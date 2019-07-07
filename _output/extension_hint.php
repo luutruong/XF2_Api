@@ -5,6 +5,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller
 {
+	class XFCP_Attachment extends \XF\Api\Controller\Attachment {}
 	class XFCP_Auth extends \XF\Api\Controller\Auth {}
 }
 

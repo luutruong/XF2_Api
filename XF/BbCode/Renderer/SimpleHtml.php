@@ -23,7 +23,8 @@ class SimpleHtml extends XFCP_SimpleHtml
                     'full' => $this->isFullAttachView($option),
                     'styleAttr' => $this->getAttachStyleAttr($option),
                     'alt' => $this->getImageAltText($option) ?: ($attachmentRef ? $attachmentRef->filename : ''),
-                    'noLightbox' => true
+                    'noLightbox' => true,
+                    'tApiViewUrl' => $this->tApiGetAttachmentViewUrl($attachmentRef)
                 ];
 
                 $rendered = $this->templater->renderTemplate('public:bb_code_tag_attach', $params);
@@ -47,5 +48,29 @@ class SimpleHtml extends XFCP_SimpleHtml
         }
 
         return parent::renderTagAttach($children, $option, $tag, $options);
+    }
+
+    protected function tApiGetAttachmentViewUrl(Attachment $attachment)
+    {
+        $visitor = \XF::visitor();
+        $app = \XF::app();
+        if (!$attachment->has_thumbnail) {
+            return $app->router('public')
+                ->buildLink('full:attachments', $attachment, [
+                    'hash' => $attachment->temp_hash
+                ]);
+        }
+
+        $token = md5(
+            $visitor->user_id
+            . $attachment->attachment_id
+            . $app->config('globalSalt')
+        );
+
+        return $app->router('api')
+            ->buildLink('full:attachments/data', $attachment, [
+                'hash' => $attachment->temp_hash ?: null,
+                'tapi_token' => $token
+            ]);
     }
 }

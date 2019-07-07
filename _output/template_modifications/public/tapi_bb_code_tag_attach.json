@@ -1,0 +1,9 @@
+{
+    "template": "bb_code_tag_attach",
+    "description": "Render view api url",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "link('full:attachments', $attachment, {'hash': $attachment.temp_hash})",
+    "replace": "$tApiViewUrl ?: $0"
+}
