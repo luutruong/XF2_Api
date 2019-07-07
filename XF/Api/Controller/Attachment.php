@@ -20,4 +20,13 @@ class Attachment extends XFCP_Attachment
 
         return parent::actionGetData($params);
     }
+
+    public function allowUnauthenticatedRequest($action)
+    {
+        if (strtolower($action) === 'data') {
+            return true;
+        }
+
+        return parent::allowUnauthenticatedRequest($action);
+    }
 }
