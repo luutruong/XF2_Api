@@ -16,5 +16,6 @@ namespace Truonglv\Api\XF\BbCode\Renderer
 namespace Truonglv\Api\XF\Entity
 {
 	class XFCP_Attachment extends \XF\Entity\Attachment {}
+	class XFCP_ConversationMessage extends \XF\Entity\ConversationMessage {}
 	class XFCP_Post extends \XF\Entity\Post {}
 }
