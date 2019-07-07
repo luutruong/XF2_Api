@@ -53,22 +53,20 @@ class SimpleHtml extends XFCP_SimpleHtml
     protected function tApiGetAttachmentViewUrl(Attachment $attachment)
     {
         $visitor = \XF::visitor();
+        /** @var \XF\Api\App $app */
         $app = \XF::app();
-        if (!$attachment->has_thumbnail) {
-            return $app->router('public')
-                ->buildLink('full:attachments', $attachment, [
-                    'hash' => $attachment->temp_hash
-                ]);
+        $token = null;
+
+        if ($attachment->has_thumbnail) {
+            $token = md5(
+                $visitor->user_id
+                . $attachment->attachment_id
+                . $app->config('globalSalt')
+            );
         }
 
-        $token = md5(
-            $visitor->user_id
-            . $attachment->attachment_id
-            . $app->config('globalSalt')
-        );
-
-        return $app->router('api')
-            ->buildLink('full:attachments/data', $attachment, [
+        return $app->router('public')
+            ->buildLink('full:attachments', $attachment, [
                 'hash' => $attachment->temp_hash ?: null,
                 'tapi_token' => $token
             ]);

@@ -5,7 +5,6 @@
 
 namespace Truonglv\Api\XF\Api\Controller
 {
-	class XFCP_Attachment extends \XF\Api\Controller\Attachment {}
 	class XFCP_Auth extends \XF\Api\Controller\Auth {}
 }
 
@@ -16,5 +15,6 @@ namespace Truonglv\Api\XF\BbCode\Renderer
 
 namespace Truonglv\Api\XF\Entity
 {
+	class XFCP_Attachment extends \XF\Entity\Attachment {}
 	class XFCP_Post extends \XF\Entity\Post {}
 }
