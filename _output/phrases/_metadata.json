@@ -1,0 +1,26 @@
+{
+    "option.tl_Api_authKey.txt": {
+        "global_cache": false,
+        "version_id": 1000000,
+        "version_string": "1.0.0",
+        "hash": "fabc773769487dfbd1b8448c5c5c465e"
+    },
+    "option_explain.tl_Api_authKey.txt": {
+        "global_cache": false,
+        "version_id": 1000000,
+        "version_string": "1.0.0",
+        "hash": "594ff2bfc4f6447b1712a6cb26d9836a"
+    },
+    "option_group.tl_Api.txt": {
+        "global_cache": false,
+        "version_id": 1000000,
+        "version_string": "1.0.0",
+        "hash": "b667ac354b52dd6cd468d80bfebb6c09"
+    },
+    "option_group_description.tl_Api.txt": {
+        "global_cache": false,
+        "version_id": 1000000,
+        "version_string": "1.0.0",
+        "hash": "eeb409a48d7dd472bcd45f820bf83be8"
+    }
+}
