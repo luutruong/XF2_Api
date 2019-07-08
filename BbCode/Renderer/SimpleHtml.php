@@ -81,6 +81,8 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             'img',
             'user',
             'plain',
+            'code',
+            'quote',
             'b',
             'u',
             'i',
@@ -104,8 +106,8 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             );
         }
 
-        return $app->router('public')
-            ->buildLink('full:attachments', $attachment, [
+        return $app->router('api')
+            ->buildLink('full:attachments/data', $attachment, [
                 'hash' => $attachment->temp_hash ?: null,
                 'tapi_token' => $token
             ]);
