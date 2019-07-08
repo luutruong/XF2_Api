@@ -1,16 +1,34 @@
 <?php
 
-namespace Truonglv\Api\XF\BbCode\Renderer;
+namespace Truonglv\Api\BbCode\Renderer;
 
 use XF\Entity\Attachment;
 
-class SimpleHtml extends XFCP_SimpleHtml
+class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
 {
+    public function addTag($tag, array $config)
+    {
+        if (!in_array($tag, $this->getWhitelistTags(), true)) {
+            unset($config['callback']);
+        }
+
+        parent::addTag($tag, $config);
+    }
+
+    public function renderTagUrl(array $children, $option, array $tag, array $options)
+    {
+        $options = array_replace($options, [
+            'unfurl' => false,
+            'allowUnfurl' => false
+        ]);
+
+        return parent::renderTagUrl($children, $option, $tag, $options);
+    }
+
     public function renderTagAttach(array $children, $option, array $tag, array $options)
     {
         $id = intval($this->renderSubTreePlain($children));
-
-        if (!empty($options['tApiRenderTagAttach']) && !empty($id)) {
+        if ($id > 0) {
             $attachments = $options['attachments'];
 
             if (!empty($attachments[$id])) {
@@ -24,7 +42,7 @@ class SimpleHtml extends XFCP_SimpleHtml
                     'styleAttr' => $this->getAttachStyleAttr($option),
                     'alt' => $this->getImageAltText($option) ?: ($attachmentRef ? $attachmentRef->filename : ''),
                     'noLightbox' => true,
-                    'tApiViewUrl' => $this->tApiGetAttachmentViewUrl($attachmentRef)
+                    'tApiViewUrl' => $this->getAttachmentViewUrl($attachmentRef)
                 ];
 
                 $rendered = $this->templater->renderTemplate('public:bb_code_tag_attach', $params);
@@ -50,7 +68,28 @@ class SimpleHtml extends XFCP_SimpleHtml
         return parent::renderTagAttach($children, $option, $tag, $options);
     }
 
-    protected function tApiGetAttachmentViewUrl(Attachment $attachment)
+    protected function getWhitelistTags()
+    {
+        return [
+            'attach',
+            'left',
+            'center',
+            'right',
+            'url',
+            'font',
+            'size',
+            'img',
+            'user',
+            'plain',
+            'b',
+            'u',
+            'i',
+            's',
+            'color'
+        ];
+    }
+
+    protected function getAttachmentViewUrl(Attachment $attachment)
     {
         $visitor = \XF::visitor();
         /** @var \XF\Api\App $app */
