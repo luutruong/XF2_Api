@@ -104,7 +104,8 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             's',
             'color',
             'icode',
-            'list'
+            'list',
+            'code'
         ];
     }
 
