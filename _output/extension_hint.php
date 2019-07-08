@@ -14,3 +14,9 @@ namespace Truonglv\Api\XF\Entity
 	class XFCP_ConversationMessage extends \XF\Entity\ConversationMessage {}
 	class XFCP_Post extends \XF\Entity\Post {}
 }
+
+namespace Truonglv\Api\XF\Str
+{
+	class XFCP_EmojiFormatter extends \XF\Str\EmojiFormatter {}
+	class XFCP_Formatter extends \XF\Str\Formatter {}
+}

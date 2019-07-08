@@ -3,6 +3,8 @@
 namespace Truonglv\Api\BbCode\Renderer;
 
 use XF\Entity\Attachment;
+use Truonglv\Api\XF\Str\Formatter;
+use Truonglv\Api\XF\Str\EmojiFormatter;
 
 class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
 {
@@ -68,6 +70,19 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         return parent::renderTagAttach($children, $option, $tag, $options);
     }
 
+    public function filterString($string, array $options)
+    {
+        /** @var Formatter $formatter */
+        $formatter = $this->formatter;
+        $formatter->setTApiDisableSmilieWithSpriteParams(true);
+
+        /** @var EmojiFormatter $emojiFormatter */
+        $emojiFormatter = $formatter->getEmojiFormatter();
+        $emojiFormatter->setTApiDisableFormatToImage(true);
+
+        return parent::filterString($string, $options);
+    }
+
     protected function getWhitelistTags()
     {
         return [
@@ -87,7 +102,9 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             'u',
             'i',
             's',
-            'color'
+            'color',
+            'icode',
+            'list'
         ];
     }
 
