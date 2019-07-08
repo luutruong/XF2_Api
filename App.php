@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api;
 
-use XF\Api\Result\EntityResult;
 use XF\Mvc\Entity\Entity;
+use XF\Api\Result\EntityResult;
 
 class App
 {
