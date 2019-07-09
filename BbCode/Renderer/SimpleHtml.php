@@ -111,21 +111,22 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
 
     protected function getAttachmentViewUrl(Attachment $attachment)
     {
-        $visitor = \XF::visitor();
         /** @var \XF\Api\App $app */
         $app = \XF::app();
         $token = null;
+        $apiKey = $app->request()->getApiKey();
 
         if ($attachment->has_thumbnail) {
-            $token = md5(
-                $visitor->user_id
+            $token = \XF::$time . '.' . md5(
+                \XF::$time
+                . $apiKey
                 . $attachment->attachment_id
                 . $app->config('globalSalt')
             );
         }
 
         return $app->router('api')
-            ->buildLink('full:attachments/data', $attachment, [
+            ->buildLink('full:attachments', $attachment, [
                 'hash' => $attachment->temp_hash ?: null,
                 'tapi_token' => $token
             ]);

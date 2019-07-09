@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use Truonglv\Api\App;
+
 class Attachment extends XFCP_Attachment
 {
     public function canView(&$error = null)
@@ -27,9 +29,26 @@ class Attachment extends XFCP_Attachment
 
     protected function tApiValidRequestToken()
     {
+        if (!in_array($this->content_type, ['post'], true)) {
+            return false;
+        }
+
         $token = $this->app()->request()->filter('tapi_token', 'str');
+        $apiKey = $this->app()->request()->getApiKey();
+
+        list($timestamp, $token) = explode('.', $token, 2);
+        if (empty($timestamp) || empty($token)) {
+            return false;
+        }
+
+        $expiresAt = $timestamp + App::$attachmentTokenExpires * 60;
+        if ($expiresAt <= \XF::$time) {
+            return false;
+        }
+
         $expected = md5(
-            \XF::visitor()->user_id
+            intval($timestamp)
+            . $apiKey
             . $this->attachment_id
             . $this->app()->config('globalSalt')
         );
