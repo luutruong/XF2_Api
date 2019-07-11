@@ -32,6 +32,9 @@ class Attachment extends XFCP_Attachment
         }
 
         $token = $this->app()->request()->filter('tapi_token', 'str');
+        if (empty($token) || strpos($token, '.') === false) {
+            return false;
+        }
         $apiKey = $this->app()->request()->getApiKey();
 
         list($timestamp, $token) = explode('.', $token, 2);
