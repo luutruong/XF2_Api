@@ -12,7 +12,7 @@ class Auth extends XFCP_Auth
         $decrypted = '';
 
         try {
-            $decrypted = PasswordDecrypter::decrypt($password);
+            $decrypted = PasswordDecrypter::decrypt($password, $this->options()->tApi_authKey);
         } catch (\InvalidArgumentException $e) {
         }
 

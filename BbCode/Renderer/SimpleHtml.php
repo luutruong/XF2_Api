@@ -125,7 +125,7 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             );
         }
 
-        return $app->router('api')
+        return $app->router('public')
             ->buildLink('full:attachments', $attachment, [
                 'hash' => $attachment->temp_hash ?: null,
                 'tapi_token' => $token

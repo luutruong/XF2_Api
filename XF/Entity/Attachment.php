@@ -2,8 +2,6 @@
 
 namespace Truonglv\Api\XF\Entity;
 
-use Truonglv\Api\App;
-
 class Attachment extends XFCP_Attachment
 {
     public function canView(&$error = null)
@@ -41,7 +39,7 @@ class Attachment extends XFCP_Attachment
             return false;
         }
 
-        $expiresAt = $timestamp + App::$attachmentTokenExpires * 60;
+        $expiresAt = $timestamp + $this->app()->options()->tApi_attachmentTokenExpires * 60;
         if ($expiresAt <= \XF::$time) {
             return false;
         }

@@ -7,11 +7,6 @@ use XF\Api\Result\EntityResult;
 
 class App
 {
-    /**
-     * @var int minutes
-     */
-    public static $attachmentTokenExpires = 30;
-
     public static function includeMessageHtmlIfNeeded(EntityResult $result, Entity $entity, $messageKey = 'message')
     {
         $isInclude = $entity->app()->request()->filter('include_message_html', 'bool');

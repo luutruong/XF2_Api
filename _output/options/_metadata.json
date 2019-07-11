@@ -1,5 +1,8 @@
 {
-    "tl_Api_authKey.json": {
+    "tApi_attachmentTokenExpires.json": {
+        "hash": "3f759dc94c59d7bc1d7f7199f0331c65"
+    },
+    "tApi_authKey.json": {
         "hash": "d12dd2c0ecd313222fae8eb9dabb6bbd"
     }
 }

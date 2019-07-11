@@ -1,13 +1,25 @@
 {
-    "option.tl_Api_authKey.txt": {
+    "option.tApi_attachmentTokenExpires.txt": {
         "global_cache": false,
-        "version_id": 1000000,
+        "version_id": 1000001,
+        "version_string": "1.0.0",
+        "hash": "0b86a7298c7794dd2056b908c39159d8"
+    },
+    "option.tApi_authKey.txt": {
+        "global_cache": false,
+        "version_id": 1000001,
         "version_string": "1.0.0",
         "hash": "fabc773769487dfbd1b8448c5c5c465e"
     },
-    "option_explain.tl_Api_authKey.txt": {
+    "option_explain.tApi_attachmentTokenExpires.txt": {
         "global_cache": false,
-        "version_id": 1000000,
+        "version_id": 1000001,
+        "version_string": "1.0.0",
+        "hash": "f1aac6e6eba3117393b6c7201aacdfe3"
+    },
+    "option_explain.tApi_authKey.txt": {
+        "global_cache": false,
+        "version_id": 1000001,
         "version_string": "1.0.0",
         "hash": "594ff2bfc4f6447b1712a6cb26d9836a"
     },
