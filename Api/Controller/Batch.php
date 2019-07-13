@@ -14,7 +14,7 @@ class Batch extends AbstractController
         $json = json_decode($input, true);
 
         if (!is_array($json)) {
-            return $this->error('invalid_batch_json', 400);
+            return $this->apiError('Invalid batch json format', 'invalid_batch_json_format');
         }
 
         $results = [];

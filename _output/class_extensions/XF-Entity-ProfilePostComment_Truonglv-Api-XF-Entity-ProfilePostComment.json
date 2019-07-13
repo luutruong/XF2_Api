@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Entity\\ProfilePostComment",
+    "to_class": "Truonglv\\Api\\XF\\Entity\\ProfilePostComment",
+    "execute_order": 10,
+    "active": true
+}
