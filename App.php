@@ -7,6 +7,8 @@ use XF\Api\Result\EntityResult;
 
 class App
 {
+    public static $followingPerPage = 20;
+
     public static function includeMessageHtmlIfNeeded(EntityResult $result, Entity $entity, $messageKey = 'message')
     {
         $isInclude = $entity->app()->request()->filter('include_message_html', 'bool');
