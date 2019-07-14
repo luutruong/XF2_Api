@@ -9,6 +9,7 @@ namespace Truonglv\Api\XF\Api\Controller
 	class XFCP_Conversation extends \XF\Api\Controller\Conversation {}
 	class XFCP_Conversations extends \XF\Api\Controller\Conversations {}
 	class XFCP_Thread extends \XF\Api\Controller\Thread {}
+	class XFCP_User extends \XF\Api\Controller\User {}
 }
 
 namespace Truonglv\Api\XF\Entity
