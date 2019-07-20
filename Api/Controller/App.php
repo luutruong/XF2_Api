@@ -2,9 +2,9 @@
 
 namespace Truonglv\Api\Api\Controller;
 
-use XF\Api\Controller\AbstractController;
 use XF\Finder\Thread;
 use XF\Mvc\Entity\Entity;
+use XF\Api\Controller\AbstractController;
 
 class App extends AbstractController
 {
@@ -51,7 +51,7 @@ class App extends AbstractController
 
         $data = [
             'threads' => $threads,
-            'pagination' => $this->getPaginationData($threads, $page,  $perPage, $total)
+            'pagination' => $this->getPaginationData($threads, $page, $perPage, $total)
         ];
 
         return $this->apiResult($data);
@@ -83,7 +83,7 @@ class App extends AbstractController
             $container = $this->app()->container();
 
             $container
-                ->set('contactUrl', function () use($container) {
+                ->set('contactUrl', function () use ($container) {
                     $options = $container['options'];
                     $router = $container['router.public'];
 
@@ -92,10 +92,15 @@ class App extends AbstractController
                     }
 
                     switch ($options->contactUrl['type']) {
-                        case 'default': $url = $router->buildLink('canonical:misc/contact/'); break;
-                        case 'custom': $url = $options->contactUrl['custom']; break;
+                        case 'default': $url = $router->buildLink('canonical:misc/contact/');
+
+break;
+                        case 'custom': $url = $options->contactUrl['custom'];
+
+break;
                         default: $url = '';
                     }
+
                     return $url;
                 });
 
