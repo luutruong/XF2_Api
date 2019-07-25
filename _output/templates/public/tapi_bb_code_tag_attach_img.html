@@ -1,0 +1,9 @@
+<xf:if is="$full"><xf:trim>
+    <img src="{$attachmentViewUrl}" data-width="{$attachment.Data.width}" data-height="{$attachment.Data.height}"
+         class="bbImage {$alignClass}" alt="{$alt}" />
+</xf:trim><xf:else /><xf:trim>
+    <a href="{$attachmentViewUrl}" class="js-lbImage">
+        <img src="{$attachment.Data.getThumbnailUrl(true)}" data-width="{$attachment.Data.thumbnail_width}"
+             data-height="{$attachment.Data.thumbnail_height}"
+             class="bbImage {$alignClass}" alt="{$alt}" /></a>
+</xf:trim></xf:if>

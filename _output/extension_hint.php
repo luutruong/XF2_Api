@@ -22,6 +22,7 @@ namespace Truonglv\Api\XF\Entity
 	class XFCP_ProfilePostComment extends \XF\Entity\ProfilePostComment {}
 	class XFCP_Thread extends \XF\Entity\Thread {}
 	class XFCP_User extends \XF\Entity\User {}
+	class XFCP_UserAlert extends \XF\Entity\UserAlert {}
 }
 
 namespace Truonglv\Api\XF\Str

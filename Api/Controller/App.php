@@ -92,12 +92,14 @@ class App extends AbstractController
                     }
 
                     switch ($options->contactUrl['type']) {
-                        case 'default': $url = $router->buildLink('canonical:misc/contact/');
+                        case 'default':
+                            $url = $router->buildLink('canonical:misc/contact/');
 
-break;
-                        case 'custom': $url = $options->contactUrl['custom'];
+                            break;
+                        case 'custom':
+                            $url = $options->contactUrl['custom'];
 
-break;
+                            break;
                         default: $url = '';
                     }
 

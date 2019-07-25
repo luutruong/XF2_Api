@@ -66,6 +66,31 @@ class Me extends XFCP_Me
         return $this->apiSuccess();
     }
 
+    public function actionGetNotifications()
+    {
+        $visitor = \XF::visitor();
+
+        $page = $this->filterPage();
+        $perPage = $this->options()->alertsPerPage;
+
+        /** @var \XF\Repository\UserAlert $alertRepo */
+        $alertRepo = $this->repository('XF:UserAlert');
+
+        $alertsFinder = $alertRepo->findAlertsForUser($visitor->user_id);
+        $total = $alertsFinder->total();
+        $alerts = $alertsFinder->limitByPage($page, $perPage)->fetch();
+
+        $alertRepo->addContentToAlerts($alerts);
+        $alerts = $alerts->filterViewable();
+
+        $data = [
+            'alerts' => $alerts->toApiResults(Entity::VERBOSITY_VERBOSE),
+            'pagination' => $this->getPaginationData($alerts, $page, $perPage, $total)
+        ];
+
+        return $this->apiResult($data);
+    }
+
     /**
      * @param int $id
      * @param mixed $with

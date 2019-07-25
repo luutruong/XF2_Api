@@ -39,31 +39,12 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
                 $params = [
                     'id' => $id,
                     'attachment' => $attachmentRef,
-                    'canView' => true,
                     'full' => $this->isFullAttachView($option),
-                    'styleAttr' => $this->getAttachStyleAttr($option),
                     'alt' => $this->getImageAltText($option) ?: ($attachmentRef ? $attachmentRef->filename : ''),
-                    'noLightbox' => true,
-                    'tApiViewUrl' => $this->getAttachmentViewUrl($attachmentRef)
+                    'attachmentViewUrl' => $this->getAttachmentViewUrl($attachmentRef)
                 ];
 
-                $rendered = $this->templater->renderTemplate('public:bb_code_tag_attach', $params);
-                $rendered = trim(strval($rendered));
-
-                if (substr($rendered, 0, 4) === '<img') {
-                    if (strpos($rendered, 'data-width') === false) {
-                        $rendered = substr($rendered, 0, 4)
-                            . ' data-width="' . $attachmentRef->Data->width . '"'
-                            . substr($rendered, 4);
-                    }
-                    if (strpos($rendered, 'data-height') === false) {
-                        $rendered = substr($rendered, 0, 4)
-                            . ' data-height="' . $attachmentRef->Data->height . '"'
-                            . substr($rendered, 4);
-                    }
-                }
-
-                return $rendered;
+                return $this->templater->renderTemplate('public:tapi_bb_code_tag_attach_img', $params);
             }
         }
 

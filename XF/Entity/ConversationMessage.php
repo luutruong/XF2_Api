@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Entity;
 
 use Truonglv\Api\App;
+use XF\Mvc\Entity\Structure;
 
 class ConversationMessage extends XFCP_ConversationMessage
 {
@@ -15,5 +16,14 @@ class ConversationMessage extends XFCP_ConversationMessage
 
         App::includeMessageHtmlIfNeeded($result, $this);
         $result->tapi_is_visitor_message = (\XF::visitor()->user_id === $this->user_id);
+    }
+
+    public static function getStructure(Structure $structure)
+    {
+        $structure = parent::getStructure($structure);
+
+        $structure->columns['embed_metadata']['api'] = true;
+
+        return $structure;
     }
 }

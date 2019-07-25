@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Entity;
 
 use Truonglv\Api\App;
+use XF\Mvc\Entity\Structure;
 
 class Post extends XFCP_Post
 {
@@ -14,5 +15,14 @@ class Post extends XFCP_Post
         parent::setupApiResultData($result, $verbosity, $options);
 
         App::includeMessageHtmlIfNeeded($result, $this);
+    }
+
+    public static function getStructure(Structure $structure)
+    {
+        $structure = parent::getStructure($structure);
+
+        $structure->columns['embed_metadata']['api'] = true;
+
+        return $structure;
     }
 }

@@ -20,4 +20,9 @@ class Auth extends XFCP_Auth
 
         return $this->rerouteController(__CLASS__, 'post');
     }
+
+    public function actionPostVerify()
+    {
+        $token = $this->filter('token', 'str');
+    }
 }
