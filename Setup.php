@@ -2,12 +2,11 @@
 
 namespace Truonglv\Api;
 
-use Truonglv\Api\DevHelper\SetupTrait;
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
 use XF\AddOn\StepRunnerUpgradeTrait;
+use Truonglv\Api\DevHelper\SetupTrait;
 use XF\AddOn\StepRunnerUninstallTrait;
-use XF\Db\Schema\Create;
 
 class Setup extends AbstractSetup
 {
