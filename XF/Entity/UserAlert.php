@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 class UserAlert extends XFCP_UserAlert
@@ -12,6 +13,9 @@ class UserAlert extends XFCP_UserAlert
         array $options = []
     ) {
         $result->includeRelation('User');
+        if ($this->Content instanceof Entity) {
+            $result->Content = $this->Content->toApiResult($verbosity, $options);
+        }
 
         $result->is_unviewed = $this->isUnviewed();
         $html = $this->isAlertRenderable()
