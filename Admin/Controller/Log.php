@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\Admin\Controller;
 
-use Truonglv\Api\DevHelper\Admin\Controller\Entity;
 use XF\Mvc\ParameterBag;
+use Truonglv\Api\DevHelper\Admin\Controller\Entity;
 
 class Log extends Entity
 {
