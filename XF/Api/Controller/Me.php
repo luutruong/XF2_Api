@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use Truonglv\Api\App;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Ignore;
 
@@ -77,6 +78,8 @@ class Me extends XFCP_Me
         $alertRepo = $this->repository('XF:UserAlert');
 
         $alertsFinder = $alertRepo->findAlertsForUser($visitor->user_id);
+        $alertsFinder->where('content_type', App::getSupportAlertContentTypes());
+
         $total = $alertsFinder->total();
         $alerts = $alertsFinder->limitByPage($page, $perPage)->fetch();
 

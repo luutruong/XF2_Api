@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Api\\Mvc\\Renderer\\Api",
+    "to_class": "Truonglv\\Api\\XF\\Api\\Mvc\\Renderer\\Api",
+    "execute_order": 10,
+    "active": true
+}

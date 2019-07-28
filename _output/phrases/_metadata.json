@@ -1,4 +1,10 @@
 {
+    "admin_navigation.tapi_logs.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "377a72a389201dfaba8ce9d22633a3d3"
+    },
     "option.tApi_attachmentTokenExpires.txt": {
         "global_cache": false,
         "version_id": 1000001,
@@ -34,5 +40,71 @@
         "version_id": 1000000,
         "version_string": "1.0.0",
         "hash": "eeb409a48d7dd472bcd45f820bf83be8"
+    },
+    "tapi_log_app_version.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "93aa6e4bfb09b1ee411f7226879ba2c1"
+    },
+    "tapi_log_end_point.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "6ef6b664d858950b25708a088288a750"
+    },
+    "tapi_log_entities.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "b2d37ae1cedf42ff874289b721860af2"
+    },
+    "tapi_log_entity.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "ce0be71e33226e4c1db2bcea5959f16b"
+    },
+    "tapi_log_log_date.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "d96edca3cf8bd06ab6a43a38a5478c43"
+    },
+    "tapi_log_payload.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "00f4e5788aab6d3546bb433842dbbefc"
+    },
+    "tapi_log_request_method.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "83658994909a9954563362af894c361d"
+    },
+    "tapi_log_request_user.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "c47042257b1d121ee300a5331d3ca645"
+    },
+    "tapi_log_response.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "d64ed3e9c10229648e069f56e32f4c8e"
+    },
+    "tapi_log_response_code.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "42d61b587a0123390822777d84e0f6bd"
+    },
+    "tapi_log_user_device.txt": {
+        "global_cache": false,
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "41b167245a76e6a9f70cabe33ca238ca"
     }
 }

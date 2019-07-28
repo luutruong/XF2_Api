@@ -7,7 +7,22 @@ use XF\Api\Result\EntityResult;
 
 class App
 {
+    const HEADER_KEY_APP_VERSION = 'HTTP_XF_TAPI_VERSION';
+    const HEADER_KEY_DEVICE_INFO = 'HTTP_XF_TAPI_DEVICE_INFO';
+
     public static $followingPerPage = 20;
+    public static $enableLogging = false;
+
+    public static function getSupportAlertContentTypes()
+    {
+        return [
+            'conversation',
+            'conversation_message',
+            'post',
+            'thread',
+            'user'
+        ];
+    }
 
     public static function includeMessageHtmlIfNeeded(EntityResult $result, Entity $entity, $messageKey = 'message')
     {

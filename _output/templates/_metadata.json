@@ -1,4 +1,19 @@
 {
+    "admin/tapi_log_entity_delete.html": {
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "6b4d4c43aec7949d705dd36d09a53a34"
+    },
+    "admin/tapi_log_entity_list.html": {
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "c2778d306de72dba10175d0cc3a9ec64"
+    },
+    "admin/tapi_log_entity_view.html": {
+        "version_id": 1000300,
+        "version_string": "1.0.3",
+        "hash": "aa4efde5f2d5c0ec922c7cf3cbd94267"
+    },
     "public/tapi_bb_code_tag_attach_img.html": {
         "version_id": 1000300,
         "version_string": "1.0.3",

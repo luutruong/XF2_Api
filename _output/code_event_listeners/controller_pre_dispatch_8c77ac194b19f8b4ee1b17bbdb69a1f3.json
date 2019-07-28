@@ -1,0 +1,9 @@
+{
+    "event_id": "controller_pre_dispatch",
+    "execute_order": 10,
+    "callback_class": "Truonglv\\Api\\Listener",
+    "callback_method": "onControllerPreDispatch",
+    "active": true,
+    "hint": "",
+    "description": ""
+}

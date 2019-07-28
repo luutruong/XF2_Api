@@ -13,6 +13,11 @@ namespace Truonglv\Api\XF\Api\Controller
 	class XFCP_User extends \XF\Api\Controller\User {}
 }
 
+namespace Truonglv\Api\XF\Api\Mvc\Renderer
+{
+	class XFCP_Api extends \XF\Api\Mvc\Renderer\Api {}
+}
+
 namespace Truonglv\Api\XF\Entity
 {
 	class XFCP_Attachment extends \XF\Entity\Attachment {}
