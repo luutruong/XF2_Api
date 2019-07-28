@@ -14,6 +14,10 @@ class Post extends XFCP_Post
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
 
+        $result->view_url = $this->app()
+            ->router('public')
+            ->buildLink('canonical:posts', $this);
+
         App::includeMessageHtmlIfNeeded($result, $this);
     }
 

@@ -25,11 +25,11 @@ class Formatter extends XFCP_Formatter
                     return false;
                 }
 
-                if (!isset($this->smilieCache[$matches[1]])) {
+                if (!isset($this->smilieReverse[$matches[1]])) {
                     return false;
                 }
 
-                $smilieRef = $this->smilieCache[$matches[1]];
+                $smilieRef = $this->smilieReverse[$matches[1]];
 
                 return empty($smilieRef['sprite_params']);
             });
