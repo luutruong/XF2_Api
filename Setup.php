@@ -31,6 +31,11 @@ class Setup extends AbstractSetup
         $this->doCreateTables($this->getTables1());
     }
 
+    public function upgrade1000500Step1()
+    {
+        $this->doCreateTables($this->getTables2());
+    }
+
     protected function getTables1()
     {
         $tables = [];
@@ -51,6 +56,34 @@ class Setup extends AbstractSetup
             $table->addColumn('log_date', 'int')->setDefault(0);
 
             $table->addKey('log_date');
+        };
+
+        return $tables;
+    }
+
+    protected function getTables2()
+    {
+        $tables = [];
+
+        $tables['xf_tapi_subscription'] = function (Create $table) {
+            $table->addColumn('subscription_id', 'int')
+                ->autoIncrement();
+            $table->addColumn('user_id', 'int');
+            $table->addColumn('username', 'varchar', 50);
+            $table->addColumn('app_version', 'varchar', 50);
+            $table->addColumn('device_type', 'varchar', 25);
+            $table->addColumn('device_token', 'varbinary', 150);
+            $table->addColumn('is_device_test', 'tinyint')->setDefault(0);
+
+            $table->addColumn('provider', 'varchar', 25);
+            $table->addColumn('provider_key', 'varchar', 100);
+
+            $table->addColumn('subscribed_date', 'int')
+                ->setDefault(0);
+
+            $table->addUniqueKey(['user_id', 'device_token']);
+            $table->addKey(['provider', 'provider_key']);
+            $table->addKey(['subscribed_date']);
         };
 
         return $tables;

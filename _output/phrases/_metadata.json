@@ -1,9 +1,15 @@
 {
+    "admin_navigation.tapi.txt": {
+        "global_cache": false,
+        "version_id": 1000400,
+        "version_string": "1.0.4",
+        "hash": "b667ac354b52dd6cd468d80bfebb6c09"
+    },
     "admin_navigation.tapi_logs.txt": {
         "global_cache": false,
-        "version_id": 1000300,
-        "version_string": "1.0.3",
-        "hash": "377a72a389201dfaba8ce9d22633a3d3"
+        "version_id": 1000400,
+        "version_string": "1.0.4",
+        "hash": "dc625ce9f516ad5c5c710176baf23a7d"
     },
     "option.tApi_attachmentTokenExpires.txt": {
         "global_cache": false,

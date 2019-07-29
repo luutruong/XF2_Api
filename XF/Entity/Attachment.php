@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use Truonglv\Api\App;
+
 class Attachment extends XFCP_Attachment
 {
     public function canView(&$error = null)
@@ -23,6 +25,19 @@ class Attachment extends XFCP_Attachment
         }
 
         return parent::canView($error);
+    }
+
+    protected function setupApiResultData(
+        \XF\Api\Result\EntityResult $result,
+        $verbosity = \XF\Entity\Attachment::VERBOSITY_NORMAL,
+        array $options = []
+    ) {
+        parent::setupApiResultData($result, $verbosity, $options);
+
+        $result->view_url = $this->app()->router('public')
+            ->buildLink('canonical:attachments', $this, [
+                'tapi_token' => App::generateTokenForViewingAttachment($this)
+            ]);
     }
 
     protected function tApiValidRequestToken()

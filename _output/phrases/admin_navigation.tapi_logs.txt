@@ -1,1 +1,1 @@
-[tl] Api: Api request logs
+Request logs

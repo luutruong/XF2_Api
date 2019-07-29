@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api;
 
+use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
 use XF\Api\Result\EntityResult;
 
@@ -22,6 +23,19 @@ class App
             'thread',
             'user'
         ];
+    }
+
+    public static function generateTokenForViewingAttachment(Attachment $attachment)
+    {
+        $app = \XF::app();
+        $apiKey = $app->request()->getApiKey();
+
+        return \XF::$time . '.' . md5(
+                \XF::$time
+                . $apiKey
+                . $attachment->attachment_id
+                . $app->config('globalSalt')
+            );
     }
 
     public static function includeMessageHtmlIfNeeded(EntityResult $result, Entity $entity, $messageKey = 'message')

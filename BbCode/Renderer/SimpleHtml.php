@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\BbCode\Renderer;
 
+use Truonglv\Api\App;
 use XF\Entity\Attachment;
 use Truonglv\Api\XF\Str\Formatter;
 use Truonglv\Api\XF\Str\EmojiFormatter;
@@ -95,15 +96,9 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         /** @var \XF\Api\App $app */
         $app = \XF::app();
         $token = null;
-        $apiKey = $app->request()->getApiKey();
 
         if ($attachment->has_thumbnail) {
-            $token = \XF::$time . '.' . md5(
-                \XF::$time
-                . $apiKey
-                . $attachment->attachment_id
-                . $app->config('globalSalt')
-            );
+            $token = App::generateTokenForViewingAttachment($attachment);
         }
 
         return $app->router('public')

@@ -1,7 +1,7 @@
 {
-    "parent_navigation_id": "tapi",
+    "parent_navigation_id": "logs",
     "display_order": 19000,
-    "link": "tapi-logs",
+    "link": "",
     "icon": "",
     "admin_permission_id": "viewLogs",
     "debug_only": false,

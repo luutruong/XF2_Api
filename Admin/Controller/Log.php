@@ -3,6 +3,7 @@
 namespace Truonglv\Api\Admin\Controller;
 
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Entity\Finder;
 use Truonglv\Api\DevHelper\Admin\Controller\Entity;
 
 class Log extends Entity
@@ -24,6 +25,28 @@ class Log extends Entity
             $this->getPrefixForTemplates() . '_entity_view',
             ['log' => $log]
         );
+    }
+
+    public function getEntityHint($entity)
+    {
+        return $entity->get('response_code');
+    }
+
+    public function getEntityExplain($entity)
+    {
+        $language = $this->app()->language();
+
+        return sprintf(
+            '%s - %s',
+            $entity->User ? $entity->User->username : '',
+            $language->dateTime($entity->log_date)
+        );
+    }
+
+    protected function doPrepareFinderForList(Finder $finder)
+    {
+        $finder->with('User');
+        $finder->order('log_date', 'desc');
     }
 
     /**

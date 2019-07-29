@@ -4,6 +4,7 @@ namespace Truonglv\Api\Api\Controller;
 
 use XF\Finder\Thread;
 use XF\Mvc\Entity\Entity;
+use Truonglv\Api\Entity\Subscription;
 use XF\Api\Controller\AbstractController;
 
 class App extends AbstractController
@@ -65,6 +66,55 @@ class App extends AbstractController
     public function actionGetPrivacy()
     {
         return $this->handleHelpPage('privacy_policy');
+    }
+
+    public function actionPostSubscriptions()
+    {
+        $this->assertRequiredApiInput([
+            'device_token',
+            'provider',
+            'provider_key'
+        ]);
+
+        $visitor = \XF::visitor();
+        if (!$visitor->user_id) {
+            return $this->noPermission();
+        }
+
+        $input = $this->filter([
+            'device_token' => 'str',
+            'device_type' => 'str',
+            'is_device_test' => 'bool',
+            'provider' => 'str',
+            'provider_key' => 'str'
+        ]);
+
+        /** @var Subscription|null $exists */
+        $exists = $this->finder('Truonglv\Api:Subscription')
+            ->where('user_id', $visitor->user_id)
+            ->where('device_token', $input['device_token'])
+            ->fetchOne();
+
+        if ($exists) {
+            $subscription = $exists;
+        } else {
+            /** @var Subscription $subscription */
+            $subscription = $this->em()->create('Truonglv\Api:Subscription');
+            $subscription->user_id = $visitor->user_id;
+            $subscription->username = $visitor->username;
+            $subscription->device_token = $input['device_token'];
+        }
+
+        $subscription->app_version = $this->request()->getServer(\Truonglv\Api\App::HEADER_KEY_APP_VERSION);
+        $subscription->device_type = $input['device_type'];
+        $subscription->subscribed_date = \XF::$time;
+        $subscription->is_device_test = $input['is_device_test'];
+        $subscription->provider = $input['provider'];
+        $subscription->provider_key = $input['provider_key'];
+
+        $subscription->save();
+
+        return $this->apiSuccess();
     }
 
     protected function handleHelpPage($pageId)
