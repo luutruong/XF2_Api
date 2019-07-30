@@ -4,5 +4,11 @@
     },
     "tApi_authKey.json": {
         "hash": "d12dd2c0ecd313222fae8eb9dabb6bbd"
+    },
+    "tApi_logLength.json": {
+        "hash": "b5ba07bb1e4c8edde2d5e9379b8cac59"
+    },
+    "tApi_oneSignalApiKey.json": {
+        "hash": "fc272fffaebb8e93c9291ad7e2dff3eb"
     }
 }

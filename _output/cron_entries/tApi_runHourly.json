@@ -1,0 +1,17 @@
+{
+    "cron_class": "Truonglv\\Api\\Cron\\Auto",
+    "cron_method": "runHourly",
+    "run_rules": {
+        "day_type": "dom",
+        "dom": [
+            -1
+        ],
+        "hours": [
+            -1
+        ],
+        "minutes": [
+            0
+        ]
+    },
+    "active": true
+}
