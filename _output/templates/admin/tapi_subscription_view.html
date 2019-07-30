@@ -1,0 +1,16 @@
+<xf:title>{$entity.getEntityLabel()}</xf:title>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <xf:formrow label="{{ phrase('member') }}">{{ $entity.User ? $entity.User.username : $entity.username }}</xf:formrow>
+            <xf:formrow label="{{ phrase('tapi_log_app_version') }}">{$entity.app_version}</xf:formrow>
+            <xf:formrow label="{{ phrase('tapi_log_user_device') }}">{$entity.device_type}</xf:formrow>
+            <xf:formrow label="{{ phrase('tapi_subscription_device_token') }}">{$entity.device_token}</xf:formrow>
+            <xf:formrow label="{{ phrase('tapi_subscription_is_device_test') }}">{{ $entity.is_device_test ? phrase('yes') : phrase('no') }}</xf:formrow>
+            <xf:formrow label="{{ phrase('tapi_subscription_provider') }}">{$entity.provider}</xf:formrow>
+            <xf:formrow label="{{ phrase('tapi_subscription_provider_key') }}">{$entity.provider_key}</xf:formrow>
+            <xf:formrow label="{{ phrase('tapi_subscription_date') }}"><xf:date time="$entity.subscribed_date"/></xf:formrow>
+        </div>
+    </div>
+</div>

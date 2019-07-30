@@ -2,34 +2,33 @@
 
 namespace Truonglv\Api\Admin\Controller;
 
-use XF\Mvc\ParameterBag;
-use XF\Mvc\Entity\Finder;
 use Truonglv\Api\DevHelper\Admin\Controller\Entity;
+use XF\Mvc\Entity\Finder;
+use XF\Mvc\ParameterBag;
 
-class Log extends Entity
+class Subscription extends Entity
 {
-    protected function preDispatchController($action, ParameterBag $params)
-    {
-        parent::preDispatchController($action, $params);
-
-        $this->assertAdminPermission('logs');
-    }
-
     public function actionView(ParameterBag $params)
     {
-        /** @var \Truonglv\Api\Entity\Log $log */
-        $log = $this->assertRecordExists('Truonglv\Api:Log', $params->log_id);
+        /** @var \Truonglv\Api\Entity\Subscription $subscription */
+        $subscription = $this->assertRecordExists('Truonglv\Api:Subscription', $params->subscription_id);
 
         return $this->view(
             $this->getPrefixForClasses() . '\View',
-            $this->getPrefixForTemplates() . '_log_view',
-            ['log' => $log]
+            $this->getPrefixForTemplates() . '_subscription_view',
+            ['entity' => $subscription]
         );
+    }
+
+    protected function doPrepareFinderForList(Finder $finder)
+    {
+        $finder->with('User');
+        $finder->order('subscribed_date', 'desc');
     }
 
     public function getEntityHint($entity)
     {
-        return $entity->get('response_code');
+        return $entity->get('device_token');
     }
 
     public function getEntityExplain($entity)
@@ -37,16 +36,11 @@ class Log extends Entity
         $language = $this->app()->language();
 
         return sprintf(
-            '%s - %s',
-            $entity->User ? $entity->User->username : '',
-            $language->dateTime($entity->log_date)
+            '%s (%s) - %s',
+            $entity->get('provider'),
+            $entity->get('provider_key'),
+            $language->dateTime($entity->subscribed_date)
         );
-    }
-
-    protected function doPrepareFinderForList(Finder $finder)
-    {
-        $finder->with('User');
-        $finder->order('log_date', 'desc');
     }
 
     /**
@@ -54,7 +48,7 @@ class Log extends Entity
      */
     protected function getShortName()
     {
-        return 'Truonglv\Api:Log';
+        return 'Truonglv\Api:Subscription';
     }
 
     /**
@@ -62,7 +56,7 @@ class Log extends Entity
      */
     protected function getPrefixForClasses()
     {
-        return 'Truonglv\Api:Log';
+        return 'Truonglv\Api:Subscription';
     }
 
     /**
@@ -70,7 +64,7 @@ class Log extends Entity
      */
     protected function getPrefixForPhrases()
     {
-        return 'tapi_log';
+        return 'tapi_subscription';
     }
 
     /**
@@ -86,7 +80,7 @@ class Log extends Entity
      */
     protected function getRoutePrefix()
     {
-        return 'tapi-logs';
+        return 'tapi-subscriptions';
     }
 
     protected function supportsAdding()

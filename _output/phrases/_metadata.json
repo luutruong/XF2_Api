@@ -11,6 +11,12 @@
         "version_string": "1.0.4",
         "hash": "dc625ce9f516ad5c5c710176baf23a7d"
     },
+    "admin_navigation.tapi_subscriptions.txt": {
+        "global_cache": false,
+        "version_id": 1000500,
+        "version_string": "1.0.5",
+        "hash": "4ca2c509994c2776d0880357b4e8e5be"
+    },
     "cron_entry.tApi_runHourly.txt": {
         "global_cache": false,
         "version_id": 1000500,
@@ -142,5 +148,47 @@
         "version_id": 1000300,
         "version_string": "1.0.3",
         "hash": "41b167245a76e6a9f70cabe33ca238ca"
+    },
+    "tapi_subscription_date.txt": {
+        "global_cache": false,
+        "version_id": 1000500,
+        "version_string": "1.0.5",
+        "hash": "b2190e13d70f49b2109533c4766b91b6"
+    },
+    "tapi_subscription_device_token.txt": {
+        "global_cache": false,
+        "version_id": 1000500,
+        "version_string": "1.0.5",
+        "hash": "903baa6cd43c6852996cce2f36eb063d"
+    },
+    "tapi_subscription_entities.txt": {
+        "global_cache": false,
+        "version_id": 1000500,
+        "version_string": "1.0.5",
+        "hash": "4ca2c509994c2776d0880357b4e8e5be"
+    },
+    "tapi_subscription_entity.txt": {
+        "global_cache": false,
+        "version_id": 1000500,
+        "version_string": "1.0.5",
+        "hash": "787ad0b7a17de4ad6b1711bbf8d79fcb"
+    },
+    "tapi_subscription_is_device_test.txt": {
+        "global_cache": false,
+        "version_id": 1000500,
+        "version_string": "1.0.5",
+        "hash": "4e2675ecfd5293e5ffe10a4ee32d2817"
+    },
+    "tapi_subscription_provider.txt": {
+        "global_cache": false,
+        "version_id": 1000500,
+        "version_string": "1.0.5",
+        "hash": "27703c8f150ac4bb0a3a83a7857353af"
+    },
+    "tapi_subscription_provider_key.txt": {
+        "global_cache": false,
+        "version_id": 1000500,
+        "version_string": "1.0.5",
+        "hash": "882978def5011d7088c7ae1e80f6b949"
     }
 }

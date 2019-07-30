@@ -4,5 +4,8 @@
     },
     "tapi_logs.json": {
         "hash": "0a63ff3e2dc62545903dba31155e02af"
+    },
+    "tapi_subscriptions.json": {
+        "hash": "ef8069561598ba2bb1a9263e3c280469"
     }
 }

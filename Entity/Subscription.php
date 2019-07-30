@@ -20,6 +20,11 @@ use XF\Mvc\Entity\Structure;
  */
 class Subscription extends Entity
 {
+    public function getEntityLabel()
+    {
+        return $this->User ? $this->User->username : $this->username;
+    }
+
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_tapi_subscription';
@@ -37,6 +42,15 @@ class Subscription extends Entity
             'provider' => ['type' => self::STR, 'allowedValues' => ['one_signal'], 'required' => true],
             'provider_key' => ['type' => self::STR, 'maxLength' => 100, 'default' => ''],
             'subscribed_date' => ['type' => self::UINT, 'default' => \XF::$time]
+        ];
+
+        $structure->relations = [
+            'User' => [
+                'type' => self::TO_ONE,
+                'entity' => 'XF:User',
+                'conditions' => 'user_id',
+                'primary' => true
+            ]
         ];
 
         return $structure;
