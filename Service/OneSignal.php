@@ -4,8 +4,8 @@ namespace Truonglv\Api\Service;
 
 use Truonglv\Api\App;
 use Truonglv\Api\Entity\Log;
-use Truonglv\Api\Entity\Subscription;
 use XF\Repository\UserAlert;
+use Truonglv\Api\Entity\Subscription;
 
 class OneSignal extends AbstractPushNotification
 {
@@ -63,6 +63,7 @@ class OneSignal extends AbstractPushNotification
         ];
 
         $response = null;
+
         try {
             $response = $client->post(self::API_END_POINT . '/notifications', [
                 'connect_timeout' => 5,

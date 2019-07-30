@@ -2,11 +2,11 @@
 
 namespace Truonglv\Api\Job;
 
+use XF\Job\JobResult;
+use XF\Job\AbstractJob;
+use XF\Entity\UserAlert;
 use Truonglv\Api\Entity\AlertQueue;
 use Truonglv\Api\Service\OneSignal;
-use XF\Entity\UserAlert;
-use XF\Job\AbstractJob;
-use XF\Job\JobResult;
 
 class PushNotification extends AbstractJob
 {
