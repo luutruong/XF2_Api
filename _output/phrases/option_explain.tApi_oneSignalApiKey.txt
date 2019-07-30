@@ -1,0 +1,1 @@
+The api key for sending push notification to app.
