@@ -36,6 +36,11 @@ class Setup extends AbstractSetup
         $this->doCreateTables($this->getTables2());
     }
 
+    public function upgrade1000600Step1()
+    {
+        $this->doCreateTables($this->getTables3());
+    }
+
     protected function getTables1()
     {
         $tables = [];
@@ -84,6 +89,18 @@ class Setup extends AbstractSetup
             $table->addUniqueKey(['user_id', 'device_token']);
             $table->addKey(['provider', 'provider_key']);
             $table->addKey(['subscribed_date']);
+        };
+
+        return $tables;
+    }
+
+    protected function getTables3()
+    {
+        $tables = [];
+
+        $tables['xf_tapi_alert_queue'] = function (Create $table) {
+            $table->addColumn('alert_id', 'int');
+            $table->addPrimaryKey('alert_id');
         };
 
         return $tables;

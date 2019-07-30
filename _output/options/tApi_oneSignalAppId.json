@@ -7,6 +7,6 @@
     "validation_method": "",
     "default_value": "",
     "relations": {
-        "tl_Api": 3010
+        "tl_Api": 3000
     }
 }

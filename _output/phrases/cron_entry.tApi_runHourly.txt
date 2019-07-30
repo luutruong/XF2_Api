@@ -1,1 +1,1 @@
-[tl] Api: Automatically clean data (hourly)
+[tl] Api: Automatically clean data (every hours)

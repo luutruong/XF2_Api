@@ -1,5 +1,8 @@
 {
     "tApi_runHourly.json": {
         "hash": "45662d338bc9382b8c788c24b57326de"
+    },
+    "tapi_runMinutely.json": {
+        "hash": "4c6b71d63d3903364cf5b32dae5e9061"
     }
 }

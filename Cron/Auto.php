@@ -11,4 +11,14 @@ class Auto
             \XF::db()->delete('xf_tapi_log', 'log_date <= ?', \XF::$time - $logLength * 86400);
         }
     }
+
+    public static function runMinutely()
+    {
+        \XF::app()
+            ->jobManager()
+            ->enqueueUnique(
+                'tapi_pushNotifications',
+                'Truonglv\Api:PushNotification'
+            );
+    }
 }

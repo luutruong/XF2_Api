@@ -21,7 +21,13 @@
         "global_cache": false,
         "version_id": 1000500,
         "version_string": "1.0.5",
-        "hash": "987cd9cb793433485267e00a6a5d6ee7"
+        "hash": "1ab31b0de5c6db3925bea69d1af794d7"
+    },
+    "cron_entry.tapi_runMinutely.txt": {
+        "global_cache": false,
+        "version_id": 1000500,
+        "version_string": "1.0.5",
+        "hash": "26e0e886f9cfd1d9b361c46a45ff665b"
     },
     "option.tApi_attachmentTokenExpires.txt": {
         "global_cache": false,
@@ -47,6 +53,12 @@
         "version_string": "1.0.5",
         "hash": "4a311bd0c51e634b7d882818b91348a0"
     },
+    "option.tApi_oneSignalAppId.txt": {
+        "global_cache": false,
+        "version_id": 1000500,
+        "version_string": "1.0.5",
+        "hash": "03be12f5a6ed74b612b3a47e03e32b86"
+    },
     "option_explain.tApi_attachmentTokenExpires.txt": {
         "global_cache": false,
         "version_id": 1000001,
@@ -70,6 +82,12 @@
         "version_id": 1000500,
         "version_string": "1.0.5",
         "hash": "96900cebbee4a9406a4241f5a8692235"
+    },
+    "option_explain.tApi_oneSignalAppId.txt": {
+        "global_cache": false,
+        "version_id": 1000500,
+        "version_string": "1.0.5",
+        "hash": "d41d8cd98f00b204e9800998ecf8427e"
     },
     "option_group.tl_Api.txt": {
         "global_cache": false,

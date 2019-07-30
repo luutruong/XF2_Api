@@ -17,6 +17,9 @@ use XF\Mvc\Entity\Structure;
  * @property string provider
  * @property string provider_key
  * @property int subscribed_date
+ *
+ * RELATIONS
+ * @property \XF\Entity\User User
  */
 class Subscription extends Entity
 {

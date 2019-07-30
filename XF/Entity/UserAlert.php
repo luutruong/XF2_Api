@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use Truonglv\Api\App;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
@@ -61,5 +62,18 @@ class UserAlert extends XFCP_UserAlert
         }
 
         return $structure;
+    }
+
+    protected function _postSave()
+    {
+        parent::_postSave();
+
+        if ($this->isInsert()
+            && in_array($this->content_type, App::getSupportAlertContentTypes(), true)
+        ) {
+            $this->db()->insert('xf_tapi_alert_queue', [
+                'alert_id' => $this->alert_id
+            ]);
+        }
     }
 }
