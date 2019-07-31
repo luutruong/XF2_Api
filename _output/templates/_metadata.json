@@ -10,14 +10,14 @@
         "hash": "c2778d306de72dba10175d0cc3a9ec64"
     },
     "admin/tapi_log_view.html": {
-        "version_id": 1000500,
-        "version_string": "1.0.5",
-        "hash": "aa4efde5f2d5c0ec922c7cf3cbd94267"
+        "version_id": 1000600,
+        "version_string": "1.0.6",
+        "hash": "60bb67b5fbab39d423cdd01e34d92ef8"
     },
     "admin/tapi_subscription_view.html": {
-        "version_id": 1000500,
-        "version_string": "1.0.5",
-        "hash": "20c4b1736def147e75449e6e69e2eadb"
+        "version_id": 1000600,
+        "version_string": "1.0.6",
+        "hash": "3f2638522968cbb76d66a5b4363b2b83"
     },
     "public/tapi_bb_code_tag_attach_img.html": {
         "version_id": 1000300,
