@@ -87,7 +87,6 @@ class OneSignal extends AbstractPushNotification
         $log->payload = $payload;
         $log->app_version = '';
         $log->user_id = 0;
-        $log->user_device = '';
         $log->end_point = self::API_END_POINT . '/notifications';
         $log->method = 'POST';
         $log->response_code = $response->getStatusCode();

@@ -106,7 +106,6 @@ class App extends AbstractController
         }
 
         $subscription->app_version = $this->request()->getServer(\Truonglv\Api\App::HEADER_KEY_APP_VERSION);
-        $subscription->device_type = $input['device_type'];
         $subscription->subscribed_date = \XF::$time;
         $subscription->is_device_test = $input['is_device_test'];
         $subscription->provider = $input['provider'];

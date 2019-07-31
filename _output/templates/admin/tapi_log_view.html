@@ -5,7 +5,6 @@
         <div class="block-body">
             <xf:formrow label="{{ phrase('tapi_log_request_user') }}">{{ $log.User ? $log.User.username : '' }}</xf:formrow>
             <xf:formrow label="{{ phrase('tapi_log_app_version') }}">{$log.app_version}</xf:formrow>
-            <xf:formrow label="{{ phrase('tapi_log_user_device') }}">{$log.user_device}</xf:formrow>
             <xf:formrow label="{{ phrase('tapi_log_request_method') }}">{$log.method}</xf:formrow>
             <xf:formrow label="{{ phrase('tapi_log_end_point') }}">{$log.end_point}</xf:formrow>
             <xf:formrow label="{{ phrase('tapi_log_payload') }}">{{ dump($log.payload) }}</xf:formrow>

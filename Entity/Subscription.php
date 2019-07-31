@@ -39,7 +39,6 @@ class Subscription extends Entity
             'user_id' => ['type' => self::UINT, 'required' => true],
             'username' => ['type' => self::STR, 'required' => true, 'maxLength' => 50],
             'app_version' => ['type' => self::STR, 'maxLength' => 50, 'default' => ''],
-            'device_type' => ['type' => self::STR, 'maxLength' => 50, 'default' => ''],
             'device_token' => ['type' => self::STR, 'required' => true, 'maxLength' => 150],
             'is_device_test' => ['type' => self::BOOL, 'default' => false],
             'provider' => ['type' => self::STR, 'allowedValues' => ['one_signal'], 'required' => true],

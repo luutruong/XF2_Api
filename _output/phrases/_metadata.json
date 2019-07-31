@@ -161,12 +161,6 @@
         "version_string": "1.0.3",
         "hash": "42d61b587a0123390822777d84e0f6bd"
     },
-    "tapi_log_user_device.txt": {
-        "global_cache": false,
-        "version_id": 1000300,
-        "version_string": "1.0.3",
-        "hash": "41b167245a76e6a9f70cabe33ca238ca"
-    },
     "tapi_subscription_date.txt": {
         "global_cache": false,
         "version_id": 1000500,

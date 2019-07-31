@@ -51,7 +51,6 @@ class Setup extends AbstractSetup
 
             $table->addColumn('user_id', 'int')->setDefault(0);
             $table->addColumn('app_version', 'varchar', 50);
-            $table->addColumn('user_device', 'varchar', 255);
 
             $table->addColumn('end_point', 'text');
             $table->addColumn('method', 'varchar', 12);
@@ -76,7 +75,6 @@ class Setup extends AbstractSetup
             $table->addColumn('user_id', 'int');
             $table->addColumn('username', 'varchar', 50);
             $table->addColumn('app_version', 'varchar', 50);
-            $table->addColumn('device_type', 'varchar', 25);
             $table->addColumn('device_token', 'varbinary', 150);
             $table->addColumn('is_device_test', 'tinyint')->setDefault(0);
 

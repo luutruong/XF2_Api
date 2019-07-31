@@ -32,7 +32,6 @@ class Listener
         $log->user_id = \XF::visitor()->user_id;
 
         $log->app_version = $request->getServer(App::HEADER_KEY_APP_VERSION);
-        $log->user_device = $request->getServer(App::HEADER_KEY_DEVICE_INFO);
 
         $log->end_point = $request->getRequestUri();
         $log->method = strtoupper($request->getRequestMethod());
