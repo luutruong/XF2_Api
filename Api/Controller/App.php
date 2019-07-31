@@ -116,6 +116,29 @@ class App extends AbstractController
         return $this->apiSuccess();
     }
 
+    public function actionDeleteSubscriptions()
+    {
+        $this->assertRequiredApiInput([
+            'device_token'
+        ]);
+
+        $input = $this->filter([
+            'device_token' => 'str'
+        ]);
+
+        $visitor = \XF::visitor();
+        /** @var Subscription[] $entities */
+        $entities = $this->finder('Truonglv\Api:Subscription')
+            ->where('user_id', $visitor->user_id)
+            ->where('device_token', $input['device_token'])
+            ->fetch();
+        foreach ($entities as $entity) {
+            $entity->delete();
+        }
+
+        return $this->apiSuccess();
+    }
+
     protected function handleHelpPage($pageId)
     {
         /** @var \XF\Entity\HelpPage|null $page */
