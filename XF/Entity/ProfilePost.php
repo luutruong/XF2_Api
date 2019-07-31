@@ -14,5 +14,7 @@ class ProfilePost extends XFCP_ProfilePost
         parent::setupApiResultData($result, $verbosity, $options);
 
         App::includeMessageHtmlIfNeeded($result, $this);
+        
+        $result->can_comment = $this->canComment();
     }
 }
