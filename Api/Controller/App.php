@@ -82,7 +82,6 @@ class App extends AbstractController
 
         $input = $this->filter([
             'device_token' => 'str',
-            'device_type' => 'str',
             'is_device_test' => 'bool',
             'provider' => 'str',
             'provider_key' => 'str',
