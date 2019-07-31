@@ -72,8 +72,7 @@ class App extends AbstractController
     {
         $this->assertRequiredApiInput([
             'device_token',
-            'provider',
-            'provider_key'
+            'type'
         ]);
 
         $visitor = \XF::visitor();
@@ -86,54 +85,48 @@ class App extends AbstractController
             'device_type' => 'str',
             'is_device_test' => 'bool',
             'provider' => 'str',
-            'provider_key' => 'str'
+            'provider_key' => 'str',
+            'type' => 'str'
         ]);
 
-        /** @var Subscription|null $exists */
-        $exists = $this->finder('Truonglv\Api:Subscription')
-            ->where('user_id', $visitor->user_id)
-            ->where('device_token', $input['device_token'])
-            ->fetchOne();
+        if ($input['type'] === 'unsubscribe') {
+            /** @var Subscription[] $subscriptions */
+            $subscriptions = $this->finder('Truonglv\Api:Subscription')
+                ->where('user_id', $visitor->user_id)
+                ->where('device_token', $input['device_token'])
+                ->fetch();
+            foreach ($subscriptions as $subscription) {
+                $subscription->delete();
+            }
+        } elseif ($input['type'] === 'subscribe') {
+            $this->assertRequiredApiInput([
+                'provider',
+                'provider_key',
+            ]);
 
-        if ($exists) {
-            $subscription = $exists;
-        } else {
-            /** @var Subscription $subscription */
-            $subscription = $this->em()->create('Truonglv\Api:Subscription');
-            $subscription->user_id = $visitor->user_id;
-            $subscription->username = $visitor->username;
-            $subscription->device_token = $input['device_token'];
-        }
+            /** @var Subscription|null $exists */
+            $exists = $this->finder('Truonglv\Api:Subscription')
+                ->where('user_id', $visitor->user_id)
+                ->where('device_token', $input['device_token'])
+                ->fetchOne();
 
-        $subscription->app_version = $this->request()->getServer(\Truonglv\Api\App::HEADER_KEY_APP_VERSION);
-        $subscription->subscribed_date = \XF::$time;
-        $subscription->is_device_test = $input['is_device_test'];
-        $subscription->provider = $input['provider'];
-        $subscription->provider_key = $input['provider_key'];
+            if ($exists) {
+                $subscription = $exists;
+            } else {
+                /** @var Subscription $subscription */
+                $subscription = $this->em()->create('Truonglv\Api:Subscription');
+                $subscription->user_id = $visitor->user_id;
+                $subscription->username = $visitor->username;
+                $subscription->device_token = $input['device_token'];
+            }
 
-        $subscription->save();
+            $subscription->app_version = $this->request()->getServer(\Truonglv\Api\App::HEADER_KEY_APP_VERSION);
+            $subscription->subscribed_date = \XF::$time;
+            $subscription->is_device_test = $input['is_device_test'];
+            $subscription->provider = $input['provider'];
+            $subscription->provider_key = $input['provider_key'];
 
-        return $this->apiSuccess();
-    }
-
-    public function actionDeleteSubscriptions()
-    {
-        $this->assertRequiredApiInput([
-            'device_token'
-        ]);
-
-        $input = $this->filter([
-            'device_token' => 'str'
-        ]);
-
-        $visitor = \XF::visitor();
-        /** @var Subscription[] $entities */
-        $entities = $this->finder('Truonglv\Api:Subscription')
-            ->where('user_id', $visitor->user_id)
-            ->where('device_token', $input['device_token'])
-            ->fetch();
-        foreach ($entities as $entity) {
-            $entity->delete();
+            $subscription->save();
         }
 
         return $this->apiSuccess();
