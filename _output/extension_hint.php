@@ -7,8 +7,11 @@ namespace Truonglv\Api\XF\Api\Controller
 {
 	class XFCP_Auth extends \XF\Api\Controller\Auth {}
 	class XFCP_Conversation extends \XF\Api\Controller\Conversation {}
+	class XFCP_ConversationMessages extends \XF\Api\Controller\ConversationMessages {}
 	class XFCP_Conversations extends \XF\Api\Controller\Conversations {}
 	class XFCP_Me extends \XF\Api\Controller\Me {}
+	class XFCP_Posts extends \XF\Api\Controller\Posts {}
+	class XFCP_ProfilePostComments extends \XF\Api\Controller\ProfilePostComments {}
 	class XFCP_Thread extends \XF\Api\Controller\Thread {}
 	class XFCP_User extends \XF\Api\Controller\User {}
 }

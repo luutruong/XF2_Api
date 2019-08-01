@@ -15,7 +15,8 @@ class UserAlert extends XFCP_UserAlert
     ) {
         try {
             parent::setupApiResultData($result, $verbosity, $options);
-        } catch (\LogicException $e) {}
+        } catch (\LogicException $e) {
+        }
 
         if (!in_array($this->content_type, App::getSupportAlertContentTypes(), true)) {
             return;

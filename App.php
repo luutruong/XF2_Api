@@ -9,7 +9,8 @@ use XF\Api\Result\EntityResult;
 class App
 {
     const HEADER_KEY_APP_VERSION = 'HTTP_XF_TAPI_VERSION';
-    const HEADER_KEY_DEVICE_INFO = 'HTTP_XF_TAPI_DEVICE_INFO';
+
+    const PARAM_KEY_INCLUDE_MESSAGE_HTML = 'include_message_html';
 
     public static $followingPerPage = 20;
     public static $enableLogging = false;
@@ -40,7 +41,7 @@ class App
 
     public static function includeMessageHtmlIfNeeded(EntityResult $result, Entity $entity, $messageKey = 'message')
     {
-        $isInclude = $entity->app()->request()->filter('include_message_html', 'bool');
+        $isInclude = $entity->app()->request()->filter(self::PARAM_KEY_INCLUDE_MESSAGE_HTML, 'bool');
         if (!$isInclude) {
             return;
         }

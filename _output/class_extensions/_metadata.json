@@ -2,6 +2,9 @@
     "XF-Api-Controller-Auth_Truonglv-Api-XF-Api-Controller-Auth.json": {
         "hash": "3d9437adf0403aee7d5cfb1f102ba12a"
     },
+    "XF-Api-Controller-ConversationMessages_Truonglv-Api-XF-Api-Controller-ConversationMessages.json": {
+        "hash": "7036e060cc6a6adde83abd9f6d05cce5"
+    },
     "XF-Api-Controller-Conversation_Truonglv-Api-XF-Api-Controller-Conversation.json": {
         "hash": "b24473c0c6efb6e64b808ac009dc1436"
     },
@@ -10,6 +13,12 @@
     },
     "XF-Api-Controller-Me_Truonglv-Api-XF-Api-Controller-Me.json": {
         "hash": "31bef0a6dac2b75c01e2cf09a835071c"
+    },
+    "XF-Api-Controller-Posts_Truonglv-Api-XF-Api-Controller-Posts.json": {
+        "hash": "eb9c9846bd3d8216ab47662ae5ce5d52"
+    },
+    "XF-Api-Controller-ProfilePostComments_Truonglv-Api-XF-Api-Controller-ProfilePostComments.json": {
+        "hash": "73ef5323f885e9f23f7a902a8c5c7680"
     },
     "XF-Api-Controller-Thread_Truonglv-Api-XF-Api-Controller-Thread.json": {
         "hash": "b5c3b31e612c9292a8c120d9624accb3"

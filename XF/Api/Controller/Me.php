@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use Truonglv\Api\App;
+use XF\Entity\UserAlert;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Ignore;
 
@@ -89,6 +90,58 @@ class Me extends XFCP_Me
         $data = [
             'alerts' => $alerts->toApiResults(Entity::VERBOSITY_VERBOSE),
             'pagination' => $this->getPaginationData($alerts, $page, $perPage, $total)
+        ];
+
+        return $this->apiResult($data);
+    }
+
+    public function actionPostNotifications()
+    {
+        $this->assertRequiredApiInput(['notification_id']);
+
+        /** @var UserAlert|null $alert */
+        $alert = $this->finder('XF:UserAlert')
+            ->whereId($this->filter('notification_id', 'uint'))
+            ->fetchOne();
+        if ($alert && $alert->alerted_user_id === \XF::visitor()->user_id) {
+            $alert->view_date = \XF::$time;
+            $alert->save();
+        }
+
+        return $this->apiSuccess();
+    }
+
+    public function actionGetWatchedThreads()
+    {
+        $page = $this->filterPage();
+        $perPage = $this->options()->discussionsPerPage;
+
+        $visitor = \XF::visitor();
+
+        /** @var \XF\Repository\Thread $threadRepo */
+        $threadRepo = $this->repository('XF:Thread');
+        $threadFinder = $threadRepo->findThreadsForApi();
+
+        $threadFinder->with('Watch|' . $visitor->user_id, true);
+        $threadFinder->with('fullForum');
+        $threadFinder->where('discussion_state', 'visible');
+        $threadFinder->setDefaultOrder('last_post_date', 'DESC');
+
+        $total = $threadFinder->total();
+
+        $this->assertValidApiPage($page, $perPage, $total);
+
+        $threads = $total > 0
+            ? $threadFinder->limitByPage($page, $perPage)->fetch()
+            : $this->em()->getEmptyCollection();
+        if (\XF::isApiCheckingPermissions()) {
+            // only filtered to the forums we could view -- could still be other conditions
+            $threads = $threads->filterViewable();
+        }
+
+        $data = [
+            'threads' => $threads->toApiResults(Entity::VERBOSITY_VERBOSE),
+            'pagination' => $this->getPaginationData($threads, $page, $perPage, $total)
         ];
 
         return $this->apiResult($data);

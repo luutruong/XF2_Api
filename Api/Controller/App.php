@@ -3,8 +3,11 @@
 namespace Truonglv\Api\Api\Controller;
 
 use XF\Finder\Thread;
+use XF\Repository\User;
 use XF\Mvc\Entity\Entity;
+use XF\Service\User\Registration;
 use Truonglv\Api\Entity\Subscription;
+use Truonglv\Api\Util\PasswordDecrypter;
 use XF\Api\Controller\AbstractController;
 
 class App extends AbstractController
@@ -129,6 +132,44 @@ class App extends AbstractController
         }
 
         return $this->apiSuccess();
+    }
+
+    public function actionPostRegister()
+    {
+        $this->assertRequiredApiInput([
+            'username',
+            'email',
+            'password'
+        ]);
+
+        $password = $this->filter('password', 'str');
+        $decrypted = '';
+
+        try {
+            $decrypted = PasswordDecrypter::decrypt($password, $this->options()->tApi_authKey);
+        } catch (\InvalidArgumentException $e) {
+        }
+
+        $input = $this->filter([
+            'username' => 'str',
+            'email' => 'str'
+        ]);
+
+        /** @var Registration $registration */
+        $registration = $this->service('XF:User\Registration');
+        $registration->setFromInput($input);
+        $registration->setPassword($decrypted, '', false);
+
+        if (!$registration->validate($errors)) {
+            return $this->error($errors, 400);
+        }
+
+        /** @var \XF\Entity\User $user */
+        $user = $registration->save();
+
+        return $this->apiSuccess([
+            'user' => $user->toApiResult()
+        ]);
     }
 
     protected function handleHelpPage($pageId)

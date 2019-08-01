@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Api\\Controller\\ConversationMessages",
+    "to_class": "Truonglv\\Api\\XF\\Api\\Controller\\ConversationMessages",
+    "execute_order": 10,
+    "active": true
+}
