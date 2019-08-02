@@ -39,8 +39,8 @@ class PushNotification extends AbstractJob
             }
 
             /** @var OneSignal $service */
-            $service = $this->app->service('Truonglv\Api:OneSignal', $userAlert);
-            $service->send();
+            $service = $this->app->service('Truonglv\Api:OneSignal');
+            $service->sendNotification($userAlert);
 
             if ($maxRunTime && (microtime(true) - $start) >= $maxRunTime) {
                 break;

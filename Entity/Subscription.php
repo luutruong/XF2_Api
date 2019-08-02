@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Entity;
 
+use Truonglv\Api\Service\AbstractPushNotification;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
@@ -56,5 +57,20 @@ class Subscription extends Entity
         ];
 
         return $structure;
+    }
+
+    protected function _postDelete()
+    {
+        $this->app()
+            ->jobManager()
+            ->enqueueUnique(
+                'tapi_unsubscribe' . $this->subscription_id,
+                'Truonglv\Api:Unsubscribe',
+                [
+                    'provider' => $this->provider,
+                    'provider_key' => $this->provider_key,
+                    'device_token' => $this->device_token
+                ]
+            );
     }
 }

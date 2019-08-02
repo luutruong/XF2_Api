@@ -14,18 +14,16 @@ class OneSignal extends AbstractPushNotification
     private $appId;
     private $apiKey;
 
-    public function send()
+    public function sendNotification(\XF\Entity\UserAlert $alert)
     {
-        $client = $this->app->http()->client();
-
         $subscriptions = $this->findSubscriptions()
+            ->where('user_id', $alert->alerted_user_id)
             ->where('provider', 'one_signal')
             ->fetch();
         if (!$subscriptions->count()) {
             return false;
         }
 
-        $alert = $this->alert;
         $playerIds = [];
         /** @var Subscription $subscription */
         foreach ($subscriptions as $subscription) {
@@ -65,14 +63,8 @@ class OneSignal extends AbstractPushNotification
         $response = null;
 
         try {
-            $response = $client->post(self::API_END_POINT . '/notifications', [
-                'connect_timeout' => 5,
-                'timeout' => 5,
-                'json' => $payload,
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Authorization' => "Basic: {$this->apiKey}"
-                ]
+            $response = $this->client()->post(self::API_END_POINT . '/notifications', [
+                'json' => $payload
             ]);
         } catch (\Exception $e) {
             $this->app->logException($e, false, '[tl] Api: ');
@@ -82,18 +74,59 @@ class OneSignal extends AbstractPushNotification
             return false;
         }
 
-        /** @var Log $log */
-        $log = $this->app->em()->create('Truonglv\Api:Log');
-        $log->payload = $payload;
-        $log->app_version = '';
-        $log->user_id = 0;
-        $log->end_point = self::API_END_POINT . '/notifications';
-        $log->method = 'POST';
-        $log->response_code = $response->getStatusCode();
-        $log->response = $response->getBody()->getContents();
-        $log->save();
+        $this->logRequest(
+            'post',
+            self::API_END_POINT . '/notifications',
+            $payload,
+            $response->getStatusCode(),
+            $response->getBody()->getContents()
+        );
 
         return true;
+    }
+
+    public function unsubscribe($externalId, $pushToken)
+    {
+        $response = null;
+
+        $endPoint = self::API_END_POINT . '/players/' . urldecode($externalId);
+        $payload = [
+            'app_id' => $this->appId,
+            'notification_types' => -2,
+            'identifier' => $pushToken
+        ];
+
+        try {
+            $response = $this->client()->put($endPoint, [
+                'form_params' => $payload
+            ]);
+        } catch (\Exception $e) {
+            \XF::logException($e, false, '[tl] Api: ');
+        }
+
+        if (!$response) {
+            return;
+        }
+
+        $this->logRequest(
+            'put',
+            $endPoint,
+            $payload,
+            $response->getStatusCode(),
+            $response->getBody()->getContents()
+        );
+    }
+
+    protected function client()
+    {
+        return $this->app->http()->createClient([
+            'connect_timeout' => 5,
+            'timeout' => 5,
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => "Basic: {$this->apiKey}"
+            ]
+        ]);
     }
 
     protected function setupDefaults()
