@@ -128,7 +128,10 @@ class App extends AbstractController
             $subscription->provider = $input['provider'];
             $subscription->provider_key = $input['provider_key'];
 
-            $subscription->save();
+            try {
+                $subscription->save(false);
+            } catch (\XF\Db\DuplicateKeyException $e) {
+            }
         }
 
         return $this->apiSuccess();
