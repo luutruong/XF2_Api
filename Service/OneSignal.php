@@ -46,7 +46,9 @@ class OneSignal extends AbstractPushNotification
         $payload = [
             'include_player_ids' => $playerIds,
             'app_id' => $this->appId,
-            'headings' => $this->app->options()->boardTitle,
+            'headings' => [
+                'en' => $this->app->options()->boardTitle
+            ],
             'contents' => [
                 'en' => strip_tags($html)
             ],
