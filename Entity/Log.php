@@ -37,7 +37,7 @@ class Log extends Entity
         $structure->columns = [
             'log_id' => ['type' => self::UINT, 'nullable' => true, 'autoIncrement' => true],
             'user_id' => ['type' => self::UINT, 'default' => 0],
-            'app_version' => ['type' => self::STR, 'required' => true, 'maxLength' => 50],
+            'app_version' => ['type' => self::STR, 'default' => '', 'maxLength' => 50],
             'end_point' => ['type' => self::STR, 'required' => true],
             'method' => ['type' => self::STR, 'required' => true, 'maxLength' => 12],
             'payload' => ['type' => self::JSON_ARRAY, 'default' => []],
