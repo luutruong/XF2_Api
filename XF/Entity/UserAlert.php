@@ -23,9 +23,6 @@ class UserAlert extends XFCP_UserAlert
         }
 
         $result->includeRelation('User');
-        if ($this->Content instanceof Entity) {
-            $result->Content = $this->Content->toApiResult($verbosity, $options);
-        }
 
         $result->is_unviewed = $this->isUnviewed();
         $html = $this->isAlertRenderable()

@@ -18,9 +18,10 @@ class Notification extends AbstractController
             return $this->notFound();
         }
 
-        /** @var \XF\Repository\UserAlert $alertRepo */
-        $alertRepo = $this->repository('XF:UserAlert');
-        $alertRepo->addContentToAlerts([$alert->alert_id => $alert]);
+        $content = $alert->getContent();
+        if (!$content || !in_array($alert->content_type, \Truonglv\Api\App::getSupportAlertContentTypes(), true)) {
+            return $this->noPermission();
+        }
 
         if (!$alert->view_date) {
             $alert->view_date = \XF::$time;
@@ -28,7 +29,8 @@ class Notification extends AbstractController
         }
 
         return $this->apiResult([
-            'notification' => $alert->toApiResult()
+            'notification' => $alert->toApiResult(),
+            'content' => $content->toApiResult()
         ]);
     }
 }
