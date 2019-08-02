@@ -63,7 +63,10 @@ class OneSignal extends AbstractPushNotification
 
         try {
             $response = $this->client()->post(self::API_END_POINT . '/notifications', [
-                'json' => $payload
+                'json' => $payload,
+                'headers' => [
+                    'Content-Type' => 'application/json'
+                ]
             ]);
         } catch (\Exception $e) {
             $this->app->logException($e, false, '[tl] Api: ');
@@ -122,7 +125,7 @@ class OneSignal extends AbstractPushNotification
             'connect_timeout' => 5,
             'timeout' => 5,
             'headers' => [
-                'Content-Type' => 'application/json',
+//                'Content-Type' => 'application/json',
                 'Authorization' => "Basic: {$this->apiKey}"
             ]
         ]);
