@@ -2,8 +2,6 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\App;
-use XF\Entity\UserAlert;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Ignore;
 
@@ -63,49 +61,6 @@ class Me extends XFCP_Me
             /** @var Ignore $ignore */
             $ignore = $this->service('XF:User\Ignore', $user);
             $ignore->unignore();
-        }
-
-        return $this->apiSuccess();
-    }
-
-    public function actionGetNotifications()
-    {
-        $visitor = \XF::visitor();
-
-        $page = $this->filterPage();
-        $perPage = $this->options()->alertsPerPage;
-
-        /** @var \XF\Repository\UserAlert $alertRepo */
-        $alertRepo = $this->repository('XF:UserAlert');
-
-        $alertsFinder = $alertRepo->findAlertsForUser($visitor->user_id);
-        $alertsFinder->where('content_type', App::getSupportAlertContentTypes());
-
-        $total = $alertsFinder->total();
-        $alerts = $alertsFinder->limitByPage($page, $perPage)->fetch();
-
-        $alertRepo->addContentToAlerts($alerts);
-        $alerts = $alerts->filterViewable();
-
-        $data = [
-            'alerts' => $alerts->toApiResults(Entity::VERBOSITY_VERBOSE),
-            'pagination' => $this->getPaginationData($alerts, $page, $perPage, $total)
-        ];
-
-        return $this->apiResult($data);
-    }
-
-    public function actionPostNotifications()
-    {
-        $this->assertRequiredApiInput(['notification_id']);
-
-        /** @var UserAlert|null $alert */
-        $alert = $this->finder('XF:UserAlert')
-            ->whereId($this->filter('notification_id', 'uint'))
-            ->fetchOne();
-        if ($alert && $alert->alerted_user_id === \XF::visitor()->user_id) {
-            $alert->view_date = \XF::$time;
-            $alert->save();
         }
 
         return $this->apiSuccess();
