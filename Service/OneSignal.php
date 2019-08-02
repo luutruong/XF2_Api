@@ -3,7 +3,6 @@
 namespace Truonglv\Api\Service;
 
 use Truonglv\Api\App;
-use Truonglv\Api\Entity\Log;
 use XF\Repository\UserAlert;
 use Truonglv\Api\Entity\Subscription;
 

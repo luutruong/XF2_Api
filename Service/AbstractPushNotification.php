@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\Service;
 
-use Truonglv\Api\Entity\Log;
 use XF\Entity\UserAlert;
+use Truonglv\Api\Entity\Log;
 use XF\Service\AbstractService;
 
 abstract class AbstractPushNotification extends AbstractService
