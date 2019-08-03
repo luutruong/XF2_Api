@@ -2,11 +2,11 @@
 
 namespace Truonglv\Api\Job;
 
-use XF\Entity\ConversationMessage;
 use XF\Timer;
 use XF\Job\JobResult;
 use XF\Job\AbstractJob;
 use XF\Entity\UserAlert;
+use XF\Entity\ConversationMessage;
 use Truonglv\Api\Entity\AlertQueue;
 use Truonglv\Api\Service\OneSignal;
 

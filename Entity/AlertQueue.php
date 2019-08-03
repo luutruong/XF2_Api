@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\Entity;
 
-use Truonglv\Api\Service\OneSignal;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 

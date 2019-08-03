@@ -3,9 +3,9 @@
 namespace Truonglv\Api\Service;
 
 use Truonglv\Api\App;
+use XF\Repository\UserAlert;
 use XF\Entity\ConversationMessage;
 use XF\Entity\ConversationRecipient;
-use XF\Repository\UserAlert;
 use Truonglv\Api\Entity\Subscription;
 
 class OneSignal extends AbstractPushNotification
@@ -39,7 +39,7 @@ class OneSignal extends AbstractPushNotification
             return false;
         }
 
-        $html = $this->swapUserLanguage($alert->Receiver, function () use($alert) {
+        $html = $this->swapUserLanguage($alert->Receiver, function () use ($alert) {
             return $alert->render();
         });
 

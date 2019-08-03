@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\Repository;
 
-use XF\Mvc\Entity\ArrayCollection;
 use XF\Mvc\Entity\Repository;
+use XF\Mvc\Entity\ArrayCollection;
 
 class AlertQueue extends Repository
 {
