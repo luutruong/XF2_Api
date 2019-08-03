@@ -88,8 +88,14 @@ class OneSignal extends AbstractPushNotification
             return;
         }
 
+        $sender = $message->User;
+
         /** @var ConversationRecipient $receiver */
         foreach ($receivers as $receiver) {
+            if ($sender->user_id === $receiver->User->user_id) {
+                continue;
+            }
+
             $subscriptions = $this->findSubscriptions()
                 ->where('user_id', $receiver->User->user_id)
                 ->fetch();
@@ -113,7 +119,7 @@ class OneSignal extends AbstractPushNotification
             $phrase = $language->phrase('push_conversation_' . $actionType, [
                 'boardTitle' => $this->app->options()->boardTitle,
                 'title' => $message->Conversation->title,
-                'sender' => $message->User->username
+                'sender' => $sender->username
             ]);
 
             $payload = [
