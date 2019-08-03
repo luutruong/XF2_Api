@@ -19,19 +19,11 @@ class Token
     {
         $retried = 0;
         $app = \XF::app();
-        $ourKey = $app->options()->tApi_apiKey;
 
         while ($retried < $limit) {
             $retried++;
 
-            $token = md5(
-                $userId
-                . $ourKey['key']
-                . $app->config('globalSalt')
-                . microtime(true)
-                . Random::getRandomBytes(32)
-            );
-
+            $token = Random::getRandomString(32);
             $exists = $app->finder('Truonglv\Api:AccessToken')
                 ->whereId($token)
                 ->fetchOne();

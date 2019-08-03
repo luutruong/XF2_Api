@@ -65,10 +65,9 @@ class Listener
 
         /** @var Http\Request $request */
         $request->setApiKey($apiKeyEntity->api_key);
+        $request->setApiUser(0);
 
-        $auth = $request->getServer(App::HEADER_KEY_AUTHORIZATION);
-        $parts = explode(' ', $auth);
-        $accessToken = end($parts);
+        $accessToken = $request->getServer(App::HEADER_KEY_ACCESS_TOKEN);
 
         /** @var AccessToken|null $token */
         $token = $app->finder('Truonglv\Api:AccessToken')
@@ -115,7 +114,7 @@ class Listener
 
         $log->payload = [
             'GET' => $_GET,
-            'POST' => $_POST,
+            'POST' => $_POST
         ];
 
         $log->response_code = $response->httpCode();

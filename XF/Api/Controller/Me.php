@@ -7,6 +7,15 @@ use XF\Service\User\Ignore;
 
 class Me extends XFCP_Me
 {
+    public function actionGet()
+    {
+        if (!\XF::visitor()->user_id) {
+            return $this->notFound();
+        }
+
+        return parent::actionGet();
+    }
+
     public function actionGetIgnoring()
     {
         $visitor = \XF::visitor();

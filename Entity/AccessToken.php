@@ -17,6 +17,16 @@ use XF\Mvc\Entity\Structure;
  */
 class AccessToken extends Entity
 {
+    public function renewExpires()
+    {
+        $ttl = $this->app()->options()->tApi_accessTokenTtl;
+        if (!$ttl) {
+            $this->expire_date = 0;
+        } else {
+            $this->expire_date = \XF::$time + $ttl * 60;
+        }
+    }
+
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_tapi_access_token';

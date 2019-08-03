@@ -2,10 +2,10 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use Truonglv\Api\Entity\AccessToken;
 use Truonglv\Api\Util\Token;
 use XF\ControllerPlugin\Login;
 use XF\Finder\Thread;
-use XF\Repository\User;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Registration;
 use Truonglv\Api\Entity\Subscription;
@@ -147,6 +147,11 @@ class App extends AbstractController
             'password'
         ]);
 
+        $visitor = \XF::visitor();
+        if (!$visitor->user_id) {
+            return $this->noPermission();
+        }
+
         $password = $this->filter('password', 'str');
         $decrypted = '';
 
@@ -234,6 +239,28 @@ class App extends AbstractController
         return $this->apiSuccess([
             'user' => $user->toApiResult(),
             'accessToken' => Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
+        ]);
+    }
+
+    public function actionPostRefreshToken()
+    {
+        $this->assertRequiredApiInput(['token']);
+
+        /** @var AccessToken|null $token */
+        $token = $this->finder('Truonglv\Api:AccessToken')
+            ->with('User', true)
+            ->whereId($this->filter('token', 'str'))
+            ->fetchOne();
+        if (!$token) {
+            return $this->notFound();
+        }
+
+        $token->renewExpires();
+        $token->save();
+
+        return $this->apiSuccess([
+            'user' => $token->User->toApiResult(),
+            'accessToken' => $token->token
         ]);
     }
 
