@@ -220,7 +220,12 @@ class App extends AbstractController
         if ($loginPlugin->isTfaConfirmationRequired($user)) {
             $provider = $this->filter('provider', 'str');
             if (!$this->request()->exists('code')) {
-                return $this->error(\XF::phrase('two_step_verification_required'), 100);
+                return $this->apiError(
+                    \XF::phrase('two_step_verification_required'),
+                    'two_step_verification_required',
+                    null,
+                    100
+                );
             }
 
             /** @var \XF\Service\User\Tfa $tfaService */
