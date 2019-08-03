@@ -112,9 +112,13 @@ class Listener
         $log->end_point = $request->getRequestUri();
         $log->method = strtoupper($request->getRequestMethod());
 
+        $post = $_POST;
+        if (isset($post['password'])) {
+            $post['password'] = '******';
+        }
+
         $log->payload = [
-            'GET' => $_GET,
-            'POST' => $_POST
+            '_POST' => $post
         ];
 
         $log->response_code = $response->httpCode();
