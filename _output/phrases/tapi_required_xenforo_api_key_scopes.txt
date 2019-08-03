@@ -1,0 +1,1 @@
+Required XenForo api key scopes

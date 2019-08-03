@@ -10,7 +10,6 @@ use XF\Mvc\Entity\Structure;
  * @property int|null log_id
  * @property int user_id
  * @property string app_version
- * @property string user_device
  * @property string end_point
  * @property string method
  * @property array payload

@@ -29,23 +29,35 @@
         "version_string": "1.0.8",
         "hash": "26e0e886f9cfd1d9b361c46a45ff665b"
     },
+    "option.tApi_accessTokenTtl.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "4aac7dab9e5c4a3b7c9802921be9a949"
+    },
+    "option.tApi_apiKey.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "62c7594948c1231bbae9f948b1535b7e"
+    },
     "option.tApi_attachmentTokenExpires.txt": {
         "global_cache": false,
         "version_id": 1000001,
         "version_string": "1.0.0",
         "hash": "0b86a7298c7794dd2056b908c39159d8"
     },
-    "option.tApi_authKey.txt": {
-        "global_cache": false,
-        "version_id": 1000001,
-        "version_string": "1.0.0",
-        "hash": "fabc773769487dfbd1b8448c5c5c465e"
-    },
     "option.tApi_delayPushNotifications.txt": {
         "global_cache": false,
         "version_id": 1000800,
         "version_string": "1.0.8",
         "hash": "5b3c61d63b02e159edd63bcb03c9edd6"
+    },
+    "option.tApi_encryptKey.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "fdf84eda0c1a395049678ab99cb0ea74"
     },
     "option.tApi_inactiveDeviceLength.txt": {
         "global_cache": false,
@@ -71,23 +83,35 @@
         "version_string": "1.0.5",
         "hash": "03be12f5a6ed74b612b3a47e03e32b86"
     },
+    "option_explain.tApi_accessTokenTtl.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "a7af45e7ba0d04b77fb56068e1054bab"
+    },
+    "option_explain.tApi_apiKey.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "70a12661034211156a1792bad2992ac2"
+    },
     "option_explain.tApi_attachmentTokenExpires.txt": {
         "global_cache": false,
         "version_id": 1000001,
         "version_string": "1.0.0",
         "hash": "f1aac6e6eba3117393b6c7201aacdfe3"
     },
-    "option_explain.tApi_authKey.txt": {
-        "global_cache": false,
-        "version_id": 1000001,
-        "version_string": "1.0.0",
-        "hash": "594ff2bfc4f6447b1712a6cb26d9836a"
-    },
     "option_explain.tApi_delayPushNotifications.txt": {
         "global_cache": false,
         "version_id": 1000800,
         "version_string": "1.0.8",
         "hash": "f2d1f54fb38532bec5412fcba2413f61"
+    },
+    "option_explain.tApi_encryptKey.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "594ff2bfc4f6447b1712a6cb26d9836a"
     },
     "option_explain.tApi_inactiveDeviceLength.txt": {
         "global_cache": false,
@@ -124,6 +148,18 @@
         "version_id": 1000000,
         "version_string": "1.0.0",
         "hash": "eeb409a48d7dd472bcd45f820bf83be8"
+    },
+    "tapi_associate_with_xenforo_api_key.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "e397df8177d2ab791984f267a0f23e67"
+    },
+    "tapi_key.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "897356954c2cd3d41b221e3f24f99bba"
     },
     "tapi_log_app_version.txt": {
         "global_cache": false,
@@ -184,6 +220,24 @@
         "version_id": 1000300,
         "version_string": "1.0.3",
         "hash": "42d61b587a0123390822777d84e0f6bd"
+    },
+    "tapi_requested_api_key_not_found.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "8fc2846b933584492e3844245571b6ab"
+    },
+    "tapi_required_score_x.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "b2c597d6356c57ffe1bc1aff08ebff1f"
+    },
+    "tapi_required_xenforo_api_key_scopes.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "15a5cf9e8c2a513472d6eaa7143af7f0"
     },
     "tapi_subscription_date.txt": {
         "global_cache": false,

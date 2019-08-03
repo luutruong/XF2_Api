@@ -1,0 +1,15 @@
+{
+    "edit_format": "callback",
+    "edit_format_params": "Truonglv\\Api\\Option\\ApiKey::renderOption",
+    "data_type": "array",
+    "sub_options": [
+        "apiKeyId",
+        "key"
+    ],
+    "validation_class": "Truonglv\\Api\\Option\\ApiKey",
+    "validation_method": "verifyOption",
+    "default_value": "{\"apiKeyId\":0,\"key\":\"\"}",
+    "relations": {
+        "tl_Api": 5
+    }
+}

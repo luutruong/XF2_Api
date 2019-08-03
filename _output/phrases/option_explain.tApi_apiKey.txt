@@ -1,0 +1,2 @@
+We use our key to work with current API instead of put XenForo api key in app. The key must be associate with existing XenForo api key.<br/>
+Note: <strong>DO NOT</strong> change the key value when your app has published to store cause that it's make all existing device could not get data.

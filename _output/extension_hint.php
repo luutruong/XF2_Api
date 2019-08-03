@@ -5,7 +5,6 @@
 
 namespace Truonglv\Api\XF\Api\Controller
 {
-	class XFCP_Auth extends \XF\Api\Controller\Auth {}
 	class XFCP_Conversation extends \XF\Api\Controller\Conversation {}
 	class XFCP_ConversationMessages extends \XF\Api\Controller\ConversationMessages {}
 	class XFCP_Conversations extends \XF\Api\Controller\Conversations {}

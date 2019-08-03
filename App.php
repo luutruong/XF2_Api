@@ -9,6 +9,8 @@ use XF\Api\Result\EntityResult;
 class App
 {
     const HEADER_KEY_APP_VERSION = 'HTTP_XF_TAPI_VERSION';
+    const HEADER_KEY_API_KEY = 'HTTP_XF_TAPI_KEY';
+    const HEADER_KEY_AUTHORIZATION = 'HTTP_AUTHORIZATION';
 
     const PARAM_KEY_INCLUDE_MESSAGE_HTML = 'include_message_html';
 

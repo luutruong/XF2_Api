@@ -1,0 +1,9 @@
+{
+    "event_id": "app_api_validate_request",
+    "execute_order": 10,
+    "callback_class": "Truonglv\\Api\\Listener",
+    "callback_method": "appApiValidateRequest",
+    "active": true,
+    "hint": "",
+    "description": ""
+}

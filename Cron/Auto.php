@@ -13,6 +13,13 @@ class Auto
             \XF::db()->delete('xf_tapi_log', 'log_date <= ?', \XF::$time - $logLength * 86400);
         }
 
+        \XF::db()
+            ->delete(
+                'xf_tapi_access_token',
+                'expire_date BETWEEN ? AND ?',
+                [1, \XF::$time - 1]
+            );
+
         $subscriptionInactiveLength = \XF::options()->tApi_inactiveDeviceLength;
         if ($subscriptionInactiveLength > 0) {
             $timer = new Timer(3);

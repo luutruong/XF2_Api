@@ -1,0 +1,9 @@
+{
+    "event_id": "app_api_setup",
+    "execute_order": 10,
+    "callback_class": "Truonglv\\Api\\Listener",
+    "callback_method": "appApiSetup",
+    "active": true,
+    "hint": "",
+    "description": ""
+}

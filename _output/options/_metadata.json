@@ -1,12 +1,18 @@
 {
+    "tApi_accessTokenTtl.json": {
+        "hash": "6c8d99d38b472eb1a53f97e140872d50"
+    },
+    "tApi_apiKey.json": {
+        "hash": "a89e0c615eb075fd2953586c9f95abd4"
+    },
     "tApi_attachmentTokenExpires.json": {
         "hash": "3f759dc94c59d7bc1d7f7199f0331c65"
     },
-    "tApi_authKey.json": {
-        "hash": "d12dd2c0ecd313222fae8eb9dabb6bbd"
-    },
     "tApi_delayPushNotifications.json": {
         "hash": "d571c9e24b0bd0c1b5386ba551608a8d"
+    },
+    "tApi_encryptKey.json": {
+        "hash": "d12dd2c0ecd313222fae8eb9dabb6bbd"
     },
     "tApi_inactiveDeviceLength.json": {
         "hash": "5b76d0658c3cf7aae7d182587683129a"

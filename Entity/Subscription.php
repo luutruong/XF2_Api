@@ -11,7 +11,6 @@ use XF\Mvc\Entity\Structure;
  * @property int user_id
  * @property string username
  * @property string app_version
- * @property string device_type
  * @property string device_token
  * @property bool is_device_test
  * @property string provider

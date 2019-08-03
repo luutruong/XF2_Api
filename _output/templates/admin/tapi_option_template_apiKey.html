@@ -1,0 +1,24 @@
+<xf:formrow rowtype="input"
+            label="{$option.title}"
+            hint="{$hintHtml}"
+            explain="{$explainHtml}"
+            html="{$listedHtml}">
+
+    <span>{{ phrase('tapi_key') }}</span>
+    <xf:textbox name="{$inputName}[key]" value="{$option.option_value.key}"/>
+
+    <span>{{ phrase('tapi_associate_with_xenforo_api_key') }}</span>
+    <xf:select name="{$inputName}[apiKeyId]" value="{$option.option_value.apiKeyId}">
+        <xf:option value="0"/>
+        <xf:foreach loop="$availableApiKeys" value="$entity">
+            <xf:option value="{$entity.api_key_id}">{$entity.title}</xf:option>
+        </xf:foreach>
+    </xf:select>
+
+    <div><strong>{{ phrase('tapi_required_xenforo_api_key_scopes:') }}</strong></div>
+    <ul class="listPlain listColumns">
+        <xf:foreach loop="$requiredScopes" value="$scope">
+            <li>{$scope}</li>
+        </xf:foreach>
+    </ul>
+</xf:formrow>
