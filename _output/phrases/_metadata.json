@@ -47,6 +47,12 @@
         "version_string": "1.0.8",
         "hash": "5b3c61d63b02e159edd63bcb03c9edd6"
     },
+    "option.tApi_inactiveDeviceLength.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "4f468311a46b2b84d525fb3c5b9eca86"
+    },
     "option.tApi_logLength.txt": {
         "global_cache": false,
         "version_id": 1000500,
@@ -82,6 +88,12 @@
         "version_id": 1000800,
         "version_string": "1.0.8",
         "hash": "f2d1f54fb38532bec5412fcba2413f61"
+    },
+    "option_explain.tApi_inactiveDeviceLength.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "e85540d2645bc79da883ab4d025b9ef4"
     },
     "option_explain.tApi_logLength.txt": {
         "global_cache": false,
