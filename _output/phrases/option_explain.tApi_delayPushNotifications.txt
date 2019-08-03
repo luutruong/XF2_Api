@@ -1,0 +1,1 @@
+If enabled, the notifications are schedule to send every minutes.

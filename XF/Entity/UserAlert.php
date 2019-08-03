@@ -83,9 +83,21 @@ class UserAlert extends XFCP_UserAlert
         if ($this->isInsert()
             && in_array($this->content_type, App::getSupportAlertContentTypes(), true)
         ) {
-            $this->db()->insert('xf_tapi_alert_queue', [
-                'alert_id' => $this->alert_id
-            ]);
+            if ($this->app()->options()->tApi_delayPushNotifications) {
+                $this->db()->insert('xf_tapi_alert_queue', [
+                    'alert_id' => $this->alert_id
+                ]);
+            } else {
+                $this->app()
+                    ->jobManager()
+                    ->enqueueUnique(
+                        'tApi_PN_' . $this->alert_id,
+                        'Truonglv\Job:PushNotification',
+                        [
+                            'alert_id' => $this->alert_id
+                        ]
+                    );
+            }
         }
     }
 }

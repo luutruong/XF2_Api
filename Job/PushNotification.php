@@ -7,6 +7,7 @@ use XF\Job\AbstractJob;
 use XF\Entity\UserAlert;
 use Truonglv\Api\Entity\AlertQueue;
 use Truonglv\Api\Service\OneSignal;
+use XF\Timer;
 
 class PushNotification extends AbstractJob
 {
@@ -14,40 +15,60 @@ class PushNotification extends AbstractJob
      * @param int $maxRunTime
      *
      * @return JobResult
+     * @throws \XF\PrintableException
      */
     public function run($maxRunTime)
     {
-        $entities = $this->app
-            ->finder('Truonglv\Api:AlertQueue')
-            ->with('UserAlert.Receiver')
-            ->order('alert_id')
-            ->limit(50)
-            ->fetch();
-        if (!$entities->count()) {
-            return $this->complete();
-        }
+        if (empty($this->data['alert_id'])) {
+            $timer = new Timer($maxRunTime);
 
-        $start = microtime(true);
-        /** @var AlertQueue $entity */
-        foreach ($entities as $entity) {
-            $entity->delete(false);
+            while (true) {
+                $entities = $this->app
+                    ->finder('Truonglv\Api:AlertQueue')
+                    ->with('UserAlert.Receiver')
+                    ->order('alert_id')
+                    ->limit(10)
+                    ->fetch();
 
-            /** @var UserAlert|null $userAlert */
-            $userAlert = $entity->UserAlert;
-            if (!$userAlert || $userAlert->view_date > 0) {
-                continue;
+                if (!$entities->count()) {
+                    break;
+                }
+
+                /** @var AlertQueue $entity */
+                foreach ($entities as $entity) {
+                    $entity->delete(false);
+
+                    /** @var UserAlert|null $userAlert */
+                    $userAlert = $entity->UserAlert;
+                    if ($userAlert) {
+                        $this->send($userAlert);
+                    }
+
+                    if ($timer->limitExceeded()) {
+                        break(2);
+                    }
+                }
             }
-
-            /** @var OneSignal $service */
-            $service = $this->app->service('Truonglv\Api:OneSignal');
-            $service->sendNotification($userAlert);
-
-            if ($maxRunTime && (microtime(true) - $start) >= $maxRunTime) {
-                break;
+        } else {
+            /** @var UserAlert|null $userAlert */
+            $userAlert = $this->app->em()->find('XF:UserAlert', $this->data['alert_id']);
+            if ($userAlert) {
+                $this->send($userAlert);
             }
         }
 
         return $this->complete();
+    }
+
+    protected function send(UserAlert $userAlert)
+    {
+        if ($userAlert->view_date > 0) {
+            return;
+        }
+
+        /** @var OneSignal $service */
+        $service = $this->app->service('Truonglv\Api:OneSignal');
+        $service->sendNotification($userAlert);
     }
 
     public function getStatusMessage()

@@ -12,7 +12,7 @@ class Auto
         }
     }
 
-    public static function runMinutely()
+    public static function sendNotifications()
     {
         \XF::app()
             ->jobManager()

@@ -23,10 +23,10 @@
         "version_string": "1.0.5",
         "hash": "1ab31b0de5c6db3925bea69d1af794d7"
     },
-    "cron_entry.tapi_runMinutely.txt": {
+    "cron_entry.tapi_sendNotifications.txt": {
         "global_cache": false,
-        "version_id": 1000500,
-        "version_string": "1.0.5",
+        "version_id": 1000800,
+        "version_string": "1.0.8",
         "hash": "26e0e886f9cfd1d9b361c46a45ff665b"
     },
     "option.tApi_attachmentTokenExpires.txt": {
@@ -40,6 +40,12 @@
         "version_id": 1000001,
         "version_string": "1.0.0",
         "hash": "fabc773769487dfbd1b8448c5c5c465e"
+    },
+    "option.tApi_delayPushNotifications.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "5b3c61d63b02e159edd63bcb03c9edd6"
     },
     "option.tApi_logLength.txt": {
         "global_cache": false,
@@ -70,6 +76,12 @@
         "version_id": 1000001,
         "version_string": "1.0.0",
         "hash": "594ff2bfc4f6447b1712a6cb26d9836a"
+    },
+    "option_explain.tApi_delayPushNotifications.txt": {
+        "global_cache": false,
+        "version_id": 1000800,
+        "version_string": "1.0.8",
+        "hash": "f2d1f54fb38532bec5412fcba2413f61"
     },
     "option_explain.tApi_logLength.txt": {
         "global_cache": false,
