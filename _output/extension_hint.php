@@ -32,6 +32,11 @@ namespace Truonglv\Api\XF\Entity
 	class XFCP_UserAlert extends \XF\Entity\UserAlert {}
 }
 
+namespace Truonglv\Api\XF\Service\Conversation
+{
+	class XFCP_Notifier extends \XF\Service\Conversation\Notifier {}
+}
+
 namespace Truonglv\Api\XF\Str
 {
 	class XFCP_EmojiFormatter extends \XF\Str\EmojiFormatter {}

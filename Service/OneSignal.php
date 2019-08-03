@@ -3,12 +3,17 @@
 namespace Truonglv\Api\Service;
 
 use Truonglv\Api\App;
+use XF\Entity\ConversationMessage;
+use XF\Entity\ConversationRecipient;
 use XF\Repository\UserAlert;
 use Truonglv\Api\Entity\Subscription;
 
 class OneSignal extends AbstractPushNotification
 {
     const API_END_POINT = 'https://onesignal.com/api/v1';
+
+    const BADGE_TYPE_SET_TO = 'SetTo';
+    const BADGE_TYPE_INCREASE = 'Increase';
 
     private $appId;
     private $apiKey;
@@ -17,7 +22,6 @@ class OneSignal extends AbstractPushNotification
     {
         $subscriptions = $this->findSubscriptions()
             ->where('user_id', $alert->alerted_user_id)
-            ->where('provider', 'one_signal')
             ->fetch();
         if (!$subscriptions->count()) {
             return false;
@@ -35,7 +39,9 @@ class OneSignal extends AbstractPushNotification
             return false;
         }
 
-        $html = $alert->render();
+        $html = $this->swapUserLanguage($alert->Receiver, function () use($alert) {
+            return $alert->render();
+        });
 
         /** @var UserAlert $alertRepo */
         $alertRepo = $this->app->repository('XF:UserAlert');
@@ -57,33 +63,80 @@ class OneSignal extends AbstractPushNotification
                 'content_id' => $alert->content_id,
                 'alert_id' => $alert->alert_id
             ],
-            'ios_badgeType' => 'SetTo',
+            'ios_badgeType' => self::BADGE_TYPE_SET_TO,
             'ios_badgeCount' => $finder->total()
         ];
 
-        $response = null;
-
-        try {
-            $response = $this->client()->post(self::API_END_POINT . '/notifications', [
-                'json' => $payload
-            ]);
-        } catch (\Exception $e) {
-            $this->app->logException($e, false, '[tl] Api: ');
-        }
-
-        if ($response === null) {
-            return false;
-        }
-
-        $this->logRequest(
-            'post',
-            self::API_END_POINT . '/notifications',
-            $payload,
-            $response->getStatusCode(),
-            $response->getBody()->getContents()
-        );
+        $this->sendNotificationRequest('POST', self::API_END_POINT . '/notifications', [
+            'json' => $payload
+        ]);
 
         return true;
+    }
+
+    public function sendConversationNotification(ConversationMessage $message, $actionType)
+    {
+        if (!in_array($actionType, ['create', 'reply'], true)) {
+            return;
+        }
+
+        $receivers = $message->Conversation->getRelationFinder('Recipients')
+            ->where('recipient_state', 'active')
+            ->with(['User', 'User.Option'], true)
+            ->fetch();
+        if (!$receivers->count()) {
+            return;
+        }
+
+        /** @var ConversationRecipient $receiver */
+        foreach ($receivers as $receiver) {
+            $subscriptions = $this->findSubscriptions()
+                ->where('user_id', $receiver->User->user_id)
+                ->fetch();
+            if (!$subscriptions->count()) {
+                continue;
+            }
+
+            $playerIds = [];
+            /** @var Subscription $subscription */
+            foreach ($subscriptions as $subscription) {
+                if ($subscription->provider_key) {
+                    $playerIds[] = $subscription->provider_key;
+                }
+            }
+
+            if (empty($playerIds)) {
+                continue;
+            }
+
+            $language = $this->app->language($receiver->User->language_id);
+            $phrase = $language->phrase('push_conversation_' . $actionType, [
+                'boardTitle' => $this->app->options()->boardTitle,
+                'title' => $message->Conversation->title,
+                'sender' => $message->User->username
+            ]);
+
+            $payload = [
+                'include_player_ids' => $playerIds,
+                'app_id' => $this->appId,
+                'headings' => [
+                    'en' => $this->app->options()->boardTitle
+                ],
+                'contents' => [
+                    'en' => strip_tags($phrase->render('raw'))
+                ],
+                'data' => [
+                    'content_type' => 'conversation_message',
+                    'content_id' => $message->message_id
+                ],
+                'ios_badgeType' => self::BADGE_TYPE_INCREASE,
+                'ios_badgeCount' => 1
+            ];
+
+            $this->sendNotificationRequest('POST', self::API_END_POINT . '/notifications', [
+                'json' => $payload
+            ]);
+        }
     }
 
     public function unsubscribe($externalId, $pushToken)
@@ -97,25 +150,40 @@ class OneSignal extends AbstractPushNotification
             'identifier' => $pushToken
         ];
 
+        $this->sendNotificationRequest('PUT', $endPoint, [
+            'json' => $payload
+        ]);
+    }
+
+    protected function sendNotificationRequest($method, $endPoint, array $payload)
+    {
+        $response = null;
+
         try {
-            $response = $this->client()->put($endPoint, [
-                'json' => $payload
-            ]);
-        } catch (\Exception $e) {
-            \XF::logException($e, false, '[tl] Api: ');
+            $response = $this->client()->request($method, $endPoint, $payload);
+        } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+            $this->app->logException($e, false, '[tl] Api: ');
         }
 
-        if (!$response) {
+        if ($response === null) {
             return;
         }
 
         $this->logRequest(
-            'put',
+            $method,
             $endPoint,
             $payload,
             $response->getStatusCode(),
             $response->getBody()->getContents()
         );
+    }
+
+    protected function findSubscriptions()
+    {
+        $finder = parent::findSubscriptions();
+        $finder->where('provider', 'one_signal');
+
+        return $finder;
     }
 
     protected function client()

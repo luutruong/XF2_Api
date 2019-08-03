@@ -26,26 +26,6 @@ class Setup extends AbstractSetup
         $this->doDropTables($this->getTables());
     }
 
-    public function upgrade1000400Step1()
-    {
-        $this->doCreateTables($this->getTables1());
-    }
-
-    public function upgrade1000500Step1()
-    {
-        $this->doCreateTables($this->getTables2());
-    }
-
-    public function upgrade1000600Step1()
-    {
-        $this->doCreateTables($this->getTables3());
-    }
-
-    public function upgrade1000900Step1()
-    {
-        $this->doCreateTables($this->getTables4());
-    }
-
     protected function getTables1()
     {
         $tables = [];
@@ -67,13 +47,6 @@ class Setup extends AbstractSetup
             $table->addKey('log_date');
         };
 
-        return $tables;
-    }
-
-    protected function getTables2()
-    {
-        $tables = [];
-
         $tables['xf_tapi_subscription'] = function (Create $table) {
             $table->addColumn('subscription_id', 'int')
                 ->autoIncrement();
@@ -94,24 +67,15 @@ class Setup extends AbstractSetup
             $table->addKey(['subscribed_date']);
         };
 
-        return $tables;
-    }
-
-    protected function getTables3()
-    {
-        $tables = [];
-
         $tables['xf_tapi_alert_queue'] = function (Create $table) {
-            $table->addColumn('alert_id', 'int');
-            $table->addPrimaryKey('alert_id');
+            $table->addColumn('content_type', 'varchar', 25);
+            $table->addColumn('content_id', 'int');
+            $table->addColumn('payload', 'blob')->nullable();
+            $table->addColumn('queue_date', 'int')->setDefault(0);
+
+            $table->addPrimaryKey(['content_type', 'content_id']);
+            $table->addKey(['queue_date']);
         };
-
-        return $tables;
-    }
-
-    protected function getTables4()
-    {
-        $tables = [];
 
         $tables['xf_tapi_access_token'] = function (Create $table) {
             $table->addColumn('token', 'varbinary', 32);

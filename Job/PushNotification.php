@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Job;
 
+use XF\Entity\ConversationMessage;
 use XF\Timer;
 use XF\Job\JobResult;
 use XF\Job\AbstractJob;
@@ -19,16 +20,30 @@ class PushNotification extends AbstractJob
      */
     public function run($maxRunTime)
     {
-        if (empty($this->data['alert_id'])) {
+        if (!empty($this->data['content_type']) && $this->data['content_type'] === 'alert') {
+            /** @var UserAlert|null $userAlert */
+            $userAlert = $this->app->em()->find('XF:UserAlert', $this->data['content_id']);
+            if ($userAlert) {
+                $this->sendAlertNotification($userAlert);
+            }
+        } elseif (!empty($this->data['content_type']) && $this->data['content_type'] === 'conversation_message') {
+            /** @var ConversationMessage|null $convoMessage */
+            $convoMessage = $this->app->em()->find('XF:ConversationMessage', $this->data['content_id']);
+            if ($convoMessage) {
+                $this->sendConversationNotification($convoMessage, $this->data['action']);
+            }
+        } else {
             $timer = new Timer($maxRunTime);
+            /** @var \Truonglv\Api\Repository\AlertQueue $alertQueueRepo */
+            $alertQueueRepo = $this->app->repository('Truonglv\Api:AlertQueue');
 
             while (true) {
                 $entities = $this->app
                     ->finder('Truonglv\Api:AlertQueue')
-                    ->with('UserAlert.Receiver')
-                    ->order('alert_id')
+                    ->order('queue_date')
                     ->limit(10)
                     ->fetch();
+                $alertQueueRepo->addContentIntoQueues($entities);
 
                 if (!$entities->count()) {
                     break;
@@ -38,10 +53,14 @@ class PushNotification extends AbstractJob
                 foreach ($entities as $entity) {
                     $entity->delete(false);
 
-                    /** @var UserAlert|null $userAlert */
-                    $userAlert = $entity->UserAlert;
-                    if ($userAlert) {
-                        $this->send($userAlert);
+                    if (!$entity->Content) {
+                        continue;
+                    }
+
+                    if ($entity->content_type === 'alert') {
+                        $this->sendAlertNotification($entity->Content);
+                    } elseif ($entity->content_type === 'conversation_message') {
+                        $this->sendConversationNotification($entity->Content, $entity->payload['action']);
                     }
 
                     if ($timer->limitExceeded()) {
@@ -49,18 +68,12 @@ class PushNotification extends AbstractJob
                     }
                 }
             }
-        } else {
-            /** @var UserAlert|null $userAlert */
-            $userAlert = $this->app->em()->find('XF:UserAlert', $this->data['alert_id']);
-            if ($userAlert) {
-                $this->send($userAlert);
-            }
         }
 
         return $this->complete();
     }
 
-    protected function send(UserAlert $userAlert)
+    protected function sendAlertNotification(UserAlert $userAlert)
     {
         if ($userAlert->view_date > 0) {
             return;
@@ -69,6 +82,13 @@ class PushNotification extends AbstractJob
         /** @var OneSignal $service */
         $service = $this->app->service('Truonglv\Api:OneSignal');
         $service->sendNotification($userAlert);
+    }
+
+    protected function sendConversationNotification(ConversationMessage $message, $actionType)
+    {
+        /** @var OneSignal $service */
+        $service = $this->app->service('Truonglv\Api:OneSignal');
+        $service->sendConversationNotification($message, $actionType);
     }
 
     public function getStatusMessage()
