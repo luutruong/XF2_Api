@@ -3,7 +3,6 @@
 namespace Truonglv\Api\XF\Entity;
 
 use Truonglv\Api\App;
-use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 class UserAlert extends XFCP_UserAlert

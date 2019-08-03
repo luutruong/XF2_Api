@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\Util;
 
-use Truonglv\Api\Entity\AccessToken;
 use XF\Util\Random;
+use Truonglv\Api\Entity\AccessToken;
 
 class Token
 {

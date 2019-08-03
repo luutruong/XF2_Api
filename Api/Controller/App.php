@@ -2,12 +2,12 @@
 
 namespace Truonglv\Api\Api\Controller;
 
-use Truonglv\Api\Entity\AccessToken;
-use Truonglv\Api\Util\Token;
-use XF\ControllerPlugin\Login;
 use XF\Finder\Thread;
 use XF\Mvc\Entity\Entity;
+use Truonglv\Api\Util\Token;
+use XF\ControllerPlugin\Login;
 use XF\Service\User\Registration;
+use Truonglv\Api\Entity\AccessToken;
 use Truonglv\Api\Entity\Subscription;
 use Truonglv\Api\Util\PasswordDecrypter;
 use XF\Api\Controller\AbstractController;

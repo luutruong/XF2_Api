@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\Option;
 
-use XF\Option\AbstractOption;
 use XF\PrintableException;
+use XF\Option\AbstractOption;
 
 class ApiKey extends AbstractOption
 {
