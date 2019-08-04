@@ -2,9 +2,9 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use XF\Mvc\ParameterBag;
 use XF\Api\Mvc\Reply\ApiResult;
 use XF\Entity\ConversationUser;
-use XF\Mvc\ParameterBag;
 use XF\Entity\ConversationRecipient;
 
 class Conversation extends XFCP_Conversation
