@@ -50,7 +50,7 @@ class Attachment extends XFCP_Attachment
         if (empty($token) || strpos($token, '.') === false) {
             return false;
         }
-        $apiKey = $this->app()->request()->getApiKey();
+        $apiKey = $this->app()->request()->getServer(App::HEADER_KEY_API_KEY);
 
         list($timestamp, $token) = explode('.', $token, 2);
         if (empty($timestamp) || empty($token)) {

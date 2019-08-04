@@ -29,6 +29,9 @@
     "XF-Entity-Attachment_Truonglv-Api-XF-Entity-Attachment.json": {
         "hash": "ec9aad5cd40063a748606128f497e838"
     },
+    "XF-Entity-ConversationMaster_Truonglv-Api-XF-Entity-ConversationMaster.json": {
+        "hash": "bb197bd18f5500bf92979a0a6f4d8585"
+    },
     "XF-Entity-ConversationMessage_Truonglv-Api-XF-Entity-ConversationMessage.json": {
         "hash": "44f7d70248f7be5f109fca85f32aa3c1"
     },

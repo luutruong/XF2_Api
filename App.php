@@ -31,7 +31,7 @@ class App
     public static function generateTokenForViewingAttachment(Attachment $attachment)
     {
         $app = \XF::app();
-        $apiKey = $app->request()->getApiKey();
+        $apiKey = $app->request()->getServer(self::HEADER_KEY_API_KEY);
 
         return \XF::$time . '.' . md5(
                 \XF::$time

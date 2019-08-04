@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Entity\\ConversationMaster",
+    "to_class": "Truonglv\\Api\\XF\\Entity\\ConversationMaster",
+    "execute_order": 10,
+    "active": true
+}

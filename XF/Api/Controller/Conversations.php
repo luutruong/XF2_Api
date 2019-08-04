@@ -35,4 +35,13 @@ class Conversations extends XFCP_Conversations
 
         return parent::actionPost();
     }
+
+    protected function setupConversationFinder()
+    {
+        $finder = parent::setupConversationFinder();
+
+        $finder->with('Master.Users|' . \XF::visitor()->user_id);
+
+        return $finder;
+    }
 }
