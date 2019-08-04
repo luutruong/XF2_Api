@@ -52,6 +52,14 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         return parent::renderTagAttach($children, $option, $tag, $options);
     }
 
+    public function renderTagImage(array $children, $option, array $tag, array $options)
+    {
+        $options['noProxy'] = true;
+        $options['lightbox'] = false;
+
+        return parent::renderTagImage($children, $option, $tag, $options);
+    }
+
     public function filterString($string, array $options)
     {
         /** @var Formatter $formatter */
