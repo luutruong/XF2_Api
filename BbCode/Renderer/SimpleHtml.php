@@ -77,25 +77,26 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
     {
         return [
             'attach',
-            'left',
-            'center',
-            'right',
-            'url',
-            'font',
-            'size',
-            'img',
-            'user',
-            'plain',
-            'code',
-            'quote',
             'b',
-            'u',
-            'i',
-            's',
+            'center',
+            'code',
             'color',
+            'email',
+            'font',
+            'i',
             'icode',
+            'img',
+            'indent',
+            'left',
             'list',
-            'code'
+            'plain',
+            'quote',
+            'right',
+            's',
+            'size',
+            'u',
+            'url',
+            'user'
         ];
     }
 
