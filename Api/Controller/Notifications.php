@@ -27,7 +27,9 @@ class Notifications extends AbstractController
         $alerts = $alertsFinder->limitByPage($page, $perPage)->fetch();
 
         $alertRepo->addContentToAlerts($alerts);
-        $alerts = $alerts->filterViewable();
+        if (\XF::isApiCheckingPermissions()) {
+            $alerts = $alerts->filterViewable();
+        }
 
         $data = [
             'notifications' => $alerts->toApiResults(Entity::VERBOSITY_VERBOSE),

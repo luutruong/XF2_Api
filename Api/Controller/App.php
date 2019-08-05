@@ -8,7 +8,6 @@ use Truonglv\Api\Util\Token;
 use XF\ControllerPlugin\Login;
 use XF\Service\User\Registration;
 use Truonglv\Api\Entity\AccessToken;
-use Truonglv\Api\Entity\Subscription;
 use Truonglv\Api\Util\PasswordDecrypter;
 use XF\Api\Controller\AbstractController;
 
@@ -93,47 +92,21 @@ class App extends AbstractController
             'type' => 'str'
         ]);
 
+        /** @var \Truonglv\Api\Service\Subscription $service */
+        $service = $this->service('Truonglv\Api:Subscription', \XF::visitor(), $input['device_token']);
+
         if ($input['type'] === 'unsubscribe') {
-            /** @var Subscription[] $subscriptions */
-            $subscriptions = $this->finder('Truonglv\Api:Subscription')
-                ->where('user_id', $visitor->user_id)
-                ->where('device_token', $input['device_token'])
-                ->fetch();
-            foreach ($subscriptions as $subscription) {
-                $subscription->delete();
-            }
+            $service->unsubscribe();
         } elseif ($input['type'] === 'subscribe') {
             $this->assertRequiredApiInput([
                 'provider',
                 'provider_key',
             ]);
 
-            /** @var Subscription|null $exists */
-            $exists = $this->finder('Truonglv\Api:Subscription')
-                ->where('user_id', $visitor->user_id)
-                ->where('device_token', $input['device_token'])
-                ->fetchOne();
+            unset($input['device_token'], $input['type']);
+            $input['app_version'] = $this->request()->getServer(\Truonglv\Api\App::HEADER_KEY_APP_VERSION);
 
-            if ($exists) {
-                $subscription = $exists;
-            } else {
-                /** @var Subscription $subscription */
-                $subscription = $this->em()->create('Truonglv\Api:Subscription');
-                $subscription->user_id = $visitor->user_id;
-                $subscription->username = $visitor->username;
-                $subscription->device_token = $input['device_token'];
-            }
-
-            $subscription->app_version = $this->request()->getServer(\Truonglv\Api\App::HEADER_KEY_APP_VERSION);
-            $subscription->subscribed_date = \XF::$time;
-            $subscription->is_device_test = $input['is_device_test'];
-            $subscription->provider = $input['provider'];
-            $subscription->provider_key = $input['provider_key'];
-
-            try {
-                $subscription->save(false);
-            } catch (\XF\Db\DuplicateKeyException $e) {
-            }
+            $service->subscribe($input);
         }
 
         return $this->apiSuccess();
