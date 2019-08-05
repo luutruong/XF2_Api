@@ -118,7 +118,7 @@ class OneSignal extends AbstractPushNotification
                     'en' => $this->app->options()->boardTitle
                 ],
                 'contents' => [
-                    'en' => $this->getConversationPushContentBody($receiver, $message, $actionType)
+                    'en' => $this->getConversationPushContentBody($receiver->User, $message, $actionType)
                 ],
                 'data' => [
                     'content_type' => 'conversation_message',
