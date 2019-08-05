@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Service\\Alert\\Pusher",
+    "to_class": "Truonglv\\Api\\XF\\Service\\Alert\\Pusher",
+    "execute_order": 10,
+    "active": true
+}

@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Service;
 
+use Truonglv\Api\XF\Service\Conversation\Pusher;
 use XF\Entity\User;
 use XF\Entity\UserAlert;
 use Truonglv\Api\Entity\Log;
@@ -34,18 +35,20 @@ abstract class AbstractPushNotification extends AbstractService
     {
     }
 
-    protected function swapUserLanguage(User $user, \Closure $closure)
+    protected function getAlertContentBody(UserAlert $alert)
     {
-        $templater = $this->app->templater();
+        /** @var \Truonglv\Api\XF\Service\Alert\Pusher $pusher */
+        $pusher = $this->service('XF:Alert\Pusher', $alert->Receiver, $alert);
 
-        $language = $this->app->language($user->language_id);
-        $orgLanguage = $templater->getLanguage();
+        return $pusher->tApiGetNotificationBody();
+    }
 
-        $templater->setLanguage($language);
-        $returned = call_user_func($closure);
-        $templater->setLanguage($orgLanguage);
+    protected function getConversationPushContentBody(User $receiver, ConversationMessage $message, $actionType)
+    {
+        /** @var Pusher $pusher */
+        $pusher = $this->service('XF:Conversation\Pusher', $receiver, $message, $actionType, $message->User);
 
-        return $returned;
+        return $pusher->tApiGetNotificationBody();
     }
 
     protected function logRequest($method, $endPoint, array $payload, $responseCode, $response, array $extra = [])

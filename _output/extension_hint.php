@@ -33,9 +33,15 @@ namespace Truonglv\Api\XF\Entity
 	class XFCP_UserAlert extends \XF\Entity\UserAlert {}
 }
 
+namespace Truonglv\Api\XF\Service\Alert
+{
+	class XFCP_Pusher extends \XF\Service\Alert\Pusher {}
+}
+
 namespace Truonglv\Api\XF\Service\Conversation
 {
 	class XFCP_Notifier extends \XF\Service\Conversation\Notifier {}
+	class XFCP_Pusher extends \XF\Service\Conversation\Pusher {}
 }
 
 namespace Truonglv\Api\XF\Str

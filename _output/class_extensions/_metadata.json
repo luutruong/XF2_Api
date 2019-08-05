@@ -53,8 +53,14 @@
     "XF-Entity-User_Truonglv-Api-XF-Entity-User.json": {
         "hash": "9c577930b3addba539df5e576b4765ce"
     },
+    "XF-Service-Alert-Pusher_Truonglv-Api-XF-Service-Alert-Pusher.json": {
+        "hash": "291cdb92c14b5e8cdd2b30a14616d861"
+    },
     "XF-Service-Conversation-Notifier_Truonglv-Api-XF-Service-Conversation-Notifier.json": {
         "hash": "9b3292a45dfe6e480d8956100e441881"
+    },
+    "XF-Service-Conversation-Pusher_Truonglv-Api-XF-Service-Conversation-Pusher.json": {
+        "hash": "8494e6fc9f654a2fc88e2efbcabed0c0"
     },
     "XF-Str-EmojiFormatter_Truonglv-Api-XF-Str-EmojiFormatter.json": {
         "hash": "1cd18320e02376b0c0217ac4c483257c"

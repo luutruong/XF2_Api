@@ -39,10 +39,6 @@ class OneSignal extends AbstractPushNotification
             return false;
         }
 
-        $html = $this->swapUserLanguage($alert->Receiver, function () use ($alert) {
-            return $alert->render();
-        });
-
         /** @var UserAlert $alertRepo */
         $alertRepo = $this->app->repository('XF:UserAlert');
         $finder = $alertRepo->findAlertsForUser($alert->alerted_user_id);
@@ -56,7 +52,7 @@ class OneSignal extends AbstractPushNotification
                 'en' => $this->app->options()->boardTitle
             ],
             'contents' => [
-                'en' => strip_tags($html)
+                'en' => $this->getAlertContentBody($alert)
             ],
             'data' => [
                 'content_type' => $alert->content_type,
@@ -115,13 +111,6 @@ class OneSignal extends AbstractPushNotification
                 continue;
             }
 
-            $language = $this->app->language($receiver->User->language_id);
-            $phrase = $language->phrase('push_conversation_' . $actionType, [
-                'boardTitle' => $this->app->options()->boardTitle,
-                'title' => $message->Conversation->title,
-                'sender' => $sender->username
-            ]);
-
             $payload = [
                 'include_player_ids' => $playerIds,
                 'app_id' => $this->appId,
@@ -129,7 +118,7 @@ class OneSignal extends AbstractPushNotification
                     'en' => $this->app->options()->boardTitle
                 ],
                 'contents' => [
-                    'en' => strip_tags($phrase->render('raw'))
+                    'en' => $this->getConversationPushContentBody($receiver, $message, $actionType)
                 ],
                 'data' => [
                     'content_type' => 'conversation_message',
