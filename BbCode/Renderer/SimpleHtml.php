@@ -6,6 +6,7 @@ use Truonglv\Api\App;
 use XF\Entity\Attachment;
 use Truonglv\Api\XF\Str\Formatter;
 use Truonglv\Api\XF\Str\EmojiFormatter;
+use XF\Http\Request;
 
 class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
 {
@@ -58,6 +59,33 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         $options['lightbox'] = false;
 
         return parent::renderTagImage($children, $option, $tag, $options);
+    }
+
+    protected function getRenderedLink($text, $url, array $options)
+    {
+        $html = parent::getRenderedLink($text, $url, $options);
+        $linkInfo = $this->formatter->getLinkClassTarget($url);
+        $html = trim($html);
+
+        if ($linkInfo['type'] === 'internal') {
+            $app = \XF::app();
+            if (strpos($url, $app->options()->boardUrl) === 0) {
+                $url = substr($url, strlen($app->options()->boardUrl));
+            }
+            $url = ltrim($url, '/');
+            $request = new Request(\XF::app()->inputFilterer(), [], [], [], []);
+            $match = $app->router('public')->routeToController($url, $request);
+
+            if ($match->getController()) {
+                $params = json_encode($match->getParams());
+                $html = substr($html, 0, 3)
+                    . ' data-tapi-route="' . htmlspecialchars($match->getController()) . '"'
+                    . ' data-tpi-route-params="' . htmlspecialchars($params) . '" '
+                    . substr($html, 3);
+            }
+        }
+
+        return $html;
     }
 
     public function filterString($string, array $options)
