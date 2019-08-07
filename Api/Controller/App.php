@@ -121,7 +121,7 @@ class App extends AbstractController
         ]);
 
         $visitor = \XF::visitor();
-        if (!$visitor->user_id) {
+        if ($visitor->user_id) {
             return $this->noPermission();
         }
 
