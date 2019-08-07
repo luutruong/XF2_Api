@@ -80,7 +80,7 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
                 $params = json_encode($match->getParams());
                 $html = substr($html, 0, 3)
                     . ' data-tapi-route="' . htmlspecialchars($match->getController()) . '"'
-                    . ' data-tpi-route-params="' . htmlspecialchars($params) . '" '
+                    . ' data-tapi-route-params="' . htmlspecialchars($params) . '" '
                     . substr($html, 3);
             }
         }
