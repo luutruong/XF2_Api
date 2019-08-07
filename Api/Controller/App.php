@@ -129,7 +129,7 @@ class App extends AbstractController
         $decrypted = '';
 
         try {
-            $decrypted = PasswordDecrypter::decrypt($password, $this->options()->tApi_authKey);
+            $decrypted = PasswordDecrypter::decrypt($password, $this->options()->tApi_encryptKey);
         } catch (\InvalidArgumentException $e) {
         }
 
