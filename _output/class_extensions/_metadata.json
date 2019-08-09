@@ -11,8 +11,14 @@
     "XF-Api-Controller-Me_Truonglv-Api-XF-Api-Controller-Me.json": {
         "hash": "31bef0a6dac2b75c01e2cf09a835071c"
     },
+    "XF-Api-Controller-Post_Truonglv-Api-XF-Api-Controller-Post.json": {
+        "hash": "0838eb6eae3fb80f17b73dad70ca2d6e"
+    },
     "XF-Api-Controller-Posts_Truonglv-Api-XF-Api-Controller-Posts.json": {
         "hash": "eb9c9846bd3d8216ab47662ae5ce5d52"
+    },
+    "XF-Api-Controller-ProfilePostComment_Truonglv-Api-XF-Api-Controller-ProfilePostComment.json": {
+        "hash": "0cc8687206e330293ecee6ed134932c5"
     },
     "XF-Api-Controller-ProfilePostComments_Truonglv-Api-XF-Api-Controller-ProfilePostComments.json": {
         "hash": "73ef5323f885e9f23f7a902a8c5c7680"
