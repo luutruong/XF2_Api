@@ -11,6 +11,7 @@ namespace Truonglv\Api\XF\Api\Controller
 	class XFCP_Me extends \XF\Api\Controller\Me {}
 	class XFCP_Post extends \XF\Api\Controller\Post {}
 	class XFCP_Posts extends \XF\Api\Controller\Posts {}
+	class XFCP_ProfilePost extends \XF\Api\Controller\ProfilePost {}
 	class XFCP_ProfilePostComment extends \XF\Api\Controller\ProfilePostComment {}
 	class XFCP_ProfilePostComments extends \XF\Api\Controller\ProfilePostComments {}
 	class XFCP_Thread extends \XF\Api\Controller\Thread {}

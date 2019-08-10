@@ -18,6 +18,17 @@ class Post extends XFCP_Post
             ->router('public')
             ->buildLink('canonical:posts', $this);
 
+        $visitor = \XF::visitor();
+        if ($visitor->user_id > 0) {
+            $result->can_report = $this->canReport();
+            $result->can_ignore = $this->User && $visitor->canIgnoreUser($this->User);
+            $result->is_ignored = $visitor->isIgnoring($this->user_id);
+        } else {
+            $result->can_report = false;
+            $result->can_ignore = false;
+            $result->is_ignored = false;
+        }
+
         App::includeMessageHtmlIfNeeded($result, $this);
     }
 

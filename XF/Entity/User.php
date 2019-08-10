@@ -14,5 +14,10 @@ class User extends XFCP_User
         if (!isset($result->can_start_converse)) {
             $result->can_start_converse = $this->canStartConversation();
         }
+
+        $result->can_be_reported = $this->canBeReported();
+
+        $result->ignoring = $this->Profile->ignored;
+        $result->following = $this->Profile->following;
     }
 }

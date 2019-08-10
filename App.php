@@ -3,6 +3,7 @@
 namespace Truonglv\Api;
 
 use XF\Entity\Attachment;
+use XF\Http\Request;
 use XF\Mvc\Entity\Entity;
 use XF\Api\Result\EntityResult;
 
@@ -16,6 +17,13 @@ class App
 
     public static $followingPerPage = 20;
     public static $enableLogging = false;
+
+    public static function isRequestFromApp(Request $request = null)
+    {
+        $request = $request ?: \XF::app()->request();
+
+        return !empty($request->getServer(self::HEADER_KEY_APP_VERSION));
+    }
 
     public static function getSupportAlertContentTypes()
     {

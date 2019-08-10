@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use Truonglv\Api\Api\ControllerPlugin\Report;
 use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
@@ -70,5 +71,36 @@ class User extends XFCP_User
         }
 
         return $this->apiSuccess();
+    }
+
+    public function actionPostReport(ParameterBag $params)
+    {
+        $user = $this->assertViewableUser($params->user_id);
+        if (\XF::isApiCheckingPermissions() && !$user->canBeReported()) {
+            return $this->noPermission();
+        }
+
+        /** @var Report $reportPlugin */
+        $reportPlugin = $this->plugin('Truonglv\Api:Api:Report');
+        return $reportPlugin->actionReport('user', $user);
+    }
+
+    protected function setupProfilePostFinder(\XF\Entity\User $user)
+    {
+        $finder = parent::setupProfilePostFinder($user);
+        if (App::isRequestFromApp()) {
+            $finder->resetWhere();
+
+            $finder->where('profile_user_id', $user->user_id);
+            $finder->whereOr([
+                ['message_state', '=', 'visible'],
+                [
+                    'message_state' => 'moderated',
+                    'user_id' => \XF::visitor()->user_id
+                ]
+            ]);
+        }
+
+        return $finder;
     }
 }

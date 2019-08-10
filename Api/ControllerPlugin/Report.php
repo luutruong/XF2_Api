@@ -19,7 +19,9 @@ class Report extends AbstractPlugin
         $creator->save();
         $this->finalizeReportCreate($creator);
 
-        return $this->apiSuccess();
+        return $this->apiSuccess([
+            'message' => \XF::phrase('thank_you_for_reporting_this_content')
+        ]);
     }
 
     /**
