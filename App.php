@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api;
 
-use XF\Entity\Attachment;
 use XF\Http\Request;
+use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
 use XF\Api\Result\EntityResult;
 

@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\Api\ControllerPlugin\Report;
 use XF\Mvc\ParameterBag;
+use Truonglv\Api\Api\ControllerPlugin\Report;
 
 class ProfilePostComment extends XFCP_ProfilePostComment
 {
@@ -16,6 +16,7 @@ class ProfilePostComment extends XFCP_ProfilePostComment
 
         /** @var Report $reportPlugin */
         $reportPlugin = $this->plugin('Truonglv\Api:Api:Report');
+
         return $reportPlugin->actionReport('profile_post_comment', $profilePostComment);
     }
 }

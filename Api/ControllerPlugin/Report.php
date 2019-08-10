@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\Api\ControllerPlugin;
 
-use XF\Api\ControllerPlugin\AbstractPlugin;
 use XF\Mvc\Entity\Entity;
+use XF\Api\ControllerPlugin\AbstractPlugin;
 
 class Report extends AbstractPlugin
 {

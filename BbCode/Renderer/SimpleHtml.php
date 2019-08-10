@@ -2,11 +2,11 @@
 
 namespace Truonglv\Api\BbCode\Renderer;
 
+use XF\Http\Request;
 use Truonglv\Api\App;
 use XF\Entity\Attachment;
 use Truonglv\Api\XF\Str\Formatter;
 use Truonglv\Api\XF\Str\EmojiFormatter;
-use XF\Http\Request;
 
 class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
 {

@@ -2,12 +2,12 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\Api\ControllerPlugin\Report;
 use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Follow;
 use XF\Repository\UserFollow;
+use Truonglv\Api\Api\ControllerPlugin\Report;
 
 class User extends XFCP_User
 {
@@ -82,6 +82,7 @@ class User extends XFCP_User
 
         /** @var Report $reportPlugin */
         $reportPlugin = $this->plugin('Truonglv\Api:Api:Report');
+
         return $reportPlugin->actionReport('user', $user);
     }
 

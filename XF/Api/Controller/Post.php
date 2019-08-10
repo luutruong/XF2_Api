@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\Api\ControllerPlugin\Report;
 use XF\Mvc\ParameterBag;
+use Truonglv\Api\Api\ControllerPlugin\Report;
 
 class Post extends XFCP_Post
 {
@@ -16,6 +16,7 @@ class Post extends XFCP_Post
 
         /** @var Report $reportPlugin */
         $reportPlugin = $this->plugin('Truonglv\Api:Api:Report');
+
         return $reportPlugin->actionReport('post', $post);
     }
 }
