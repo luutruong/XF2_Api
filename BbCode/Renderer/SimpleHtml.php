@@ -10,6 +10,11 @@ use Truonglv\Api\XF\Str\EmojiFormatter;
 
 class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
 {
+    /**
+     * @param mixed $tag
+     * @param array $config
+     * @return void
+     */
     public function addTag($tag, array $config)
     {
         if (!in_array($tag, $this->getWhitelistTags(), true)) {
@@ -19,6 +24,13 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         parent::addTag($tag, $config);
     }
 
+    /**
+     * @param array $children
+     * @param mixed $option
+     * @param array $tag
+     * @param array $options
+     * @return string
+     */
     public function renderTagUrl(array $children, $option, array $tag, array $options)
     {
         $options = array_replace($options, [
@@ -29,20 +41,27 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         return parent::renderTagUrl($children, $option, $tag, $options);
     }
 
+    /**
+     * @param array $children
+     * @param mixed $option
+     * @param array $tag
+     * @param array $options
+     * @return string
+     */
     public function renderTagAttach(array $children, $option, array $tag, array $options)
     {
         $id = intval($this->renderSubTreePlain($children));
         if ($id > 0) {
             $attachments = $options['attachments'];
 
-            if (!empty($attachments[$id])) {
+            if (isset($attachments[$id])) {
                 /** @var Attachment $attachmentRef */
                 $attachmentRef = $attachments[$id];
                 $params = [
                     'id' => $id,
                     'attachment' => $attachmentRef,
                     'full' => $this->isFullAttachView($option),
-                    'alt' => $this->getImageAltText($option) ?: ($attachmentRef ? $attachmentRef->filename : ''),
+                    'alt' => ($this->getImageAltText($option) !== '') ?: $attachmentRef->filename,
                     'attachmentViewUrl' => $this->getAttachmentViewUrl($attachmentRef)
                 ];
 
@@ -53,6 +72,13 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         return parent::renderTagAttach($children, $option, $tag, $options);
     }
 
+    /**
+     * @param array $children
+     * @param mixed $option
+     * @param array $tag
+     * @param array $options
+     * @return string|string[]|null
+     */
     public function renderTagImage(array $children, $option, array $tag, array $options)
     {
         $options['noProxy'] = true;
@@ -61,6 +87,12 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         return parent::renderTagImage($children, $option, $tag, $options);
     }
 
+    /**
+     * @param mixed $text
+     * @param mixed $url
+     * @param array $options
+     * @return string
+     */
     protected function getRenderedLink($text, $url, array $options)
     {
         $html = parent::getRenderedLink($text, $url, $options);
@@ -77,7 +109,7 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             $match = $app->router('public')->routeToController($url, $request);
 
             if ($match->getController()) {
-                $params = json_encode($match->getParams());
+                $params = (string) json_encode($match->getParams());
                 $html = substr($html, 0, 3)
                     . ' data-tapi-route="' . htmlspecialchars($match->getController()) . '"'
                     . ' data-tapi-route-params="' . htmlspecialchars($params) . '" '
@@ -88,6 +120,12 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         return $html;
     }
 
+    /**
+     * @param mixed $string
+     * @param array $options
+     * @return string|string[]|null
+     * @throws \Exception
+     */
     public function filterString($string, array $options)
     {
         /** @var Formatter $formatter */
@@ -101,6 +139,9 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         return parent::filterString($string, $options);
     }
 
+    /**
+     * @return array
+     */
     protected function getWhitelistTags()
     {
         return [
@@ -128,6 +169,10 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         ];
     }
 
+    /**
+     * @param Attachment $attachment
+     * @return string
+     */
     protected function getAttachmentViewUrl(Attachment $attachment)
     {
         /** @var \XF\Api\App $app */

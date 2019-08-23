@@ -20,13 +20,13 @@ class PushNotification extends AbstractJob
      */
     public function run($maxRunTime)
     {
-        if (!empty($this->data['content_type']) && $this->data['content_type'] === 'alert') {
+        if (isset($this->data['content_type']) && $this->data['content_type'] === 'alert') {
             /** @var UserAlert|null $userAlert */
             $userAlert = $this->app->em()->find('XF:UserAlert', $this->data['content_id']);
             if ($userAlert) {
                 $this->sendAlertNotification($userAlert);
             }
-        } elseif (!empty($this->data['content_type']) && $this->data['content_type'] === 'conversation_message') {
+        } elseif (isset($this->data['content_type']) && $this->data['content_type'] === 'conversation_message') {
             /** @var ConversationMessage|null $convoMessage */
             $convoMessage = $this->app->em()->find('XF:ConversationMessage', $this->data['content_id']);
             if ($convoMessage) {
@@ -58,9 +58,13 @@ class PushNotification extends AbstractJob
                     }
 
                     if ($entity->content_type === 'alert') {
-                        $this->sendAlertNotification($entity->Content);
+                        /** @var UserAlert $mixed */
+                        $mixed = $entity->Content;
+                        $this->sendAlertNotification($mixed);
                     } elseif ($entity->content_type === 'conversation_message') {
-                        $this->sendConversationNotification($entity->Content, $entity->payload['action']);
+                        /** @var ConversationMessage $mixed */
+                        $mixed = $entity->Content;
+                        $this->sendConversationNotification($mixed, $entity->payload['action']);
                     }
 
                     if ($timer->limitExceeded()) {
@@ -73,6 +77,10 @@ class PushNotification extends AbstractJob
         return $this->complete();
     }
 
+    /**
+     * @param UserAlert $userAlert
+     * @return void
+     */
     protected function sendAlertNotification(UserAlert $userAlert)
     {
         if ($userAlert->view_date > 0) {
@@ -84,6 +92,11 @@ class PushNotification extends AbstractJob
         $service->sendNotification($userAlert);
     }
 
+    /**
+     * @param ConversationMessage $message
+     * @param string $actionType
+     * @return void
+     */
     protected function sendConversationNotification(ConversationMessage $message, $actionType)
     {
         /** @var OneSignal $service */
@@ -91,16 +104,25 @@ class PushNotification extends AbstractJob
         $service->sendConversationNotification($message, $actionType);
     }
 
+    /**
+     * @return string
+     */
     public function getStatusMessage()
     {
         return 'Sending notifications...';
     }
 
+    /**
+     * @return bool
+     */
     public function canCancel()
     {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function canTriggerByChoice()
     {
         return false;

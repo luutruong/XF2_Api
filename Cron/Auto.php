@@ -6,6 +6,9 @@ use XF\Timer;
 
 class Auto
 {
+    /**
+     * @return void
+     */
     public static function runHourly()
     {
         $logLength = \XF::options()->tApi_logLength;
@@ -39,6 +42,9 @@ class Auto
         }
     }
 
+    /**
+     * @return void
+     */
     public static function sendNotifications()
     {
         \XF::app()

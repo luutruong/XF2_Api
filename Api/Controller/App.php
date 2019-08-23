@@ -13,6 +13,45 @@ use XF\Api\Controller\AbstractController;
 
 class App extends AbstractController
 {
+    public function actionGet()
+    {
+        $activeReactions = $this->finder('XF:Reaction')
+            ->where('active', true)
+            ->order('display_order')
+            ->fetch();
+        $reactions = $this->options()->tApi_reactions;
+        $validReactions = [];
+
+        if (count($reactions) === 0) {
+            $validReactions[1] = [
+                'imageUrl' => 'styles/default/Truonglv/Api/like.png',
+                'text' => $activeReactions[1]->title,
+                'reactionId' => 1
+            ];
+        } else {
+            foreach ($reactions as $reaction) {
+                if (isset($activeReactions[$reaction['reactionId']])) {
+                    $validReactions[$reaction['reactionId']] = [
+                        'imageUrl' => $reaction['imageUrl'],
+                        'text' => $activeReactions[$reaction['reactionId']]->title,
+                        'reactionId' => $reaction['reactionId']
+                    ];
+                }
+            }
+        }
+
+        $pather = $this->app()->container('request.pather');
+        foreach ($validReactions as &$reaction) {
+            $reaction['imageUrl'] = $pather($reaction['imageUrl'], 'full');
+        }
+
+        $data = [
+            'reactions' => $validReactions
+        ];
+
+        return $this->apiResult($data);
+    }
+
     public function actionGetNewsFeeds()
     {
         $cache = $this->app()->cache();
@@ -23,8 +62,8 @@ class App extends AbstractController
         $perPage = $this->options()->discussionsPerPage;
 
         if ($cache) {
-            $threadIds = $cache->fetch('tApi_NewsFeeds_threadIds');
-            if (!$threadIds) {
+            $threadIds = (array) $cache->fetch('tApi_NewsFeeds_threadIds');
+            if (count($threadIds) === 0) {
                 $this->applyNewsFeedsFilter($finder);
                 $finder->limit($this->options()->maximumSearchResults);
 
@@ -80,7 +119,7 @@ class App extends AbstractController
         ]);
 
         $visitor = \XF::visitor();
-        if (!$visitor->user_id) {
+        if ($visitor->user_id <= 0) {
             return $this->noPermission();
         }
 
@@ -121,7 +160,7 @@ class App extends AbstractController
         ]);
 
         $visitor = \XF::visitor();
-        if ($visitor->user_id) {
+        if ($visitor->user_id > 0) {
             return $this->noPermission();
         }
 
@@ -182,7 +221,7 @@ class App extends AbstractController
             return $this->error(\XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'), 400);
         }
 
-        /** @var \XF\Entity\User $user */
+        /** @var \XF\Entity\User|null $user */
         $user = $loginService->validate($password, $error);
         if (!$user) {
             return $this->error($error);
@@ -242,7 +281,11 @@ class App extends AbstractController
         ]);
     }
 
-    protected function handleHelpPage($pageId)
+    /**
+     * @param string $pageId
+     * @return \XF\Api\Mvc\Reply\ApiResult
+     */
+    protected function handleHelpPage(string $pageId)
     {
         /** @var \XF\Entity\HelpPage|null $page */
         $page = $this->em()->find('XF:HelpPage', $pageId);
@@ -293,6 +336,10 @@ class App extends AbstractController
         ]);
     }
 
+    /**
+     * @param Thread $finder
+     * @return void
+     */
     protected function applyNewsFeedsFilter(Thread $finder)
     {
         $finder->with('api');

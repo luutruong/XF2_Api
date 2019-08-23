@@ -7,10 +7,16 @@ use XF\Service\AbstractService;
 
 class Subscription extends AbstractService
 {
+    /**
+     * @var User
+     */
     protected $user;
+    /**
+     * @var string
+     */
     protected $pushToken;
 
-    public function __construct(\XF\App $app, User $user, $pushToken)
+    public function __construct(\XF\App $app, User $user, string $pushToken)
     {
         parent::__construct($app);
 
@@ -18,6 +24,10 @@ class Subscription extends AbstractService
         $this->pushToken = $pushToken;
     }
 
+    /**
+     * @throws \XF\PrintableException
+     * @return void
+     */
     public function unsubscribe()
     {
         /** @var \Truonglv\Api\Entity\Subscription[] $subscriptions */
@@ -30,6 +40,11 @@ class Subscription extends AbstractService
         }
     }
 
+    /**
+     * @param array $extra
+     * @throws \XF\PrintableException
+     * @return void
+     */
     public function subscribe(array $extra)
     {
         /** @var \Truonglv\Api\Entity\Subscription|null $exists */

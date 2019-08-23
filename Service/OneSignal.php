@@ -15,9 +15,19 @@ class OneSignal extends AbstractPushNotification
     const BADGE_TYPE_SET_TO = 'SetTo';
     const BADGE_TYPE_INCREASE = 'Increase';
 
-    private $appId;
-    private $apiKey;
+    /**
+     * @var string
+     */
+    private $appId = '';
+    /**
+     * @var string
+     */
+    private $apiKey = '';
 
+    /**
+     * @param \XF\Entity\UserAlert $alert
+     * @return bool
+     */
     public function sendNotification(\XF\Entity\UserAlert $alert)
     {
         $subscriptions = $this->findSubscriptions()
@@ -30,12 +40,12 @@ class OneSignal extends AbstractPushNotification
         $playerIds = [];
         /** @var Subscription $subscription */
         foreach ($subscriptions as $subscription) {
-            if ($subscription->provider_key) {
+            if (trim($subscription->provider_key) !== '') {
                 $playerIds[] = $subscription->provider_key;
             }
         }
 
-        if (empty($playerIds)) {
+        if (count($playerIds) === 0) {
             return false;
         }
 
@@ -70,6 +80,11 @@ class OneSignal extends AbstractPushNotification
         return true;
     }
 
+    /**
+     * @param ConversationMessage $message
+     * @param string $actionType
+     * @return void
+     */
     public function sendConversationNotification(ConversationMessage $message, $actionType)
     {
         if (!in_array($actionType, ['create', 'reply'], true)) {
@@ -102,12 +117,12 @@ class OneSignal extends AbstractPushNotification
             $playerIds = [];
             /** @var Subscription $subscription */
             foreach ($subscriptions as $subscription) {
-                if ($subscription->provider_key) {
+                if (trim($subscription->provider_key) !== '') {
                     $playerIds[] = $subscription->provider_key;
                 }
             }
 
-            if (empty($playerIds)) {
+            if (count($playerIds) === 0) {
                 continue;
             }
 
@@ -134,6 +149,11 @@ class OneSignal extends AbstractPushNotification
         }
     }
 
+    /**
+     * @param string $externalId
+     * @param string $pushToken
+     * @return void
+     */
     public function unsubscribe($externalId, $pushToken)
     {
         $response = null;
@@ -150,6 +170,12 @@ class OneSignal extends AbstractPushNotification
         ]);
     }
 
+    /**
+     * @param string $method
+     * @param string $endPoint
+     * @param array $payload
+     * @return void
+     */
     protected function sendNotificationRequest($method, $endPoint, array $payload)
     {
         $response = null;
@@ -173,6 +199,9 @@ class OneSignal extends AbstractPushNotification
         );
     }
 
+    /**
+     * @return \XF\Mvc\Entity\Finder
+     */
     protected function findSubscriptions()
     {
         $finder = parent::findSubscriptions();
@@ -181,6 +210,9 @@ class OneSignal extends AbstractPushNotification
         return $finder;
     }
 
+    /**
+     * @return \GuzzleHttp\Client
+     */
     protected function client()
     {
         return $this->app->http()->createClient([
@@ -193,15 +225,18 @@ class OneSignal extends AbstractPushNotification
         ]);
     }
 
+    /**
+     * @return void
+     */
     protected function setupDefaults()
     {
-        $apiKey = $this->app->options()->tApi_oneSignalApiKey;
-        $appId = $this->app->options()->tApi_oneSignalAppId;
+        $apiKey = trim($this->app->options()->tApi_oneSignalApiKey);
+        $appId = trim($this->app->options()->tApi_oneSignalAppId);
 
-        if (empty($appId)) {
+        if ($appId === '') {
             throw new \InvalidArgumentException('OneSignal api ID must be set!');
         }
-        if (empty($apiKey)) {
+        if ($apiKey === '') {
             throw new \InvalidArgumentException('OneSignal api key must be set!');
         }
 

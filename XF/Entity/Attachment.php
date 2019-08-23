@@ -6,6 +6,10 @@ use Truonglv\Api\App;
 
 class Attachment extends XFCP_Attachment
 {
+    /**
+     * @param null|string $error
+     * @return bool
+     */
     public function canView(&$error = null)
     {
         if ($this->tApiValidRequestToken()) {
@@ -27,6 +31,12 @@ class Attachment extends XFCP_Attachment
         return parent::canView($error);
     }
 
+    /**
+     * @param \XF\Api\Result\EntityResult $result
+     * @param int $verbosity
+     * @param array $options
+     * @return void
+     */
     protected function setupApiResultData(
         \XF\Api\Result\EntityResult $result,
         $verbosity = \XF\Entity\Attachment::VERBOSITY_NORMAL,
@@ -40,6 +50,9 @@ class Attachment extends XFCP_Attachment
             ]);
     }
 
+    /**
+     * @return bool
+     */
     protected function tApiValidRequestToken()
     {
         if (!in_array($this->content_type, ['post'], true)) {
@@ -47,17 +60,18 @@ class Attachment extends XFCP_Attachment
         }
 
         $token = $this->app()->request()->filter('tapi_token', 'str');
-        if (empty($token) || strpos($token, '.') === false) {
+        if ($token === '' || strpos($token, '.') === false) {
             return false;
         }
         $apiKey = $this->app()->request()->getServer(App::HEADER_KEY_API_KEY);
 
         list($timestamp, $token) = explode('.', $token, 2);
-        if (empty($timestamp) || empty($token)) {
+        $timestamp = intval($timestamp);
+        if ($timestamp <= 0 || trim($token) === '') {
             return false;
         }
 
-        $expiresAt = $timestamp + $this->app()->options()->tApi_attachmentTokenExpires * 60;
+        $expiresAt = $timestamp + intval($this->app()->options()->tApi_attachmentTokenExpires) * 60;
         if ($expiresAt <= \XF::$time) {
             return false;
         }

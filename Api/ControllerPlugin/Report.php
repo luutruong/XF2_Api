@@ -7,6 +7,12 @@ use XF\Api\ControllerPlugin\AbstractPlugin;
 
 class Report extends AbstractPlugin
 {
+    /**
+     * @param string $contentType
+     * @param Entity $content
+     * @return \XF\Api\Mvc\Reply\ApiResult|\XF\Mvc\Reply\Error
+     * @throws \XF\Mvc\Reply\Exception
+     */
     public function actionReport($contentType, Entity $content)
     {
         $this->assertRequiredApiInput(['message']);
@@ -26,6 +32,7 @@ class Report extends AbstractPlugin
 
     /**
      * @param \XF\Service\Report\Creator $creator
+     * @return void
      */
     protected function finalizeReportCreate(\XF\Service\Report\Creator $creator)
     {
@@ -35,7 +42,6 @@ class Report extends AbstractPlugin
     /**
      * @param string $contentType
      * @param Entity $content
-     *
      * @return \XF\Service\Report\Creator
      * @throws \XF\Mvc\Reply\Exception
      */

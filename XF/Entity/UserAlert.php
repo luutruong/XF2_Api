@@ -8,6 +8,12 @@ use Truonglv\Api\Repository\AlertQueue;
 
 class UserAlert extends XFCP_UserAlert
 {
+    /**
+     * @param \XF\Api\Result\EntityResult $result
+     * @param int $verbosity
+     * @param array $options
+     * @return void
+     */
     protected function setupApiResultData(
         \XF\Api\Result\EntityResult $result,
         $verbosity = self::VERBOSITY_NORMAL,
@@ -26,9 +32,9 @@ class UserAlert extends XFCP_UserAlert
 
         $result->is_unviewed = $this->isUnviewed();
         $html = $this->isAlertRenderable()
-            ? $this->render()
+            ? trim($this->render())
             : '';
-        if (!empty($html)) {
+        if ($html !== '') {
             // remove any html without content.
             $html = preg_replace('#<([\w]+)[^>]*></\1>#si', '', $html);
 
@@ -45,7 +51,7 @@ class UserAlert extends XFCP_UserAlert
             }
 
             preg_match('#<span class="reaction.*"[^>]*>.*<bdi>(.+)</bdi>.*</span>#si', $html, $reactionMatches);
-            if ($reactionMatches) {
+            if (count($reactionMatches) > 0) {
                 $html = str_replace($reactionMatches[0], $reactionMatches[1], $html);
             }
         }

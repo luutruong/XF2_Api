@@ -7,6 +7,9 @@ use XF\Option\AbstractOption;
 
 class ApiKey extends AbstractOption
 {
+    /**
+     * @var array
+     */
     public static $requiredScopes = [
         'attachment:delete',
         'attachment:read',
@@ -27,6 +30,11 @@ class ApiKey extends AbstractOption
         'user:write'
     ];
 
+    /**
+     * @param \XF\Entity\Option $option
+     * @param array $htmlParams
+     * @return string
+     */
     public static function renderOption(\XF\Entity\Option $option, array $htmlParams)
     {
         return self::getTemplate('admin:tapi_option_template_apiKey', $option, $htmlParams, [
@@ -35,12 +43,17 @@ class ApiKey extends AbstractOption
         ]);
     }
 
+    /**
+     * @param array $value
+     * @return bool
+     * @throws PrintableException
+     */
     public static function verifyOption(array &$value)
     {
-        if (!empty($value['apiKeyId'])) {
+        if (isset($value['apiKeyId'])) {
             /** @var \XF\Entity\ApiKey|null $apiKey */
             $apiKey = \XF::app()->em()->find('XF:ApiKey', $value['apiKeyId']);
-            if (empty($apiKey)) {
+            if ($apiKey === null) {
                 throw new PrintableException(\XF::phrase('tapi_requested_api_key_not_found'));
             }
 

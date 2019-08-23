@@ -14,12 +14,12 @@ class PasswordDecrypter
      */
     public static function decrypt($encrypted, $key)
     {
-        if (empty($key)) {
+        if (trim($key) === '') {
             throw new \InvalidArgumentException('Key must not empty!');
         }
 
         $encrypted = \base64_decode($encrypted, true);
-        if (empty($encrypted)) {
+        if ($encrypted === false) {
             throw new \InvalidArgumentException('Encrypted string must not empty!');
         }
 

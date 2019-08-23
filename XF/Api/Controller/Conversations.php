@@ -36,6 +36,9 @@ class Conversations extends XFCP_Conversations
         return parent::actionPost();
     }
 
+    /**
+     * @return \XF\Finder\ConversationUser
+     */
     protected function setupConversationFinder()
     {
         $finder = parent::setupConversationFinder();

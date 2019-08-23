@@ -26,6 +26,10 @@ class Thread extends XFCP_Thread
         ]);
     }
 
+    /**
+     * @param \XF\Entity\Thread $thread
+     * @return \XF\Finder\Post
+     */
     protected function setupPostFinder(\XF\Entity\Thread $thread)
     {
         $finder = parent::setupPostFinder($thread);

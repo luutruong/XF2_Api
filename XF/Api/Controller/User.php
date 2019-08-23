@@ -86,6 +86,10 @@ class User extends XFCP_User
         return $reportPlugin->actionReport('user', $user);
     }
 
+    /**
+     * @param \XF\Entity\User $user
+     * @return \XF\Finder\ProfilePost
+     */
     protected function setupProfilePostFinder(\XF\Entity\User $user)
     {
         $finder = parent::setupProfilePostFinder($user);

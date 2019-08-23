@@ -4,6 +4,12 @@ namespace Truonglv\Api\XF\Entity;
 
 class ConversationMaster extends XFCP_ConversationMaster
 {
+    /**
+     * @param \XF\Api\Result\EntityResult $result
+     * @param int $verbosity
+     * @param array $options
+     * @return void
+     */
     protected function setupApiResultData(
         \XF\Api\Result\EntityResult $result,
         $verbosity = \XF\Entity\ConversationMaster::VERBOSITY_NORMAL,

@@ -22,6 +22,9 @@ use XF\Mvc\Entity\Structure;
  */
 class Subscription extends Entity
 {
+    /**
+     * @return string
+     */
     public function getEntityLabel()
     {
         return $this->User ? $this->User->username : $this->username;

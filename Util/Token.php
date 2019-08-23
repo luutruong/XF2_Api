@@ -34,7 +34,7 @@ class Token
 
                 $entity->token = $token;
                 $entity->user_id = $userId;
-                $entity->expire_date = $ttl > 0 ? (\XF::$time + $ttl * 60) : 0;
+                $entity->expire_date = $ttl > 0 ? intval((\XF::$time + $ttl * 60)) : 0;
 
                 $entity->save();
 

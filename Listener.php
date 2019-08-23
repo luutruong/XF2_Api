@@ -5,11 +5,16 @@ namespace Truonglv\Api;
 use XF\Container;
 use XF\Entity\ApiKey;
 use Truonglv\Api\Entity\Log;
+use Truonglv\Api\Http\Request;
 use Truonglv\Api\Entity\AccessToken;
 use XF\Api\Controller\AbstractController;
 
 class Listener
 {
+    /**
+     * @param \XF\Api\App $app
+     * @return void
+     */
     public static function appApiSetup(\XF\Api\App $app)
     {
         $app->container()->set('request', function (Container $c) {
@@ -20,6 +25,13 @@ class Listener
         });
     }
 
+    /**
+     * @param \XF\Http\Request $request
+     * @param mixed $result
+     * @param mixed $error
+     * @param mixed $code
+     * @return void
+     */
     public static function appApiValidateRequest(\XF\Http\Request $request, &$result, &$error, &$code)
     {
         $app = \XF::app();
@@ -27,7 +39,7 @@ class Listener
         $apiKey = $request->getApiKey();
         $ourKey = $app->options()->tApi_apiKey;
 
-        if (!empty($ourKey)) {
+        if (trim($ourKey) !== '') {
             /** @var ApiKey|null $apiKeyEntity */
             $apiKeyEntity = $app->em()->find('XF:ApiKey', $ourKey['apiKeyId']);
             if (!$apiKeyEntity) {
@@ -63,9 +75,10 @@ class Listener
             return;
         }
 
-        /** @var Http\Request $request */
-        $request->setApiKey($apiKeyEntity->api_key);
-        $request->setApiUser(0);
+        /** @var Request $mixed */
+        $mixed = $request;
+        $mixed->setApiKey($apiKeyEntity->api_key);
+        $mixed->setApiUser(0);
 
         $accessToken = $request->getServer(App::HEADER_KEY_ACCESS_TOKEN);
 
@@ -78,21 +91,32 @@ class Listener
             ])
             ->fetchOne();
 
-        if ($token) {
-            $request->setApiUser($token->user_id);
+        if ($token !== null) {
+            $mixed->setApiUser($token->user_id);
         }
     }
 
+    /**
+     * @param \XF\Mvc\Controller $controller
+     * @param mixed $action
+     * @param \XF\Mvc\ParameterBag $params
+     * @return void
+     */
     public static function onControllerPreDispatch(\XF\Mvc\Controller $controller, $action, \XF\Mvc\ParameterBag $params)
     {
         if (!$controller instanceof AbstractController) {
             return;
         }
 
-        $appVersion = $controller->request()->getServer(App::HEADER_KEY_APP_VERSION);
-        App::$enableLogging = !empty($appVersion);
+        App::$enableLogging = App::isRequestFromApp($controller->request());
     }
 
+    /**
+     * @param \XF\Api\App $app
+     * @param \XF\Http\Response $response
+     * @throws \XF\PrintableException
+     * @return void
+     */
     public static function onAppApiComplete(\XF\Api\App $app, \XF\Http\Response &$response)
     {
         if (!App::$enableLogging) {
@@ -122,7 +146,7 @@ class Listener
         ];
 
         $log->response_code = $response->httpCode();
-        $log->response = $logRepo->prepareDataForLog($response->body());
+        $log->response = trim($logRepo->prepareDataForLog($response->body()));
 
         $log->save();
     }

@@ -15,9 +15,9 @@ class Unsubscribe extends AbstractJob
      */
     public function run($maxRunTime)
     {
-        if (empty($this->data['provider'])
-            || empty($this->data['provider_key'])
-            || empty($this->data['device_token'])
+        if (!isset($this->data['provider'])
+            || !isset($this->data['provider_key'])
+            || !isset($this->data['device_token'])
         ) {
             return $this->complete();
         }
@@ -35,16 +35,25 @@ class Unsubscribe extends AbstractJob
         return $this->complete();
     }
 
+    /**
+     * @return string
+     */
     public function getStatusMessage()
     {
         return 'Unsubscribe...';
     }
 
+    /**
+     * @return bool
+     */
     public function canCancel()
     {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function canTriggerByChoice()
     {
         return false;

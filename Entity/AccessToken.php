@@ -17,10 +17,13 @@ use XF\Mvc\Entity\Structure;
  */
 class AccessToken extends Entity
 {
+    /**
+     * @return void
+     */
     public function renewExpires()
     {
         $ttl = $this->app()->options()->tApi_accessTokenTtl;
-        if (!$ttl) {
+        if ($ttl <= 0) {
             $this->expire_date = 0;
         } else {
             $this->expire_date = \XF::$time + $ttl * 60;

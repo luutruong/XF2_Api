@@ -7,12 +7,15 @@ use XF\Repository\UserAlert;
 
 class Api extends XFCP_Api
 {
+    /**
+     * @return array
+     */
     protected function getVisitorResponseExtras()
     {
         $extra = parent::getVisitorResponseExtras();
 
         $request = \XF::app()->request();
-        if (!empty($request->getServer(App::HEADER_KEY_APP_VERSION))) {
+        if (App::isRequestFromApp($request)) {
             $visitor = \XF::visitor();
 
             /** @var UserAlert $alertRepo */

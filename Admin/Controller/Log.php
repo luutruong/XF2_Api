@@ -8,6 +8,12 @@ use Truonglv\Api\DevHelper\Admin\Controller\Entity;
 
 class Log extends Entity
 {
+    /**
+     * @param mixed $action
+     * @param ParameterBag $params
+     * @throws \XF\Mvc\Reply\Exception
+     * @return void
+     */
     protected function preDispatchController($action, ParameterBag $params)
     {
         parent::preDispatchController($action, $params);
@@ -34,6 +40,9 @@ class Log extends Entity
 
     public function getEntityExplain($entity)
     {
+        if (!$entity instanceof \Truonglv\Api\Entity\Log) {
+            return '';
+        }
         $language = $this->app()->language();
 
         return sprintf(
@@ -43,6 +52,10 @@ class Log extends Entity
         );
     }
 
+    /**
+     * @param Finder $finder
+     * @return void
+     */
     protected function doPrepareFinderForList(Finder $finder)
     {
         $finder->with('User');

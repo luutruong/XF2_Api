@@ -9,6 +9,9 @@ use XF\Entity\ConversationRecipient;
 
 class Conversation extends XFCP_Conversation
 {
+    /**
+     * @var null|ConversationUser
+     */
     private $tApiUserConvo = null;
 
     public function actionGet(ParameterBag $params)
@@ -53,6 +56,12 @@ class Conversation extends XFCP_Conversation
         return $this->rerouteController(__CLASS__, 'post-invite', $params);
     }
 
+    /**
+     * @param int $id
+     * @param array|string $with
+     * @return ConversationUser
+     * @throws \XF\Mvc\Reply\Exception
+     */
     protected function assertViewableUserConversation($id, $with = 'api')
     {
         $userConvo = parent::assertViewableUserConversation($id, $with);

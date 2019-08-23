@@ -18,9 +18,24 @@ abstract class AbstractPushNotification extends AbstractService
         $this->setupDefaults();
     }
 
+    /**
+     * @param ConversationMessage $message
+     * @param string $actionType
+     * @return void
+     */
     abstract public function sendConversationNotification(ConversationMessage $message, $actionType);
+
+    /**
+     * @param UserAlert $alert
+     * @return void
+     */
     abstract public function sendNotification(UserAlert $alert);
 
+    /**
+     * @param string $externalId
+     * @param string $pushToken
+     * @return void
+     */
     abstract public function unsubscribe($externalId, $pushToken);
 
     /**
@@ -31,10 +46,17 @@ abstract class AbstractPushNotification extends AbstractService
         return $this->app->finder('Truonglv\Api:Subscription');
     }
 
+    /**
+     * @return void
+     */
     protected function setupDefaults()
     {
     }
 
+    /**
+     * @param UserAlert $alert
+     * @return string
+     */
     protected function getAlertContentBody(UserAlert $alert)
     {
         /** @var \Truonglv\Api\XF\Service\Alert\Pusher $pusher */
@@ -43,6 +65,12 @@ abstract class AbstractPushNotification extends AbstractService
         return $pusher->tApiGetNotificationBody();
     }
 
+    /**
+     * @param User $receiver
+     * @param ConversationMessage $message
+     * @param string $actionType
+     * @return string
+     */
     protected function getConversationPushContentBody(User $receiver, ConversationMessage $message, $actionType)
     {
         /** @var Pusher $pusher */
@@ -51,6 +79,16 @@ abstract class AbstractPushNotification extends AbstractService
         return $pusher->tApiGetNotificationBody();
     }
 
+    /**
+     * @param string $method
+     * @param string $endPoint
+     * @param array $payload
+     * @param int $responseCode
+     * @param mixed $response
+     * @param array $extra
+     * @throws \XF\PrintableException
+     * @return void
+     */
     protected function logRequest($method, $endPoint, array $payload, $responseCode, $response, array $extra = [])
     {
         $extra = array_replace([

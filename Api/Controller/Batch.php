@@ -10,7 +10,7 @@ class Batch extends AbstractController
 {
     public function actionPost()
     {
-        $input = file_get_contents('php://input');
+        $input = (string) file_get_contents('php://input');
         $json = json_decode($input, true);
 
         if (!is_array($json)) {
@@ -28,9 +28,13 @@ class Batch extends AbstractController
         return $this->apiResult($results);
     }
 
+    /**
+     * @param array $batch
+     * @return array
+     */
     protected function runInternalRequest(array $batch)
     {
-        if (empty($batch['uri'])) {
+        if (!isset($batch['uri'])) {
             return null;
         }
 
@@ -46,9 +50,12 @@ class Batch extends AbstractController
 
         $response = $dispatcher->render($reply, 'api');
 
-        return json_decode($response->body(), true);
+        return (array) json_decode($response->body(), true);
     }
 
+    /**
+     * @return array
+     */
     protected function getDefaultBatchRequest()
     {
         return [

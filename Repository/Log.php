@@ -9,6 +9,10 @@ class Log extends Repository
     const MAX_ARRAY_ELEMENTS = 10;
     const MAX_STRING_LENGTH = 200;
 
+    /**
+     * @param string $data
+     * @return string
+     */
     public function prepareDataForLog($data)
     {
         $json = json_decode($data, true);
@@ -25,9 +29,13 @@ class Log extends Repository
             }
         }
 
-        return json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return (string) json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
     protected function prepareValueForLogging($value)
     {
         if (is_string($value)) {
@@ -41,6 +49,11 @@ class Log extends Repository
         return $value;
     }
 
+    /**
+     * @param array $data
+     * @param int $depth
+     * @return array
+     */
     protected function prepareArrayForLogging(array $data, $depth = 1)
     {
         if ($depth > 3) {
@@ -65,7 +78,7 @@ class Log extends Repository
             }
         }
 
-        if ($arrayStripped) {
+        if ($arrayStripped > 0) {
             $results['(...)'] = '(Stripped ' . $arrayStripped . ' elements)';
         }
 

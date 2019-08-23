@@ -11,17 +11,25 @@ class Formatter extends XFCP_Formatter
      */
     private $tApiDisableSmilieWithSpriteParams = false;
 
+    /**
+     * @param bool $bool
+     * @return void
+     */
     public function setTApiDisableSmilieWithSpriteParams($bool)
     {
         $this->tApiDisableSmilieWithSpriteParams = $bool;
     }
 
+    /**
+     * @param mixed $text
+     * @return string|string[]|null
+     */
     public function replaceSmiliesHtml($text)
     {
         if ($this->tApiDisableSmilieWithSpriteParams) {
             $this->smilieTranslate = array_filter($this->smilieTranslate, function ($value) {
                 preg_match('/\0(\d+)\0/', $value, $matches);
-                if (empty($matches)) {
+                if (count($matches) === 0) {
                     return false;
                 }
 
@@ -31,7 +39,7 @@ class Formatter extends XFCP_Formatter
 
                 $smilieRef = $this->smilieReverse[$matches[1]];
 
-                return empty($smilieRef['sprite_params']);
+                return count($smilieRef['sprite_params']) === 0;
             });
         }
 

@@ -26,6 +26,9 @@ class Setup extends AbstractSetup
         $this->doDropTables($this->getTables());
     }
 
+    /**
+     * @return array
+     */
     protected function getTables1()
     {
         $tables = [];

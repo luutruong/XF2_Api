@@ -7,6 +7,12 @@ use XF\Mvc\Entity\Structure;
 
 class Post extends XFCP_Post
 {
+    /**
+     * @param \XF\Api\Result\EntityResult $result
+     * @param int $verbosity
+     * @param array $options
+     * @return void
+     */
     protected function setupApiResultData(
         \XF\Api\Result\EntityResult $result,
         $verbosity = \XF\Entity\Post::VERBOSITY_NORMAL,

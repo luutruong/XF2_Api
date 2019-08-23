@@ -22,6 +22,9 @@ use XF\Mvc\Entity\Structure;
  */
 class Log extends Entity
 {
+    /**
+     * @return string
+     */
     public function getEntityLabel()
     {
         return $this->method . ' - ' . $this->end_point;

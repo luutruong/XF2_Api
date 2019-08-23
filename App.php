@@ -15,16 +15,29 @@ class App
 
     const PARAM_KEY_INCLUDE_MESSAGE_HTML = 'include_message_html';
 
+    /**
+     * @var int
+     */
     public static $followingPerPage = 20;
+    /**
+     * @var bool
+     */
     public static $enableLogging = false;
 
+    /**
+     * @param Request|null $request
+     * @return bool
+     */
     public static function isRequestFromApp(Request $request = null)
     {
         $request = $request ?: \XF::app()->request();
 
-        return !empty($request->getServer(self::HEADER_KEY_APP_VERSION));
+        return trim($request->getServer(self::HEADER_KEY_APP_VERSION)) !== '';
     }
 
+    /**
+     * @return array
+     */
     public static function getSupportAlertContentTypes()
     {
         return [
@@ -36,19 +49,29 @@ class App
         ];
     }
 
+    /**
+     * @param Attachment $attachment
+     * @return string
+     */
     public static function generateTokenForViewingAttachment(Attachment $attachment)
     {
         $app = \XF::app();
         $apiKey = $app->request()->getServer(self::HEADER_KEY_API_KEY);
 
         return \XF::$time . '.' . md5(
-                \XF::$time
+            \XF::$time
                 . $apiKey
                 . $attachment->attachment_id
                 . $app->config('globalSalt')
             );
     }
 
+    /**
+     * @param EntityResult $result
+     * @param Entity $entity
+     * @param string $messageKey
+     * @return void
+     */
     public static function includeMessageHtmlIfNeeded(EntityResult $result, Entity $entity, $messageKey = 'message')
     {
         $isInclude = $entity->app()->request()->filter(self::PARAM_KEY_INCLUDE_MESSAGE_HTML, 'bool');

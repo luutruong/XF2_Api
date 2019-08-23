@@ -9,7 +9,7 @@ class Me extends XFCP_Me
 {
     public function actionGet()
     {
-        if (!\XF::visitor()->user_id) {
+        if (\XF::visitor()->user_id <= 0) {
             return $this->notFound();
         }
 
@@ -19,7 +19,8 @@ class Me extends XFCP_Me
     public function actionGetIgnoring()
     {
         $visitor = \XF::visitor();
-        if ($ignored = $visitor->Profile->ignored) {
+        $ignored = $visitor->Profile->ignored;
+        if (count($ignored) > 0) {
             $users = $this->finder('XF:User')
                 ->where('user_id', array_keys($ignored))
                 ->order('username')

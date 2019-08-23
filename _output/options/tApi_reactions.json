@@ -1,0 +1,14 @@
+{
+    "edit_format": "callback",
+    "edit_format_params": "Truonglv\\Api\\Option\\Reaction::renderOption",
+    "data_type": "array",
+    "sub_options": [
+        "*"
+    ],
+    "validation_class": "Truonglv\\Api\\Option\\Reaction",
+    "validation_method": "verifyOption",
+    "default_value": "[{\"reactionId\":1,\"imageUrl\":\"styles\\/default\\/Truonglv\\/Api\\/like.png\"},{\"reactionId\":2,\"imageUrl\":\"styles\\/default\\/Truonglv\\/Api\\/love.png\"},{\"reactionId\":3,\"imageUrl\":\"styles\\/default\\/Truonglv\\/Api\\/haha.png\"},{\"reactionId\":4,\"imageUrl\":\"styles\\/default\\/Truonglv\\/Api\\/wow.png\"},{\"reactionId\":5,\"imageUrl\":\"styles\\/default\\/Truonglv\\/Api\\/sad.png\"},{\"reactionId\":6,\"imageUrl\":\"styles\\/default\\/Truonglv\\/Api\\/angry.png\"}]",
+    "relations": {
+        "tl_Api": 220
+    }
+}

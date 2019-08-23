@@ -7,14 +7,25 @@ use XF\Mvc\Entity\ArrayCollection;
 
 class AlertQueue extends Repository
 {
+    /**
+     * @param string $contentType
+     * @param int $contentId
+     * @param array $payload
+     * @param null|int $queueDate
+     * @return void
+     */
     public static function queue($contentType, $contentId, array $payload = [], $queueDate = null)
     {
         /** @var static $repo */
         $repo = \XF::app()->repository('Truonglv\Api:AlertQueue');
 
-        return $repo->insertQueue($contentType, $contentId, $payload, $queueDate);
+        $repo->insertQueue($contentType, $contentId, $payload, $queueDate);
     }
 
+    /**
+     * @param ArrayCollection $queues
+     * @return void
+     */
     public function addContentIntoQueues(ArrayCollection $queues)
     {
         if (!$queues->count()) {
@@ -39,14 +50,25 @@ class AlertQueue extends Repository
         /** @var \Truonglv\Api\Entity\AlertQueue $queue */
         foreach ($queues as $queue) {
             $content = null;
-            if (isset($contents[$queue->content_type][$queue->content_id])) {
-                $content = $contents[$queue->content_type][$queue->content_id];
+            $entities = isset($contents[$queue->content_type])
+                ? $contents[$queue->content_type]
+                : [];
+            if (isset($entities[$queue->content_id])) {
+                $content = $entities[$queue->content_id];
             }
 
             $queue->setContent($content);
         }
     }
 
+    /**
+     * @param string $contentType
+     * @param int $contentId
+     * @param array $payload
+     * @param null|int $queueDate
+     * @throws \XF\PrintableException
+     * @return void
+     */
     public function insertQueue($contentType, $contentId, array $payload = [], $queueDate = null)
     {
         if (!$this->app()->options()->tApi_delayPushNotifications) {

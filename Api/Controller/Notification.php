@@ -23,7 +23,7 @@ class Notification extends AbstractController
             return $this->noPermission();
         }
 
-        if (!$alert->view_date) {
+        if ($alert->view_date <= 0) {
             $alert->view_date = \XF::$time;
             $alert->save();
         }

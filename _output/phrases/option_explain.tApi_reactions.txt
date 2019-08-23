@@ -1,0 +1,6 @@
+In the app only support maximum 6 reactions for display. The reaction image must following there rules:
+<ol>
+<li>Image must be format PNG</li>
+<li>Image dimensions must be 64x64 pixels</li>
+<li>Image must not be sprite image</li>
+</ol>

@@ -17,11 +17,18 @@ use XF\Mvc\Entity\Structure;
  */
 class AlertQueue extends Entity
 {
+    /**
+     * @param Entity|null $content
+     * @return void
+     */
     public function setContent(Entity $content = null)
     {
         $this->_getterCache['Content'] = $content;
     }
 
+    /**
+     * @return Entity|null
+     */
     public function getContent()
     {
         if (array_key_exists('Content', $this->_getterCache)) {

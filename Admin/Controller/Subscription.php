@@ -20,6 +20,10 @@ class Subscription extends Entity
         );
     }
 
+    /**
+     * @param Finder $finder
+     * @return void
+     */
     protected function doPrepareFinderForList(Finder $finder)
     {
         $finder->with('User');
@@ -39,7 +43,7 @@ class Subscription extends Entity
             '%s (%s) - %s',
             $entity->get('provider'),
             $entity->get('provider_key'),
-            $language->dateTime($entity->subscribed_date)
+            $language->dateTime($entity->get('subscribed_date'))
         );
     }
 

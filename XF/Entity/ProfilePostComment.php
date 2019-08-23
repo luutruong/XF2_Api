@@ -6,6 +6,12 @@ use Truonglv\Api\App;
 
 class ProfilePostComment extends XFCP_ProfilePostComment
 {
+    /**
+     * @param \XF\Api\Result\EntityResult $result
+     * @param int $verbosity
+     * @param array $options
+     * @return void
+     */
     protected function setupApiResultData(
         \XF\Api\Result\EntityResult $result,
         $verbosity = \XF\Entity\ProfilePostComment::VERBOSITY_NORMAL,

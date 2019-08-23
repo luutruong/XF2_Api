@@ -13,12 +13,17 @@ class EmojiFormatter extends XFCP_EmojiFormatter
 
     /**
      * @param bool $tApiDisableFormatToImage
+     * @return void
      */
     public function setTApiDisableFormatToImage(bool $tApiDisableFormatToImage)
     {
         $this->tApiDisableFormatToImage = $tApiDisableFormatToImage;
     }
 
+    /**
+     * @param mixed $string
+     * @return string|string[]|null
+     */
     public function formatEmojiToImage($string)
     {
         if ($this->tApiDisableFormatToImage) {
@@ -28,6 +33,10 @@ class EmojiFormatter extends XFCP_EmojiFormatter
         return parent::formatEmojiToImage($string);
     }
 
+    /**
+     * @param mixed $string
+     * @return string|string[]|null
+     */
     public function formatShortnameToImage($string)
     {
         if ($this->tApiDisableFormatToImage) {

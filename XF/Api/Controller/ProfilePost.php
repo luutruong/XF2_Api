@@ -21,6 +21,10 @@ class ProfilePost extends XFCP_ProfilePost
         return $reportPlugin->actionReport('profile_post', $profilePost);
     }
 
+    /**
+     * @param \XF\Entity\ProfilePost $profilePost
+     * @return \XF\Finder\ProfilePostComment
+     */
     protected function setupCommentsFinder(\XF\Entity\ProfilePost $profilePost)
     {
         $finder = parent::setupCommentsFinder($profilePost);

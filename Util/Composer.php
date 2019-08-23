@@ -8,6 +8,11 @@ namespace Truonglv\Api\Util;
 
 class Composer
 {
+    /**
+     * @param \XF\App $app
+     * @param bool $prepend
+     * @return void
+     */
     public static function autoloadNamespaces(\XF\App $app, $prepend = false)
     {
         $namespaces = self::getAddOnDir() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR . 'autoload_namespaces.php';
@@ -23,6 +28,11 @@ class Composer
         }
     }
 
+    /**
+     * @param \XF\App $app
+     * @param bool $prepend
+     * @return void
+     */
     public static function autoloadPsr4(\XF\App $app, $prepend = false)
     {
         $psr4 = self::getAddOnDir() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR . 'autoload_psr4.php';
@@ -38,6 +48,10 @@ class Composer
         }
     }
 
+    /**
+     * @param \XF\App $app
+     * @return void
+     */
     public static function autoloadClassmap(\XF\App $app)
     {
         $classmap = self::getAddOnDir() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR . 'autoload_classmap.php';
@@ -53,6 +67,10 @@ class Composer
         }
     }
 
+    /**
+     * @param \XF\App $app
+     * @return void
+     */
     public static function autoloadFiles(\XF\App $app)
     {
         $files = self::getAddOnDir() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR . 'autoload_files.php';
@@ -62,7 +80,7 @@ class Composer
             $includeFiles = require $files;
 
             foreach ($includeFiles as $fileIdentifier => $file) {
-                if (empty($GLOBALS['__composer_autoload_files'][$fileIdentifier])) {
+                if (!isset($GLOBALS['__composer_autoload_files'][$fileIdentifier])) {
                     require $file;
 
                     $GLOBALS['__composer_autoload_files'][$fileIdentifier] = true;
@@ -71,6 +89,9 @@ class Composer
         }
     }
 
+    /**
+     * @return string
+     */
     private static function getAddOnDir()
     {
         return \XF::getAddOnDirectory() . DIRECTORY_SEPARATOR . 'Truonglv/Api';

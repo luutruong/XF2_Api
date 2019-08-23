@@ -12,6 +12,11 @@ namespace Truonglv\Api\DevHelper;
  */
 trait SetupTrait
 {
+    /**
+     * @param array $tables
+     *
+     * @return void
+     */
     protected function doCreateTables(array $tables)
     {
         $sm = \XF::db()->getSchemaManager();
@@ -21,6 +26,11 @@ trait SetupTrait
         }
     }
 
+    /**
+     * @param array $alters
+     *
+     * @return void
+     */
     protected function doAlterTables(array $alters)
     {
         $sm = \XF::db()->getSchemaManager();
@@ -41,6 +51,11 @@ trait SetupTrait
         }
     }
 
+    /**
+     * @param array $tables
+     *
+     * @return void
+     */
     protected function doDropTables(array $tables)
     {
         $sm = \XF::db()->getSchemaManager();
@@ -49,6 +64,11 @@ trait SetupTrait
         }
     }
 
+    /**
+     * @param array $alters
+     *
+     * @return void
+     */
     protected function doDropColumns(array $alters)
     {
         $sm = \XF::db()->getSchemaManager();

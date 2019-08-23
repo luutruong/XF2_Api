@@ -83,6 +83,12 @@
         "version_string": "1.0.5",
         "hash": "03be12f5a6ed74b612b3a47e03e32b86"
     },
+    "option.tApi_reactions.txt": {
+        "global_cache": false,
+        "version_id": 1010100,
+        "version_string": "1.1.1",
+        "hash": "e3fecd9ec868c8c581c3a4b477f15a62"
+    },
     "option_explain.tApi_accessTokenTtl.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -136,6 +142,12 @@
         "version_id": 1000500,
         "version_string": "1.0.5",
         "hash": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "option_explain.tApi_reactions.txt": {
+        "global_cache": false,
+        "version_id": 1010100,
+        "version_string": "1.1.1",
+        "hash": "b57bc9a7b66d79fdae674f2bf21dd315"
     },
     "option_group.tl_Api.txt": {
         "global_cache": false,
