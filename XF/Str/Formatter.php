@@ -39,7 +39,7 @@ class Formatter extends XFCP_Formatter
 
                 $smilieRef = $this->smilieReverse[$matches[1]];
 
-                return count($smilieRef['sprite_params']) === 0;
+                return !isset($smilieRef['sprite_params']) || count($smilieRef['sprite_params']) === 0;
             });
         }
 
