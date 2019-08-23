@@ -62,8 +62,8 @@ class App extends AbstractController
         $perPage = $this->options()->discussionsPerPage;
 
         if ($cache) {
-            $threadIds = (array) $cache->fetch('tApi_NewsFeeds_threadIds');
-            if (count($threadIds) === 0) {
+            $threadIds = $cache->fetch('tApi_NewsFeeds_threadIds');
+            if ($threadIds === false) {
                 $this->applyNewsFeedsFilter($finder);
                 $finder->limit($this->options()->maximumSearchResults);
 
