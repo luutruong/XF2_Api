@@ -39,7 +39,7 @@ class Listener
         $apiKey = $request->getApiKey();
         $ourKey = $app->options()->tApi_apiKey;
 
-        if (trim($ourKey) !== '') {
+        if (count($ourKey) > 0) {
             /** @var ApiKey|null $apiKeyEntity */
             $apiKeyEntity = $app->em()->find('XF:ApiKey', $ourKey['apiKeyId']);
             if (!$apiKeyEntity) {
