@@ -7,14 +7,14 @@
         <xf:foreach loop="{{ range(0, $maxReactions) }}" value="$index">
             <li style="margin-bottom: 6px">
                 <div class="inputGroup">
-                    <xf:select name="{$inputName}[$index][reactionId]"
+                    <xf:select name="{$inputName}[{$index}][reactionId]"
                                value="{$option.option_value.{$index}.reactionId}">
                         <xf:option value="0"></xf:option>
                         <xf:foreach loop="$reactions" value="$reaction">
                             <xf:option value="{$reaction.reaction_id}">{$reaction.title}</xf:option>
                         </xf:foreach>
                     </xf:select>
-                    <xf:textbox name="{$inputName}[$index][imageUrl]"
+                    <xf:textbox name="{$inputName}[{$index}][imageUrl]"
                                 value="{$option.option_value.{$index}.imageUrl}"/>
                 </div>
             </li>

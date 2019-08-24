@@ -8,6 +8,7 @@ use XF\Option\AbstractOption;
 class Reaction extends AbstractOption
 {
     const MAXIMUM_REACTIONS = 6;
+    const DEFAULT_REACTION_ID = 1;
 
     /**
      * @param \XF\Entity\Option $option
@@ -33,6 +34,21 @@ class Reaction extends AbstractOption
     {
         $output = [];
         $reactions = self::getReactions();
+
+        $defaultReactionFound = false;
+        foreach ($values as $value) {
+            if ($value['reactionId'] == self::DEFAULT_REACTION_ID) {
+                $defaultReactionFound = true;
+
+                break;
+            }
+        }
+
+        if (!$defaultReactionFound) {
+            throw new PrintableException(\XF::phrase('tapi_reaction_x_are_required', [
+                'title' => $reactions[self::DEFAULT_REACTION_ID]->title
+            ]));
+        }
 
         foreach ($values as $index => $value) {
             $value = array_replace([

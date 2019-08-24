@@ -233,6 +233,12 @@
         "version_string": "1.0.3",
         "hash": "42d61b587a0123390822777d84e0f6bd"
     },
+    "tapi_reaction_x_are_required.txt": {
+        "global_cache": false,
+        "version_id": 1010100,
+        "version_string": "1.1.1",
+        "hash": "6857f72460eecf1336a15418acc7b29d"
+    },
     "tapi_requested_api_key_not_found.txt": {
         "global_cache": false,
         "version_id": 1000800,
