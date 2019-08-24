@@ -17,6 +17,11 @@ class Search extends AbstractController
             return $this->message(\XF::phrase('no_results_found'));
         }
 
+        $keywords = $this->filter('keywords', 'str');
+        if (strlen($keywords) <= $this->options()->searchMinWordLength) {
+            return $this->message(\XF::phrase('no_results_found'));
+        }
+
         $searchRequest = new \XF\Http\Request($this->app->inputFilterer(), [], [], []);
 
         $searcher = $this->app()->search();
@@ -28,7 +33,6 @@ class Search extends AbstractController
         $query->forTypeHandler($typeHandler, $searchRequest, $urlConstraints);
         $query->withGroupedResults();
 
-        $keywords = $this->filter('keywords', 'str');
         $query->withKeywords($keywords, false);
         $query->orderedBy('date');
 
