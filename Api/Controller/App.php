@@ -52,6 +52,7 @@ class App extends AbstractController
         return $this->apiResult($data);
     }
 
+    /** @noinspection PhpUnused */
     public function actionGetNewsFeeds()
     {
         $cache = $this->app()->cache();
@@ -101,16 +102,19 @@ class App extends AbstractController
         return $this->apiResult($data);
     }
 
+    /** @noinspection PhpUnused */
     public function actionGetTerms()
     {
         return $this->handleHelpPage('terms');
     }
 
+    /** @noinspection PhpUnused */
     public function actionGetPrivacy()
     {
         return $this->handleHelpPage('privacy_policy');
     }
 
+    /** @noinspection PhpUnused */
     public function actionPostSubscriptions()
     {
         $this->assertRequiredApiInput([
@@ -151,6 +155,7 @@ class App extends AbstractController
         return $this->apiSuccess();
     }
 
+    /** @noinspection PhpUnused */
     public function actionPostRegister()
     {
         $this->assertRequiredApiInput([
@@ -195,6 +200,7 @@ class App extends AbstractController
         ]);
     }
 
+    /** @noinspection PhpUnused */
     public function actionPostAuth()
     {
         $this->assertRequiredApiInput(['username', 'password']);
@@ -259,6 +265,7 @@ class App extends AbstractController
         ]);
     }
 
+    /** @noinspection PhpUnused */
     public function actionPostRefreshToken()
     {
         $this->assertRequiredApiInput(['token']);
