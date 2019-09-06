@@ -27,10 +27,12 @@ class Thread extends XFCP_Thread
 
             $result->can_ignore = $this->User && $visitor->canIgnoreUser($this->User);
             $result->is_ignored = $visitor->isIgnoring($this->user_id);
+            $result->can_upload_attachments = $this->Forum->canUploadAndManageAttachments();
         } else {
             $result->can_report = false;
             $result->can_ignore = false;
             $result->is_ignored = false;
+            $result->can_upload_attachments = false;
         }
     }
 }

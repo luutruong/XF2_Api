@@ -19,6 +19,11 @@ class User extends XFCP_User
 
         $result->can_start_converse = $this->canStartConversation();
         $result->can_be_reported = $this->canBeReported();
+        if ($this->user_id === \XF::visitor()->user_id) {
+            $result->can_upload_avatar = $this->canUploadAvatar();
+        } else {
+            $result->can_upload_avatar = false;
+        }
 
         $result->ignoring = $this->Profile->ignored;
         $result->following = $this->Profile->following;
