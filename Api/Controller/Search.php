@@ -2,9 +2,9 @@
 
 namespace Truonglv\Api\Api\Controller;
 
-use XF\Api\Controller\AbstractController;
-use XF\Mvc\Entity\Entity;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Entity\Entity;
+use XF\Api\Controller\AbstractController;
 
 class Search extends AbstractController
 {
