@@ -27,5 +27,16 @@ class User extends XFCP_User
 
         $result->ignoring = $this->Profile->ignored;
         $result->following = $this->Profile->following;
+
+        $avatarUrls = [];
+        $baseUrl = rtrim($this->app()->options()->boardUrl, '/');
+        foreach ($result->avatar_urls as $size => $url) {
+            if (substr($url, 0, 1) === '/') {
+                $url = $baseUrl . $url;
+            }
+
+            $avatarUrls[$size] = $url;
+        }
+        $result->avatar_urls = $avatarUrls;
     }
 }
