@@ -2,10 +2,19 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use Truonglv\Api\App;
 use XF\Repository\User;
 
 class Conversations extends XFCP_Conversations
 {
+    public function actionGet()
+    {
+        $this->app()->request()->set('tapi_last_message', true);
+        $this->app()->request()->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
+
+        return parent::actionGet();
+    }
+
     public function actionPost()
     {
         if ($this->request()->exists('recipients')) {
@@ -43,7 +52,10 @@ class Conversations extends XFCP_Conversations
     {
         $finder = parent::setupConversationFinder();
 
-        $finder->with('Master.Users|' . \XF::visitor()->user_id);
+        if (App::isRequestFromApp()) {
+            $finder->with('Master.Users|' . \XF::visitor()->user_id);
+            $finder->with('Master.LastMessage');
+        }
 
         return $finder;
     }

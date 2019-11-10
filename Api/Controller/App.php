@@ -90,9 +90,14 @@ class App extends AbstractController
             $threads = $finder->fetch();
         }
 
+        $this->request()->set(\Truonglv\Api\App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
+
         $threads = $threads
             ->filterViewable()
-            ->toApiResults(Entity::VERBOSITY_VERBOSE);
+            ->toApiResults(Entity::VERBOSITY_VERBOSE, [
+                'tapi_first_post' => true,
+                'tapi_last_poster' => true
+            ]);
 
         $data = [
             'threads' => $threads,
@@ -350,6 +355,8 @@ class App extends AbstractController
     protected function applyNewsFeedsFilter(Thread $finder)
     {
         $finder->with('api');
+        $finder->with('FirstPost');
+        $finder->with('LastPoster');
 
         $finder->where('discussion_state', 'visible');
         $finder->where('discussion_type', '<>', 'redirect');

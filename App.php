@@ -74,7 +74,7 @@ class App
      */
     public static function includeMessageHtmlIfNeeded(EntityResult $result, Entity $entity, $messageKey = 'message')
     {
-        $isInclude = $entity->app()->request()->filter(self::PARAM_KEY_INCLUDE_MESSAGE_HTML, 'bool');
+        $isInclude = (bool) $entity->app()->request()->filter(self::PARAM_KEY_INCLUDE_MESSAGE_HTML, 'bool');
         if (!$isInclude) {
             return;
         }
@@ -85,6 +85,17 @@ class App
             'Truonglv\Api:SimpleHtml',
             'tapi:html',
             $entity
+        );
+
+        $stringFomatter = $entity->app()->stringFormatter();
+        $plainText = $stringFomatter->stripBbCode($entity->get($messageKey), [
+            'stripQuote' => true
+        ]);
+
+        $result->tapi_message_plain_text = $plainText;
+        $result->tapi_message_plain_text_preview = $stringFomatter->wholeWordTrim(
+            $plainText,
+            $entity->app()->options()->discussionRssContentLength
         );
     }
 }

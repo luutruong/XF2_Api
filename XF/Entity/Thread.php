@@ -34,5 +34,12 @@ class Thread extends XFCP_Thread
             $result->is_ignored = false;
             $result->can_upload_attachments = false;
         }
+
+        if (isset($options['tapi_first_post'])) {
+            $result->includeRelation('FirstPost', $verbosity, $options);
+        }
+        if (isset($options['tapi_last_poster'])) {
+            $result->includeRelation('LastPoster', $verbosity, $options);
+        }
     }
 }
