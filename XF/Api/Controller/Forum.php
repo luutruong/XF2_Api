@@ -28,7 +28,6 @@ class Forum extends XFCP_Forum
 
         if (App::isRequestFromApp()) {
             $finder->with('FirstPost');
-            $finder->with('LastPoster');
         }
 
         return $finder;
@@ -45,7 +44,6 @@ class Forum extends XFCP_Forum
 
         if (App::isRequestFromApp()) {
             $result->includeRelation('FirstPost');
-            $result->includeRelation('LastPoster');
         }
     }
 }

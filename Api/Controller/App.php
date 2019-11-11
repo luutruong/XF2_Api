@@ -35,54 +35,90 @@ class App extends AbstractController
     /** @noinspection PhpUnused */
     public function actionGetNewsFeeds()
     {
-        $cache = $this->app()->cache();
         /** @var Thread $finder */
         $finder = $this->finder('XF:Thread');
 
         $page = $this->filterPage();
         $perPage = $this->options()->discussionsPerPage;
 
-        if ($cache) {
-            $threadIds = $cache->fetch('tApi_NewsFeeds_threadIds');
-            if ($threadIds === false) {
-                $this->applyNewsFeedsFilter($finder);
-                $finder->limit($this->options()->maximumSearchResults);
+        $filters = $this->getNewsFeedsFilters();
+        $queryHash = md5('tApi_NewsFeeds_threadIds' . __METHOD__ . strval(json_encode($filters)));
 
-                $threads = $finder->fetchColumns('thread_id');
-                $threadIds = array_column($threads, 'thread_id');
+        // 5 minutes
+        $ttl = 300;
 
-                // cache for 30 minutes
-                $cache->save('tApi_NewsFeeds_threadIds', $threadIds, 30 * 60);
+        /** @var \XF\Entity\Search|null $search */
+        $search = $this->em()->findOne('XF:Search', [
+            'query_hash' => $queryHash
+        ]);
+        if ($search !== null) {
+            if (($search->search_date + $ttl) <= \XF::$time || $search->result_count === 0) {
+                $search->delete();
+                $search = null;
+            }
+        }
+
+        if ($search === null) {
+            $this->applyNewsFeedsFilter($finder, $filters);
+            $finder->limit($this->options()->maximumSearchResults);
+
+            $results = $finder->fetchColumns('thread_id');
+            $searchResults = [];
+            foreach ($results as $result) {
+                $searchResults['thread-' . $result['thread_id']] = [
+                    'thread',
+                    $result['thread_id']
+                ];
             }
 
-            $total = count($threadIds);
+            if (count($searchResults) === 0) {
+                return $this->apiResult([
+                    'threads' => []
+                ]);
+            }
 
-            $threadIds = array_slice($threadIds, ($page - 1) * $perPage, $perPage, true);
+            /** @var \XF\Entity\Search $search */
+            $search = $this->em()->create('XF:Search');
+            $search->search_type = 'thread';
+            $search->query_hash = $queryHash;
+            $search->search_results = $searchResults;
+            $search->result_count = count($searchResults);
+            $search->search_date = \XF::$time;
+            $search->user_id = 0;
+            $search->search_query = 'tApi_NewsFeeds_threadIds';
+            $search->search_order = 'date';
+            $search->search_grouping = 1;
+            $search->search_constraints = [];
+
+            $search->save();
+        }
+
+        $threadIds = [];
+        $data = [
+            'threads' => []
+        ];
+
+        foreach ($search->search_results as $result) {
+            $threadIds[] = $result[1];
+        }
+
+        $threadIds = array_slice($threadIds, ($page - 1) * $perPage, $perPage, true);
+        if (count($threadIds) > 0) {
+            $this->request()->set(\Truonglv\Api\App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
+
             $threads = $finder->whereIds($threadIds)
                 ->with('api')
                 ->with('full')
                 ->fetch()
                 ->sortByList($threadIds);
-        } else {
-            $this->applyNewsFeedsFilter($finder);
 
-            $total = $finder->total();
-            $threads = $finder->fetch();
-        }
-
-        $this->request()->set(\Truonglv\Api\App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
-
-        $threads = $threads
-            ->filterViewable()
-            ->toApiResults(Entity::VERBOSITY_VERBOSE, [
-                'tapi_first_post' => true,
-                'tapi_last_poster' => true
+            $data['threads'] = $threads->filterViewable()->toApiResults(Entity::VERBOSITY_VERBOSE, [
+                'tapi_first_post' => true
             ]);
-
-        $data = [
-            'threads' => $threads,
-            'pagination' => $this->getPaginationData($threads, $page, $perPage, $total)
-        ];
+            if ($search->result_count > $perPage) {
+                $data['pagination'] = $this->getPaginationData($threads, $page, $perPage, $search->result_count);
+            }
+        }
 
         return $this->apiResult($data);
     }
@@ -329,19 +365,67 @@ class App extends AbstractController
     }
 
     /**
+     * @return array
+     */
+    protected function getNewsFeedsFilters()
+    {
+        $filters = [];
+
+        $input = $this->filter([
+            'order' => 'str'
+        ]);
+
+        $availableOrders = $this->getNewsFeedsAvailableSorts();
+        if (isset($availableOrders[$input['order']])) {
+            $order = $availableOrders[$input['order']];
+
+            if ($order instanceof \Closure) {
+                $filters['orderCallback'] = $order;
+            } else {
+                $filters['order'] = $order[0];
+                $filters['direction'] = $order[1];
+            }
+        }
+
+        return $filters;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getNewsFeedsAvailableSorts()
+    {
+        return [
+            'new_threads' => ['post_date', 'DESC'],
+            'recent_threads' => ['last_post_date', 'DESC'],
+            'trending' => function (Thread $finder) {
+                $finder->order('view_count', 'DESC');
+                // only fetch threads in 7 days!
+                $finder->where('post_date', '>=', \XF::$time - 7 * 86400);
+            }
+        ];
+    }
+
+    /**
      * @param Thread $finder
+     * @param array $filters
      * @return void
      */
-    protected function applyNewsFeedsFilter(Thread $finder)
+    protected function applyNewsFeedsFilter(Thread $finder, array $filters)
     {
         $finder->with('api');
         $finder->with('FirstPost');
-        $finder->with('LastPoster');
 
         $finder->where('discussion_state', 'visible');
         $finder->where('discussion_type', '<>', 'redirect');
 
-        $finder->order('last_post_date', 'DESC');
-        $finder->indexHint('FORCE', 'last_post_date');
+        if (isset($filters['order']) && isset($filters['direction'])) {
+            $finder->order($filters['order'], $filters['direction']);
+        } elseif (isset($filters['orderCallback'])) {
+            call_user_func($filters['orderCallback'], $finder);
+        } else {
+            $finder->order('last_post_date', 'DESC');
+            $finder->indexHint('FORCE', 'last_post_date');
+        }
     }
 }

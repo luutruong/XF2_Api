@@ -38,8 +38,5 @@ class Thread extends XFCP_Thread
         if (isset($options['tapi_first_post'])) {
             $result->includeRelation('FirstPost', $verbosity, $options);
         }
-        if (isset($options['tapi_last_poster'])) {
-            $result->includeRelation('LastPoster', $verbosity, $options);
-        }
     }
 }
