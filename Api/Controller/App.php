@@ -2,10 +2,12 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use Truonglv\Api\Data\Reaction;
 use XF\Finder\Thread;
 use XF\Mvc\Entity\Entity;
 use Truonglv\Api\Util\Token;
 use XF\ControllerPlugin\Login;
+use XF\Repository\AddOn;
 use XF\Service\User\Registration;
 use Truonglv\Api\Entity\AccessToken;
 use Truonglv\Api\Util\PasswordDecrypter;
@@ -15,38 +17,16 @@ class App extends AbstractController
 {
     public function actionGet()
     {
-        $activeReactions = $this->finder('XF:Reaction')
-            ->where('active', true)
-            ->order('display_order')
-            ->fetch();
-        $reactions = $this->options()->tApi_reactions;
-        $validReactions = [];
+        /** @var Reaction $reactionData */
+        $reactionData = $this->data('Truonglv\Api:Reaction');
 
-        if (count($reactions) === 0) {
-            $validReactions[1] = [
-                'imageUrl' => 'styles/default/Truonglv/Api/like.png',
-                'text' => $activeReactions[1]->title,
-                'reactionId' => 1
-            ];
-        } else {
-            foreach ($reactions as $reaction) {
-                if (isset($activeReactions[$reaction['reactionId']])) {
-                    $validReactions[$reaction['reactionId']] = [
-                        'imageUrl' => $reaction['imageUrl'],
-                        'text' => $activeReactions[$reaction['reactionId']]->title,
-                        'reactionId' => $reaction['reactionId']
-                    ];
-                }
-            }
-        }
-
-        $pather = $this->app()->container('request.pather');
-        foreach ($validReactions as &$reaction) {
-            $reaction['imageUrl'] = $pather($reaction['imageUrl'], 'full');
-        }
+        /** @var AddOn $addOnRepo */
+        $addOnRepo = $this->repository('XF:AddOn');
+        $addOns = $addOnRepo->getInstalledAddOnData();
 
         $data = [
-            'reactions' => $validReactions
+            'reactions' => $reactionData->getReactions(),
+            'apiVersion' => $addOns['Truonglv/Api']['version_id']
         ];
 
         return $this->apiResult($data);
