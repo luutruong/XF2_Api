@@ -6,9 +6,9 @@ use XF\Finder\Thread;
 use XF\Repository\AddOn;
 use XF\Mvc\Entity\Entity;
 use Truonglv\Api\Util\Token;
+use XF\Repository\Attachment;
 use XF\ControllerPlugin\Login;
 use Truonglv\Api\Data\Reaction;
-use XF\Repository\Attachment;
 use XF\Service\User\Registration;
 use Truonglv\Api\Entity\AccessToken;
 use Truonglv\Api\Util\PasswordDecrypter;
@@ -89,7 +89,7 @@ class App extends AbstractController
             $search->user_id = 0;
             $search->search_query = 'tApi_NewsFeeds_threadIds';
             $search->search_order = 'date';
-            $search->search_grouping = 1;
+            $search->search_grouping = true;
             $search->search_constraints = [];
 
             $search->save();

@@ -46,7 +46,7 @@ class Thread extends XFCP_Thread
             $result->includeRelation('FirstPost', $verbosity, $options);
             if (isset($options['tapi_fetch_image'])) {
                 // Base image height (pixels) which support in mobile app
-                $baseRatio = 0.5;
+                $baseRatio = 0.8;
 
                 $imageRatios = [];
                 $ratioIndexMap = [];
@@ -63,6 +63,8 @@ class Thread extends XFCP_Thread
                     );
                     $imageRatios[$ratioIndex] = $ratio;
                     $ratioIndexMap[$ratioIndex] = $attachment;
+
+                    $ratioIndex++;
                 }
 
                 if (count($imageRatios) === 0) {
