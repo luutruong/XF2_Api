@@ -107,7 +107,7 @@ class App
         $result->tapi_message_plain_text = $plainText;
         $result->tapi_message_plain_text_preview = $stringFomatter->wholeWordTrim(
             $plainText,
-            $entity->app()->options()->discussionRssContentLength
+            $entity->app()->options()->tApi_discussionPreviewLength
         );
     }
 }

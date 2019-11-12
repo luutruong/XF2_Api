@@ -14,6 +14,9 @@
     "tApi_delayPushNotifications.json": {
         "hash": "d571c9e24b0bd0c1b5386ba551608a8d"
     },
+    "tApi_discussionPreviewLength.json": {
+        "hash": "54ecc4b0fa2ba655d8ebf04ec1165770"
+    },
     "tApi_encryptKey.json": {
         "hash": "d12dd2c0ecd313222fae8eb9dabb6bbd"
     },

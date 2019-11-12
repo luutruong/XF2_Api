@@ -59,6 +59,12 @@
         "version_string": "1.0.8",
         "hash": "5b3c61d63b02e159edd63bcb03c9edd6"
     },
+    "option.tApi_discussionPreviewLength.txt": {
+        "global_cache": false,
+        "version_id": 1010202,
+        "version_string": "1.1.2",
+        "hash": "ac4a7e0fe9d2f18b3455eac55a8aa7e6"
+    },
     "option.tApi_encryptKey.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -130,6 +136,12 @@
         "version_id": 1000800,
         "version_string": "1.0.8",
         "hash": "f2d1f54fb38532bec5412fcba2413f61"
+    },
+    "option_explain.tApi_discussionPreviewLength.txt": {
+        "global_cache": false,
+        "version_id": 1010202,
+        "version_string": "1.1.2",
+        "hash": "d41d8cd98f00b204e9800998ecf8427e"
     },
     "option_explain.tApi_encryptKey.txt": {
         "global_cache": false,
