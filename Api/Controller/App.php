@@ -3,6 +3,8 @@
 namespace Truonglv\Api\Api\Controller;
 
 use XF\Finder\Thread;
+use XF\Repository\Node;
+use XF\Repository\User;
 use XF\Repository\AddOn;
 use XF\Mvc\Entity\Entity;
 use Truonglv\Api\Util\Token;
@@ -435,6 +437,29 @@ class App extends AbstractController
     {
         $finder->where('discussion_state', 'visible');
         $finder->where('discussion_type', '<>', 'redirect');
+
+        /** @var Node $nodeRepo */
+        $nodeRepo = $this->repository('XF:Node');
+        /** @var User $userRepo */
+        $userRepo = $this->repository('XF:User');
+        $guest = $userRepo->getGuestUser();
+
+        $nodes = \XF::asVisitor($guest, function () use ($nodeRepo) {
+            return $nodeRepo->getNodeList();
+        });
+
+        $forumIds = [];
+        /** @var \XF\Entity\Node $node */
+        foreach ($nodes as $node) {
+            if ($node->node_type_id === 'Forum') {
+                $forumIds[] = $node->node_id;
+            }
+        }
+        if (count($forumIds) > 0) {
+            $finder->where('node_id', $forumIds);
+        } else {
+            $finder->whereImpossible();
+        }
 
         if (isset($filters['order']) && isset($filters['direction'])) {
             $finder->order($filters['order'], $filters['direction']);
