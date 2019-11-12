@@ -1,0 +1,1 @@
+Load default data when first going to home in mobile app.

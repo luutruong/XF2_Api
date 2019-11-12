@@ -8,6 +8,7 @@ use XF\Mvc\Entity\Entity;
 use Truonglv\Api\Util\Token;
 use XF\ControllerPlugin\Login;
 use Truonglv\Api\Data\Reaction;
+use XF\Repository\Attachment;
 use XF\Service\User\Registration;
 use Truonglv\Api\Entity\AccessToken;
 use Truonglv\Api\Util\PasswordDecrypter;
@@ -26,7 +27,8 @@ class App extends AbstractController
 
         $data = [
             'reactions' => $reactionData->getReactions(),
-            'apiVersion' => $addOns['Truonglv/Api']['version_id']
+            'apiVersion' => $addOns['Truonglv/Api']['version_id'],
+            'homeTabActive' => $this->options()->tApi_defaultHomeData
         ];
 
         return $this->apiResult($data);
@@ -35,9 +37,6 @@ class App extends AbstractController
     /** @noinspection PhpUnused */
     public function actionGetNewsFeeds()
     {
-        /** @var Thread $finder */
-        $finder = $this->finder('XF:Thread');
-
         $page = $this->filterPage();
         $perPage = $this->options()->discussionsPerPage;
 
@@ -59,6 +58,9 @@ class App extends AbstractController
         }
 
         if ($search === null) {
+            /** @var Thread $finder */
+            $finder = $this->finder('XF:Thread');
+
             $this->applyNewsFeedsFilter($finder, $filters);
             $finder->limit($this->options()->maximumSearchResults);
 
@@ -106,14 +108,25 @@ class App extends AbstractController
         if (count($threadIds) > 0) {
             $this->request()->set(\Truonglv\Api\App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
 
-            $threads = $finder->whereIds($threadIds)
+            $newFinder = $this->finder('XF:Thread');
+            $threads = $newFinder->whereIds($threadIds)
+                ->with('FirstPost')
                 ->with('api')
-                ->with('full')
                 ->fetch()
                 ->sortByList($threadIds);
+            $posts = $this->em()->getEmptyCollection();
+            /** @var \XF\Entity\Thread $thread */
+            foreach ($threads as $thread) {
+                $posts[$thread->first_post_id] = $thread->FirstPost;
+            }
+
+            /** @var Attachment $attachmentRepo */
+            $attachmentRepo = $this->repository('XF:Attachment');
+            $attachmentRepo->addAttachmentsToContent($posts, 'post');
 
             $data['threads'] = $threads->filterViewable()->toApiResults(Entity::VERBOSITY_VERBOSE, [
-                'tapi_first_post' => true
+                'tapi_first_post' => true,
+                'tapi_fetch_image' => true
             ]);
             if ($search->result_count > $perPage) {
                 $data['pagination'] = $this->getPaginationData($threads, $page, $perPage, $search->result_count);
@@ -374,6 +387,10 @@ class App extends AbstractController
         $input = $this->filter([
             'order' => 'str'
         ]);
+        $defaultOrder = $this->options()->tApi_defaultHomeData;
+        if ($input['order'] === '') {
+            $input['order'] = $defaultOrder;
+        }
 
         $availableOrders = $this->getNewsFeedsAvailableSorts();
         if (isset($availableOrders[$input['order']])) {
@@ -400,8 +417,11 @@ class App extends AbstractController
             'recent_threads' => ['last_post_date', 'DESC'],
             'trending' => function (Thread $finder) {
                 $finder->order('view_count', 'DESC');
-                // only fetch threads in 7 days!
-                $finder->where('post_date', '>=', \XF::$time - 7 * 86400);
+                $cutOff = $this->options()->tApi_trendingCutoff;
+
+                if ($cutOff > 0) {
+                    $finder->where('post_date', '>=', \XF::$time - $cutOff * 86400);
+                }
             }
         ];
     }
@@ -413,9 +433,6 @@ class App extends AbstractController
      */
     protected function applyNewsFeedsFilter(Thread $finder, array $filters)
     {
-        $finder->with('api');
-        $finder->with('FirstPost');
-
         $finder->where('discussion_state', 'visible');
         $finder->where('discussion_type', '<>', 'redirect');
 

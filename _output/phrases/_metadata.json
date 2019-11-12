@@ -47,6 +47,12 @@
         "version_string": "1.0.0",
         "hash": "0b86a7298c7794dd2056b908c39159d8"
     },
+    "option.tApi_defaultHomeData.txt": {
+        "global_cache": false,
+        "version_id": 1010202,
+        "version_string": "1.1.2",
+        "hash": "2f80883052a46ed0bd2b2aff3bbdb32b"
+    },
     "option.tApi_delayPushNotifications.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -89,6 +95,12 @@
         "version_string": "1.1.1",
         "hash": "e3fecd9ec868c8c581c3a4b477f15a62"
     },
+    "option.tApi_trendingCutoff.txt": {
+        "global_cache": false,
+        "version_id": 1010202,
+        "version_string": "1.1.2",
+        "hash": "3301bb1792ce9c2384c374f2e23ae720"
+    },
     "option_explain.tApi_accessTokenTtl.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -106,6 +118,12 @@
         "version_id": 1000001,
         "version_string": "1.0.0",
         "hash": "f1aac6e6eba3117393b6c7201aacdfe3"
+    },
+    "option_explain.tApi_defaultHomeData.txt": {
+        "global_cache": false,
+        "version_id": 1010202,
+        "version_string": "1.1.2",
+        "hash": "935c3d689b0b17202ac8ebf8cc71b253"
     },
     "option_explain.tApi_delayPushNotifications.txt": {
         "global_cache": false,
@@ -148,6 +166,12 @@
         "version_id": 1010100,
         "version_string": "1.1.1",
         "hash": "b57bc9a7b66d79fdae674f2bf21dd315"
+    },
+    "option_explain.tApi_trendingCutoff.txt": {
+        "global_cache": false,
+        "version_id": 1010202,
+        "version_string": "1.1.2",
+        "hash": "96b2f955774aee5f11e61646b7d5ae43"
     },
     "option_group.tl_Api.txt": {
         "global_cache": false,

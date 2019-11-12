@@ -175,18 +175,6 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
      */
     protected function getAttachmentViewUrl(Attachment $attachment)
     {
-        /** @var \XF\Api\App $app */
-        $app = \XF::app();
-        $token = null;
-
-        if ($attachment->has_thumbnail) {
-            $token = App::generateTokenForViewingAttachment($attachment);
-        }
-
-        return $app->router('public')
-            ->buildLink('full:attachments', $attachment, [
-                'hash' => $attachment->temp_hash ?: null,
-                'tapi_token' => $token
-            ]);
+        return App::buildAttachmentLink($attachment);
     }
 }

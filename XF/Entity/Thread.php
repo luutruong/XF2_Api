@@ -2,6 +2,9 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use Truonglv\Api\App;
+use Truonglv\Api\Util\BinarySearch;
+
 class Thread extends XFCP_Thread
 {
     /**
@@ -35,8 +38,48 @@ class Thread extends XFCP_Thread
             $result->can_upload_attachments = false;
         }
 
+        // If specified the image will display in thread card in mobile app
+        // the image MUST be viewable by guest as well
+        $result->tapi_thread_image_url = null;
+
         if (isset($options['tapi_first_post'])) {
             $result->includeRelation('FirstPost', $verbosity, $options);
+            if (isset($options['tapi_fetch_image'])) {
+                // Base image height (pixels) which support in mobile app
+                $baseRatio = 0.5;
+
+                $imageRatios = [];
+                $ratioIndexMap = [];
+                $ratioIndex = 0;
+
+                foreach ($this->FirstPost->Attachments as $attachment) {
+                    if ($attachment->Data->width === 0 || $attachment->Data->height === 0) {
+                        continue;
+                    }
+
+                    $ratio = min(
+                        $attachment->Data->width / $attachment->Data->height,
+                        $attachment->Data->height / $attachment->Data->width
+                    );
+                    $imageRatios[$ratioIndex] = $ratio;
+                    $ratioIndexMap[$ratioIndex] = $attachment;
+                }
+
+                if (count($imageRatios) === 0) {
+                    return;
+                }
+
+                sort($imageRatios, SORT_ASC);
+
+                $best = BinarySearch::findClosestNumber($imageRatios, $baseRatio);
+                foreach ($imageRatios as $index => $ratio) {
+                    if ($best === $ratio) {
+                        $result->tapi_thread_image_url = App::buildAttachmentLink($ratioIndexMap[$index]);
+
+                        break;
+                    }
+                }
+            }
         }
     }
 }

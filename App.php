@@ -53,6 +53,18 @@ class App
      * @param Attachment $attachment
      * @return string
      */
+    public static function buildAttachmentLink(Attachment $attachment)
+    {
+        return \XF::app()->router('public')->buildLink('canonical:attachments', $attachment, [
+            'hash' => (strlen($attachment->temp_hash) > 0) ? $attachment->temp_hash : null,
+            'tapi_token' => self::generateTokenForViewingAttachment($attachment)
+        ]);
+    }
+
+    /**
+     * @param Attachment $attachment
+     * @return string
+     */
     public static function generateTokenForViewingAttachment(Attachment $attachment)
     {
         $app = \XF::app();
