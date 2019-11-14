@@ -34,6 +34,11 @@ class Listener
      */
     public static function appApiValidateRequest(\XF\Http\Request $request, &$result, &$error, &$code)
     {
+        $ourApiKey = $request->getServer(App::HEADER_KEY_API_KEY);
+        if ($ourApiKey === false || !App::isRequestFromApp($request)) {
+            return;
+        }
+
         $app = \XF::app();
 
         $apiKey = $request->getApiKey();
@@ -56,7 +61,6 @@ class Listener
             }
         }
 
-        $ourApiKey = $request->getServer(App::HEADER_KEY_API_KEY);
         if ($ourKey['key'] !== $ourApiKey) {
             $error = 'api_error.api_key_not_found';
             $code = 401;
