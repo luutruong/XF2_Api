@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Entity;
 
 use Truonglv\Api\App;
+use Truonglv\Api\Data\Reaction;
 
 class ProfilePostComment extends XFCP_ProfilePostComment
 {
@@ -30,6 +31,7 @@ class ProfilePostComment extends XFCP_ProfilePostComment
             $result->is_ignored = false;
         }
 
+        App::attachReactions($result, $this);
         App::includeMessageHtmlIfNeeded($result, $this);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api;
 
+use Truonglv\Api\Data\Reaction;
 use XF\Http\Request;
 use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
@@ -76,6 +77,32 @@ class App
                 . $attachment->attachment_id
                 . $app->config('globalSalt')
             );
+    }
+
+    /**
+     * @param EntityResult $result
+     * @param Entity $entity
+     * @param string $reactionKey
+     * @return void
+     */
+    public static function attachReactions(EntityResult $result, Entity $entity, $reactionKey = 'reactions')
+    {
+        $visitorReactedId = call_user_func([$entity, 'getVisitorReactionId']);
+
+        $reacted = [];
+        /** @var Reaction $reactionData */
+        $reactionData = \XF::app()->data('Truonglv\Api:Reaction');
+        $reactions = $reactionData->getReactions();
+        foreach (array_keys($entity->get($reactionKey . '_')) as $reactionId) {
+            $count = $entity->get($reactionKey . '_')[$reactionId];
+            if ($visitorReactedId > 0 && $visitorReactedId == $reactionId) {
+                $count -= 1;
+            }
+            if (isset($reactions[$reactionId]) && $count > 0) {
+                $reacted[] = $reactions[$reactionId]['imageUrl'];
+            }
+        }
+        $result->tapi_reactions = $reacted;
     }
 
     /**

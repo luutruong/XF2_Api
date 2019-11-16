@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Entity;
 
 use Truonglv\Api\App;
+use Truonglv\Api\Data\Reaction;
 
 class ProfilePost extends XFCP_ProfilePost
 {
@@ -19,6 +20,7 @@ class ProfilePost extends XFCP_ProfilePost
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
 
+        App::attachReactions($result, $this);
         App::includeMessageHtmlIfNeeded($result, $this);
 
         $visitor = \XF::visitor();
@@ -34,5 +36,8 @@ class ProfilePost extends XFCP_ProfilePost
             $result->can_ignore = false;
             $result->is_ignored = false;
         }
+
+        $result->view_url = $this->app()->router('public')
+            ->buildLink('canonical:profile-posts', $this);
     }
 }

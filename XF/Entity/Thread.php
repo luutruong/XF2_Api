@@ -20,9 +20,7 @@ class Thread extends XFCP_Thread
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
 
-        if (!isset($result->can_watch)) {
-            $result->can_watch = $this->canWatch();
-        }
+        $result->can_watch = $this->canWatch();
 
         $visitor = \XF::visitor();
         if ($visitor->user_id > 0) {

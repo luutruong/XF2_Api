@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Entity;
 
 use Truonglv\Api\App;
+use Truonglv\Api\Data\Reaction;
 use XF\Mvc\Entity\Structure;
 
 class Post extends XFCP_Post
@@ -35,6 +36,7 @@ class Post extends XFCP_Post
             $result->is_ignored = false;
         }
 
+        App::attachReactions($result, $this);
         App::includeMessageHtmlIfNeeded($result, $this);
     }
 
