@@ -30,7 +30,8 @@ class App extends AbstractController
         $data = [
             'reactions' => $reactionData->getReactions(),
             'apiVersion' => $addOns['Truonglv/Api']['version_id'],
-            'homeTabActive' => $this->options()->tApi_defaultHomeData
+            'homeTabActive' => $this->options()->tApi_defaultHomeData,
+            'googleAnalyticsWebPropertyId' => $this->options()->googleAnalyticsWebPropertyId
         ];
 
         return $this->apiResult($data);
