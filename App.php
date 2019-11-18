@@ -2,10 +2,10 @@
 
 namespace Truonglv\Api;
 
-use Truonglv\Api\Data\Reaction;
 use XF\Http\Request;
 use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
+use Truonglv\Api\Data\Reaction;
 use XF\Api\Result\EntityResult;
 
 class App
@@ -87,7 +87,9 @@ class App
      */
     public static function attachReactions(EntityResult $result, Entity $entity, $reactionKey = 'reactions')
     {
-        $visitorReactedId = call_user_func([$entity, 'getVisitorReactionId']);
+        /** @var callable $callable */
+        $callable = [$entity, 'getVisitorReactionId'];
+        $visitorReactedId = call_user_func($callable);
 
         $reacted = [];
         /** @var Reaction $reactionData */

@@ -3,7 +3,6 @@
 namespace Truonglv\Api\XF\Entity;
 
 use Truonglv\Api\App;
-use Truonglv\Api\Data\Reaction;
 
 class ProfilePostComment extends XFCP_ProfilePostComment
 {

@@ -3,7 +3,6 @@
 namespace Truonglv\Api\XF\Entity;
 
 use Truonglv\Api\App;
-use Truonglv\Api\Data\Reaction;
 use XF\Mvc\Entity\Structure;
 
 class Post extends XFCP_Post
