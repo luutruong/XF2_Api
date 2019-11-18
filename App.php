@@ -92,18 +92,23 @@ class App
         $visitorReactedId = call_user_func($callable);
 
         $reacted = [];
-        /** @var Reaction $reactionData */
-        $reactionData = \XF::app()->data('Truonglv\Api:Reaction');
-        $reactions = $reactionData->getReactions();
-        foreach (array_keys($entity->get($reactionKey . '_')) as $reactionId) {
-            $count = $entity->get($reactionKey . '_')[$reactionId];
-            if ($visitorReactedId > 0 && $visitorReactedId == $reactionId) {
-                $count -= 1;
-            }
-            if (isset($reactions[$reactionId]) && $count > 0) {
-                $reacted[] = $reactions[$reactionId]['imageUrl'];
+        $entityReactions = $entity->get($reactionKey . '_');
+        if (is_array($entityReactions)) {
+            /** @var Reaction $reactionData */
+            $reactionData = \XF::app()->data('Truonglv\Api:Reaction');
+            $reactions = $reactionData->getReactions();
+
+            foreach (array_keys($entityReactions) as $reactionId) {
+                $count = $entityReactions[$reactionId];
+                if ($visitorReactedId > 0 && $visitorReactedId == $reactionId) {
+                    $count -= 1;
+                }
+                if (isset($reactions[$reactionId]) && $count > 0) {
+                    $reacted[] = $reactions[$reactionId]['imageUrl'];
+                }
             }
         }
+
         $result->tapi_reactions = $reacted;
     }
 
