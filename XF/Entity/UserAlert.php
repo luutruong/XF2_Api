@@ -75,6 +75,41 @@ class UserAlert extends XFCP_UserAlert
         }
 
         $result->tapi_message_html = trim($html);
+        foreach ($this->getTApiAlertData() as $key => $value) {
+            $result->{ $key } = $value;
+        }
+    }
+
+    /**
+     * @param bool $forPush
+     * @return array
+     */
+    public function getTApiAlertData($forPush = false)
+    {
+        $data = [
+            'alert_id' => $this->alert_id,
+            'content_id' => $this->content_id,
+            'content_type' => $this->content_type
+        ];
+
+        if ($this->content_type === 'user'
+            && $this->action === 'thread_move'
+            && isset($this->extra_data['link'])
+        ) {
+            // issue: https://nobita.me/threads/35088/
+            preg_match('#\.(\d+)(\/?)#', $this->extra_data['link'], $matches);
+            if (count($matches) > 0) {
+                if (!$forPush) {
+                    $data['tapi_content_type_original'] = $data['content_type'];
+                    $data['tapi_content_id_original'] = $data['content_id'];
+                }
+
+                $data['content_type'] = 'thread';
+                $data['content_id'] = $matches[1];
+            }
+        }
+
+        return $data;
     }
 
     public static function getStructure(Structure $structure)

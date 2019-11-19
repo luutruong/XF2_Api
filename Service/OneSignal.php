@@ -55,6 +55,9 @@ class OneSignal extends AbstractPushNotification
         $finder->where('view_date', 0);
         $finder->where('content_type', App::getSupportAlertContentTypes());
 
+        /** @var \Truonglv\Api\XF\Entity\UserAlert $mixed */
+        $mixed = $alert;
+
         $payload = [
             'include_player_ids' => $playerIds,
             'app_id' => $this->appId,
@@ -64,11 +67,7 @@ class OneSignal extends AbstractPushNotification
             'contents' => [
                 'en' => $this->getAlertContentBody($alert)
             ],
-            'data' => [
-                'content_type' => $alert->content_type,
-                'content_id' => $alert->content_id,
-                'alert_id' => $alert->alert_id
-            ],
+            'data' => $mixed->getTApiAlertData(true),
             'ios_badgeType' => self::BADGE_TYPE_SET_TO,
             'ios_badgeCount' => $finder->total()
         ];
