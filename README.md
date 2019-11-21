@@ -23,6 +23,7 @@ Response:
   ],
   "apiVersion": number,
   "homeTabActive": string,
+  "allowRegistration": boolean,
   "googleAnalyticsWebPropertyId": string
 }
 ```
