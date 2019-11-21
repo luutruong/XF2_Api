@@ -31,6 +31,7 @@ class App extends AbstractController
             'reactions' => $reactionData->getReactions(),
             'apiVersion' => $addOns['Truonglv/Api']['version_id'],
             'homeTabActive' => $this->options()->tApi_defaultHomeData,
+            'allowRegistration' => (bool) $this->options()->registrationSetup['enabled'],
             'googleAnalyticsWebPropertyId' => $this->options()->googleAnalyticsWebPropertyId
         ];
 
@@ -195,6 +196,10 @@ class App extends AbstractController
     /** @noinspection PhpUnused */
     public function actionPostRegister()
     {
+        if (!$this->options()->registrationSetup['enabled']) {
+            return $this->error(\XF::phrase('new_registrations_currently_not_being_accepted'), 400);
+        }
+
         $this->assertRequiredApiInput([
             'username',
             'email',
