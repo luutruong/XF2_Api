@@ -85,5 +85,5 @@ Response:
 }
 ```
 
-###Encrypt password
+### Encrypt password
 Please see the method `Util\PasswordDecrypter::encrypt(...)`
