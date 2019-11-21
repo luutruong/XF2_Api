@@ -7,6 +7,26 @@ class PasswordDecrypter
     const ALGO_AES_128_ECB = 'AES-128-ECB';
 
     /**
+     * @param string $payload
+     * @param string $key
+     * @return string
+     */
+    public static function encrypt($payload, $key)
+    {
+        if (\trim($key) === '') {
+            throw new \InvalidArgumentException('Key must not empty!');
+        }
+
+        $key = \md5($key, true);
+        $encrypted = \openssl_encrypt($payload, self::ALGO_AES_128_ECB, $key, OPENSSL_RAW_DATA);
+        if ($encrypted === false) {
+            throw new \InvalidArgumentException('Cannot encrypt data!');
+        }
+
+        return \base64_encode($encrypted);
+    }
+
+    /**
      * @param string $encrypted
      * @param string $key
      * @return string
@@ -14,7 +34,7 @@ class PasswordDecrypter
      */
     public static function decrypt($encrypted, $key)
     {
-        if (trim($key) === '') {
+        if (\trim($key) === '') {
             throw new \InvalidArgumentException('Key must not empty!');
         }
 
