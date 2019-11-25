@@ -8,6 +8,8 @@ use Truonglv\Api\Entity\Log;
 use Truonglv\Api\Http\Request;
 use Truonglv\Api\Entity\AccessToken;
 use XF\Api\Controller\AbstractController;
+use XF\Http\ResponseFile;
+use XF\Http\ResponseStream;
 
 class Listener
 {
@@ -150,7 +152,14 @@ class Listener
         ];
 
         $log->response_code = $response->httpCode();
-        $log->response = trim($logRepo->prepareDataForLog($response->body()));
+        $body = $response->body();
+        if ($body instanceof ResponseFile
+            || $body instanceof ResponseStream
+        ) {
+            $log->response = '';
+        } else {
+            $log->response = trim($logRepo->prepareDataForLog($body));
+        }
 
         $log->save();
     }
