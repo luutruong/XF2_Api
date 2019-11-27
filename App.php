@@ -104,7 +104,10 @@ class App
                     $count -= 1;
                 }
                 if (isset($reactions[$reactionId]) && $count > 0) {
-                    $reacted[] = $reactions[$reactionId]['imageUrl'];
+                    $reacted[] = [
+                        'image' => $reactions[$reactionId]['imageUrl'],
+                        'total' => $count
+                    ];
                 }
             }
         }
