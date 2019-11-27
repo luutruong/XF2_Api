@@ -44,10 +44,23 @@ class Attachment extends XFCP_Attachment
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
 
-        $result->view_url = $this->app()->router('public')
-            ->buildLink('canonical:attachments', $this, [
-                'tapi_token' => App::generateTokenForViewingAttachment($this)
-            ]);
+        if (in_array($this->content_type, $this->tApiGetSupportContentTypes(), true)) {
+            $result->view_url = $this->app()->router('public')
+                ->buildLink('canonical:attachments', $this, [
+                    'tapi_token' => App::generateTokenForViewingAttachment($this)
+                ]);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function tApiGetSupportContentTypes()
+    {
+        return [
+            'conversation_message',
+            'post'
+        ];
     }
 
     /**
@@ -55,7 +68,7 @@ class Attachment extends XFCP_Attachment
      */
     protected function tApiValidRequestToken()
     {
-        if (!in_array($this->content_type, ['post'], true)) {
+        if (!in_array($this->content_type, $this->tApiGetSupportContentTypes(), true)) {
             return false;
         }
 
