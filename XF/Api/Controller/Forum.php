@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use Truonglv\Api\App;
+use XF\Entity\ThreadPrefix;
 use XF\Mvc\ParameterBag;
 
 class Forum extends XFCP_Forum
@@ -14,6 +15,34 @@ class Forum extends XFCP_Forum
             ->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
 
         return parent::actionGetThreads($params);
+    }
+
+    public function actionGetPrefixes(ParameterBag $params)
+    {
+        $forum = $this->assertViewableForum($params->node_id);
+
+        $prefixTree = [];
+        $prefixes = [];
+
+        foreach ($forum->getUsablePrefixes() as $index => $prefixGrouped) {
+            /** @var ThreadPrefix $prefix */
+            foreach ($prefixGrouped as $id => $prefix) {
+                $prefixes[$id] = $prefix;
+                $prefixTree[$index][] = $prefix->prefix_id;
+            }
+        }
+
+        /** @var \XF\Repository\ThreadPrefix $prefixRepo */
+        $prefixRepo = $this->repository('XF:ThreadPrefix');
+        $prefixGroups = $prefixRepo->findPrefixGroups(true);
+
+        $data = [
+            'prefix_groups' => $prefixGroups->count() > 1 ?  $prefixGroups->toApiResults() : [],
+            'prefixes' => $this->em()->getBasicCollection($prefixes)->toApiResults(),
+            'prefix_tree' => $prefixTree
+        ];
+
+        return $this->apiSuccess($data);
     }
 
     /**
