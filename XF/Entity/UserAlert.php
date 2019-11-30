@@ -76,7 +76,7 @@ class UserAlert extends XFCP_UserAlert
 
         $result->tapi_message_html = trim($html);
         foreach ($this->getTApiAlertData() as $key => $value) {
-            $result->{ $key } = $value;
+            $result->__set($key, $value);
         }
     }
 

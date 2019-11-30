@@ -4,12 +4,12 @@ namespace Truonglv\Api;
 
 use XF\Container;
 use XF\Entity\ApiKey;
+use XF\Http\ResponseFile;
+use XF\Http\ResponseStream;
 use Truonglv\Api\Entity\Log;
 use Truonglv\Api\Http\Request;
 use Truonglv\Api\Entity\AccessToken;
 use XF\Api\Controller\AbstractController;
-use XF\Http\ResponseFile;
-use XF\Http\ResponseStream;
 
 class Listener
 {

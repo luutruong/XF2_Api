@@ -3,8 +3,9 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use Truonglv\Api\App;
-use XF\Entity\ThreadPrefix;
 use XF\Mvc\ParameterBag;
+use XF\Entity\ThreadPrefix;
+use XF\Mvc\Entity\AbstractCollection;
 
 class Forum extends XFCP_Forum
 {
@@ -34,6 +35,7 @@ class Forum extends XFCP_Forum
 
         /** @var \XF\Repository\ThreadPrefix $prefixRepo */
         $prefixRepo = $this->repository('XF:ThreadPrefix');
+        /** @var AbstractCollection $prefixGroups */
         $prefixGroups = $prefixRepo->findPrefixGroups(true);
 
         $data = [

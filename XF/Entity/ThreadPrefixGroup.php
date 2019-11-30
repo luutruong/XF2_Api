@@ -2,11 +2,14 @@
 
 namespace Truonglv\Api\XF\Entity;
 
-use XF\Mvc\Entity\Entity;
-use XF\Mvc\Entity\Structure;
-
 class ThreadPrefixGroup extends XFCP_ThreadPrefixGroup
 {
+    /**
+     * @param \XF\Api\Result\EntityResult $result
+     * @param int $verbosity
+     * @param array $options
+     * @return void
+     */
     protected function setupApiResultData(
         \XF\Api\Result\EntityResult $result,
         $verbosity = self::VERBOSITY_NORMAL,
