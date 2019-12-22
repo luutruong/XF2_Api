@@ -10,17 +10,17 @@ class Batch extends AbstractController
 {
     public function actionPost()
     {
-        $input = (string) file_get_contents('php://input');
-        $json = json_decode($input, true);
+        $input = (string) \file_get_contents('php://input');
+        $json = \json_decode($input, true);
 
-        if (!is_array($json)) {
+        if (!\is_array($json)) {
             return $this->apiError('Invalid batch json format', 'invalid_batch_json_format');
         }
 
         $results = [];
 
         foreach ($json as $batchRequest) {
-            $batchRequest = array_replace($this->getDefaultBatchRequest(), $batchRequest);
+            $batchRequest = \array_replace($this->getDefaultBatchRequest(), $batchRequest);
 
             $results[$batchRequest['uri']] = $this->runInternalRequest($batchRequest);
         }
@@ -38,8 +38,8 @@ class Batch extends AbstractController
             return null;
         }
 
-        $server = array_replace($_SERVER, [
-            'REQUEST_METHOD' => strtoupper($batch['method'])
+        $server = \array_replace($_SERVER, [
+            'REQUEST_METHOD' => \strtoupper($batch['method'])
         ]);
 
         $request = new Request($this->app()->inputFilterer(), $batch['params'], [], [], $server);
@@ -50,7 +50,7 @@ class Batch extends AbstractController
 
         $response = $dispatcher->render($reply, 'api');
 
-        return (array) json_decode($response->body(), true);
+        return (array) \json_decode($response->body(), true);
     }
 
     /**

@@ -19,6 +19,6 @@ class Request extends \XF\Http\Request
      */
     public function setApiUser($id)
     {
-        $this->server['HTTP_XF_API_USER'] = intval($id);
+        $this->server['HTTP_XF_API_USER'] = \intval($id);
     }
 }

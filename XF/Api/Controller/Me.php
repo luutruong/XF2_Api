@@ -20,9 +20,9 @@ class Me extends XFCP_Me
     {
         $visitor = \XF::visitor();
         $ignored = $visitor->Profile->ignored;
-        if (count($ignored) > 0) {
+        if (\count($ignored) > 0) {
             $users = $this->finder('XF:User')
-                ->where('user_id', array_keys($ignored))
+                ->where('user_id', \array_keys($ignored))
                 ->order('username')
                 ->fetch();
         } else {

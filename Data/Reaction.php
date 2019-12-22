@@ -22,7 +22,7 @@ class Reaction
                 ->fetch();
             $enabledReactions = \XF::app()->options()->tApi_reactions;
 
-            if (count($enabledReactions) === 0) {
+            if (\count($enabledReactions) === 0) {
                 $reactions[1] = [
                     'imageUrl' => 'styles/default/Truonglv/Api/like.png',
                     'text' => $activeReactions[1]->title,
@@ -40,9 +40,8 @@ class Reaction
                 }
             }
 
-            $pather = \XF::app()->container('request.pather');
             foreach ($reactions as &$reaction) {
-                $reaction['imageUrl'] = $pather($reaction['imageUrl'], 'full');
+                $reaction['imageUrl'] = \XF::canonicalizeUrl($reaction['imageUrl']);
             }
 
             $this->reactions = $reactions;

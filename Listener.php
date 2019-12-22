@@ -46,7 +46,7 @@ class Listener
         $apiKey = $request->getApiKey();
         $ourKey = $app->options()->tApi_apiKey;
 
-        if (count($ourKey) > 0) {
+        if (\count($ourKey) > 0) {
             /** @var ApiKey|null $apiKeyEntity */
             $apiKeyEntity = $app->em()->find('XF:ApiKey', $ourKey['apiKeyId']);
             if (!$apiKeyEntity) {
@@ -140,7 +140,7 @@ class Listener
         $log->app_version = $request->getServer(App::HEADER_KEY_APP_VERSION);
 
         $log->end_point = $request->getRequestUri();
-        $log->method = strtoupper($request->getRequestMethod());
+        $log->method = \strtoupper($request->getRequestMethod());
 
         $post = $_POST;
         if (isset($post['password'])) {

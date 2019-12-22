@@ -19,16 +19,16 @@ class Conversations extends XFCP_Conversations
     {
         if ($this->request()->exists('recipients')) {
             $names = $this->filter('recipients', 'str');
-            $names = explode(',', $names);
-            $names = array_map('trim', $names);
+            $names = \explode(',', $names);
+            $names = \array_map('trim', $names);
 
             /** @var User $userRepo */
             $userRepo = $this->repository('XF:User');
-            if (count($names)> 0) {
+            if (\ount($names)> 0) {
                 $users = $userRepo->getUsersByNames($names, $notFound);
-                if (count($notFound) > 0) {
+                if (\count($notFound) > 0) {
                     return $this->apiError(\XF::phrase('following_members_not_found_x', [
-                        'members' => implode(', ', $notFound)
+                        'members' => \implode(', ', $notFound)
                     ]), 'recipient_not_found');
                 }
 

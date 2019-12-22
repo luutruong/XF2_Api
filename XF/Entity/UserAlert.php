@@ -25,7 +25,7 @@ class UserAlert extends XFCP_UserAlert
         } catch (\LogicException $e) {
         }
 
-        if (!in_array($this->content_type, App::getSupportAlertContentTypes(), true)) {
+        if (!\in_array($this->content_type, App::getSupportAlertContentTypes(), true)) {
             return;
         }
 
@@ -33,32 +33,32 @@ class UserAlert extends XFCP_UserAlert
 
         $result->is_unviewed = $this->isUnviewed();
         $html = $this->isAlertRenderable()
-            ? trim($this->render())
+            ? \trim($this->render())
             : '';
         if ($html !== '') {
             // remove any html without content.
-            $html = preg_replace('#<([\w]+)[^>]*></\1>#si', '', $html);
+            $html = \preg_replace('#<([\w]+)[^>]*></\1>#si', '', $html);
 
             // ensure all link in html are full.
-            preg_match_all('#<a[^>]* href=(["\'])([^"]*)\1#i', $html, $matches);
-            $baseUrl = rtrim($this->app()->options()->boardUrl, '/');
+            \preg_match_all('#<a[^>]* href=(["\'])([^"]*)\1#i', $html, $matches);
+            $baseUrl = \rtrim($this->app()->options()->boardUrl, '/');
             foreach ($matches[0] as $index => $match) {
                 $link = $matches[2][$index];
-                if (substr($link, 0, 1) === '/') {
+                if (\substr($link, 0, 1) === '/') {
                     $fullLink = $baseUrl . $link;
-                    $newMatch = str_replace($link, $fullLink, $match);
-                    $html = str_replace($match, $newMatch, $html);
+                    $newMatch = \str_replace($link, $fullLink, $match);
+                    $html = \str_replace($match, $newMatch, $html);
                 }
             }
 
             if ($this->action === 'reaction') {
-                preg_match(
+                \preg_match(
                     '#<span class="reaction.*"[^>]*>.*<bdi>(.+)</bdi>.*</span>#si',
                     $html,
                     $reactionMatches
                 );
-                if (count($reactionMatches) > 0) {
-                    $html = str_replace($reactionMatches[0], $reactionMatches[1], $html);
+                if (\count($reactionMatches) > 0) {
+                    $html = \str_replace($reactionMatches[0], $reactionMatches[1], $html);
                 }
             }
         }
@@ -97,8 +97,8 @@ class UserAlert extends XFCP_UserAlert
             && isset($this->extra_data['link'])
         ) {
             // issue: https://nobita.me/threads/35088/
-            preg_match('#\.(\d+)(\/?)#', $this->extra_data['link'], $matches);
-            if (count($matches) > 0) {
+            \preg_match('#\.(\d+)(\/?)#', $this->extra_data['link'], $matches);
+            if (\count($matches) > 0) {
                 if (!$forPush) {
                     $data['tapi_content_type_original'] = $data['content_type'];
                     $data['tapi_content_id_original'] = $data['content_id'];
@@ -140,7 +140,7 @@ class UserAlert extends XFCP_UserAlert
         parent::_postSave();
 
         if ($this->isInsert()
-            && in_array($this->content_type, App::getSupportAlertContentTypes(), true)
+            && \in_array($this->content_type, App::getSupportAlertContentTypes(), true)
         ) {
             AlertQueue::queue('alert', $this->alert_id);
         }

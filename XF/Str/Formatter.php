@@ -27,9 +27,9 @@ class Formatter extends XFCP_Formatter
     public function replaceSmiliesHtml($text)
     {
         if ($this->tApiDisableSmilieWithSpriteParams) {
-            $this->smilieTranslate = array_filter($this->smilieTranslate, function ($value) {
-                preg_match('/\0(\d+)\0/', $value, $matches);
-                if (count($matches) === 0) {
+            $this->smilieTranslate = \array_filter($this->smilieTranslate, function ($value) {
+                \preg_match('/\0(\d+)\0/', $value, $matches);
+                if (\count($matches) === 0) {
                     return false;
                 }
 
@@ -39,7 +39,7 @@ class Formatter extends XFCP_Formatter
 
                 $smilieRef = $this->smilieReverse[$matches[1]];
 
-                return !isset($smilieRef['sprite_params']) || count($smilieRef['sprite_params']) === 0;
+                return !isset($smilieRef['sprite_params']) || \count($smilieRef['sprite_params']) === 0;
             });
         }
 

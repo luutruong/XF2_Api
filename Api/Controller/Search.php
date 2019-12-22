@@ -18,7 +18,7 @@ class Search extends AbstractController
         }
 
         $keywords = $this->filter('keywords', 'str');
-        if (strlen($keywords) <= $this->options()->searchMinWordLength) {
+        if (\strlen($keywords) <= $this->options()->searchMinWordLength) {
             return $this->message(\XF::phrase('no_results_found'));
         }
 

@@ -45,7 +45,7 @@ class App extends AbstractController
         $perPage = $this->options()->discussionsPerPage;
 
         $filters = $this->getNewsFeedsFilters();
-        $queryHash = md5('tApi_NewsFeeds_threadIds' . __METHOD__ . strval(json_encode($filters)));
+        $queryHash = \md5('tApi_NewsFeeds_threadIds' . __METHOD__ . \strval(\json_encode($filters)));
 
         // 5 minutes
         $ttl = 300;
@@ -77,7 +77,7 @@ class App extends AbstractController
                 ];
             }
 
-            if (count($searchResults) === 0) {
+            if (\count($searchResults) === 0) {
                 return $this->apiResult([
                     'threads' => []
                 ]);
@@ -88,7 +88,7 @@ class App extends AbstractController
             $search->search_type = 'thread';
             $search->query_hash = $queryHash;
             $search->search_results = $searchResults;
-            $search->result_count = count($searchResults);
+            $search->result_count = \count($searchResults);
             $search->search_date = \XF::$time;
             $search->user_id = 0;
             $search->search_query = 'tApi_NewsFeeds_threadIds';
@@ -108,8 +108,8 @@ class App extends AbstractController
             $threadIds[] = $result[1];
         }
 
-        $threadIds = array_slice($threadIds, ($page - 1) * $perPage, $perPage, true);
-        if (count($threadIds) > 0) {
+        $threadIds = \array_slice($threadIds, ($page - 1) * $perPage, $perPage, true);
+        if (\count($threadIds) > 0) {
             $this->request()->set(\Truonglv\Api\App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
 
             $newFinder = $this->finder('XF:Thread');
@@ -341,7 +341,7 @@ class App extends AbstractController
 
         $html = '';
         if (!$page) {
-            \XF::logError(sprintf(
+            \XF::logError(\sprintf(
                 '[tl] Api: Unknown help page with page_id=%s',
                 $pageId
             ));
@@ -461,7 +461,7 @@ class App extends AbstractController
                 $forumIds[] = $node->node_id;
             }
         }
-        if (count($forumIds) > 0) {
+        if (\count($forumIds) > 0) {
             $finder->where('node_id', $forumIds);
         } else {
             $finder->whereImpossible();
@@ -470,7 +470,7 @@ class App extends AbstractController
         if (isset($filters['order']) && isset($filters['direction'])) {
             $finder->order($filters['order'], $filters['direction']);
         } elseif (isset($filters['orderCallback'])) {
-            call_user_func($filters['orderCallback'], $finder);
+            \call_user_func($filters['orderCallback'], $finder);
         } else {
             $finder->order('last_post_date', 'DESC');
             $finder->indexHint('FORCE', 'last_post_date');

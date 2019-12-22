@@ -72,7 +72,7 @@ class AlertQueue extends Repository
     public function insertQueue($contentType, $contentId, array $payload = [], $queueDate = null)
     {
         if (!$this->app()->options()->tApi_delayPushNotifications) {
-            $payload = array_replace($payload, [
+            $payload = \array_replace($payload, [
                 'content_type' => $contentType,
                 'content_id' => $contentId
             ]);

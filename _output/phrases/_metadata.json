@@ -175,9 +175,9 @@
     },
     "option_explain.tApi_reactions.txt": {
         "global_cache": false,
-        "version_id": 1010100,
-        "version_string": "1.1.1",
-        "hash": "b57bc9a7b66d79fdae674f2bf21dd315"
+        "version_id": 1010500,
+        "version_string": "1.1.5",
+        "hash": "953fadc81ed355a0e867006df1644c61"
     },
     "option_explain.tApi_trendingCutoff.txt": {
         "global_cache": false,

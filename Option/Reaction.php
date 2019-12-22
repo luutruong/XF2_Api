@@ -51,18 +51,18 @@ class Reaction extends AbstractOption
         }
 
         foreach ($values as $index => $value) {
-            $value = array_replace([
+            $value = \array_replace([
                 'reactionId' => 0,
                 'imageUrl' => ''
             ], $value);
             if (isset($reactions[$value['reactionId']])
-                && trim($value['imageUrl']) !== ''
+                && \trim($value['imageUrl']) !== ''
             ) {
                 $output[] = $value;
             }
         }
 
-        if (count($output) > self::MAXIMUM_REACTIONS) {
+        if (\count($output) > self::MAXIMUM_REACTIONS) {
             throw new PrintableException('Too many reactions provided!');
         }
 

@@ -41,7 +41,7 @@ class Token
                 return $token;
             }
 
-            usleep($retried * 50);
+            \usleep($retried * 50);
         }
 
         throw new \RuntimeException('Too many retries to create accessToken');

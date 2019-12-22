@@ -40,12 +40,12 @@ class OneSignal extends AbstractPushNotification
         $playerIds = [];
         /** @var Subscription $subscription */
         foreach ($subscriptions as $subscription) {
-            if (trim($subscription->provider_key) !== '') {
+            if (\trim($subscription->provider_key) !== '') {
                 $playerIds[] = $subscription->provider_key;
             }
         }
 
-        if (count($playerIds) === 0) {
+        if (\count($playerIds) === 0) {
             return false;
         }
 
@@ -116,12 +116,12 @@ class OneSignal extends AbstractPushNotification
             $playerIds = [];
             /** @var Subscription $subscription */
             foreach ($subscriptions as $subscription) {
-                if (trim($subscription->provider_key) !== '') {
+                if (\trim($subscription->provider_key) !== '') {
                     $playerIds[] = $subscription->provider_key;
                 }
             }
 
-            if (count($playerIds) === 0) {
+            if (\count($playerIds) === 0) {
                 continue;
             }
 
@@ -157,7 +157,7 @@ class OneSignal extends AbstractPushNotification
     {
         $response = null;
 
-        $endPoint = self::API_END_POINT . '/players/' . urldecode($externalId);
+        $endPoint = self::API_END_POINT . '/players/' . \urldecode($externalId);
         $payload = [
             'app_id' => $this->appId,
             'notification_types' => -2,
@@ -229,8 +229,8 @@ class OneSignal extends AbstractPushNotification
      */
     protected function setupDefaults()
     {
-        $apiKey = trim($this->app->options()->tApi_oneSignalApiKey);
-        $appId = trim($this->app->options()->tApi_oneSignalAppId);
+        $apiKey = \trim($this->app->options()->tApi_oneSignalApiKey);
+        $appId = \trim($this->app->options()->tApi_oneSignalAppId);
 
         if ($appId === '') {
             throw new \InvalidArgumentException('OneSignal api ID must be set!');

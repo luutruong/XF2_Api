@@ -31,7 +31,7 @@ class AlertQueue extends Entity
      */
     public function getContent()
     {
-        if (array_key_exists('Content', $this->_getterCache)) {
+        if (\array_key_exists('Content', $this->_getterCache)) {
             return $this->_getterCache['Content'];
         }
 

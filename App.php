@@ -33,7 +33,7 @@ class App
     {
         $request = $request ?: \XF::app()->request();
 
-        return trim($request->getServer(self::HEADER_KEY_APP_VERSION)) !== '';
+        return \trim($request->getServer(self::HEADER_KEY_APP_VERSION)) !== '';
     }
 
     /**
@@ -89,16 +89,16 @@ class App
     {
         /** @var callable $callable */
         $callable = [$entity, 'getVisitorReactionId'];
-        $visitorReactedId = call_user_func($callable);
+        $visitorReactedId = \call_user_func($callable);
 
         $reacted = [];
         $entityReactions = $entity->get($reactionKey . '_');
-        if (is_array($entityReactions)) {
+        if (\is_array($entityReactions)) {
             /** @var Reaction $reactionData */
             $reactionData = \XF::app()->data('Truonglv\Api:Reaction');
             $reactions = $reactionData->getReactions();
 
-            foreach (array_keys($entityReactions) as $reactionId) {
+            foreach (\array_keys($entityReactions) as $reactionId) {
                 $count = $entityReactions[$reactionId];
                 if ($visitorReactedId > 0 && $visitorReactedId == $reactionId) {
                     $count -= 1;
@@ -136,13 +136,13 @@ class App
             $entity
         );
 
-        $stringFomatter = $entity->app()->stringFormatter();
-        $plainText = $stringFomatter->stripBbCode($entity->get($messageKey), [
+        $stringFormatter = $entity->app()->stringFormatter();
+        $plainText = $stringFormatter->stripBbCode($entity->get($messageKey), [
             'stripQuote' => true
         ]);
 
         $result->tapi_message_plain_text = $plainText;
-        $result->tapi_message_plain_text_preview = $stringFomatter->wholeWordTrim(
+        $result->tapi_message_plain_text_preview = $stringFormatter->wholeWordTrim(
             $plainText,
             $entity->app()->options()->tApi_discussionPreviewLength
         );

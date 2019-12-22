@@ -55,7 +55,7 @@ class Thread extends XFCP_Thread
                         continue;
                     }
 
-                    $ratio = min(
+                    $ratio = \min(
                         $attachment->Data->width / $attachment->Data->height,
                         $attachment->Data->height / $attachment->Data->width
                     );
@@ -65,11 +65,11 @@ class Thread extends XFCP_Thread
                     $ratioIndex++;
                 }
 
-                if (count($imageRatios) === 0) {
+                if (\count($imageRatios) === 0) {
                     return;
                 }
 
-                sort($imageRatios, SORT_ASC);
+                \sort($imageRatios, SORT_ASC);
 
                 $best = BinarySearch::findClosestNumber($imageRatios, $baseRatio);
                 foreach ($imageRatios as $index => $ratio) {

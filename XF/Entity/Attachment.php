@@ -44,7 +44,7 @@ class Attachment extends XFCP_Attachment
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
 
-        if (in_array($this->content_type, $this->tApiGetSupportContentTypes(), true)) {
+        if (\in_array($this->content_type, $this->tApiGetSupportContentTypes(), true)) {
             $result->view_url = $this->app()->router('public')
                 ->buildLink('canonical:attachments', $this, [
                     'tapi_token' => App::generateTokenForViewingAttachment($this)
@@ -68,29 +68,29 @@ class Attachment extends XFCP_Attachment
      */
     protected function tApiValidRequestToken()
     {
-        if (!in_array($this->content_type, $this->tApiGetSupportContentTypes(), true)) {
+        if (!\in_array($this->content_type, $this->tApiGetSupportContentTypes(), true)) {
             return false;
         }
 
         $token = $this->app()->request()->filter('tapi_token', 'str');
-        if ($token === '' || strpos($token, '.') === false) {
+        if ($token === '' || \strpos($token, '.') === false) {
             return false;
         }
         $apiKey = $this->app()->request()->getServer(App::HEADER_KEY_API_KEY);
 
-        list($timestamp, $token) = explode('.', $token, 2);
-        $timestamp = intval($timestamp);
-        if ($timestamp <= 0 || trim($token) === '') {
+        list($timestamp, $token) = \explode('.', $token, 2);
+        $timestamp = \intval($timestamp);
+        if ($timestamp <= 0 || \trim($token) === '') {
             return false;
         }
 
-        $expiresAt = $timestamp + intval($this->app()->options()->tApi_attachmentTokenExpires) * 60;
+        $expiresAt = $timestamp + \intval($this->app()->options()->tApi_attachmentTokenExpires) * 60;
         if ($expiresAt <= \XF::$time) {
             return false;
         }
 
-        $expected = md5(
-            intval($timestamp)
+        $expected = \md5(
+            \intval($timestamp)
             . $apiKey
             . $this->attachment_id
             . $this->app()->config('globalSalt')

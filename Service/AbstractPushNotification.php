@@ -91,7 +91,7 @@ abstract class AbstractPushNotification extends AbstractService
      */
     protected function logRequest($method, $endPoint, array $payload, $responseCode, $response, array $extra = [])
     {
-        $extra = array_replace([
+        $extra = \array_replace([
             'app_version' => '',
             'user_id' => 0
         ], $extra);
@@ -100,7 +100,7 @@ abstract class AbstractPushNotification extends AbstractService
         $log = $this->app->em()->create('Truonglv\Api:Log');
         $log->payload = $payload;
         $log->end_point = $endPoint;
-        $log->method = strtoupper($method);
+        $log->method = \strtoupper($method);
         $log->response_code = $responseCode;
         $log->response = $response;
 

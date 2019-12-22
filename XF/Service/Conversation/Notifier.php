@@ -19,7 +19,7 @@ class Notifier extends XFCP_Notifier
         \XF\Entity\ConversationMessage $message = null,
         \XF\Entity\User $sender = null
     ) {
-        if ($message !== null && in_array($actionType, ['create', 'reply'], true)) {
+        if ($message !== null && \in_array($actionType, ['create', 'reply'], true)) {
             AlertQueue::queue('conversation_message', $message->message_id, [
                 'action' => $actionType
             ]);

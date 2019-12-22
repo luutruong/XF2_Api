@@ -11,7 +11,7 @@ class BinarySearch
      */
     public static function findClosestNumber(array $numbers, $target)
     {
-        $total = count($numbers);
+        $total = \count($numbers);
         if ($total === 0) {
             throw new \InvalidArgumentException('Array numbers must not be empty!');
         }

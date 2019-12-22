@@ -19,7 +19,7 @@ class Notification extends AbstractController
         }
 
         $content = $alert->getContent();
-        if (!$content || !in_array($alert->content_type, \Truonglv\Api\App::getSupportAlertContentTypes(), true)) {
+        if (!$content || !\in_array($alert->content_type, \Truonglv\Api\App::getSupportAlertContentTypes(), true)) {
             return $this->noPermission();
         }
 
