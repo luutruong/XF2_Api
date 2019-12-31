@@ -28,6 +28,30 @@ class Thread extends XFCP_Thread
 
     /**
      * @param \XF\Entity\Thread $thread
+     * @param mixed $page
+     * @param mixed $perPage
+     * @return array
+     * @throws \XF\Mvc\Reply\Exception
+     */
+    protected function getPostsInThreadPaginated(\XF\Entity\Thread $thread, $page = 1, $perPage = null)
+    {
+        $postId = $this->filter('post_id', 'uint');
+        if ($postId > 0) {
+            /** @var \XF\Entity\Post|null $post */
+            $post = $this->em()->find('XF:Post', $postId);
+            if ($post !== null
+                && $post->thread_id === $thread->thread_id
+                && $post->canView()
+            ) {
+                $page = floor($post->position / $this->options()->messagesPerPage) + 1;
+            }
+        }
+
+        return parent::getPostsInThreadPaginated($thread, $page, $perPage);
+    }
+
+    /**
+     * @param \XF\Entity\Thread $thread
      * @return \XF\Finder\Post
      */
     protected function setupPostFinder(\XF\Entity\Thread $thread)

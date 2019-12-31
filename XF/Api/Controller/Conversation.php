@@ -6,6 +6,7 @@ use XF\Mvc\ParameterBag;
 use XF\Api\Mvc\Reply\ApiResult;
 use XF\Entity\ConversationUser;
 use XF\Entity\ConversationRecipient;
+use XF\Repository\ConversationMessage;
 
 class Conversation extends XFCP_Conversation
 {
@@ -54,6 +55,45 @@ class Conversation extends XFCP_Conversation
     public function actionPostRecipients(ParameterBag $params)
     {
         return $this->rerouteController(__CLASS__, 'post-invite', $params);
+    }
+
+    /**
+     * @param \XF\Entity\ConversationMaster $conversation
+     * @param mixed $page
+     * @param mixed $perPage
+     * @return array
+     */
+    protected function getMessagesInConversationPaginated(\XF\Entity\ConversationMaster $conversation, $page = 1, $perPage = null)
+    {
+        $unread = (bool) $this->filter('is_unread', 'bool');
+        $messageId = $this->filter('message_id', 'uint');
+
+        $userConv = $conversation->Users[\XF::visitor()->user_id];
+        /** @var ConversationMessage $convMessageRepo */
+        $convMessageRepo = $this->repository('XF:ConversationMessage');
+
+        if ($messageId > 0) {
+            /** @var \XF\Entity\ConversationMessage|null $message */
+            $message = $this->em()->find('XF:ConversationMessage', $messageId);
+            if ($message !== null
+                && $message->conversation_id === $conversation->conversation_id
+            ) {
+                $messagesBefore = $convMessageRepo->findEarlierMessages($conversation, $message)->total();
+                $page = floor($messagesBefore / $this->options()->messagesPerPage) + 1;
+            }
+        } elseif ($page === 1 && $unread && $userConv->isUnread()) {
+            /** @var \XF\Entity\ConversationMessage|null $firstUnread */
+            $firstUnread = $convMessageRepo->getFirstUnreadMessageInConversation($userConv);
+            if (!$firstUnread || $firstUnread->message_id == $conversation->last_message_id) {
+                $messagesBefore = $conversation->reply_count;
+            } else {
+                $messagesBefore = $convMessageRepo->findEarlierMessages($conversation, $firstUnread)->total();
+            }
+
+            $page = floor($messagesBefore / $this->options()->messagesPerPage) + 1;
+        }
+
+        return parent::getMessagesInConversationPaginated($conversation, $page, $perPage);
     }
 
     /**
