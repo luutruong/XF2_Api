@@ -24,7 +24,7 @@ class Conversations extends XFCP_Conversations
 
             /** @var User $userRepo */
             $userRepo = $this->repository('XF:User');
-            if (\ount($names)> 0) {
+            if (\count($names)> 0) {
                 $users = $userRepo->getUsersByNames($names, $notFound);
                 if (\count($notFound) > 0) {
                     return $this->apiError(\XF::phrase('following_members_not_found_x', [
