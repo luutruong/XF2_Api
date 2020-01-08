@@ -113,7 +113,7 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
                 $this->renderEmbedVideoHtml(
                     $provider,
                     'https://youtube.com/watch?v=' . $mediaKey,
-                    'https://img.youtube.com/vi/' . $mediaKey .'/hqdefault.jpg'
+                    'https://img.youtube.com/vi/' . $mediaKey . '/hqdefault.jpg'
                 ),
                 ''
             );
