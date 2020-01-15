@@ -31,6 +31,23 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
      * @param array $options
      * @return string
      */
+    public function renderTagCode(array $children, $option, array $tag, array $options)
+    {
+        $content = $this->renderSubTree($children, $options);
+        // a bit like ltrim, but only remove blank lines, not leading tabs on the first line
+        $content = \preg_replace('#^([ \t]*\r?\n)+#', '', $content);
+        $content = \rtrim($content);
+
+        return $this->wrapHtml('<pre>', $content, '</pre>');
+    }
+
+    /**
+     * @param array $children
+     * @param mixed $option
+     * @param array $tag
+     * @param array $options
+     * @return string
+     */
     public function renderTagUrl(array $children, $option, array $tag, array $options)
     {
         $options = \array_replace($options, [
