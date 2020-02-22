@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use XF\Api\Mvc\Reply\ApiResult;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Ignore;
 
@@ -110,6 +111,19 @@ class Me extends XFCP_Me
         ];
 
         return $this->apiResult($data);
+    }
+
+    public function actionPostAvatar()
+    {
+        $response = parent::actionPostAvatar();
+        if ($response instanceof ApiResult) {
+            $result = $response->getApiResult()->render();
+            $result['user'] = \XF::visitor()->toApiResult();
+
+            return $this->apiResult($result);
+        }
+
+        return $response;
     }
 
     /**

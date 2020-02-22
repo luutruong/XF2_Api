@@ -21,6 +21,7 @@ class ConversationMessage extends XFCP_ConversationMessage
         parent::setupApiResultData($result, $verbosity, $options);
 
         App::includeMessageHtmlIfNeeded($result, $this);
+        App::attachReactions($result, $this);
         $result->tapi_is_visitor_message = (\XF::visitor()->user_id === $this->user_id);
     }
 
