@@ -36,6 +36,8 @@ class Thread extends XFCP_Thread
     protected function getPostsInThreadPaginated(\XF\Entity\Thread $thread, $page = 1, $perPage = null)
     {
         $postId = $this->filter('post_id', 'uint');
+        $isUnread = $this->filter('is_unread', 'bool') === true;
+
         if ($postId > 0) {
             /** @var \XF\Entity\Post|null $post */
             $post = $this->em()->find('XF:Post', $postId);
@@ -44,6 +46,30 @@ class Thread extends XFCP_Thread
             ) {
                 if (\XF::isApiCheckingPermissions() && $post->canView()) {
                     $page = \floor($post->position / $this->options()->messagesPerPage) + 1;
+                }
+            }
+        } elseif ($isUnread) {
+            $visitor = \XF::visitor();
+            $postRepo = $this->getPostRepo();
+
+            if ($visitor->user_id > 0) {
+                $firstUnreadDate = $thread->getVisitorReadDate();
+                $findFirstUnread = $postRepo->findNextPostsInThread($thread, $firstUnreadDate);
+                /** @var \XF\Entity\Post|null $firstUnread */
+                $firstUnread = $findFirstUnread->skipIgnored()->fetchOne();
+                if (!$firstUnread) {
+                    /** @var \XF\Entity\Post|null $firstUnread */
+                    $firstUnread = $thread->LastPost;
+                }
+
+                if ($firstUnread) {
+                    $page = \floor($firstUnread->position / $this->options()->messagesPerPage) + 1;
+                }
+            } else {
+                /** @var \XF\Entity\Post|null $firstUnread */
+                $firstUnread = $thread->LastPost;
+                if ($firstUnread) {
+                    $page = \floor($firstUnread->position / $this->options()->messagesPerPage) + 1;
                 }
             }
         }
