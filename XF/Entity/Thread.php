@@ -21,6 +21,8 @@ class Thread extends XFCP_Thread
         parent::setupApiResultData($result, $verbosity, $options);
 
         $result->can_watch = $this->canWatch();
+        $result->view_url = $this->app()->router('public')
+            ->buildLink('canonical:threads', $this);
 
         $visitor = \XF::visitor();
         if ($visitor->user_id > 0) {

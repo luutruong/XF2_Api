@@ -81,7 +81,7 @@ class Conversation extends XFCP_Conversation
                 $messagesBefore = $convMessageRepo->findEarlierMessages($conversation, $message)->total();
                 $page = floor($messagesBefore / $this->options()->messagesPerPage) + 1;
             }
-        } elseif ($page === 1 && $unread && $userConv->isUnread()) {
+        } elseif ($unread) {
             /** @var \XF\Entity\ConversationMessage|null $firstUnread */
             $firstUnread = $convMessageRepo->getFirstUnreadMessageInConversation($userConv);
             if (!$firstUnread || $firstUnread->message_id == $conversation->last_message_id) {
