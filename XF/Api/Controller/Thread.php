@@ -41,9 +41,10 @@ class Thread extends XFCP_Thread
             $post = $this->em()->find('XF:Post', $postId);
             if ($post !== null
                 && $post->thread_id === $thread->thread_id
-                && $post->canView()
             ) {
-                $page = floor($post->position / $this->options()->messagesPerPage) + 1;
+                if (\XF::isApiCheckingPermissions() && $post->canView()) {
+                    $page = \floor($post->position / $this->options()->messagesPerPage) + 1;
+                }
             }
         }
 
