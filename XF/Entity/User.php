@@ -27,5 +27,7 @@ class User extends XFCP_User
 
         $result->ignoring = $this->Profile->ignored;
         $result->following = $this->Profile->following;
+        // if this key is TRUE in the user profile will have a tick icon
+        $result->tapi_is_verified = $this->is_staff;
     }
 }
