@@ -2,9 +2,9 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use XF\Api\Mvc\Reply\ApiResult;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Ignore;
+use XF\Api\Mvc\Reply\ApiResult;
 
 class Me extends XFCP_Me
 {

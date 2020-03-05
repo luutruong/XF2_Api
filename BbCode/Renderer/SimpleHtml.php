@@ -148,7 +148,7 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
      */
     public function renderTagQuote(array $children, $option, array $tag, array $options)
     {
-        if (!$children) {
+        if (\count($children) === 0) {
             return '';
         }
 
@@ -170,7 +170,7 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
                 'stopBreakConversion' => 1
             ]));
 
-            foreach ($parts AS $part) {
+            foreach ($parts as $part) {
                 $attributeParts = \explode(':', $part, 2);
                 if (isset($attributeParts[1])) {
                     $attrName = \trim($attributeParts[0]);
@@ -181,11 +181,10 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
                 }
             }
 
-            if ($attributes) {
+            if (\count($attributes) > 0) {
                 $firstValue = \reset($attributes);
                 $firstName = \key($attributes);
-                if ($firstName != 'member')
-                {
+                if ($firstName != 'member') {
                     $source = ['type' => $firstName, 'id' => \intval($firstValue)];
                 }
             }
