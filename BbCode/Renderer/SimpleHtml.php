@@ -140,6 +140,65 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
     }
 
     /**
+     * @param array $children
+     * @param mixed $option
+     * @param array $tag
+     * @param array $options
+     * @return string
+     */
+    public function renderTagQuote(array $children, $option, array $tag, array $options)
+    {
+        if (!$children) {
+            return '';
+        }
+
+        $this->trimChildrenList($children);
+
+        $content = $this->renderSubTree($children, $options);
+        if ($content === '') {
+            return '';
+        }
+
+        $name = null;
+        $attributes = [];
+        $source = [];
+
+        if ($option !== null && \strlen($option) > 0) {
+            $parts = \explode(',', $option);
+            $name = $this->filterString(\array_shift($parts), \array_merge($options, [
+                'stopSmilies' => 1,
+                'stopBreakConversion' => 1
+            ]));
+
+            foreach ($parts AS $part) {
+                $attributeParts = \explode(':', $part, 2);
+                if (isset($attributeParts[1])) {
+                    $attrName = \trim($attributeParts[0]);
+                    $attrValue = \trim($attributeParts[1]);
+                    if ($attrName !== '' && $attrValue !== '') {
+                        $attributes[$attrName] = $attrValue;
+                    }
+                }
+            }
+
+            if ($attributes) {
+                $firstValue = \reset($attributes);
+                $firstName = \key($attributes);
+                if ($firstName != 'member')
+                {
+                    $source = ['type' => $firstName, 'id' => \intval($firstValue)];
+                }
+            }
+        }
+
+        return $this->wrapHtml(
+            '<blockquote data-name="' . $name . '" data-source="' . \json_encode($source) . '">',
+            $content,
+            '</blockquote>'
+        );
+    }
+
+    /**
      * @param string $provider
      * @param string $viewUrl
      * @param string $thumbnailUrl
