@@ -221,6 +221,13 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
      */
     protected function getRenderedLink($text, $url, array $options)
     {
+        // Bug: https://xenforo.com/community/threads/dead-code-conditions.177711/
+        // use the function prepareTextFromUrl() if XF fixed above bugs.
+        $length = \utf8_strlen($text);
+        if ($length > 50) {
+            $text = \utf8_substr_replace($text, '...', 25, $length - 25 - 10);
+        }
+
         $html = parent::getRenderedLink($text, $url, $options);
         $linkInfo = $this->formatter->getLinkClassTarget($url);
         $html = \trim($html);
@@ -235,7 +242,7 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             $match = $app->router('public')->routeToController($url, $request);
 
             if ($match->getController()) {
-                $params = (string) json_encode($match->getParams());
+                $params = (string) \json_encode($match->getParams());
                 $html = \substr($html, 0, 3)
                     . ' data-tapi-route="' . \htmlspecialchars($match->getController()) . '"'
                     . ' data-tapi-route-params="' . \htmlspecialchars($params) . '" '
