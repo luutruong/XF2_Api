@@ -214,6 +214,19 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
     }
 
     /**
+     * @param mixed $url
+     * @param array $options
+     * @return string
+     */
+    protected function prepareTextFromUrlExtended($url, array $options)
+    {
+        // force URL shorten in App
+        $options['shortenUrl'] = true;
+
+        return parent::prepareTextFromUrlExtended($url, $options);
+    }
+
+    /**
      * @param mixed $text
      * @param mixed $url
      * @param array $options
@@ -221,11 +234,13 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
      */
     protected function getRenderedLink($text, $url, array $options)
     {
-        // Bug: https://xenforo.com/community/threads/dead-code-conditions.177711/
-        // use the function prepareTextFromUrl() if XF fixed above bugs.
-        $length = \utf8_strlen($text);
-        if ($length > 50) {
-            $text = \utf8_substr_replace($text, '...', 25, $length - 25 - 10);
+        if (\XF::$versionId <= 2010800) {
+            // Bug: https://xenforo.com/community/threads/dead-code-conditions.177711/
+            // use the function prepareTextFromUrl() if XF fixed above bugs.
+            $length = \utf8_strlen($text);
+            if ($length > 50) {
+                $text = \utf8_substr_replace($text, '...', 25, $length - 25 - 10);
+            }
         }
 
         $html = parent::getRenderedLink($text, $url, $options);
