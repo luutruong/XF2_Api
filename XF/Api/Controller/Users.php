@@ -12,6 +12,11 @@ class Users extends XFCP_Users
 
         $names = $this->filter('names', 'str');
         $names = \preg_split('/,/', $names, -1, PREG_SPLIT_NO_EMPTY);
+        if (!\is_array($names)) {
+            return $this->apiResult([
+                'users' => [],
+            ]);
+        }
 
         $names = \array_map('trim', $names);
         /** @var \XF\Finder\User $userFinder */
