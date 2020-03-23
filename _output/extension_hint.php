@@ -17,6 +17,7 @@ namespace Truonglv\Api\XF\Api\Controller
 	class XFCP_ProfilePostComments extends \XF\Api\Controller\ProfilePostComments {}
 	class XFCP_Thread extends \XF\Api\Controller\Thread {}
 	class XFCP_User extends \XF\Api\Controller\User {}
+	class XFCP_Users extends \XF\Api\Controller\Users {}
 }
 
 namespace Truonglv\Api\XF\Api\Mvc\Renderer
