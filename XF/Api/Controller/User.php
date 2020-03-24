@@ -86,6 +86,39 @@ class User extends XFCP_User
         return $reportPlugin->actionReport('user', $user);
     }
 
+    public function actionGetThreads(ParameterBag $params)
+    {
+        $user = $this->assertViewableUser($params->user_id);
+
+        /** @var \XF\Repository\Thread $threadRepo */
+        $threadRepo = $this->repository('XF:Thread');
+
+        $threadFinder = $threadRepo->findThreadsStartedByUser($user->user_id);
+        if (\XF::isApiCheckingPermissions()) {
+            /** @var \XF\Repository\Forum $forumRepo */
+            $forumRepo = $this->repository('XF:Forum');
+            $forums = $forumRepo->getViewableForums();
+
+            $threadFinder->where('node_id', $forums->keys())
+                ->where('discussion_state', 'visible');
+        }
+
+        $page = $this->filterPage();
+        $perPage = $this->options()->discussionsPerPage;
+
+        $total = $threadFinder->total();
+        $this->assertValidApiPage($page, $perPage, $total);
+
+        $threads = $threadFinder->limitByPage($page, $perPage)->fetch();
+
+        $data = [
+            'pagination' => $this->getPaginationData($threads, $page, $perPage, $total),
+            'threads' => $threads->toApiResults(Entity::VERBOSITY_VERBOSE)
+        ];
+
+        return $this->apiResult($data);
+    }
+
     /**
      * @param \XF\Entity\User $user
      * @return \XF\Finder\ProfilePost
