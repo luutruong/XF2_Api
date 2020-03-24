@@ -6,6 +6,7 @@ use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
 use XF\Entity\ThreadPrefix;
 use XF\Mvc\Entity\AbstractCollection;
+use XF\Repository\ForumWatch;
 
 class Forum extends XFCP_Forum
 {
@@ -45,6 +46,26 @@ class Forum extends XFCP_Forum
         ];
 
         return $this->apiSuccess($data);
+    }
+
+    public function actionPostWatch(ParameterBag $params)
+    {
+        $forum = $this->assertViewableForum($params->node_id);
+        if (\XF::isApiCheckingPermissions() && $forum->canWatch()) {
+            return $this->noPermission();
+        }
+
+        /** @var ForumWatch $forumWatch */
+        $forumWatch = $this->repository('XF:ForumWatch');
+
+        $visitor = \XF::visitor();
+        $newState = ($forum->Watch[$visitor->user_id] !== null) ? 'delete' : 'watch_no_email';
+
+        $forumWatch->setWatchState($forum, $visitor, $newState);
+
+        return $this->apiSuccess([
+            'is_watched' => $newState !== 'delete'
+        ]);
     }
 
     /**
