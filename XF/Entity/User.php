@@ -30,10 +30,20 @@ class User extends XFCP_User
         // if this key is TRUE in the user profile will have a tick icon
         // make this option config from server to support third party add-on
         $result->tapi_is_verified = $this->is_staff;
+        // determine if the user can using dark theme.
+        $result->tapi_can_use_dark_theme = $this->canTApiUseDarkTheme();
 
         if ($verbosity >= self::VERBOSITY_VERBOSE) {
             $result->tapi_about_data = $this->getTApiAboutTabData();
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function canTApiUseDarkTheme()
+    {
+        return true;
     }
 
     /**
