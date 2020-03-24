@@ -41,7 +41,29 @@ class User extends XFCP_User
      */
     protected function getTApiAboutTabData()
     {
-        $data = [];
+        $language = $this->app()->language(\XF::visitor()->language_id);
+
+        $data = [
+            [
+                'label' => \XF::phrase('joined'),
+                'value' => $language->date($this->register_date, 'absolute'),
+            ],
+            [
+                'label' => \XF::phrase('messages'),
+                'value' => $language->numberFormat($this->message_count)
+            ],
+            [
+                'label' => \XF::phrase('reaction_score'),
+                'value' => $language->numberFormat($this->reaction_score)
+            ],
+        ];
+
+        if ($this->app()->options()->enableTrophies) {
+            $data[] = [
+                'label' => \XF::phrase('trophy_points'),
+                'value' => $language->numberFormat($this->trophy_points)
+            ];
+        }
 
         if ($this->custom_title !== '') {
             $data[] = [
@@ -52,8 +74,6 @@ class User extends XFCP_User
 
         $birthday = $this->Profile->getBirthday();
         if (\count($birthday) > 0) {
-            $language = $this->app()->language(\XF::visitor()->language_id);
-
             $data[] = [
                 'label' => \XF::phrase('date_of_birth'),
                 'value' => $language->date($birthday['timeStamp'], $birthday['format']),
