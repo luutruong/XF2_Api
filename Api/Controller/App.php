@@ -20,20 +20,7 @@ class App extends AbstractController
 {
     public function actionGet()
     {
-        /** @var Reaction $reactionData */
-        $reactionData = $this->data('Truonglv\Api:Reaction');
-
-        /** @var AddOn $addOnRepo */
-        $addOnRepo = $this->repository('XF:AddOn');
-        $addOns = $addOnRepo->getInstalledAddOnData();
-
-        $data = [
-            'reactions' => $reactionData->getReactions(),
-            'apiVersion' => $addOns['Truonglv/Api']['version_id'],
-            'homeTabActive' => $this->options()->tApi_defaultHomeData,
-            'allowRegistration' => (bool) $this->options()->registrationSetup['enabled'],
-            'googleAnalyticsWebPropertyId' => $this->options()->googleAnalyticsWebPropertyId
-        ];
+        $data = $this->getAppInfo();
 
         return $this->apiResult($data);
     }
@@ -328,6 +315,27 @@ class App extends AbstractController
             'user' => $token->User->toApiResult(),
             'accessToken' => $token->token
         ]);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAppInfo()
+    {
+        /** @var Reaction $reactionData */
+        $reactionData = $this->data('Truonglv\Api:Reaction');
+
+        /** @var AddOn $addOnRepo */
+        $addOnRepo = $this->repository('XF:AddOn');
+        $addOns = $addOnRepo->getInstalledAddOnData();
+
+        return [
+            'reactions' => $reactionData->getReactions(),
+            'apiVersion' => $addOns['Truonglv/Api']['version_id'],
+            'homeTabActive' => $this->options()->tApi_defaultHomeData,
+            'allowRegistration' => (bool) $this->options()->registrationSetup['enabled'],
+            'googleAnalyticsWebPropertyId' => $this->options()->googleAnalyticsWebPropertyId
+        ];
     }
 
     /**
