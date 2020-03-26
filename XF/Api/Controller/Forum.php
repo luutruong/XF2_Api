@@ -5,8 +5,8 @@ namespace Truonglv\Api\XF\Api\Controller;
 use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
 use XF\Entity\ThreadPrefix;
-use XF\Mvc\Entity\AbstractCollection;
 use XF\Repository\ForumWatch;
+use XF\Mvc\Entity\AbstractCollection;
 
 class Forum extends XFCP_Forum
 {
@@ -59,7 +59,9 @@ class Forum extends XFCP_Forum
         $forumWatch = $this->repository('XF:ForumWatch');
 
         $visitor = \XF::visitor();
-        $newState = ($forum->Watch[$visitor->user_id] !== null) ? 'delete' : 'watch_no_email';
+        /** @var \XF\Entity\ForumWatch|null $forumWatchEntity */
+        $forumWatchEntity = $forum->Watch[$visitor->user_id];
+        $newState = ($forumWatchEntity !== null) ? 'delete' : 'watch_no_email';
 
         $forumWatch->setWatchState($forum, $visitor, $newState);
 

@@ -103,6 +103,7 @@ class User extends XFCP_User
                 continue;
             }
 
+            /** @var mixed $definition */
             $definition = $customFields->getDefinition($customFieldId);
             $data[] = [
                 'label' => $definition->title,
