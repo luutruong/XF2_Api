@@ -43,6 +43,7 @@ class Thread extends XFCP_Thread
             return $this->noPermission();
         }
 
+        if (\XF::isApiCheckingPermissions() && !$poll->canVote()) {
             return $this->noPermission();
         }
 
