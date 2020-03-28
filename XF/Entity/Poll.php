@@ -20,6 +20,14 @@ class Poll extends XFCP_Poll
         $result->is_closed = $this->isClosed();
         $result->can_vote = $this->canVote();
         $result->is_visitor_voted = $this->hasVoted();
+
+        $responses = $this->responses;
+        foreach ($responses as $responseId => &$responseRef) {
+            $responseRef['is_visitor_voted'] = $this->hasVoted($responseId);
+            $responseRef['vote_percentage'] = $this->getVotePercentage($responseRef['response_vote_count']);
+        }
+
+        $result->responses = $responses;
     }
 
     public static function getStructure(Structure $structure)
