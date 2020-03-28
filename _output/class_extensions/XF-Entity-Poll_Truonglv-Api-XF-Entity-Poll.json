@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Entity\\Poll",
+    "to_class": "Truonglv\\Api\\XF\\Entity\\Poll",
+    "execute_order": 10,
+    "active": true
+}

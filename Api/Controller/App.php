@@ -115,7 +115,7 @@ class App extends AbstractController
             $attachmentRepo = $this->repository('XF:Attachment');
             $attachmentRepo->addAttachmentsToContent($posts, 'post');
 
-            $data['threads'] = $threads->filterViewable()->toApiResults(Entity::VERBOSITY_VERBOSE, [
+            $data['threads'] = $threads->filterViewable()->toApiResults(Entity::VERBOSITY_NORMAL, [
                 'tapi_first_post' => true,
                 'tapi_fetch_image' => true
             ]);
@@ -224,7 +224,7 @@ class App extends AbstractController
         $user = $registration->save();
 
         return $this->apiSuccess([
-            'user' => $user->toApiResult(),
+            'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE),
             'accessToken' => Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
         ]);
     }
@@ -289,7 +289,7 @@ class App extends AbstractController
         }
 
         return $this->apiSuccess([
-            'user' => $user->toApiResult(),
+            'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE),
             'accessToken' => Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
         ]);
     }
@@ -312,7 +312,7 @@ class App extends AbstractController
         $token->save();
 
         return $this->apiSuccess([
-            'user' => $token->User->toApiResult(),
+            'user' => $token->User->toApiResult(Entity::VERBOSITY_VERBOSE),
             'accessToken' => $token->token
         ]);
     }

@@ -70,7 +70,7 @@ class Search extends AbstractController
         $results = [];
         /** @var Entity $entity */
         foreach ($resultSet->getResultsData() as $entity) {
-            $results[] = $entity->toApiResult(Entity::VERBOSITY_VERBOSE);
+            $results[] = $entity->toApiResult();
         }
 
         $data = [

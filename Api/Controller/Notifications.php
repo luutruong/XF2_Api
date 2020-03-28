@@ -32,7 +32,7 @@ class Notifications extends AbstractController
         }
 
         $data = [
-            'notifications' => $alerts->toApiResults(Entity::VERBOSITY_VERBOSE),
+            'notifications' => $alerts->toApiResults(),
             'pagination' => $this->getPaginationData($alerts, $page, $perPage, $total)
         ];
 

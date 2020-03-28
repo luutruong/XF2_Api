@@ -3,6 +3,8 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use Truonglv\Api\App;
+use XF\Entity\Poll;
+use XF\Mvc\Entity\Entity;
 use XF\Mvc\ParameterBag;
 
 class Thread extends XFCP_Thread
@@ -23,6 +25,42 @@ class Thread extends XFCP_Thread
 
         return $this->apiSuccess([
             'is_watched' => $newState !== 'delete'
+        ]);
+    }
+
+    public function actionPostPollVote(ParameterBag $params)
+    {
+        $this->assertRequiredApiInput('responses');
+
+        $thread = $this->assertViewableThread($params->thread_id);
+        if (\XF::isApiCheckingPermissions() && !$thread->canWatch()) {
+            return $this->noPermission();
+        }
+
+        /** @var Poll|null $poll */
+        $poll = $thread->discussion_type === 'poll' ? $thread->Poll : null;
+        if (!$poll) {
+            return $this->noPermission();
+        }
+
+            return $this->noPermission();
+        }
+
+        $voteResponseIds = $this->filter('responses', 'array-uint');
+
+        /** @var \XF\Service\Poll\Voter $voter */
+        $voter = $this->service('XF:Poll\Voter', $poll, $voteResponseIds);
+        if (!$voter->validate($errors)) {
+            return $this->error($errors);
+        }
+
+        $voter->save();
+
+        /** @var Poll $pollNew */
+        $pollNew = $this->finder('XF:Poll')->whereId($poll->poll_id)->fetchOne();
+
+        return $this->apiSuccess([
+            'poll' => $pollNew->toApiResult(Entity::VERBOSITY_VERBOSE)
         ]);
     }
 

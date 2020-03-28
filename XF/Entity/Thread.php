@@ -83,5 +83,9 @@ class Thread extends XFCP_Thread
                 }
             }
         }
+
+        if ($this->discussion_type === 'poll' && $verbosity >= self::VERBOSITY_VERBOSE) {
+            $result->includeRelation('Poll', $verbosity, $options);
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace Truonglv\Api\Api\Controller;
 
 use XF\Entity\UserAlert;
+use XF\Mvc\Entity\Entity;
 use XF\Mvc\ParameterBag;
 use XF\Api\Controller\AbstractController;
 
@@ -29,7 +30,7 @@ class Notification extends AbstractController
         }
 
         return $this->apiResult([
-            'notification' => $alert->toApiResult(),
+            'notification' => $alert->toApiResult(Entity::VERBOSITY_VERBOSE),
             'content' => $content->toApiResult()
         ]);
     }
