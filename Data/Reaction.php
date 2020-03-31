@@ -34,7 +34,7 @@ class Reaction
                         $reactions[$reaction['reactionId']] = [
                             'imageUrl' => $reaction['imageUrl'],
                             'text' => $activeReactions[$reaction['reactionId']]->title,
-                            'reactionId' => $reaction['reactionId']
+                            'reactionId' => \intval($reaction['reactionId'])
                         ];
                     }
                 }
