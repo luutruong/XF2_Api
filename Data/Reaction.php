@@ -23,10 +23,10 @@ class Reaction
             $enabledReactions = \XF::app()->options()->tApi_reactions;
 
             if (\count($enabledReactions) === 0) {
-                $reactions[1] = [
+                $reactions[\Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID] = [
                     'imageUrl' => 'styles/default/Truonglv/Api/like.png',
-                    'text' => $activeReactions[1]->title,
-                    'reactionId' => 1
+                    'text' => $activeReactions[\Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID]->title,
+                    'reactionId' => \Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID
                 ];
             } else {
                 foreach ($enabledReactions as $reaction) {
