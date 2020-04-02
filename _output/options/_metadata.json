@@ -35,6 +35,9 @@
     "tApi_reactions.json": {
         "hash": "05b5e646329aef8a57dbb5449415cd4f"
     },
+    "tApi_recordsPerPage.json": {
+        "hash": "16e3ed88a64c7e7ec1ba1d0ff87c7693"
+    },
     "tApi_trendingCutoff.json": {
         "hash": "5c6d43259043e4365c10aeb32e118330"
     }

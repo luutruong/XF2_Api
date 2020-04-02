@@ -121,6 +121,22 @@ class User extends XFCP_User
 
     /**
      * @param \XF\Entity\User $user
+     * @param mixed $page
+     * @param mixed $perPage
+     * @return array
+     * @throws \XF\Mvc\Reply\Exception
+     */
+    protected function getProfilePostsForUserPaginated(\XF\Entity\User $user, $page = 1, $perPage = null)
+    {
+        if (App::isRequestFromApp()) {
+            $perPage = $this->options()->tApi_recordsPerPage;
+        }
+
+        return parent::getProfilePostsForUserPaginated($user, $page, $perPage);
+    }
+
+    /**
+     * @param \XF\Entity\User $user
      * @return \XF\Finder\ProfilePost
      */
     protected function setupProfilePostFinder(\XF\Entity\User $user)

@@ -56,7 +56,7 @@ class Search extends AbstractController
         $search = $this->assertSearchViewable($params->search_id);
 
         $page = $this->filterPage();
-        $perPage = $this->options()->searchResultsPerPage;
+        $perPage = $this->options()->tApi_recordsPerPage;
 
         $searcher = $this->app()->search();
         $resultSet = $searcher->getResultSet($search->search_results);

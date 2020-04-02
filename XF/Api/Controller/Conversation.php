@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
 use XF\Api\Mvc\Reply\ApiResult;
 use XF\Entity\ConversationUser;
@@ -65,6 +66,10 @@ class Conversation extends XFCP_Conversation
      */
     protected function getMessagesInConversationPaginated(\XF\Entity\ConversationMaster $conversation, $page = 1, $perPage = null)
     {
+        if (App::isRequestFromApp()) {
+            $perPage = $this->options()->tApi_recordsPerPage;
+        }
+
         $unread = (bool) $this->filter('is_unread', 'bool');
         $messageId = $this->filter('message_id', 'uint');
 

@@ -15,7 +15,7 @@ class Notifications extends AbstractController
         $visitor = \XF::visitor();
 
         $page = $this->filterPage();
-        $perPage = $this->options()->alertsPerPage;
+        $perPage = $this->options()->tApi_recordsPerPage;
 
         /** @var \XF\Repository\UserAlert $alertRepo */
         $alertRepo = $this->repository('XF:UserAlert');

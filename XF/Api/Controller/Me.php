@@ -80,7 +80,7 @@ class Me extends XFCP_Me
     public function actionGetWatchedThreads()
     {
         $page = $this->filterPage();
-        $perPage = $this->options()->discussionsPerPage;
+        $perPage = $this->options()->tApi_recordsPerPage;
 
         $visitor = \XF::visitor();
 

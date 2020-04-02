@@ -23,6 +23,22 @@ class ProfilePost extends XFCP_ProfilePost
 
     /**
      * @param \XF\Entity\ProfilePost $profilePost
+     * @param mixed $page
+     * @param mixed $perPage
+     * @return array
+     * @throws \XF\Mvc\Reply\Exception
+     */
+    protected function getCommentsOnProfilePostPaginated(\XF\Entity\ProfilePost $profilePost, $page = 1, $perPage = null)
+    {
+        if (App::isRequestFromApp()) {
+            $perPage = $this->options()->tApi_recordsPerPage;
+        }
+
+        return parent::getCommentsOnProfilePostPaginated($profilePost, $page, $perPage);
+    }
+
+    /**
+     * @param \XF\Entity\ProfilePost $profilePost
      * @return \XF\Finder\ProfilePostComment
      */
     protected function setupCommentsFinder(\XF\Entity\ProfilePost $profilePost)

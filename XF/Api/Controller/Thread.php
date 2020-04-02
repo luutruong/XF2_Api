@@ -74,6 +74,10 @@ class Thread extends XFCP_Thread
      */
     protected function getPostsInThreadPaginated(\XF\Entity\Thread $thread, $page = 1, $perPage = null)
     {
+        if (App::isRequestFromApp()) {
+            $perPage = $this->options()->tApi_recordsPerPage;
+        }
+
         $postId = $this->filter('post_id', 'uint');
         $isUnread = $this->filter('is_unread', 'bool') === true;
 

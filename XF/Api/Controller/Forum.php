@@ -72,6 +72,21 @@ class Forum extends XFCP_Forum
 
     /**
      * @param \XF\Entity\Forum $forum
+     * @param mixed $page
+     * @param mixed $perPage
+     * @return array
+     */
+    protected function getThreadsInForumPaginated(\XF\Entity\Forum $forum, $page = 1, $perPage = null)
+    {
+        if (App::isRequestFromApp()) {
+            $perPage = $this->options()->tApi_recordsPerPage;
+        }
+
+        return parent::getThreadsInForumPaginated($forum, $page, $perPage);
+    }
+
+    /**
+     * @param \XF\Entity\Forum $forum
      * @param array $filters
      * @param mixed $sort
      * @return \XF\Finder\Thread

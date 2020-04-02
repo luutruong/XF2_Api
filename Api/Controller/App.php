@@ -29,7 +29,7 @@ class App extends AbstractController
     public function actionGetNewsFeeds()
     {
         $page = $this->filterPage();
-        $perPage = $this->options()->discussionsPerPage;
+        $perPage = $this->options()->tApi_recordsPerPage;
 
         $filters = $this->getNewsFeedsFilters();
         $queryHash = \md5('tApi_NewsFeeds_threadIds' . __METHOD__ . \strval(\json_encode($filters)));

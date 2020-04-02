@@ -101,6 +101,12 @@
         "version_string": "1.1.1",
         "hash": "e3fecd9ec868c8c581c3a4b477f15a62"
     },
+    "option.tApi_recordsPerPage.txt": {
+        "global_cache": false,
+        "version_id": 1020610,
+        "version_string": "1.2.6 Alpha",
+        "hash": "0d65c51f1e5f7281260c6494c57549fc"
+    },
     "option.tApi_trendingCutoff.txt": {
         "global_cache": false,
         "version_id": 1010202,
@@ -178,6 +184,12 @@
         "version_id": 1010500,
         "version_string": "1.1.5",
         "hash": "953fadc81ed355a0e867006df1644c61"
+    },
+    "option_explain.tApi_recordsPerPage.txt": {
+        "global_cache": false,
+        "version_id": 1020610,
+        "version_string": "1.2.6 Alpha",
+        "hash": "d41d8cd98f00b204e9800998ecf8427e"
     },
     "option_explain.tApi_trendingCutoff.txt": {
         "global_cache": false,
