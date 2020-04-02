@@ -3,8 +3,8 @@
 namespace Truonglv\Api\Api\Controller;
 
 use XF\Entity\UserAlert;
-use XF\Mvc\Entity\Entity;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Entity\Entity;
 use XF\Api\Controller\AbstractController;
 
 class Notification extends AbstractController

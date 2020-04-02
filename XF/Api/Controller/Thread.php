@@ -2,10 +2,10 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\App;
 use XF\Entity\Poll;
-use XF\Mvc\Entity\Entity;
+use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Entity\Entity;
 
 class Thread extends XFCP_Thread
 {

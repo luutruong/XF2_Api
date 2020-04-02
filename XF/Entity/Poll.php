@@ -2,11 +2,16 @@
 
 namespace Truonglv\Api\XF\Entity;
 
-use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 class Poll extends XFCP_Poll
 {
+    /**
+     * @param \XF\Api\Result\EntityResult $result
+     * @param mixed $verbosity
+     * @param array $options
+     * @return void
+     */
     protected function setupApiResultData(
         \XF\Api\Result\EntityResult $result,
         $verbosity = self::VERBOSITY_NORMAL,
