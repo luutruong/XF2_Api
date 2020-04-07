@@ -44,7 +44,7 @@ class Subscription extends Entity
             'device_token' => ['type' => self::STR, 'required' => true, 'maxLength' => 150],
             'is_device_test' => ['type' => self::BOOL, 'default' => false],
             'provider' => ['type' => self::STR, 'allowedValues' => ['one_signal'], 'required' => true],
-            'provider_key' => ['type' => self::STR, 'maxLength' => 100, 'default' => ''],
+            'provider_key' => ['type' => self::STR, 'maxLength' => 255, 'default' => ''],
             'subscribed_date' => ['type' => self::UINT, 'default' => \XF::$time]
         ];
 

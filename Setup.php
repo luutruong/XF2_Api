@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api;
 
+use XF\Db\Schema\Alter;
 use XF\Db\Schema\Create;
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
@@ -19,11 +20,17 @@ class Setup extends AbstractSetup
     public function installStep1()
     {
         $this->doCreateTables($this->getTables());
+        $this->doAlterTables($this->getAlters());
     }
 
     public function uninstallStep1()
     {
         $this->doDropTables($this->getTables());
+    }
+
+    public function upgrade2000000Step1()
+    {
+        $this->doAlterTables($this->getAlters1());
     }
 
     /**
@@ -91,5 +98,21 @@ class Setup extends AbstractSetup
         };
 
         return $tables;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAlters1()
+    {
+        $alters = [];
+
+        $alters['xf_tapi_subscription'] = [
+            'provider_key' => function (Alter $table) {
+                $table->changeColumn('provider_key', 'varchar', 255);
+            }
+        ];
+
+        return $alters;
     }
 }
