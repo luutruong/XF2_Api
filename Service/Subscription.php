@@ -16,7 +16,13 @@ class Subscription extends AbstractService
      */
     protected $pushToken;
 
-    public function __construct(\XF\App $app, User $user, string $pushToken)
+    /**
+     * Subscription constructor.
+     * @param \XF\App $app
+     * @param User $user
+     * @param string $pushToken
+     */
+    public function __construct(\XF\App $app, User $user, $pushToken)
     {
         parent::__construct($app);
 
@@ -43,7 +49,7 @@ class Subscription extends AbstractService
     /**
      * @param array $extra
      * @throws \XF\PrintableException
-     * @return void
+     * @return \Truonglv\Api\Entity\Subscription
      */
     public function subscribe(array $extra)
     {
@@ -70,5 +76,7 @@ class Subscription extends AbstractService
             $subscription->save(false);
         } catch (\XF\Db\DuplicateKeyException $e) {
         }
+
+        return $subscription;
     }
 }

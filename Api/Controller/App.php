@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use Truonglv\Api\Entity\Subscription;
 use XF\Finder\Thread;
 use XF\Repository\Node;
 use XF\Repository\User;
@@ -163,6 +164,7 @@ class App extends AbstractController
         /** @var \Truonglv\Api\Service\Subscription $service */
         $service = $this->service('Truonglv\Api:Subscription', \XF::visitor(), $input['device_token']);
 
+        $extra = [];
         if ($input['type'] === 'unsubscribe') {
             $service->unsubscribe();
         } elseif ($input['type'] === 'subscribe') {
@@ -171,13 +173,27 @@ class App extends AbstractController
                 'provider_key',
             ]);
 
+            $dupes = $this->finder('Truonglv\Api:Subscription')
+                ->where('device_token', $input['device_token'])
+                ->where('provider', $input['provider'])
+                ->fetch();
+            /** @var Subscription $dupe */
+            foreach ($dupes as $dupe) {
+                if ($dupe->user_id == $visitor->user_id) {
+                    continue;
+                }
+
+                $dupe->delete();
+            }
+
             unset($input['device_token'], $input['type']);
             $input['app_version'] = $this->request()->getServer(\Truonglv\Api\App::HEADER_KEY_APP_VERSION);
 
-            $service->subscribe($input);
+            $subscription = $service->subscribe($input);
+            $extra['subscription'] = $subscription->toApiResult();
         }
 
-        return $this->apiSuccess();
+        return $this->apiSuccess($extra);
     }
 
     /** @noinspection PhpUnused */

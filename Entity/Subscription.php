@@ -30,6 +30,19 @@ class Subscription extends Entity
         return $this->User ? $this->User->username : $this->username;
     }
 
+    /**
+     * @param \XF\Api\Result\EntityResult $result
+     * @param mixed $verbosity
+     * @param array $options
+     * @return void
+     */
+    protected function setupApiResultData(
+        \XF\Api\Result\EntityResult $result,
+        $verbosity = self::VERBOSITY_NORMAL,
+        array $options = []
+    ) {
+    }
+
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_tapi_subscription';
@@ -37,15 +50,19 @@ class Subscription extends Entity
         $structure->shortName = 'Truonglv\Api:Subscription';
 
         $structure->columns = [
-            'subscription_id' => ['type' => self::UINT, 'nullable' => true, 'autoIncrement' => true],
-            'user_id' => ['type' => self::UINT, 'required' => true],
-            'username' => ['type' => self::STR, 'required' => true, 'maxLength' => 50],
-            'app_version' => ['type' => self::STR, 'maxLength' => 50, 'default' => ''],
-            'device_token' => ['type' => self::STR, 'required' => true, 'maxLength' => 150],
-            'is_device_test' => ['type' => self::BOOL, 'default' => false],
-            'provider' => ['type' => self::STR, 'allowedValues' => ['one_signal'], 'required' => true],
-            'provider_key' => ['type' => self::STR, 'maxLength' => 255, 'default' => ''],
-            'subscribed_date' => ['type' => self::UINT, 'default' => \XF::$time]
+            'subscription_id' => ['type' => self::UINT, 'nullable' => true, 'autoIncrement' => true, 'api' => true],
+            'user_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
+            'username' => ['type' => self::STR, 'required' => true, 'maxLength' => 50, 'api' => true],
+            'app_version' => ['type' => self::STR, 'maxLength' => 50, 'default' => '', 'api' => true],
+            'device_token' => ['type' => self::STR, 'required' => true, 'maxLength' => 255, 'api' => true],
+            'is_device_test' => ['type' => self::BOOL, 'default' => false, 'api' => true],
+            'provider' => [
+                'type' => self::STR,
+                'required' => true,
+                'api' => true
+            ],
+            'provider_key' => ['type' => self::STR, 'maxLength' => 255, 'default' => '', 'api' => true],
+            'subscribed_date' => ['type' => self::UINT, 'default' => \XF::$time, 'api' => true]
         ];
 
         $structure->relations = [
@@ -62,16 +79,19 @@ class Subscription extends Entity
 
     protected function _postDelete()
     {
-        $this->app()
-            ->jobManager()
-            ->enqueueUnique(
-                'tapi_unsubscribe' . $this->subscription_id,
-                'Truonglv\Api:Unsubscribe',
-                [
-                    'provider' => $this->provider,
-                    'provider_key' => $this->provider_key,
-                    'device_token' => $this->device_token
-                ]
-            );
+        if ($this->provider === 'one_signal') {
+            // TODO: Remove support OneSignal
+            $this->app()
+                ->jobManager()
+                ->enqueueUnique(
+                    'tapi_unsubscribe' . $this->subscription_id,
+                    'Truonglv\Api:Unsubscribe',
+                    [
+                        'provider' => $this->provider,
+                        'provider_key' => $this->provider_key,
+                        'device_token' => $this->device_token
+                    ]
+                );
+        }
     }
 }
