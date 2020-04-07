@@ -2,14 +2,14 @@
 
 namespace Truonglv\Api\Job;
 
-use Truonglv\Api\App;
-use Truonglv\Api\Service\AbstractPushNotification;
 use XF\Timer;
+use Truonglv\Api\App;
 use XF\Job\JobResult;
 use XF\Job\AbstractJob;
 use XF\Entity\UserAlert;
 use XF\Entity\ConversationMessage;
 use Truonglv\Api\Entity\AlertQueue;
+use Truonglv\Api\Service\AbstractPushNotification;
 
 class PushNotification extends AbstractJob
 {

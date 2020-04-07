@@ -1,9 +1,8 @@
 <?php
 
-namespace Truognlv\Api\Service;
+namespace Truonglv\Api\Service;
 
 use Truonglv\Api\Entity\Subscription;
-use Truonglv\Api\Service\AbstractPushNotification;
 
 class FCM extends AbstractPushNotification
 {

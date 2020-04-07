@@ -2,13 +2,12 @@
 
 namespace Truonglv\Api\Service;
 
-use Truonglv\Api\Entity\Subscription;
-use XF\Entity\ConversationRecipient;
 use XF\Entity\User;
 use XF\Entity\UserAlert;
 use Truonglv\Api\Entity\Log;
 use XF\Service\AbstractService;
 use XF\Entity\ConversationMessage;
+use XF\Entity\ConversationRecipient;
 use Truonglv\Api\XF\Service\Conversation\Pusher;
 
 abstract class AbstractPushNotification extends AbstractService

@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\Api\Controller;
 
-use Truonglv\Api\Entity\Subscription;
 use XF\Finder\Thread;
 use XF\Repository\Node;
 use XF\Repository\User;
@@ -14,6 +13,7 @@ use XF\ControllerPlugin\Login;
 use Truonglv\Api\Data\Reaction;
 use XF\Service\User\Registration;
 use Truonglv\Api\Entity\AccessToken;
+use Truonglv\Api\Entity\Subscription;
 use Truonglv\Api\Util\PasswordDecrypter;
 use XF\Api\Controller\AbstractController;
 

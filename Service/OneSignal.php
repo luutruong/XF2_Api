@@ -2,10 +2,6 @@
 
 namespace Truonglv\Api\Service;
 
-use Truonglv\Api\App;
-use XF\Repository\UserAlert;
-use XF\Entity\ConversationMessage;
-use XF\Entity\ConversationRecipient;
 use Truonglv\Api\Entity\Subscription;
 
 class OneSignal extends AbstractPushNotification
