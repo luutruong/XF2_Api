@@ -71,6 +71,12 @@
         "version_string": "1.0.8",
         "hash": "fdf84eda0c1a395049678ab99cb0ea74"
     },
+    "option.tApi_fcmServerKey.txt": {
+        "global_cache": false,
+        "version_id": 1020610,
+        "version_string": "1.2.6 Alpha",
+        "hash": "050ce9a6a89c425f1549ea1df7dad12d"
+    },
     "option.tApi_inactiveDeviceLength.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -82,18 +88,6 @@
         "version_id": 1000500,
         "version_string": "1.0.5",
         "hash": "e2913fa0e03ecb289721e96f3be7f070"
-    },
-    "option.tApi_oneSignalApiKey.txt": {
-        "global_cache": false,
-        "version_id": 1000500,
-        "version_string": "1.0.5",
-        "hash": "4a311bd0c51e634b7d882818b91348a0"
-    },
-    "option.tApi_oneSignalAppId.txt": {
-        "global_cache": false,
-        "version_id": 1000500,
-        "version_string": "1.0.5",
-        "hash": "03be12f5a6ed74b612b3a47e03e32b86"
     },
     "option.tApi_reactions.txt": {
         "global_cache": false,
@@ -155,6 +149,12 @@
         "version_string": "1.0.8",
         "hash": "594ff2bfc4f6447b1712a6cb26d9836a"
     },
+    "option_explain.tApi_fcmServerKey.txt": {
+        "global_cache": false,
+        "version_id": 1020610,
+        "version_string": "1.2.6 Alpha",
+        "hash": "d41d8cd98f00b204e9800998ecf8427e"
+    },
     "option_explain.tApi_inactiveDeviceLength.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -166,18 +166,6 @@
         "version_id": 1000500,
         "version_string": "1.0.5",
         "hash": "bee49858a855e132dc110b53fe61639d"
-    },
-    "option_explain.tApi_oneSignalApiKey.txt": {
-        "global_cache": false,
-        "version_id": 1000500,
-        "version_string": "1.0.5",
-        "hash": "96900cebbee4a9406a4241f5a8692235"
-    },
-    "option_explain.tApi_oneSignalAppId.txt": {
-        "global_cache": false,
-        "version_id": 1000500,
-        "version_string": "1.0.5",
-        "hash": "d41d8cd98f00b204e9800998ecf8427e"
     },
     "option_explain.tApi_reactions.txt": {
         "global_cache": false,

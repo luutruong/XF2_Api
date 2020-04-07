@@ -26,6 +26,11 @@ class App
     public static $enableLogging = false;
 
     /**
+     * @var string
+     */
+    public static $defaultPushNotificationService = 'Truonglv\Api:FCM';
+
+    /**
      * @param Request|null $request
      * @return bool
      */

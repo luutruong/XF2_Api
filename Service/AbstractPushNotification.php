@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\Service;
 
+use Truonglv\Api\Entity\Subscription;
+use XF\Entity\ConversationRecipient;
 use XF\Entity\User;
 use XF\Entity\UserAlert;
 use Truonglv\Api\Entity\Log;
@@ -19,19 +21,6 @@ abstract class AbstractPushNotification extends AbstractService
     }
 
     /**
-     * @param ConversationMessage $message
-     * @param string $actionType
-     * @return void
-     */
-    abstract public function sendConversationNotification(ConversationMessage $message, $actionType);
-
-    /**
-     * @param UserAlert $alert
-     * @return void
-     */
-    abstract public function sendNotification(UserAlert $alert);
-
-    /**
      * @param string $externalId
      * @param string $pushToken
      * @return void
@@ -39,11 +28,100 @@ abstract class AbstractPushNotification extends AbstractService
     abstract public function unsubscribe($externalId, $pushToken);
 
     /**
+     * @return string
+     */
+    abstract protected function getProviderId();
+
+    /**
+     * @param mixed $subscriptions
+     * @param string $title
+     * @param string $body
+     * @param array $data
+     * @return void
+     */
+    abstract protected function doSendNotification($subscriptions, $title, $body, array $data);
+
+    /**
+     * @param UserAlert $alert
+     * @return void
+     */
+    public function sendNotification(UserAlert $alert)
+    {
+        $subscriptions = $this->findSubscriptions()
+            ->where('user_id', $alert->alerted_user_id)
+            ->fetch();
+        if (!$subscriptions->count()) {
+            return;
+        }
+
+        /** @var \Truonglv\Api\XF\Entity\UserAlert $mixed */
+        $mixed = $alert;
+
+        $this->doSendNotification(
+            $subscriptions,
+            $this->app->options()->boardTitle,
+            $this->getAlertContentBody($alert),
+            $mixed->getTApiAlertData(true)
+        );
+    }
+
+    /**
+     * @param ConversationMessage $message
+     * @param string $actionType
+     * @return void
+     * @throws \XF\PrintableException
+     */
+    public function sendConversationNotification(ConversationMessage $message, $actionType)
+    {
+        if (!in_array($actionType, ['create', 'reply'], true)) {
+            return;
+        }
+
+        $receivers = $message->Conversation->getRelationFinder('Recipients')
+            ->where('recipient_state', 'active')
+            ->with(['User', 'User.Option'], true)
+            ->fetch();
+        if (!$receivers->count()) {
+            return;
+        }
+
+        $sender = $message->User;
+
+        /** @var ConversationRecipient $receiver */
+        foreach ($receivers as $receiver) {
+            if ($sender->user_id === $receiver->User->user_id) {
+                continue;
+            }
+
+            $subscriptions = $this->findSubscriptions()
+                ->where('user_id', $receiver->User->user_id)
+                ->fetch();
+            if (!$subscriptions->count()) {
+                continue;
+            }
+
+            $body = $this->getConversationPushContentBody($receiver->User, $message, $actionType);
+            $this->doSendNotification(
+                $subscriptions,
+                $this->app->options()->boardTitle,
+                $body,
+                [
+                    'content_type' => 'conversation_message',
+                    'content_id' => $message->message_id
+                ]
+            );
+        }
+    }
+
+    /**
      * @return \XF\Mvc\Entity\Finder
      */
     protected function findSubscriptions()
     {
-        return $this->app->finder('Truonglv\Api:Subscription');
+        $finder = $this->app->finder('Truonglv\Api:Subscription');
+        $finder->where('provider', $this->getProviderId());
+
+        return $finder;
     }
 
     /**
@@ -83,6 +161,36 @@ abstract class AbstractPushNotification extends AbstractService
      * @param string $method
      * @param string $endPoint
      * @param array $payload
+     * @return void
+     * @throws \XF\PrintableException
+     */
+    protected function sendNotificationRequest($method, $endPoint, array $payload)
+    {
+        $response = null;
+
+        try {
+            $response = $this->client()->request($method, $endPoint, $payload);
+        } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+            $this->app->logException($e, false, '[tl] Api: ');
+        }
+
+        if ($response === null) {
+            return;
+        }
+
+        $this->logRequest(
+            $method,
+            $endPoint,
+            $payload,
+            $response->getStatusCode(),
+            $response->getBody()->getContents()
+        );
+    }
+
+    /**
+     * @param string $method
+     * @param string $endPoint
+     * @param array $payload
      * @param int $responseCode
      * @param mixed $response
      * @param array $extra
@@ -107,5 +215,17 @@ abstract class AbstractPushNotification extends AbstractService
         $log->bulkSet($extra);
 
         $log->save();
+    }
+
+    /**
+     * @param array $options
+     * @return \GuzzleHttp\Client
+     */
+    protected function client(array $options = [])
+    {
+        return $this->app->http()->createClient(array_replace([
+            'connect_timeout' => 5,
+            'timeout' => 5,
+        ], $options));
     }
 }
