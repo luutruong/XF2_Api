@@ -1,12 +1,12 @@
 {
     "edit_format": "textbox",
-    "edit_format_params": "",
+    "edit_format_params": "rows=3",
     "data_type": "string",
     "sub_options": [],
     "validation_class": "",
     "validation_method": "",
     "default_value": "",
     "relations": {
-        "tl_Api": 3000
+        "tl_Api": 320
     }
 }
