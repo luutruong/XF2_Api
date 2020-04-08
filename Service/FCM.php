@@ -70,7 +70,7 @@ class FCM extends AbstractPushNotification
      */
     protected function client(array $options = [])
     {
-        $apiKey = $this->app->options()->fcmServerKey;
+        $apiKey = $this->app->options()->tApi_fcmServerKey;
         $options = \array_replace_recursive($options, [
             'headers' => [
                 'Content-Type' => 'application/json',
