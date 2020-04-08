@@ -3,12 +3,13 @@
 namespace Truonglv\Api\Job;
 
 use XF\Timer;
+use Truonglv\Api\App;
 use XF\Job\JobResult;
 use XF\Job\AbstractJob;
 use XF\Entity\UserAlert;
 use XF\Entity\ConversationMessage;
 use Truonglv\Api\Entity\AlertQueue;
-use Truonglv\Api\Service\OneSignal;
+use Truonglv\Api\Service\AbstractPushNotification;
 
 class PushNotification extends AbstractJob
 {
@@ -87,8 +88,8 @@ class PushNotification extends AbstractJob
             return;
         }
 
-        /** @var OneSignal $service */
-        $service = $this->app->service('Truonglv\Api:OneSignal');
+        /** @var AbstractPushNotification $service */
+        $service = $this->app->service(App::$defaultPushNotificationService);
         $service->sendNotification($userAlert);
     }
 
@@ -96,11 +97,12 @@ class PushNotification extends AbstractJob
      * @param ConversationMessage $message
      * @param string $actionType
      * @return void
+     * @throws \XF\PrintableException
      */
     protected function sendConversationNotification(ConversationMessage $message, $actionType)
     {
-        /** @var OneSignal $service */
-        $service = $this->app->service('Truonglv\Api:OneSignal');
+        /** @var AbstractPushNotification $service */
+        $service = $this->app->service(App::$defaultPushNotificationService);
         $service->sendConversationNotification($message, $actionType);
     }
 
