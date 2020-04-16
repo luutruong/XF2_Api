@@ -24,13 +24,13 @@ class PushNotification extends AbstractJob
         if (isset($this->data['content_type']) && $this->data['content_type'] === 'alert') {
             /** @var UserAlert|null $userAlert */
             $userAlert = $this->app->em()->find('XF:UserAlert', $this->data['content_id']);
-            if ($userAlert) {
+            if ($userAlert !== null) {
                 $this->sendAlertNotification($userAlert);
             }
         } elseif (isset($this->data['content_type']) && $this->data['content_type'] === 'conversation_message') {
             /** @var ConversationMessage|null $convoMessage */
             $convoMessage = $this->app->em()->find('XF:ConversationMessage', $this->data['content_id']);
-            if ($convoMessage) {
+            if ($convoMessage !== null) {
                 $this->sendConversationNotification($convoMessage, $this->data['action']);
             }
         } else {
@@ -54,7 +54,7 @@ class PushNotification extends AbstractJob
                 foreach ($entities as $entity) {
                     $entity->delete(false);
 
-                    if (!$entity->Content) {
+                    if ($entity->Content === null) {
                         continue;
                     }
 

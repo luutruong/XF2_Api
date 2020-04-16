@@ -30,7 +30,7 @@ class Batch extends AbstractController
 
     /**
      * @param array $batch
-     * @return array
+     * @return array|null
      */
     protected function runInternalRequest(array $batch)
     {

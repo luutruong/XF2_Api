@@ -6,6 +6,7 @@ use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
 use XF\Api\Mvc\Reply\ApiResult;
 use XF\Entity\ConversationUser;
+use XF\Entity\ConversationMaster;
 use XF\Entity\ConversationRecipient;
 use XF\Repository\ConversationMessage;
 
@@ -33,11 +34,13 @@ class Conversation extends XFCP_Conversation
     public function actionGetRecipients(ParameterBag $params)
     {
         $userConvo = $this->assertViewableUserConversation($params->conversation_id);
+        /** @var ConversationMaster $convoMaster */
+        $convoMaster = $userConvo->Master;
 
         $finder = $this->finder('XF:ConversationRecipient');
         $finder->with('User', true);
         $finder->where('recipient_state', 'active');
-        $finder->where('conversation_id', $userConvo->Master->conversation_id);
+        $finder->where('conversation_id', $convoMaster->conversation_id);
         $finder->order('User.username');
 
         $recipients = [];
@@ -89,7 +92,7 @@ class Conversation extends XFCP_Conversation
         } elseif ($unread) {
             /** @var \XF\Entity\ConversationMessage|null $firstUnread */
             $firstUnread = $convMessageRepo->getFirstUnreadMessageInConversation($userConv);
-            if (!$firstUnread || $firstUnread->message_id == $conversation->last_message_id) {
+            if ($firstUnread === null || $firstUnread->message_id == $conversation->last_message_id) {
                 $messagesBefore = $conversation->reply_count;
             } else {
                 $messagesBefore = $convMessageRepo->findEarlierMessages($conversation, $firstUnread)->total();

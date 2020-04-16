@@ -20,7 +20,7 @@ class Me extends XFCP_Me
     public function actionGetIgnoring()
     {
         $visitor = \XF::visitor();
-        $ignored = $visitor->Profile->ignored;
+        $ignored = $visitor->Profile !== null ? $visitor->Profile->ignored : [];
         if (\count($ignored) > 0) {
             $users = $this->finder('XF:User')
                 ->where('user_id', \array_keys($ignored))

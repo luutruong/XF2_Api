@@ -49,7 +49,7 @@ class Listener
         if (\count($ourKey) > 0) {
             /** @var ApiKey|null $apiKeyEntity */
             $apiKeyEntity = $app->em()->find('XF:ApiKey', $ourKey['apiKeyId']);
-            if (!$apiKeyEntity) {
+            if ($apiKeyEntity === null) {
                 return;
             }
 
@@ -73,7 +73,7 @@ class Listener
 
         /** @var ApiKey|null $apiKeyEntity */
         $apiKeyEntity = $app->em()->find('XF:ApiKey', $ourKey['apiKeyId']);
-        if (!$apiKeyEntity) {
+        if ($apiKeyEntity === null) {
             $error = 'api_error.api_key_not_found';
             $code = 401;
             $result = false;

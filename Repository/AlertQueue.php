@@ -93,7 +93,7 @@ class AlertQueue extends Repository
         $entity->content_type = $contentType;
         $entity->content_id = $contentId;
         $entity->payload = $payload;
-        $entity->queue_date = $queueDate ?: \XF::$time;
+        $entity->queue_date = $queueDate > 0 ? $queueDate : \XF::$time;
 
         try {
             $entity->save(false);

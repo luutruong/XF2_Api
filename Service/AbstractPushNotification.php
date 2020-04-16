@@ -6,6 +6,7 @@ use XF\Entity\User;
 use XF\Entity\UserAlert;
 use Truonglv\Api\Entity\Log;
 use XF\Service\AbstractService;
+use XF\Entity\ConversationMaster;
 use XF\Entity\ConversationMessage;
 use XF\Entity\ConversationRecipient;
 use Truonglv\Api\XF\Service\Conversation\Pusher;
@@ -76,7 +77,10 @@ abstract class AbstractPushNotification extends AbstractService
             return;
         }
 
-        $receivers = $message->Conversation->getRelationFinder('Recipients')
+        /** @var ConversationMaster $conversation */
+        $conversation = $message->Conversation;
+
+        $receivers = $conversation->getRelationFinder('Recipients')
             ->where('recipient_state', 'active')
             ->with(['User', 'User.Option'], true)
             ->fetch();
@@ -84,11 +88,14 @@ abstract class AbstractPushNotification extends AbstractService
             return;
         }
 
+        /** @var User $sender */
         $sender = $message->User;
 
         /** @var ConversationRecipient $receiver */
         foreach ($receivers as $receiver) {
-            if ($sender->user_id === $receiver->User->user_id) {
+            if ($receiver->User === null
+                || $sender->user_id === $receiver->user_id
+            ) {
                 continue;
             }
 

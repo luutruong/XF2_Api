@@ -78,7 +78,9 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
                     'id' => $id,
                     'attachment' => $attachmentRef,
                     'full' => $this->isFullAttachView($option),
-                    'alt' => ($this->getImageAltText($option) !== '') ?: $attachmentRef->filename,
+                    'alt' => ($this->getImageAltText($option) !== '')
+                        ? $this->getImageAltText($option)
+                        : $attachmentRef->filename,
                     'attachmentViewUrl' => $this->getAttachmentViewUrl($attachmentRef)
                 ];
 
@@ -159,12 +161,14 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             return '';
         }
 
-        $name = null;
+        /** @var string $name */
+        $name = '';
         $attributes = [];
         $source = [];
 
         if ($option !== null && \strlen($option) > 0) {
             $parts = \explode(',', $option);
+            /** @var string $name */
             $name = $this->filterString(\array_shift($parts), \array_merge($options, [
                 'stopSmilies' => 1,
                 'stopBreakConversion' => 1
@@ -190,8 +194,14 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             }
         }
 
+        $openTag = \sprintf(
+            '<blockquote data-name="%s" data-source="%s">',
+            $name,
+            \json_encode($source)
+        );
+
         return $this->wrapHtml(
-            '<blockquote data-name="' . $name . '" data-source="' . \json_encode($source) . '">',
+            $openTag,
             $content,
             '</blockquote>'
         );

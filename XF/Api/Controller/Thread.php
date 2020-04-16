@@ -39,7 +39,7 @@ class Thread extends XFCP_Thread
 
         /** @var Poll|null $poll */
         $poll = $thread->discussion_type === 'poll' ? $thread->Poll : null;
-        if (!$poll) {
+        if ($poll === null) {
             return $this->noPermission();
         }
 
@@ -100,18 +100,18 @@ class Thread extends XFCP_Thread
                 $findFirstUnread = $postRepo->findNextPostsInThread($thread, $firstUnreadDate);
                 /** @var \XF\Entity\Post|null $firstUnread */
                 $firstUnread = $findFirstUnread->skipIgnored()->fetchOne();
-                if (!$firstUnread) {
+                if ($firstUnread === null) {
                     /** @var \XF\Entity\Post|null $firstUnread */
                     $firstUnread = $thread->LastPost;
                 }
 
-                if ($firstUnread) {
+                if ($firstUnread !== null) {
                     $page = \floor($firstUnread->position / $this->options()->messagesPerPage) + 1;
                 }
             } else {
                 /** @var \XF\Entity\Post|null $firstUnread */
                 $firstUnread = $thread->LastPost;
-                if ($firstUnread) {
+                if ($firstUnread !== null) {
                     $page = \floor($firstUnread->position / $this->options()->messagesPerPage) + 1;
                 }
             }

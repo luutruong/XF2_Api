@@ -27,7 +27,7 @@ class Subscription extends Entity
      */
     public function getEntityLabel()
     {
-        return $this->User ? $this->User->username : $this->username;
+        return $this->User !== null ? $this->User->username : $this->username;
     }
 
     /**

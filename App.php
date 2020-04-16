@@ -36,7 +36,7 @@ class App
      */
     public static function isRequestFromApp(Request $request = null)
     {
-        $request = $request ?: \XF::app()->request();
+        $request = $request !== null ? $request : \XF::app()->request();
 
         return \trim($request->getServer(self::HEADER_KEY_APP_VERSION)) !== '';
     }
@@ -81,7 +81,7 @@ class App
                 . $apiKey
                 . $attachment->attachment_id
                 . $app->config('globalSalt')
-            );
+        );
     }
 
     /**

@@ -27,7 +27,7 @@ class ProfilePost extends XFCP_ProfilePost
             $result->can_comment = $this->canComment();
             $result->can_report = $this->canReport();
 
-            $result->can_ignore = $this->User && $visitor->canIgnoreUser($this->User);
+            $result->can_ignore = $this->User !== null && $visitor->canIgnoreUser($this->User);
             $result->is_ignored = $visitor->isIgnoring($this->user_id);
         } else {
             $result->can_comment = false;

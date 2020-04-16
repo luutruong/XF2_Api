@@ -32,11 +32,13 @@ class UserAlert extends XFCP_UserAlert
         $result->includeRelation('User');
 
         $result->is_unviewed = $this->isUnviewed();
+        /** @var mixed $html */
         $html = $this->isAlertRenderable()
             ? \trim($this->render())
             : '';
         if ($html !== '') {
             // remove any html without content.
+            /** @var mixed $html */
             $html = \preg_replace('#<([\w]+)[^>]*></\1>#si', '', $html);
 
             // ensure all link in html are full.
@@ -74,7 +76,7 @@ class UserAlert extends XFCP_UserAlert
             }
         }
 
-        $result->tapi_message_html = trim($html);
+        $result->tapi_message_html = \trim(\strval($html));
         foreach ($this->getTApiAlertData() as $key => $value) {
             $result->__set($key, $value);
         }

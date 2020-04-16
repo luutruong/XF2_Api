@@ -59,7 +59,7 @@ class Subscription extends AbstractService
             ->where('device_token', $this->pushToken)
             ->fetchOne();
 
-        if ($exists) {
+        if ($exists !== null) {
             $subscription = $exists;
         } else {
             /** @var \Truonglv\Api\Entity\Subscription $subscription */

@@ -25,8 +25,8 @@ class User extends XFCP_User
             $result->can_upload_avatar = false;
         }
 
-        $result->ignoring = $this->Profile->ignored;
-        $result->following = $this->Profile->following;
+        $result->ignoring = $this->Profile !== null ? $this->Profile->ignored : [];
+        $result->following = $this->Profile !== null ? $this->Profile->following : [];
         // if this key is TRUE in the user profile will have a tick icon
         // make this option config from server to support third party add-on
         $result->tapi_is_verified = $this->is_staff;
@@ -72,7 +72,7 @@ class User extends XFCP_User
             ];
         }
 
-        $birthday = $this->Profile->getBirthday();
+        $birthday = $this->Profile !== null ? $this->Profile->getBirthday() : [];
         if (\count($birthday) > 0) {
             $data[] = [
                 'label' => \XF::phrase('date_of_birth'),
@@ -80,35 +80,37 @@ class User extends XFCP_User
             ];
         }
 
-        if ($this->Profile->website !== '') {
+        if ($this->Profile !== null && $this->Profile->website !== '') {
             $data[] = [
                 'label' => \XF::phrase('website'),
                 'value' => $this->Profile->website,
             ];
         }
 
-        if ($this->Profile->location !== '') {
+        if ($this->Profile !== null && $this->Profile->location !== '') {
             $data[] = [
                 'label' => \XF::phrase('location'),
                 'value' => $this->Profile->location,
             ];
         }
 
-        $showingCustomFieldIds = ['skype', 'facebook', 'twitter'];
-        $customFields = $this->Profile->custom_fields;
+        if ($this->Profile !== null) {
+            $showingCustomFieldIds = ['skype', 'facebook', 'twitter'];
+            $customFields = $this->Profile->custom_fields;
 
-        foreach ($showingCustomFieldIds as $customFieldId) {
-            $value = $customFields->getFieldValue($customFieldId);
-            if ($value === null) {
-                continue;
+            foreach ($showingCustomFieldIds as $customFieldId) {
+                $value = $customFields->getFieldValue($customFieldId);
+                if ($value === null) {
+                    continue;
+                }
+
+                /** @var mixed $definition */
+                $definition = $customFields->getDefinition($customFieldId);
+                $data[] = [
+                    'label' => $definition->title,
+                    'value' => $value,
+                ];
             }
-
-            /** @var mixed $definition */
-            $definition = $customFields->getDefinition($customFieldId);
-            $data[] = [
-                'label' => $definition->title,
-                'value' => $value,
-            ];
         }
 
         return $data;

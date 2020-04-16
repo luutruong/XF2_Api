@@ -7,7 +7,7 @@ use Truonglv\Api\App;
 class Attachment extends XFCP_Attachment
 {
     /**
-     * @param null|string $error
+     * @param mixed $error
      * @return bool
      */
     public function canView(&$error = null)
@@ -16,7 +16,7 @@ class Attachment extends XFCP_Attachment
             /** @var \XF\Repository\Attachment $attachmentRepo */
             $attachmentRepo = $this->repository('XF:Attachment');
             $handler = $attachmentRepo->getAttachmentHandler($this->content_type);
-            if (!$handler) {
+            if ($handler === null) {
                 return false;
             }
 

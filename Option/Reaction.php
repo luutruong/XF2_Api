@@ -45,8 +45,11 @@ class Reaction extends AbstractOption
         }
 
         if (!$defaultReactionFound) {
+            /** @var \XF\Entity\Reaction $reactionEntity */
+            $reactionEntity = $reactions[self::DEFAULT_REACTION_ID];
+
             throw new PrintableException(\XF::phrase('tapi_reaction_x_are_required', [
-                'title' => $reactions[self::DEFAULT_REACTION_ID]->title
+                'title' => $reactionEntity->title
             ]));
         }
 

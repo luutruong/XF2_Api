@@ -47,7 +47,7 @@ class Log extends Entity
 
         return sprintf(
             '%s - %s',
-            $entity->User ? $entity->User->username : '',
+            $entity->User !== null ? $entity->User->username : '',
             $language->dateTime($entity->log_date)
         );
     }

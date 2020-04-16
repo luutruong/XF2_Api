@@ -274,7 +274,7 @@ class App extends AbstractController
 
         /** @var \XF\Entity\User|null $user */
         $user = $loginService->validate($password, $error);
-        if (!$user) {
+        if ($user === null) {
             return $this->error($error);
         }
 
@@ -320,15 +320,18 @@ class App extends AbstractController
             ->with('User', true)
             ->whereId($this->filter('token', 'str'))
             ->fetchOne();
-        if (!$token) {
+        if ($token === null) {
             return $this->notFound();
         }
 
         $token->renewExpires();
         $token->save();
 
+        /** @var \XF\Entity\User $user */
+        $user = $token->User;
+
         return $this->apiSuccess([
-            'user' => $token->User->toApiResult(Entity::VERBOSITY_VERBOSE),
+            'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE),
             'accessToken' => $token->token
         ]);
     }
@@ -366,7 +369,7 @@ class App extends AbstractController
         $page = $this->em()->find('XF:HelpPage', $pageId);
 
         $html = '';
-        if (!$page) {
+        if ($page === null) {
             \XF::logError(\sprintf(
                 '[tl] Api: Unknown help page with page_id=%s',
                 $pageId

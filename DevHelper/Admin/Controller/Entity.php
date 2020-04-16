@@ -285,7 +285,7 @@ abstract class Entity extends AbstractController
                 $tag = 'username';
                 /** @var \XF\Entity\User|null $user */
                 $user = $entity->getRelation($relationKey);
-                $tagOptions['username'] = $user ? $user->username : '';
+                $tagOptions['username'] = $user !== null ? $user->username : '';
                 break;
             default:
                 if (strpos($relation['entity'], $this->getPrefixForClasses()) === 0) {

@@ -28,7 +28,7 @@ class Posts extends XFCP_Posts
             if ($quotePostId > 0) {
                 /** @var \XF\Entity\Post|null $post */
                 $post = $this->em()->find('XF:Post', $quotePostId, 'User');
-                if ($post && $post->thread_id == $thread->thread_id) {
+                if ($post !== null && $post->thread_id == $thread->thread_id) {
                     if (\XF::isApiCheckingPermissions() && $post->canView()) {
                         $defaultMessage = $post->getQuoteWrapper(
                             $this->app->stringFormatter()->getBbCodeForQuote($post->message, 'post')

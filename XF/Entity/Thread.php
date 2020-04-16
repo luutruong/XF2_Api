@@ -26,11 +26,11 @@ class Thread extends XFCP_Thread
 
         $visitor = \XF::visitor();
         if ($visitor->user_id > 0) {
-            $result->can_report = $this->FirstPost->canReport();
+            $result->can_report = $this->FirstPost !== null && $this->FirstPost->canReport();
 
-            $result->can_ignore = $this->User && $visitor->canIgnoreUser($this->User);
+            $result->can_ignore = $this->User !== null && $visitor->canIgnoreUser($this->User);
             $result->is_ignored = $visitor->isIgnoring($this->user_id);
-            $result->can_upload_attachments = $this->Forum->canUploadAndManageAttachments();
+            $result->can_upload_attachments = $this->Forum !== null && $this->Forum->canUploadAndManageAttachments();
         } else {
             $result->can_report = false;
             $result->can_ignore = false;
@@ -42,7 +42,9 @@ class Thread extends XFCP_Thread
         // the image MUST be viewable by guest as well
         $result->tapi_thread_image_url = null;
 
-        if (isset($options['tapi_first_post'])) {
+        if (isset($options['tapi_first_post'])
+            && $this->FirstPost !== null
+        ) {
             $result->includeRelation('FirstPost', $verbosity, $options);
             if (isset($options['tapi_fetch_image'])) {
                 // Base image height (pixels) which support in mobile app
@@ -53,7 +55,10 @@ class Thread extends XFCP_Thread
                 $ratioIndex = 0;
 
                 foreach ($this->FirstPost->Attachments as $attachment) {
-                    if ($attachment->Data->width === 0 || $attachment->Data->height === 0) {
+                    if ($attachment->Data === null
+                        || $attachment->Data->width === 0
+                        || $attachment->Data->height === 0
+                    ) {
                         continue;
                     }
 

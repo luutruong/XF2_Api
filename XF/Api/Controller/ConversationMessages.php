@@ -28,7 +28,7 @@ class ConversationMessages extends XFCP_ConversationMessages
             if ($quoteMessageId > 0) {
                 /** @var \XF\Entity\ConversationMessage|null $message */
                 $message = $this->em()->find('XF:ConversationMessage', $quoteMessageId, 'User');
-                if ($message && $message->conversation_id == $conversation->conversation_id) {
+                if ($message !== null && $message->conversation_id == $conversation->conversation_id) {
                     $defaultMessage = $message->getQuoteWrapper(
                         $this->app->stringFormatter()->getBbCodeForQuote($message->message, 'conversation_message')
                     );

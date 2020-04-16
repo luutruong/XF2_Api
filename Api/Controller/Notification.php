@@ -15,13 +15,15 @@ class Notification extends AbstractController
 
         /** @var UserAlert|null $alert */
         $alert = $this->finder('XF:UserAlert')->whereId($params->alert_id)->fetchOne();
-        if (!$alert || $alert->alerted_user_id !== \XF::visitor()->user_id) {
+        if ($alert === null || $alert->alerted_user_id !== \XF::visitor()->user_id) {
             return $this->notFound();
         }
 
         $content = $alert->getContent();
-        if (!$content || !\in_array($alert->content_type, \Truonglv\Api\App::getSupportAlertContentTypes(), true)) {
-            return $this->noPermission();
+        if ($content === null
+            || !\in_array($alert->content_type, \Truonglv\Api\App::getSupportAlertContentTypes(), true)
+        ) {
+            return $this->notFound();
         }
 
         if ($alert->view_date <= 0) {
