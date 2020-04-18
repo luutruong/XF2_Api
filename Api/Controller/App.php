@@ -89,7 +89,11 @@ class App extends AbstractController
 
         $threadIds = [];
         $data = [
-            'threads' => []
+            'threads' => [],
+            'pagination' => [
+                'current_page' => $page,
+                'last_page' => 1,
+            ],
         ];
 
         foreach ($search->search_results as $result) {
