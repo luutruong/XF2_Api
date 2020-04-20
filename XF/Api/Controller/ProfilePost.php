@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use Truonglv\Api\Api\ControllerPlugin\Reaction;
 use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
 use Truonglv\Api\Api\ControllerPlugin\Report;
@@ -19,6 +20,16 @@ class ProfilePost extends XFCP_ProfilePost
         $reportPlugin = $this->plugin('Truonglv\Api:Api:Report');
 
         return $reportPlugin->actionReport('profile_post', $profilePost);
+    }
+
+    public function actionGetTApiReactions(ParameterBag $params)
+    {
+        $profilePost = $this->assertViewableProfilePost($params->profile_post_id);
+
+        /** @var Reaction $reactionPlugin */
+        $reactionPlugin = $this->plugin('Truonglv\Api:Api:Reaction');
+
+        return $reactionPlugin->actionReactions('profile_post', $profilePost);
     }
 
     /**

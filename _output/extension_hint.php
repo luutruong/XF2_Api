@@ -6,6 +6,7 @@
 namespace Truonglv\Api\XF\Api\Controller
 {
 	class XFCP_Conversation extends \XF\Api\Controller\Conversation {}
+	class XFCP_ConversationMessage extends \XF\Api\Controller\ConversationMessage {}
 	class XFCP_ConversationMessages extends \XF\Api\Controller\ConversationMessages {}
 	class XFCP_Conversations extends \XF\Api\Controller\Conversations {}
 	class XFCP_Forum extends \XF\Api\Controller\Forum {}
