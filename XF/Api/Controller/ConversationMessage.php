@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\Api\ControllerPlugin\Reaction;
 use XF\Mvc\ParameterBag;
+use Truonglv\Api\Api\ControllerPlugin\Reaction;
 
 class ConversationMessage extends XFCP_ConversationMessage
 {

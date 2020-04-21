@@ -2,9 +2,9 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\Api\ControllerPlugin\Reaction;
 use XF\Mvc\ParameterBag;
 use Truonglv\Api\Api\ControllerPlugin\Report;
+use Truonglv\Api\Api\ControllerPlugin\Reaction;
 
 class ProfilePostComment extends XFCP_ProfilePostComment
 {

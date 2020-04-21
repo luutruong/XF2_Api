@@ -2,11 +2,16 @@
 
 namespace Truonglv\Api\Api\ControllerPlugin;
 
-use XF\Api\ControllerPlugin\AbstractPlugin;
 use XF\Mvc\Entity\Entity;
+use XF\Api\ControllerPlugin\AbstractPlugin;
 
 class Reaction extends AbstractPlugin
 {
+    /**
+     * @param string $contentType
+     * @param Entity $content
+     * @return \XF\Api\Mvc\Reply\ApiResult
+     */
     public function actionReactions($contentType, Entity $content)
     {
         $input = $this->filter([
