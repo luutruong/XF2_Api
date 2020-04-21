@@ -35,6 +35,7 @@ namespace Truonglv\Api\XF\Entity
 	class XFCP_Post extends \XF\Entity\Post {}
 	class XFCP_ProfilePost extends \XF\Entity\ProfilePost {}
 	class XFCP_ProfilePostComment extends \XF\Entity\ProfilePostComment {}
+	class XFCP_ReactionContent extends \XF\Entity\ReactionContent {}
 	class XFCP_Thread extends \XF\Entity\Thread {}
 	class XFCP_ThreadPrefixGroup extends \XF\Entity\ThreadPrefixGroup {}
 	class XFCP_User extends \XF\Entity\User {}

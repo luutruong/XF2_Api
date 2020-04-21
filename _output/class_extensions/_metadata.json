@@ -65,6 +65,9 @@
     "XF-Entity-ProfilePost_Truonglv-Api-XF-Entity-ProfilePost.json": {
         "hash": "ba184540bb8de4edab2483c4100ea682"
     },
+    "XF-Entity-ReactionContent_Truonglv-Api-XF-Entity-ReactionContent.json": {
+        "hash": "020b2d7186543317bb5b6e5f4fa0e661"
+    },
     "XF-Entity-ThreadPrefixGroup_Truonglv-Api-XF-Entity-ThreadPrefixGroup.json": {
         "hash": "c3c78e77b3e502c009d0ee93c1bbd573"
     },
