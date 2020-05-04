@@ -109,10 +109,10 @@ class Setup extends AbstractSetup
 
         $alters['xf_tapi_subscription'] = [
             'provider_key' => function (Alter $table) {
-                $table->changeColumn('provider_key', 'varchar', 150);
+                $table->changeColumn('provider_key', 'varchar', 200);
             },
             'device_token' => function (Alter $table) {
-                $table->changeColumn('device_token', 'varchar', 150);
+                $table->changeColumn('device_token', 'varchar', 200);
             },
             'device_type' => function (Alter $table) {
                 $table->addColumn('device_type', 'varchar', 25)->setDefault('');
