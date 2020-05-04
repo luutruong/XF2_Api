@@ -1,0 +1,1 @@
+The absolute path to Firebase config file. To create a config file go to Firebase projects > Settings > Service accounts > Generate new private key.

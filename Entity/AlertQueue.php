@@ -13,7 +13,7 @@ use XF\Mvc\Entity\Structure;
  * @property int queue_date
  *
  * GETTERS
- * @property mixed Content
+ * @property Entity|null Content
  */
 class AlertQueue extends Entity
 {

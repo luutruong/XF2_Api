@@ -20,8 +20,8 @@
     "tApi_encryptKey.json": {
         "hash": "d12dd2c0ecd313222fae8eb9dabb6bbd"
     },
-    "tApi_fcmServerKey.json": {
-        "hash": "499279a9e2f0f3300158d5fa4be2a2ab"
+    "tApi_firebaseConfigPath.json": {
+        "hash": "eb96becf2cece718415d74443217c3f2"
     },
     "tApi_inactiveDeviceLength.json": {
         "hash": "5b76d0658c3cf7aae7d182587683129a"

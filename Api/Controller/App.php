@@ -162,7 +162,8 @@ class App extends AbstractController
             'is_device_test' => 'bool',
             'provider' => 'str',
             'provider_key' => 'str',
-            'type' => 'str'
+            'type' => 'str',
+            'device_type' => 'str',
         ]);
 
         /** @var \Truonglv\Api\Service\Subscription $service */

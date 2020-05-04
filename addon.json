@@ -9,6 +9,12 @@
     "faq_url": "",
     "support_url": "",
     "extra_urls": [],
-    "require": [],
-    "icon": ""
+    "require": {
+        "php": [
+            "7.1.0",
+            "Required PHP 7.1.0 or higher."
+        ]
+    },
+    "icon": "",
+    "composer_autoload": "vendor/composer"
 }

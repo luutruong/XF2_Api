@@ -12,6 +12,7 @@ use XF\Mvc\Entity\Structure;
  * @property string username
  * @property string app_version
  * @property string device_token
+ * @property string device_type
  * @property bool is_device_test
  * @property string provider
  * @property string provider_key
@@ -54,14 +55,15 @@ class Subscription extends Entity
             'user_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
             'username' => ['type' => self::STR, 'required' => true, 'maxLength' => 50, 'api' => true],
             'app_version' => ['type' => self::STR, 'maxLength' => 50, 'default' => '', 'api' => true],
-            'device_token' => ['type' => self::STR, 'required' => true, 'maxLength' => 200, 'api' => true],
+            'device_token' => ['type' => self::STR, 'required' => true, 'maxLength' => 150, 'api' => true],
+            'device_type' => ['type' => self::STR, 'default' => '', 'maxLength' => 25],
             'is_device_test' => ['type' => self::BOOL, 'default' => false, 'api' => true],
             'provider' => [
                 'type' => self::STR,
                 'required' => true,
                 'api' => true
             ],
-            'provider_key' => ['type' => self::STR, 'maxLength' => 200, 'default' => '', 'api' => true],
+            'provider_key' => ['type' => self::STR, 'maxLength' => 150, 'default' => '', 'api' => true],
             'subscribed_date' => ['type' => self::UINT, 'default' => \XF::$time, 'api' => true]
         ];
 

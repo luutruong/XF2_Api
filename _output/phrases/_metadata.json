@@ -71,11 +71,11 @@
         "version_string": "1.0.8",
         "hash": "fdf84eda0c1a395049678ab99cb0ea74"
     },
-    "option.tApi_fcmServerKey.txt": {
+    "option.tApi_firebaseConfigPath.txt": {
         "global_cache": false,
-        "version_id": 1020610,
-        "version_string": "1.2.6 Alpha",
-        "hash": "050ce9a6a89c425f1549ea1df7dad12d"
+        "version_id": 1020900,
+        "version_string": "1.2.9",
+        "hash": "249ae17eca4f88aa737c56f9af62e0ff"
     },
     "option.tApi_inactiveDeviceLength.txt": {
         "global_cache": false,
@@ -149,11 +149,11 @@
         "version_string": "1.0.8",
         "hash": "594ff2bfc4f6447b1712a6cb26d9836a"
     },
-    "option_explain.tApi_fcmServerKey.txt": {
+    "option_explain.tApi_firebaseConfigPath.txt": {
         "global_cache": false,
-        "version_id": 1020610,
-        "version_string": "1.2.6 Alpha",
-        "hash": "d41d8cd98f00b204e9800998ecf8427e"
+        "version_id": 1020900,
+        "version_string": "1.2.9",
+        "hash": "8010719cf30f8cfd740abc7d9976f9f4"
     },
     "option_explain.tApi_inactiveDeviceLength.txt": {
         "global_cache": false,

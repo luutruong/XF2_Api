@@ -42,7 +42,7 @@ class Subscription extends Entity
         return sprintf(
             '%s (%s) - %s',
             $entity->get('provider'),
-            $entity->get('provider_key'),
+            $entity->get('device_type'),
             $language->dateTime($entity->get('subscribed_date'))
         );
     }

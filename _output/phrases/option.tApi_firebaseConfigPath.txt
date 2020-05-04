@@ -1,0 +1,1 @@
+Firebase config path

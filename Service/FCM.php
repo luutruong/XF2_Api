@@ -2,12 +2,15 @@
 
 namespace Truonglv\Api\Service;
 
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
+use Truonglv\Api\App;
 use Truonglv\Api\Entity\Subscription;
+use XF\Repository\UserAlert;
 
 class FCM extends AbstractPushNotification
 {
-    const END_POINT = 'https://fcm.googleapis.com/fcm/send';
-
     /**
      * @return string
      */
@@ -26,33 +29,66 @@ class FCM extends AbstractPushNotification
      */
     protected function doSendNotification($subscriptions, $title, $body, array $data)
     {
-        $ids = [];
+        $fbConfigFile = $this->app->options()->tApi_firebaseConfigPath;
+        if (\strlen($fbConfigFile) === 0) {
+            return;
+        }
+
+        if (!\file_exists($fbConfigFile) || !\is_readable($fbConfigFile)) {
+            throw new \InvalidArgumentException('Firebase config file not exists or not readable.');
+        }
+
+        $contents = \file_get_contents($fbConfigFile);
+        $factory = new Factory();
+        $factory = $factory->withServiceAccount($contents);
+
+        $badges = [];
+        $messages = [];
+        $dataTransformed = [];
+        foreach ($data as $key => $value) {
+            $dataTransformed[$key] = \strval($value);
+        }
+
+        /** @var UserAlert $alertRepo */
+        $alertRepo = \XF::app()->repository('XF:UserAlert');
+
         /** @var Subscription $subscription */
         foreach ($subscriptions as $subscription) {
-            $ids[] = $subscription->device_token;
+            if (!\array_key_exists($subscription->user_id, $badges)) {
+                $badges[$subscription->user_id] = $alertRepo->findAlertsForUser($subscription->user_id)
+                    ->where('view_date', 0)
+                    ->where('content_type', App::getSupportAlertContentTypes())
+                    ->total();
+            }
+
+            $message = CloudMessage::withTarget('token', $subscription->device_token)
+                ->withNotification(Notification::create($title, $body))
+                ->withData($dataTransformed);
+            if ($subscription->device_type === 'ios') {
+                $message = $message->withApnsConfig([
+                    'payload' => [
+                        'aps' => [
+                            'badge' => $badges[$subscription->user_id],
+                        ]
+                    ]
+                ]);
+            } elseif ($subscription->device_type === 'android') {
+                $message = $message->withAndroidConfig([
+                    'notification' => [
+                        'notification_count' => $badges[$subscription->user_id],
+                    ],
+                ]);
+            }
+
+            \array_push($messages, $message);
         }
 
-        $payload = [
-            'notification' => [
-                'body' => $body,
-                'title' => $title,
-            ],
-            'data' => $data,
-            'content_available' => true,
-        ];
-        if (\count($ids) > 1) {
-            $payload['registration_ids'] = $ids;
-        } else {
-            $payload['to'] = \reset($ids);
+        $messaging = $factory->createMessaging();
+        try {
+            $messaging->sendAll($messages);
+        } catch (\Exception $e) {
+            \XF::logException($e, false, '[tl] Api: ');
         }
-
-        $this->sendNotificationRequest(
-            'POST',
-            self::END_POINT,
-            [
-                'json' => $payload
-            ]
-        );
     }
 
     /**
@@ -62,22 +98,5 @@ class FCM extends AbstractPushNotification
      */
     public function unsubscribe($externalId, $pushToken)
     {
-    }
-
-    /**
-     * @param array $options
-     * @return \GuzzleHttp\Client
-     */
-    protected function client(array $options = [])
-    {
-        $apiKey = $this->app->options()->tApi_fcmServerKey;
-        $options = \array_replace_recursive($options, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Authorization' => "key={$apiKey}"
-            ]
-        ]);
-
-        return parent::client($options);
     }
 }
