@@ -2,12 +2,12 @@
 
 namespace Truonglv\Api\Service;
 
+use Truonglv\Api\App;
 use Kreait\Firebase\Factory;
+use XF\Repository\UserAlert;
+use Truonglv\Api\Entity\Subscription;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
-use Truonglv\Api\App;
-use Truonglv\Api\Entity\Subscription;
-use XF\Repository\UserAlert;
 
 class FCM extends AbstractPushNotification
 {
@@ -39,6 +39,9 @@ class FCM extends AbstractPushNotification
         }
 
         $contents = \file_get_contents($fbConfigFile);
+        if ($contents === false) {
+            throw new \InvalidArgumentException('Cannot read Firebase config.');
+        }
         $factory = new Factory();
         $factory = $factory->withServiceAccount($contents);
 
@@ -46,7 +49,7 @@ class FCM extends AbstractPushNotification
         $messages = [];
         $dataTransformed = [];
         foreach ($data as $key => $value) {
-            $dataTransformed[$key] = \strval($value);
+            $dataTransformed[\strval($key)] = \strval($value);
         }
 
         /** @var UserAlert $alertRepo */
@@ -84,6 +87,7 @@ class FCM extends AbstractPushNotification
         }
 
         $messaging = $factory->createMessaging();
+
         try {
             $messaging->sendAll($messages);
         } catch (\Exception $e) {
