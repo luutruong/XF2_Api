@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use Truonglv\Api\App;
+use XF\Mvc\Entity\Entity;
 use XF\Mvc\ParameterBag;
 use XF\Api\Mvc\Reply\ApiResult;
 use XF\Entity\ConversationUser;
@@ -50,8 +51,12 @@ class Conversation extends XFCP_Conversation
         }
 
         $data = [
-            'recipients' => $this->em()->getBasicCollection($recipients)->toApiResults()
+            'recipients' => $this->em()->getBasicCollection($recipients)->toApiResults(),
         ];
+
+        if ($this->filter('with_conversation', 'bool') === true) {
+            $data['conversation'] = $userConvo->toApiResult(Entity::VERBOSITY_VERBOSE);
+        }
 
         return $this->apiResult($data);
     }
