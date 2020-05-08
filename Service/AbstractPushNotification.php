@@ -69,7 +69,6 @@ abstract class AbstractPushNotification extends AbstractService
      * @param ConversationMessage $message
      * @param string $actionType
      * @return void
-     * @throws \XF\PrintableException
      */
     public function sendConversationNotification(ConversationMessage $message, $actionType)
     {
