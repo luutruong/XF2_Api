@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\Service;
 
-use Truonglv\Api\App;
 use XF\Entity\User;
+use Truonglv\Api\App;
 use XF\Entity\UserAlert;
 use Truonglv\Api\Entity\Log;
 use XF\Service\AbstractService;

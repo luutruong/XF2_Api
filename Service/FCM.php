@@ -2,10 +2,8 @@
 
 namespace Truonglv\Api\Service;
 
-use Truonglv\Api\App;
-use Kreait\Firebase\Factory;
 use XF\Entity\User;
-use XF\Repository\UserAlert;
+use Kreait\Firebase\Factory;
 use Truonglv\Api\Entity\Subscription;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
