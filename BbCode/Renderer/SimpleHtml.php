@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\BbCode\Renderer;
 
+use Truonglv\Api\Util\PasswordDecrypter;
 use XF\Http\Request;
 use Truonglv\Api\App;
 use XF\Entity\Attachment;
@@ -253,7 +254,33 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             }
         }
 
-        $html = parent::getRenderedLink($text, $url, $options);
+        $visitor = \XF::visitor();
+        $proxyUrl = $url;
+        if ($visitor->user_id > 0) {
+            $payload = [
+                'user_id' => $visitor->user_id,
+                'date' => \XF::$time,
+                'url' => $url,
+            ];
+
+            $encoded = \strval(\json_encode($payload));
+            $encrypted = null;
+
+            try {
+                $encrypted = PasswordDecrypter::encrypt($encoded, \XF::options()->tApi_encryptKey);
+            } catch (\InvalidArgumentException $e) {
+            }
+
+            if ($encrypted !== null) {
+                $proxyUrl = \XF::app()->router('public')
+                    ->buildLink('canonical:misc/tapi-goto', null, [
+                        'd' => $encrypted,
+                        's' => \md5($encoded)
+                    ]);
+            }
+        }
+
+        $html = parent::getRenderedLink($text, $proxyUrl, $options);
         $linkInfo = $this->formatter->getLinkClassTarget($url);
         $html = \trim($html);
 
