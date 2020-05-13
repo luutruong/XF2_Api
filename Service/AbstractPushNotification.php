@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Service;
 
+use Truonglv\Api\App;
 use XF\Entity\User;
 use XF\Entity\UserAlert;
 use Truonglv\Api\Entity\Log;
@@ -13,6 +14,11 @@ use Truonglv\Api\XF\Service\Conversation\Pusher;
 
 abstract class AbstractPushNotification extends AbstractService
 {
+    /**
+     * @var array
+     */
+    private $userAlertsCache = [];
+
     public function __construct(\XF\App $app)
     {
         parent::__construct($app);
@@ -116,6 +122,26 @@ abstract class AbstractPushNotification extends AbstractService
                 ]
             );
         }
+    }
+
+    /**
+     * @param User $user
+     * @return int
+     */
+    protected function getTotalUnreadNotifications(User $user)
+    {
+        if (!\array_key_exists($user->user_id, $this->userAlertsCache)) {
+            /** @var \XF\Repository\UserAlert $alertRepo */
+            $alertRepo = \XF::app()->repository('XF:UserAlert');
+
+            $total = $alertRepo->findAlertsForUser($user->user_id)
+                ->where('view_date', 0)
+                ->where('content_type', App::getSupportAlertContentTypes())
+                ->total();
+            $this->userAlertsCache[$user->user_id] = $total + $user->conversations_unread;
+        }
+
+        return $this->userAlertsCache[$user->user_id];
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Truonglv\Api\Service;
 
 use Truonglv\Api\App;
 use Kreait\Firebase\Factory;
+use XF\Entity\User;
 use XF\Repository\UserAlert;
 use Truonglv\Api\Entity\Subscription;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -45,25 +46,16 @@ class FCM extends AbstractPushNotification
         $factory = new Factory();
         $factory = $factory->withServiceAccount($contents);
 
-        $badges = [];
         $messages = [];
         $dataTransformed = [];
         foreach ($data as $key => $value) {
             $dataTransformed[\strval($key)] = \strval($value);
         }
 
-        /** @var UserAlert $alertRepo */
-        $alertRepo = \XF::app()->repository('XF:UserAlert');
-
         /** @var Subscription $subscription */
         foreach ($subscriptions as $subscription) {
-            if (!\array_key_exists($subscription->user_id, $badges)) {
-                $badges[$subscription->user_id] = $alertRepo->findAlertsForUser($subscription->user_id)
-                    ->where('view_date', 0)
-                    ->where('content_type', App::getSupportAlertContentTypes())
-                    ->total();
-            }
-
+            /** @var User $receiver */
+            $receiver = $subscription->User;
             $message = CloudMessage::withTarget('token', $subscription->device_token)
                 ->withNotification(Notification::create($title, $body))
                 ->withData($dataTransformed);
@@ -71,14 +63,14 @@ class FCM extends AbstractPushNotification
                 $message = $message->withApnsConfig([
                     'payload' => [
                         'aps' => [
-                            'badge' => $badges[$subscription->user_id],
+                            'badge' => $this->getTotalUnreadNotifications($receiver),
                         ]
                     ]
                 ]);
             } elseif ($subscription->device_type === 'android') {
                 $message = $message->withAndroidConfig([
                     'notification' => [
-                        'notification_count' => $badges[$subscription->user_id],
+                        'notification_count' => $this->getTotalUnreadNotifications($receiver),
                     ],
                 ]);
             }
