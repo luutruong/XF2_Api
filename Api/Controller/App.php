@@ -357,10 +357,10 @@ class App extends AbstractController
         return [
             'reactions' => $reactions,
             'apiVersion' => $addOns['Truonglv/Api']['version_id'],
-            'homeTabActive' => $this->options()->tApi_defaultHomeData,
             'allowRegistration' => (bool) $this->options()->registrationSetup['enabled'],
             'defaultReactionId' => \Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID,
             'defaultReactionText' => $reactions[\Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID]['text'],
+
         ];
     }
 

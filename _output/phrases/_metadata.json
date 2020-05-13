@@ -47,12 +47,6 @@
         "version_string": "1.0.0",
         "hash": "0b86a7298c7794dd2056b908c39159d8"
     },
-    "option.tApi_defaultHomeData.txt": {
-        "global_cache": false,
-        "version_id": 1010202,
-        "version_string": "1.1.2",
-        "hash": "2f80883052a46ed0bd2b2aff3bbdb32b"
-    },
     "option.tApi_delayPushNotifications.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -124,12 +118,6 @@
         "version_id": 1000001,
         "version_string": "1.0.0",
         "hash": "f1aac6e6eba3117393b6c7201aacdfe3"
-    },
-    "option_explain.tApi_defaultHomeData.txt": {
-        "global_cache": false,
-        "version_id": 1010202,
-        "version_string": "1.1.2",
-        "hash": "935c3d689b0b17202ac8ebf8cc71b253"
     },
     "option_explain.tApi_delayPushNotifications.txt": {
         "global_cache": false,
