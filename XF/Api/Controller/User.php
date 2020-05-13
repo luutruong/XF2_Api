@@ -33,7 +33,7 @@ class User extends XFCP_User
         $user = $this->assertViewableUser($params->user_id);
 
         $page = $this->filterPage();
-        $perPage = App::$followingPerPage;
+        $perPage = $this->app()->options()->tApi_recordsPerPage;
 
         /** @var UserFollow $followRepo */
         $followRepo = $this->repository('XF:UserFollow');

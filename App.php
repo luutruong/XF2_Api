@@ -17,10 +17,6 @@ class App
     const PARAM_KEY_INCLUDE_MESSAGE_HTML = 'include_message_html';
 
     /**
-     * @var int
-     */
-    public static $followingPerPage = 20;
-    /**
      * @var bool
      */
     public static $enableLogging = false;
