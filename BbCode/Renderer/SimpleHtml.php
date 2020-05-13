@@ -2,12 +2,12 @@
 
 namespace Truonglv\Api\BbCode\Renderer;
 
-use Truonglv\Api\Util\PasswordDecrypter;
 use XF\Http\Request;
 use Truonglv\Api\App;
 use XF\Entity\Attachment;
 use Truonglv\Api\XF\Str\Formatter;
 use Truonglv\Api\XF\Str\EmojiFormatter;
+use Truonglv\Api\Util\PasswordDecrypter;
 
 class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
 {
@@ -256,7 +256,9 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
 
         $visitor = \XF::visitor();
         $proxyUrl = $url;
-        if ($visitor->user_id > 0) {
+        $linkInfo = $this->formatter->getLinkClassTarget($url);
+
+        if ($visitor->user_id > 0 && $linkInfo['trusted'] === true) {
             $payload = [
                 'user_id' => $visitor->user_id,
                 'date' => \XF::$time,
@@ -281,7 +283,6 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         }
 
         $html = parent::getRenderedLink($text, $proxyUrl, $options);
-        $linkInfo = $this->formatter->getLinkClassTarget($url);
         $html = \trim($html);
 
         if ($linkInfo['type'] === 'internal') {
@@ -292,11 +293,19 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             $url = \ltrim($url, '/');
             $request = new Request(\XF::app()->inputFilterer(), [], [], [], []);
             $match = $app->router('public')->routeToController($url, $request);
+            $matchController = $match->getController();
 
-            if ($match->getController()) {
+            $supportControllers = [
+                'XF:Category',
+                'XF:Forum',
+                'XF:Member',
+                'XF:Post',
+                'XF:Thread',
+            ];
+            if (\in_array($matchController, $supportControllers, true)) {
                 $params = (string) \json_encode($match->getParams());
                 $html = \substr($html, 0, 3)
-                    . ' data-tapi-route="' . \htmlspecialchars($match->getController()) . '"'
+                    . ' data-tapi-route="' . \htmlspecialchars($matchController) . '"'
                     . ' data-tapi-route-params="' . \htmlspecialchars($params) . '" '
                     . \substr($html, 3);
             }

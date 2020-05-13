@@ -2,10 +2,10 @@
 
 namespace Truonglv\Api\XF\Pub\Controller;
 
-use Truonglv\Api\App;
-use Truonglv\Api\Util\PasswordDecrypter;
-use XF\ControllerPlugin\Login;
 use XF\Entity\User;
+use Truonglv\Api\App;
+use XF\ControllerPlugin\Login;
+use Truonglv\Api\Util\PasswordDecrypter;
 
 class Misc extends XFCP_Misc
 {
@@ -39,6 +39,7 @@ class Misc extends XFCP_Misc
         }
 
         $computeSign = \md5(\strval(\json_encode($data)));
+
         if (!\hash_equals($sign, $computeSign)) {
             return $this->redirect($this->buildLink('index'));
         }
@@ -46,14 +47,10 @@ class Misc extends XFCP_Misc
         $userId = $data['user_id'];
         $targetUrl = $data['url'];
 
-        $linkInfo = $this->app->stringFormatter()->getLinkClassTarget($targetUrl);
-        if ($linkInfo['trusted'] === false) {
-            return $this->redirectPermanently($targetUrl);
-        }
-
         /** @var User|null $user */
         $user = $this->app->em()->find('XF:User', $userId);
-        if ($user !== null) {
+        $isActive = ($data['date'] + 3600) > \XF::$time;
+        if ($user !== null && $isActive) {
             /** @var Login $loginPlugin */
             $loginPlugin = $this->plugin('XF:Login');
             $loginPlugin->completeLogin($user, false);
