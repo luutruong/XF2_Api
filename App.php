@@ -45,7 +45,7 @@ class App
 
         $apiKey = $request->getServer(self::HEADER_KEY_API_KEY);
         if ($apiKey === false
-            || $apiKey !== \XF::app()->options()->tApi_apiKey
+            || $apiKey !== \XF::app()->options()->tApi_apiKey['key']
         ) {
             return false;
         }

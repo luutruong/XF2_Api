@@ -36,8 +36,7 @@ class Listener
      */
     public static function appApiValidateRequest(\XF\Http\Request $request, &$result, &$error, &$code)
     {
-        $ourApiKey = $request->getServer(App::HEADER_KEY_API_KEY);
-        if ($ourApiKey === false || !App::isRequestFromApp($request)) {
+        if (!App::isRequestFromApp($request)) {
             return;
         }
 
@@ -63,14 +62,6 @@ class Listener
             }
         }
 
-        if ($ourKey['key'] !== $ourApiKey) {
-            $error = 'api_error.api_key_not_found';
-            $code = 401;
-            $result = false;
-
-            return;
-        }
-
         /** @var ApiKey|null $apiKeyEntity */
         $apiKeyEntity = $app->em()->find('XF:ApiKey', $ourKey['apiKeyId']);
         if ($apiKeyEntity === null) {
@@ -81,24 +72,25 @@ class Listener
             return;
         }
 
-        /** @var Request $mixed */
-        $mixed = $request;
-        $mixed->setApiKey($apiKeyEntity->api_key);
-        $mixed->setApiUser(0);
+        /** @var Request $ourRequest */
+        $ourRequest = $request;
+        $ourRequest->setApiKey($apiKeyEntity->api_key);
+        $ourRequest->setApiUser(0);
 
         $accessToken = $request->getServer(App::HEADER_KEY_ACCESS_TOKEN);
+        if ($accessToken !== false) {
+            /** @var AccessToken|null $token */
+            $token = $app->finder('Truonglv\Api:AccessToken')
+                ->where('token', $accessToken)
+                ->whereOr([
+                    ['expire_date', '=', 0],
+                    ['expire_date', '>', \XF::$time]
+                ])
+                ->fetchOne();
 
-        /** @var AccessToken|null $token */
-        $token = $app->finder('Truonglv\Api:AccessToken')
-            ->where('token', $accessToken)
-            ->whereOr([
-                ['expire_date', '=', 0],
-                ['expire_date', '>', \XF::$time]
-            ])
-            ->fetchOne();
-
-        if ($token !== null) {
-            $mixed->setApiUser($token->user_id);
+            if ($token !== null) {
+                $ourRequest->setApiUser($token->user_id);
+            }
         }
     }
 
