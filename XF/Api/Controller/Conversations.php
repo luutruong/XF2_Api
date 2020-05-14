@@ -9,15 +9,19 @@ class Conversations extends XFCP_Conversations
 {
     public function actionGet()
     {
-        $this->app()->request()->set('tapi_last_message', true);
-        $this->app()->request()->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
+        if (App::isRequestFromApp()) {
+            $this->app()->request()->set('tapi_last_message', true);
+            $this->app()->request()->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
+        }
 
         return parent::actionGet();
     }
 
     public function actionPost()
     {
-        if ($this->request()->exists('recipients')) {
+        if ($this->request()->exists('recipients')
+            && App::isRequestFromApp()
+        ) {
             $names = $this->filter('recipients', 'str');
             $names = \explode(',', $names);
             $names = \array_map('trim', $names);

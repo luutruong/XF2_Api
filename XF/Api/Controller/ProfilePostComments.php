@@ -9,7 +9,9 @@ class ProfilePostComments extends XFCP_ProfilePostComments
 {
     public function actionPost(ParameterBag $params)
     {
-        $this->request()->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, 1);
+        if (App::isRequestFromApp()) {
+            $this->request()->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, 1);
+        }
 
         return parent::actionPost($params);
     }

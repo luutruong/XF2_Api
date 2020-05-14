@@ -33,8 +33,24 @@ class App
     public static function isRequestFromApp(Request $request = null)
     {
         $request = $request !== null ? $request : \XF::app()->request();
+        $appVersion = $request->getServer(self::HEADER_KEY_APP_VERSION);
 
-        return \trim($request->getServer(self::HEADER_KEY_APP_VERSION)) !== '';
+        if ($appVersion === false) {
+            return false;
+        }
+
+        if (\preg_match('#^\d{4}\.\d{2}\.\d{2} \(\d+\)$#', $appVersion) !== 1) {
+            return false;
+        }
+
+        $apiKey = $request->getServer(self::HEADER_KEY_API_KEY);
+        if ($apiKey === false
+            || $apiKey !== \XF::app()->options()->tApi_apiKey
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

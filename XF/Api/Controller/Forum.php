@@ -12,9 +12,11 @@ class Forum extends XFCP_Forum
 {
     public function actionGetThreads(ParameterBag $params)
     {
-        $this->app()
-            ->request()
-            ->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
+        if (App::isRequestFromApp()) {
+            $this->app()
+                ->request()
+                ->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
+        }
 
         return parent::actionGetThreads($params);
     }

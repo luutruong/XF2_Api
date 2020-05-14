@@ -39,21 +39,22 @@ class Misc extends XFCP_Misc
         }
 
         $computeSign = \md5(\strval(\json_encode($data)));
-
         if (!\hash_equals($sign, $computeSign)) {
             return $this->redirect($this->buildLink('index'));
         }
 
-        $userId = $data['user_id'];
         $targetUrl = $data['url'];
 
-        /** @var User|null $user */
-        $user = $this->app->em()->find('XF:User', $userId);
-        $isActive = ($data['date'] + 3600) > \XF::$time;
-        if ($user !== null && $isActive) {
-            /** @var Login $loginPlugin */
-            $loginPlugin = $this->plugin('XF:Login');
-            $loginPlugin->completeLogin($user, false);
+        if (\XF::visitor()->user_id === 0) {
+            $userId = $data['user_id'];
+            /** @var User|null $user */
+            $user = $this->app->em()->find('XF:User', $userId);
+            $isActive = ($data['date'] + 3600) > \XF::$time;
+            if ($user !== null && $isActive) {
+                /** @var Login $loginPlugin */
+                $loginPlugin = $this->plugin('XF:Login');
+                $loginPlugin->completeLogin($user, false);
+            }
         }
 
         return $this->redirectPermanently($targetUrl);
