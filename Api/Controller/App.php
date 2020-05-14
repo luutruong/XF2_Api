@@ -425,14 +425,9 @@ class App extends AbstractController
     protected function getNewsFeedsFilters()
     {
         $filters = [];
-
         $input = $this->filter([
             'order' => 'str'
         ]);
-        $defaultOrder = $this->options()->tApi_defaultHomeData;
-        if ($input['order'] === '') {
-            $input['order'] = $defaultOrder;
-        }
 
         $availableOrders = $this->getNewsFeedsAvailableSorts();
         if (isset($availableOrders[$input['order']])) {
