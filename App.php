@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api;
 
+use Truonglv\Api\Util\PasswordDecrypter;
 use XF\Http\Request;
 use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
@@ -16,6 +17,13 @@ class App
 
     const PARAM_KEY_INCLUDE_MESSAGE_HTML = 'include_message_html';
 
+    const KEY_LINK_PROXY_USER_ID = 'userId';
+    const KEY_LINK_PROXY_DATE = 'date';
+    const KEY_LINK_PROXY_TARGET_URL = 'url';
+
+    const KEY_LINK_PROXY_INPUT_DATA = '_d';
+    const KEY_LINK_PROXY_INPUT_SIGNATURE = '_s';
+
     /**
      * @var bool
      */
@@ -25,6 +33,33 @@ class App
      * @var string
      */
     public static $defaultPushNotificationService = 'Truonglv\Api:FCM';
+
+    /**
+     * @param string $targetUrl
+     * @return string
+     */
+    public static function buildLinkProxy($targetUrl)
+    {
+        $payload = [
+            self::KEY_LINK_PROXY_USER_ID => \XF::visitor()->user_id,
+            self::KEY_LINK_PROXY_DATE => \XF::$time,
+            self::KEY_LINK_PROXY_TARGET_URL => $targetUrl,
+        ];
+
+        $encoded = \strval(\json_encode($payload));
+
+        try {
+            $encrypted = PasswordDecrypter::encrypt($encoded, \XF::app()->options()->tApi_encryptKey);
+        } catch (\InvalidArgumentException $e) {
+            return $targetUrl;
+        }
+
+        return \XF::app()->router('public')
+            ->buildLink('canonical:misc/tapi-goto', null, [
+                self::KEY_LINK_PROXY_INPUT_DATA => $encrypted,
+                self::KEY_LINK_PROXY_INPUT_SIGNATURE => \md5($encoded)
+            ]);
+    }
 
     /**
      * @param Request|null $request

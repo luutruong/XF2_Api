@@ -15,8 +15,8 @@ class Misc extends XFCP_Misc
             return $this->redirect($this->buildLink('index'));
         }
 
-        $payload = $this->filter('d', 'str');
-        $sign = $this->filter('s', 'str');
+        $payload = $this->filter(App::KEY_LINK_PROXY_INPUT_DATA, 'str');
+        $sign = $this->filter(App::KEY_LINK_PROXY_INPUT_SIGNATURE, 'str');
         if ($sign === '') {
             return $this->redirect($this->buildLink('index'));
         }
@@ -43,13 +43,13 @@ class Misc extends XFCP_Misc
             return $this->redirect($this->buildLink('index'));
         }
 
-        $targetUrl = $data['url'];
+        $targetUrl = $data[App::KEY_LINK_PROXY_TARGET_URL];
 
         if (\XF::visitor()->user_id === 0) {
-            $userId = $data['user_id'];
+            $userId = $data[App::KEY_LINK_PROXY_USER_ID];
             /** @var User|null $user */
             $user = $this->app->em()->find('XF:User', $userId);
-            $isActive = ($data['date'] + 3600) > \XF::$time;
+            $isActive = ($data[App::KEY_LINK_PROXY_DATE] + 3600) > \XF::$time;
             if ($user !== null && $isActive) {
                 /** @var Login $loginPlugin */
                 $loginPlugin = $this->plugin('XF:Login');

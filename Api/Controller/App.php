@@ -354,13 +354,15 @@ class App extends AbstractController
         $addOnRepo = $this->repository('XF:AddOn');
         $addOns = $addOnRepo->getInstalledAddOnData();
 
+        $accountDetails = $this->buildLink('canonical:account/account-details');
+
         return [
             'reactions' => $reactions,
             'apiVersion' => $addOns['Truonglv/Api']['version_id'],
             'allowRegistration' => (bool) $this->options()->registrationSetup['enabled'],
             'defaultReactionId' => \Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID,
             'defaultReactionText' => $reactions[\Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID]['text'],
-
+            'accountUpdateUrl' => \Truonglv\Api\App::buildLinkProxy($accountDetails),
         ];
     }
 

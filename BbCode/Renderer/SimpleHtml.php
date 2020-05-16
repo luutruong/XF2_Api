@@ -258,28 +258,8 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
         $proxyUrl = $url;
         $linkInfo = $this->formatter->getLinkClassTarget($url);
 
-        if ($visitor->user_id > 0 && $linkInfo['trusted'] === true) {
-            $payload = [
-                'user_id' => $visitor->user_id,
-                'date' => \XF::$time,
-                'url' => $url,
-            ];
-
-            $encoded = \strval(\json_encode($payload));
-            $encrypted = null;
-
-            try {
-                $encrypted = PasswordDecrypter::encrypt($encoded, \XF::options()->tApi_encryptKey);
-            } catch (\InvalidArgumentException $e) {
-            }
-
-            if ($encrypted !== null) {
-                $proxyUrl = \XF::app()->router('public')
-                    ->buildLink('canonical:misc/tapi-goto', null, [
-                        'd' => $encrypted,
-                        's' => \md5($encoded)
-                    ]);
-            }
+        if ($visitor->user_id > 0 && $linkInfo['trusted'] === true && App::isRequestFromApp()) {
+            $proxyUrl = App::buildLinkProxy($url);
         }
 
         $html = parent::getRenderedLink($text, $proxyUrl, $options);
