@@ -21,7 +21,7 @@ class Misc extends XFCP_Misc
             return $this->redirect($this->buildLink('index'));
         }
 
-        /** @var array|null $data */
+        /** @var mixed $data */
         $data = null;
 
         try {

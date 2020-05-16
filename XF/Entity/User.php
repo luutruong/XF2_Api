@@ -2,8 +2,6 @@
 
 namespace Truonglv\Api\XF\Entity;
 
-use Truonglv\Api\App;
-
 class User extends XFCP_User
 {
     /**

@@ -7,7 +7,6 @@ use Truonglv\Api\App;
 use XF\Entity\Attachment;
 use Truonglv\Api\XF\Str\Formatter;
 use Truonglv\Api\XF\Str\EmojiFormatter;
-use Truonglv\Api\Util\PasswordDecrypter;
 
 class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
 {

@@ -2,12 +2,12 @@
 
 namespace Truonglv\Api;
 
-use Truonglv\Api\Util\PasswordDecrypter;
 use XF\Http\Request;
 use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
 use Truonglv\Api\Data\Reaction;
 use XF\Api\Result\EntityResult;
+use Truonglv\Api\Util\PasswordDecrypter;
 
 class App
 {
