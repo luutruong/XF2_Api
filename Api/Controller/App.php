@@ -354,7 +354,7 @@ class App extends AbstractController
         $addOnRepo = $this->repository('XF:AddOn');
         $addOns = $addOnRepo->getInstalledAddOnData();
 
-        $accountDetails = $this->buildLink('canonical:account/account-details');
+        $accountDetails = $this->app()->router('public')->buildLink('canonical:account/account-details');
 
         return [
             'reactions' => $reactions,
