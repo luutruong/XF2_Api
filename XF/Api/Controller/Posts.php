@@ -46,8 +46,8 @@ class Posts extends XFCP_Posts
 
             if ($defaultMessage !== null) {
                 $message = $defaultMessage . "\n" . $message;
-                $replier->setMessage($message);
             }
+            $replier->setMessage($message);
         }
 
         return $replier;

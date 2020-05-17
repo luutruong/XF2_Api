@@ -44,8 +44,8 @@ class ConversationMessages extends XFCP_ConversationMessages
 
             if ($defaultMessage !== null) {
                 $message = $defaultMessage . "\n" . $message;
-                $replier->setMessageContent($message);
             }
+            $replier->setMessageContent($message);
         }
 
         return $replier;
