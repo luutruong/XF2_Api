@@ -363,6 +363,7 @@ class App extends AbstractController
             'defaultReactionId' => \Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID,
             'defaultReactionText' => $reactions[\Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID]['text'],
             'accountUpdateUrl' => \Truonglv\Api\App::buildLinkProxy($accountDetails),
+            'quotePlaceholderTemplate' => \Truonglv\Api\App::QUOTE_PLACEHOLDER_TEMPLATE,
         ];
     }
 

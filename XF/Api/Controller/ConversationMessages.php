@@ -38,6 +38,10 @@ class ConversationMessages extends XFCP_ConversationMessages
             }
 
             $message = $this->filter('message', 'str');
+            /** @var \Truonglv\Api\Api\ControllerPlugin\Quote $quotePlugin */
+            $quotePlugin = $this->plugin('Truonglv\Api:Api:Quote');
+            $message = $quotePlugin->prepareMessage($message, 'conversation_message');
+
             if ($defaultMessage !== null) {
                 $message = $defaultMessage . "\n" . $message;
                 $replier->setMessageContent($message);

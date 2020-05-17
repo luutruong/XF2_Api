@@ -40,6 +40,10 @@ class Posts extends XFCP_Posts
             }
 
             $message = $this->filter('message', 'str');
+            /** @var \Truonglv\Api\Api\ControllerPlugin\Quote $quotePlugin */
+            $quotePlugin = $this->plugin('Truonglv\Api:Api:Quote');
+            $message = $quotePlugin->prepareMessage($message, 'post');
+
             if ($defaultMessage !== null) {
                 $message = $defaultMessage . "\n" . $message;
                 $replier->setMessage($message);

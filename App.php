@@ -20,9 +20,10 @@ class App
     const KEY_LINK_PROXY_USER_ID = 'userId';
     const KEY_LINK_PROXY_DATE = 'date';
     const KEY_LINK_PROXY_TARGET_URL = 'url';
-
     const KEY_LINK_PROXY_INPUT_DATA = '_d';
     const KEY_LINK_PROXY_INPUT_SIGNATURE = '_s';
+
+    const QUOTE_PLACEHOLDER_TEMPLATE = '[APPQUOTE={content_type},{content_id}]';
 
     /**
      * @var bool
