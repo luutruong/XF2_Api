@@ -41,26 +41,7 @@ class Listener
         }
 
         $app = \XF::app();
-
-        $apiKey = $request->getApiKey();
         $ourKey = $app->options()->tApi_apiKey;
-
-        if (\count($ourKey) > 0) {
-            /** @var ApiKey|null $apiKeyEntity */
-            $apiKeyEntity = $app->em()->find('XF:ApiKey', $ourKey['apiKeyId']);
-            if ($apiKeyEntity === null) {
-                return;
-            }
-
-            if ($apiKey === $apiKeyEntity->api_key) {
-                // DO NOT allow request with api_key in header.
-                $error = 'api_error.api_key_not_found';
-                $code = 401;
-                $result = false;
-
-                return;
-            }
-        }
 
         /** @var ApiKey|null $apiKeyEntity */
         $apiKeyEntity = $app->em()->find('XF:ApiKey', $ourKey['apiKeyId']);
