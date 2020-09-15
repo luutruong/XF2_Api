@@ -8,6 +8,10 @@ use XF\Api\Controller\AbstractController;
 
 class Search extends AbstractController
 {
+    const SEARCH_TYPE_THREAD = 'thread';
+    const SEARCH_TYPE_POST = 'post';
+    const SEARCH_TYPE_USER = 'user';
+
     public function actionPost()
     {
         $this->assertRequiredApiInput(['keywords']);
@@ -17,7 +21,18 @@ class Search extends AbstractController
             return $this->message(\XF::phrase('no_results_found'));
         }
 
-        $keywords = $this->filter('keywords', 'str');
+        $searchType = $this->filter('search_type', 'str');
+        if (!in_array($searchType, $this->getAllowedSearchTypes(), true)) {
+            $searchType = '';
+        }
+
+        $keywords = $this->app()->stringFormatter()->censorText($this->filter('keywords', 'str'), '');
+        if ($searchType === self::SEARCH_TYPE_USER) {
+            $this->request()->set('name', $keywords);
+
+            return $this->rerouteController(__CLASS__, 'user');
+        }
+
         if (\strlen($keywords) <= $this->options()->searchMinWordLength) {
             return $this->message(\XF::phrase('no_results_found'));
         }
@@ -29,11 +44,16 @@ class Search extends AbstractController
 
         $urlConstraints = [];
 
-        $typeHandler = $searcher->handler('post');
+        if ($searchType === 'post') {
+            $typeHandler = $searcher->handler('post');
+        } else {
+            $typeHandler = $searcher->handler('thread');
+        }
+
         $query->forTypeHandler($typeHandler, $searchRequest, $urlConstraints);
         $query->withGroupedResults();
 
-        $query->withKeywords($keywords, false);
+        $query->withKeywords($keywords, $searchType !== 'post');
         $query->orderedBy('date');
 
         $constraints = [];
@@ -61,16 +81,26 @@ class Search extends AbstractController
         $searcher = $this->app()->search();
         $resultSet = $searcher->getResultSet($search->search_results);
 
-        $resultSet->sliceResultsToPage($page, $perPage);
-
+        $resultSet->sliceResultsToPage($page, $perPage, $search->search_type !== self::SEARCH_TYPE_USER);
         if (!$resultSet->countResults()) {
             return $this->message(\XF::phrase('no_results_found'));
         }
 
         $results = [];
-        /** @var Entity $entity */
-        foreach ($resultSet->getResultsData() as $entity) {
-            $results[] = $entity->toApiResult();
+        if ($search->search_type === self::SEARCH_TYPE_USER) {
+            $userIds = [];
+            foreach ($resultSet->getResults() as $result) {
+                $userIds[] = $result[1];
+            }
+
+            $results = $this->em()
+                ->findByIds('XF:User', $userIds, ['Profile', 'Privacy', 'Option'])
+                ->sortByList($userIds);
+        } else {
+            /** @var Entity $entity */
+            foreach ($resultSet->getResultsData() as $entity) {
+                $results[] = $entity->toApiResult();
+            }
         }
 
         $data = [
@@ -83,6 +113,70 @@ class Search extends AbstractController
         return $this->apiResult($data);
     }
 
+    public function actionUser()
+    {
+        $name = $this->filter('name', 'str');
+
+        if (\utf8_strlen($name) <= 2) {
+            return $this->message(\XF::phrase('no_results_found'));
+        }
+
+        $queryHash = \md5(
+            $this->app()->config('globalSalt')
+            . __METHOD__
+            . self::SEARCH_TYPE_USER
+            . \utf8_strtolower($name)
+        );
+
+        /** @var \XF\Entity\Search|null $existingSearch */
+        $existingSearch = $this->finder('XF:Search')
+            ->where('user_id', 0)
+            ->where('query_hash', $queryHash)
+            ->where('search_type', self::SEARCH_TYPE_USER)
+            ->where('search_date', '>=', \XF::$time - 3600)
+            ->order('search_date', 'desc')
+            ->fetchOne();
+        if ($existingSearch !== null) {
+            return $this->rerouteController(__CLASS__, 'get', [
+                'search_id' => $existingSearch->search_id
+            ]);
+        }
+
+        $finder = $this->finder('XF:User');
+        $finder->where('username', 'LIKE', $finder->escapeLike($name, '?%'));
+        $finder->order('username');
+
+        $results = $finder->limit(\max(\XF::options()->maximumSearchResults, 20))
+            ->fetchColumns('user_id');
+        $searchResults = [];
+
+        foreach ($results as $result) {
+            $searchResults[] = ['user', $result['user_id']];
+        }
+
+        if (\count($searchResults) === 0) {
+            return $this->message(\XF::phrase('no_results_found'));
+        }
+
+        /** @var \XF\Entity\Search $search */
+        $search = $this->em()->create('XF:Search');
+
+        $search->user_id = 0;
+        $search->result_count = \count($searchResults);
+        $search->search_results = $searchResults;
+        $search->search_type = self::SEARCH_TYPE_USER;
+        $search->search_constraints = [];
+        $search->search_order = 'date';
+        $search->query_hash = $queryHash;
+        $search->search_query = $name;
+
+        $search->save();
+
+        return $this->rerouteController(__CLASS__, 'get', [
+            'search_id' => $search->search_id
+        ]);
+    }
+
     /**
      * @param mixed $id
      * @return \XF\Entity\Search
@@ -93,11 +187,19 @@ class Search extends AbstractController
         /** @var \XF\Entity\Search $search */
         $search = $this->assertRecordExists('XF:Search', $id);
         if (($search->user_id > 0 && $search->user_id !== \XF::visitor()->user_id)
-            || $search->search_type !== 'post'
+            || !in_array($search->search_type, $this->getAllowedSearchTypes(), true)
         ) {
             throw $this->exception($this->notFound());
         }
 
         return $search;
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getAllowedSearchTypes()
+    {
+        return [self::SEARCH_TYPE_THREAD, self::SEARCH_TYPE_POST, self::SEARCH_TYPE_USER];
     }
 }
