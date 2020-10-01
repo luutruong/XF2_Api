@@ -74,13 +74,12 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             if (isset($attachments[$id])) {
                 /** @var Attachment $attachmentRef */
                 $attachmentRef = $attachments[$id];
+
                 $params = [
                     'id' => $id,
                     'attachment' => $attachmentRef,
                     'full' => $this->isFullAttachView($option),
-                    'alt' => ($this->getImageAltText($option) !== '')
-                        ? $this->getImageAltText($option)
-                        : $attachmentRef->filename,
+                    'alt' => $attachmentRef->filename,
                     'attachmentViewUrl' => $this->getAttachmentViewUrl($attachmentRef)
                 ];
 
