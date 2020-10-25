@@ -28,7 +28,7 @@ class AlertQueue extends Repository
      */
     public function addContentIntoQueues(ArrayCollection $queues)
     {
-        if (!$queues->count()) {
+        if ($queues->count() < 1) {
             return;
         }
 
@@ -38,6 +38,7 @@ class AlertQueue extends Repository
             $contentMap[$queue->content_type][$queue->content_id] = true;
         }
 
+        /** @var mixed $contents */
         $contents = [];
         foreach ($contentMap as $contentType => $contentIds) {
             if ($contentType === 'alert') {

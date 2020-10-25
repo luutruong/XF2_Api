@@ -5,6 +5,7 @@
     "sub_options": [],
     "validation_class": "",
     "validation_method": "",
+    "advanced": false,
     "default_value": "30",
     "relations": {
         "tl_Api": 30

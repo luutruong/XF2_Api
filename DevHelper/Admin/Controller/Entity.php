@@ -9,7 +9,7 @@ use XF\Mvc\FormAction;
 use XF\Mvc\ParameterBag;
 
 /**
- * @version 2020011000
+ * @version 2020052301
  * @see \DevHelper\Autogen\Admin\Controller\Entity
  */
 abstract class Entity extends AbstractController

@@ -1,5 +1,6 @@
 {
     "icon": "",
     "display_order": 19000,
+    "advanced": false,
     "debug_only": false
 }

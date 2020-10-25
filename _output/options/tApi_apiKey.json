@@ -8,6 +8,7 @@
     ],
     "validation_class": "Truonglv\\Api\\Option\\ApiKey",
     "validation_method": "verifyOption",
+    "advanced": false,
     "default_value": "{\"apiKeyId\":0,\"key\":\"\"}",
     "relations": {
         "tl_Api": 5
