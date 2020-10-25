@@ -62,6 +62,7 @@ class FCM extends AbstractPushNotification
                     'payload' => [
                         'aps' => [
                             'badge' => $this->getTotalUnreadNotifications($receiver),
+                            'sound' => 'default',
                         ]
                     ]
                 ]);
@@ -69,6 +70,7 @@ class FCM extends AbstractPushNotification
                 $message = $message->withAndroidConfig([
                     'notification' => [
                         'notification_count' => $this->getTotalUnreadNotifications($receiver),
+                        'sound' => 'default',
                     ],
                 ]);
             }
