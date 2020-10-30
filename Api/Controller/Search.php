@@ -2,10 +2,10 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use XF\Repository\Tag;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
 use XF\Api\Controller\AbstractController;
-use XF\Repository\Tag;
 
 class Search extends AbstractController
 {
