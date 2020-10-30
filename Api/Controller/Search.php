@@ -5,6 +5,7 @@ namespace Truonglv\Api\Api\Controller;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
 use XF\Api\Controller\AbstractController;
+use XF\Repository\Tag;
 
 class Search extends AbstractController
 {
@@ -33,14 +34,31 @@ class Search extends AbstractController
             return $this->rerouteController(__CLASS__, 'user');
         }
 
-        if (\strlen($keywords) <= $this->options()->searchMinWordLength) {
-            return $this->message(\XF::phrase('no_results_found'));
-        }
-
         $searchRequest = new \XF\Http\Request($this->app->inputFilterer(), [], [], []);
 
         $searcher = $this->app()->search();
         $query = $searcher->getQuery();
+        /** @var \XF\Entity\Tag|null $tag */
+        $tag = null;
+
+        if (strpos($keywords, 'tag:') === 0) {
+            $tagName = substr($keywords, 4);
+            /** @var Tag $tagRepo */
+            $tagRepo = $this->repository('XF:Tag');
+            if (!$tagRepo->isValidTag($tagName)) {
+                return $this->message(\XF::phrase('no_results_found'));
+            }
+
+            $tags = $tagRepo->getTags([$tagName]);
+            $foundTag = reset($tags);
+            if (!$foundTag instanceof \XF\Entity\Tag) {
+                return $this->message(\XF::phrase('no_results_found'));
+            }
+
+            $tag = $foundTag;
+        } elseif (\strlen($keywords) <= $this->options()->searchMinWordLength) {
+            return $this->message(\XF::phrase('no_results_found'));
+        }
 
         $urlConstraints = [];
 
@@ -53,7 +71,11 @@ class Search extends AbstractController
         $query->forTypeHandler($typeHandler, $searchRequest, $urlConstraints);
         $query->withGroupedResults();
 
-        $query->withKeywords($keywords, $searchType !== 'post');
+        if ($tag !== null) {
+            $query->withTags($tag->tag_id);
+        } else {
+            $query->withKeywords($keywords, $searchType !== 'post');
+        }
         $query->orderedBy('date');
 
         $constraints = [];
