@@ -4,6 +4,7 @@ namespace Truonglv\Api\Api\Controller;
 
 use XF\Finder\Thread;
 use XF\Repository\Node;
+use XF\Repository\Tfa;
 use XF\Repository\User;
 use XF\Repository\AddOn;
 use XF\Mvc\Entity\Entity;
@@ -261,58 +262,98 @@ class App extends AbstractController
         }
 
         $encrypted = $this->filter('password', 'str');
-        $password = '';
+        $password = $encrypted;
 
-        try {
-            $password = PasswordDecrypter::decrypt($encrypted, $this->options()->tApi_encryptKey);
-        } catch (\InvalidArgumentException $e) {
-        }
+//        try {
+//            $password = PasswordDecrypter::decrypt($encrypted, $this->options()->tApi_encryptKey);
+//        } catch (\InvalidArgumentException $e) {
+//        }
 
         $username = $this->filter('username', 'str');
-        $ip = $this->request()->getIp();
-
-        /** @var \XF\Service\User\Login $loginService */
-        $loginService = $this->service('XF:User\Login', $username, $ip);
-        if ($loginService->isLoginLimited($limitType)) {
-            return $this->error(\XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'), 400);
-        }
-
-        /** @var \XF\Entity\User|null $user */
-        $user = $loginService->validate($password, $error);
-        if ($user === null) {
-            return $this->error($error);
-        }
-
-        /** @var Login $loginPlugin */
-        $loginPlugin = $this->plugin('XF:Login');
-        if ($loginPlugin->isTfaConfirmationRequired($user)) {
-            $provider = $this->filter('provider', 'str');
-            if (!$this->request()->exists('code')) {
-                return $this->apiError(
-                    \XF::phrase('two_step_verification_required'),
-                    'two_step_verification_required',
-                    null,
-                    100
-                );
-            }
-
-            /** @var \XF\Service\User\Tfa $tfaService */
-            $tfaService = $this->service('XF:User\Tfa', $user);
-            if ($tfaService->isTfaAvailable()) {
-                if (!$tfaService->isProviderValid($provider)) {
-                    return $this->error(\XF::phrase('two_step_verification_value_could_not_be_confirmed'), 400);
-                }
-
-                if (!$tfaService->verify($this->request(), $provider)) {
-                    return $this->error(\XF::phrase('two_step_verification_value_could_not_be_confirmed'), 400);
-                }
-            }
-        }
+        $user = $this->verifyUserCredentials($username, $password);
 
         return $this->apiSuccess([
             'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE),
             'accessToken' => Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
         ]);
+    }
+
+    /**
+     * @param string $username
+     * @param string $password
+     * @return \XF\Entity\User
+     * @throws \XF\Mvc\Reply\Exception
+     */
+    protected function verifyUserCredentials(string $username, string $password)
+    {
+        $ip = $this->request()->getIp();
+
+        /** @var \XF\Service\User\Login $loginService */
+        $loginService = $this->service('XF:User\Login', $username, $ip);
+        if ($loginService->isLoginLimited($limitType)) {
+            throw $this->errorException(\XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'), 400);
+        }
+
+        /** @var \XF\Entity\User|null $user */
+        $user = $loginService->validate($password, $error);
+        if ($user === null) {
+            throw $this->errorException($error, 400);
+        }
+
+        if (!$this->runTfaValidation($user)) {
+            throw $this->errorException(\XF::phrase('two_step_verification_value_could_not_be_confirmed'));
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param \XF\Entity\User $user
+     * @return bool
+     * @throws \XF\Mvc\Reply\Exception
+     */
+    protected function runTfaValidation(\XF\Entity\User $user)
+    {
+        /** @var Login $loginPlugin */
+        $loginPlugin = $this->plugin('XF:Login');
+        if (!$loginPlugin->isTfaConfirmationRequired($user)) {
+            return true;
+        }
+
+        $provider = $this->filter('tfa_provider', 'str');
+        /** @var Tfa $tfaRepo */
+        $tfaRepo = $this->repository('XF:Tfa');
+        $providers = $tfaRepo->getAvailableProvidersForUser($user->user_id);
+        $response = $this->app()->response();
+        $response->header('X-Api-Tfa-Providers', implode(',', array_keys($providers)));
+
+        $this->assertRequiredApiInput(['tfa_provider']);
+
+        if (!isset($providers[$provider])) {
+            throw $this->exception($this->message(\XF::phrase('two_step_verification_required'), 202));
+        }
+
+        /** @var \XF\Service\User\Tfa $tfaService */
+        $tfaService = $this->service('XF:User\Tfa', $user);
+
+        if (!$tfaService->isTfaAvailable()) {
+            return true;
+        }
+
+        if ($this->filter('tfa_trigger', 'bool') === true) {
+            $tfaService->trigger($this->request(), $provider);
+            throw $this->exception($this->message('changes_saved'));
+        }
+
+        if ($tfaService->hasTooManyTfaAttempts()) {
+            throw $this->errorException(\XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'));
+        }
+
+        if (!$tfaService->verify($this->request(), $provider)) {
+            throw $this->errorException(\XF::phrase('two_step_verification_value_could_not_be_confirmed'));
+        }
+
+        return true;
     }
 
     /** @noinspection PhpUnused */
