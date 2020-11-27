@@ -262,12 +262,12 @@ class App extends AbstractController
         }
 
         $encrypted = $this->filter('password', 'str');
-        $password = $encrypted;
+        $password = '';
 
-//        try {
-//            $password = PasswordDecrypter::decrypt($encrypted, $this->options()->tApi_encryptKey);
-//        } catch (\InvalidArgumentException $e) {
-//        }
+        try {
+            $password = PasswordDecrypter::decrypt($encrypted, $this->options()->tApi_encryptKey);
+        } catch (\InvalidArgumentException $e) {
+        }
 
         $username = $this->filter('username', 'str');
         $user = $this->verifyUserCredentials($username, $password);
