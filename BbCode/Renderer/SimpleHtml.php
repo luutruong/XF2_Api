@@ -340,7 +340,8 @@ class SimpleHtml extends \XF\BbCode\Renderer\SimpleHtml
             'size',
             'u',
             'url',
-            'user'
+            'user',
+            'heading'
         ];
     }
 
