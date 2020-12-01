@@ -3,8 +3,8 @@
 namespace Truonglv\Api\Api\Controller;
 
 use XF\Finder\Thread;
-use XF\Repository\Node;
 use XF\Repository\Tfa;
+use XF\Repository\Node;
 use XF\Repository\User;
 use XF\Repository\AddOn;
 use XF\Mvc\Entity\Entity;
@@ -342,6 +342,7 @@ class App extends AbstractController
 
         if ($this->filter('tfa_trigger', 'bool') === true) {
             $tfaService->trigger($this->request(), $provider);
+
             throw $this->exception($this->message('changes_saved'));
         }
 
