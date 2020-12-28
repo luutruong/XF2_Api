@@ -2,18 +2,15 @@
 
 namespace Truonglv\Api\Api\ControllerPlugin;
 
+use XF\Entity\ConversationMessage;
 use XF\Entity\Post;
 use Truonglv\Api\App;
 use XF\Api\ControllerPlugin\AbstractPlugin;
+use XF\Mvc\Entity\Entity;
 
 class Quote extends AbstractPlugin
 {
-    /**
-     * @param string $message
-     * @param string $contentType
-     * @return string
-     */
-    public function prepareMessage($message, $contentType)
+    public function prepareMessage(string $message, string $contentType): string
     {
         $template = App::QUOTE_PLACEHOLDER_TEMPLATE;
         $template = \strtr($template, [
@@ -29,22 +26,47 @@ class Quote extends AbstractPlugin
             return $message;
         }
 
-        $posts = $this->app->findByContentType($contentType, $matches[1], 'full');
+        $contents = $this->app->findByContentType($contentType, $matches[1], 'full');
         foreach ($matches[0] as $index => $match) {
-            $postId = $matches[1][$index];
-            /** @var Post|null $postRef */
-            $postRef = isset($posts[$postId]) ? $posts[$postId] : null;
-            if ($postRef !== null && $postRef->canView()) {
-                $replacement = $postRef->getQuoteWrapper(
-                    $this->app->stringFormatter()->getBbCodeForQuote($postRef->message, 'post')
-                );
-            } else {
-                $replacement = '';
-            }
+            $entityId = $matches[1][$index];
+            /** @var Entity|null $entityRef */
+            $entityRef = isset($contents[$entityId]) ? $contents[$entityId] : null;
 
-            $message = \str_replace($match, $replacement, $message);
+            $message = \str_replace(
+                $match,
+                $entityRef === null
+                    ? ''
+                    : $this->getReplacement($entityRef, $contentType),
+                $message
+            );
         }
 
         return $message;
+    }
+
+    protected function getReplacement(Entity $entity, string $contentType): string
+    {
+        switch ($contentType) {
+            case 'post':
+                /** @var Post $post */
+                $post = $entity;
+                if ($post->canView()) {
+                    return $post->getQuoteWrapper($this->app->stringFormatter()->getBbCodeForQuote($post->message, $contentType));
+                }
+
+                return '';
+            case 'conversation_message':
+                /** @var ConversationMessage $message */
+                $message = $entity;
+                if ($message->canView()) {
+                    return $message->getQuoteWrapper(
+                        $this->app->stringFormatter()->getBbCodeForQuote($message->message, $contentType)
+                    );
+                }
+
+                return '';
+        }
+
+        throw new \LogicException('Must be implemented!');
     }
 }
