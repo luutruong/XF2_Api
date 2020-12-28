@@ -10,7 +10,7 @@ use XF\Mvc\Entity\Entity;
 
 class Quote extends AbstractPlugin
 {
-    public function prepareMessage(string $message, string $contentType): string
+    public function getMessagePlaceholders(string $message, string $contentType): array
     {
         $template = App::QUOTE_PLACEHOLDER_TEMPLATE;
         $template = \strtr($template, [
@@ -22,13 +22,26 @@ class Quote extends AbstractPlugin
         ]);
 
         \preg_match_all('#' . $template . '#i', $message, $matches);
-        if (\count($matches[0]) === 0) {
+        if (count($matches[0]) === 0) {
+            return [];
+        }
+
+        return [
+            'full' => $matches[0],
+            'ids' => $matches[1],
+        ];
+    }
+
+    public function prepareMessage(string $message, string $contentType): string
+    {
+        $matchInfo = $this->getMessagePlaceholders($message, $contentType);
+        if (\count($matchInfo) === 0) {
             return $message;
         }
 
-        $contents = $this->app->findByContentType($contentType, $matches[1], 'full');
-        foreach ($matches[0] as $index => $match) {
-            $entityId = $matches[1][$index];
+        $contents = $this->app->findByContentType($contentType, $matchInfo['ids'], 'full');
+        foreach ($matchInfo['full'] as $index => $match) {
+            $entityId = $matchInfo[1][$index];
             /** @var Entity|null $entityRef */
             $entityRef = isset($contents[$entityId]) ? $contents[$entityId] : null;
 
