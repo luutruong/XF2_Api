@@ -4,6 +4,7 @@ namespace Truonglv\Api\XF\Api\Controller;
 
 use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
+use XF\Service\Thread\Replier;
 
 class Posts extends XFCP_Posts
 {
@@ -24,32 +25,39 @@ class Posts extends XFCP_Posts
     {
         $replier = parent::setupThreadReply($thread);
 
-        if (App::isRequestFromApp()) {
-            $quotePostId = $this->filter('quote_post_id', 'uint');
-            $defaultMessage = null;
-            if ($quotePostId > 0) {
-                /** @var \XF\Entity\Post|null $post */
-                $post = $this->em()->find('XF:Post', $quotePostId, 'User');
-                if ($post !== null && $post->thread_id == $thread->thread_id) {
-                    if (\XF::isApiCheckingPermissions() && $post->canView()) {
-                        $defaultMessage = $post->getQuoteWrapper(
-                            $this->app->stringFormatter()->getBbCodeForQuote($post->message, 'post')
-                        );
-                    }
-                }
-            }
-
-            $message = $this->filter('message', 'str');
-            /** @var \Truonglv\Api\Api\ControllerPlugin\Quote $quotePlugin */
-            $quotePlugin = $this->plugin('Truonglv\Api:Api:Quote');
-            $message = $quotePlugin->prepareMessage($message, 'post');
-
-            if ($defaultMessage !== null) {
-                $message = $defaultMessage . "\n" . $message;
-            }
-            $replier->setMessage($message);
+        if (App::isRequestFromApp() && $this->request()->exists('quote_post_id')) {
+            $this->tApiPrepareMessageForReply($replier);
         }
 
         return $replier;
+    }
+
+    protected function tApiPrepareMessageForReply(Replier $replier): void
+    {
+        $thread = $replier->getThread();
+
+        $quotePostId = $this->filter('quote_post_id', 'uint');
+        $defaultMessage = null;
+        if ($quotePostId > 0) {
+            /** @var \XF\Entity\Post|null $post */
+            $post = $this->em()->find('XF:Post', $quotePostId, 'User');
+            if ($post !== null && $post->thread_id == $thread->thread_id) {
+                if (\XF::isApiCheckingPermissions() && $post->canView()) {
+                    $defaultMessage = $post->getQuoteWrapper(
+                        $this->app->stringFormatter()->getBbCodeForQuote($post->message, 'post')
+                    );
+                }
+            }
+        }
+
+        $message = $this->filter('message', 'str');
+        /** @var \Truonglv\Api\Api\ControllerPlugin\Quote $quotePlugin */
+        $quotePlugin = $this->plugin('Truonglv\Api:Api:Quote');
+        $message = $quotePlugin->prepareMessage($message, 'post');
+
+        if ($defaultMessage !== null) {
+            $message = $defaultMessage . "\n" . $message;
+        }
+        $replier->setMessage($message);
     }
 }
