@@ -13,6 +13,10 @@
         "php": [
             "7.1.0",
             "Required PHP 7.1.0 or higher."
+        ],
+        "XF": [
+            2020000,
+            "XenForo 2.2.x"
         ]
     },
     "icon": "",
