@@ -3,60 +3,92 @@
 namespace Truonglv\Api\Api\Controller;
 
 use XF\Http\Request;
-use XF\Api\Mvc\Dispatcher;
+use XF\Mvc\Dispatcher;
+use XF\Mvc\Reply\Error;
+use XF\Mvc\Reply\Message;
+use XF\Mvc\Reply\Exception;
+use XF\Api\Mvc\Reply\ApiResult;
 use XF\Api\Controller\AbstractController;
 
 class Batch extends AbstractController
 {
     public function actionPost()
     {
-        $input = (string) \file_get_contents('php://input');
-        $json = \json_decode($input, true);
+        $input = $this->request()->getInputRaw();
+        $jobs = \json_decode($input, true);
 
-        if (!\is_array($json)) {
+        if (!\is_array($jobs)) {
             return $this->apiError('Invalid batch json format', 'invalid_batch_json_format');
         }
 
-        $results = [];
+        $jobResults = [];
+        $start = microtime(true);
 
-        foreach ($json as $batchRequest) {
-            $batchRequest = \array_replace($this->getDefaultBatchRequest(), $batchRequest);
+        foreach ($jobs as $job) {
+            if (!is_array($job)) {
+                continue;
+            }
 
-            $results[$batchRequest['uri']] = $this->runInternalRequest($batchRequest);
+            $job = \array_replace_recursive($this->getDefaultJobOptions(), $job);
+            $jobResults[$job['uri']] = $this->runJob($job);
         }
 
-        return $this->apiResult($results);
+        return $this->apiResult([
+            'jobs' => $jobResults,
+            '_job_timing' => microtime(true) - $start,
+        ]);
     }
 
     /**
-     * @param array $batch
+     * @param array $job
      * @return array|null
      */
-    protected function runInternalRequest(array $batch)
+    protected function runJob(array $job): ?array
     {
-        if (!isset($batch['uri'])) {
+        if (!isset($job['uri'])) {
             return null;
         }
 
         $server = \array_replace($_SERVER, [
-            'REQUEST_METHOD' => \strtoupper($batch['method'])
+            'REQUEST_METHOD' => \strtoupper($job['method'])
         ]);
 
-        $request = new Request($this->app()->inputFilterer(), $batch['params'], [], [], $server);
+        $request = new Request($this->app()->inputFilterer(), $job['params'], [], [], $server);
+        $request->set('_isApiJob', true);
         $dispatcher = new Dispatcher($this->app(), $request);
 
-        $match = $dispatcher->route($batch['uri']);
+        $match = $dispatcher->route($job['uri']);
         $reply = $dispatcher->dispatchLoop($match);
 
-        $response = $dispatcher->render($reply, 'api');
+        if ($reply instanceof ApiResult) {
+            return [
+                '_job_result' => 'ok',
+                '_job_response' => $reply->getApiResult(),
+            ];
+        } elseif ($reply instanceof Error) {
+            return [
+                '_job_result' => 'error',
+                '_job_error' => $reply->getErrors(),
+            ];
+        } elseif ($reply instanceof Message) {
+            return [
+                '_job_result' => 'ok',
+                '_job_message' => $reply->getMessage(),
+            ];
+        } elseif ($reply instanceof Exception) {
+            return [
+                '_job_result' => 'error',
+                '_job_error' => $reply->getMessage(),
+            ];
+        }
 
-        return (array) \json_decode($response->body(), true);
+        throw new \Exception('Unknown reply (' . get_class($reply) . ') occurred.');
     }
 
     /**
      * @return array
      */
-    protected function getDefaultBatchRequest()
+    protected function getDefaultJobOptions(): array
     {
         return [
             'method' => 'GET',
