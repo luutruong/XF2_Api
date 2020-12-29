@@ -2,11 +2,11 @@
 
 namespace Truonglv\Api\Api\ControllerPlugin;
 
-use XF\Entity\ConversationMessage;
 use XF\Entity\Post;
 use Truonglv\Api\App;
-use XF\Api\ControllerPlugin\AbstractPlugin;
 use XF\Mvc\Entity\Entity;
+use XF\Entity\ConversationMessage;
+use XF\Api\ControllerPlugin\AbstractPlugin;
 
 class Quote extends AbstractPlugin
 {
