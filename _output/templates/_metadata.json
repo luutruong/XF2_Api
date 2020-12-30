@@ -15,9 +15,9 @@
         "hash": "60bb67b5fbab39d423cdd01e34d92ef8"
     },
     "admin/tapi_option_template_apiKey.html": {
-        "version_id": 1000800,
-        "version_string": "1.0.8",
-        "hash": "90d6d0c7a260366c35f09314b79b76a1"
+        "version_id": 2000500,
+        "version_string": "2.0.5",
+        "hash": "80541e3a8c84af626e93bade25a312ff"
     },
     "admin/tapi_option_template_reactions.html": {
         "version_id": 1010100,

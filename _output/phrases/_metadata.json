@@ -133,9 +133,9 @@
     },
     "option_explain.tApi_encryptKey.txt": {
         "global_cache": false,
-        "version_id": 1000800,
-        "version_string": "1.0.8",
-        "hash": "594ff2bfc4f6447b1712a6cb26d9836a"
+        "version_id": 2000500,
+        "version_string": "2.0.5",
+        "hash": "24dc3687c0c765ec3ed7a650c8478bdc"
     },
     "option_explain.tApi_firebaseConfigPath.txt": {
         "global_cache": false,
@@ -256,6 +256,12 @@
         "version_id": 1000300,
         "version_string": "1.0.3",
         "hash": "42d61b587a0123390822777d84e0f6bd"
+    },
+    "tapi_option_api_key_explain.txt": {
+        "global_cache": false,
+        "version_id": 2000500,
+        "version_string": "2.0.5",
+        "hash": "bed342f5ba1d4342c519372dc1e3b0c5"
     },
     "tapi_reaction_x_are_required.txt": {
         "global_cache": false,

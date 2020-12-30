@@ -1,1 +1,1 @@
-The secret used to secure user password while submitting from app. The key <b>MUST</b> match with the app configure to make it work.
+A free-text which you can put whatever you want. The secret used to secure user password while submitting from app. The key <b>MUST</b> match with the app configure to make it work.

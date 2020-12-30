@@ -6,6 +6,7 @@
 
     <span>{{ phrase('tapi_key') }}</span>
     <xf:textbox name="{$inputName}[key]" value="{$option.option_value.key}"/>
+    <div class="formRow-explain">{{ phrase('tapi_option_api_key_explain') }}</div>
 
     <span>{{ phrase('tapi_associate_with_xenforo_api_key') }}</span>
     <xf:select name="{$inputName}[apiKeyId]" value="{$option.option_value.apiKeyId}">

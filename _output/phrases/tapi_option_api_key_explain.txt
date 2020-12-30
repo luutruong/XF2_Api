@@ -1,0 +1,1 @@
+A free text which you can put whatever you want as a key. This key will used for all requests from app. 
