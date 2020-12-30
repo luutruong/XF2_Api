@@ -6,6 +6,7 @@ use XF\Api\Mvc\Reply\ApiResult;
 use XF\Finder\Thread;
 use XF\Http\Request;
 use XF\Mvc\Dispatcher;
+use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\Error;
 use XF\Mvc\Reply\Exception;
 use XF\Mvc\Reply\Message;
@@ -477,7 +478,7 @@ class App extends AbstractController
     /**
      * @return array
      */
-    protected function getAppInfo()
+    protected function getAppInfo(): array
     {
         /** @var Reaction $reactionData */
         $reactionData = $this->data('Truonglv\Api:Reaction');
@@ -500,11 +501,7 @@ class App extends AbstractController
         ];
     }
 
-    /**
-     * @param string $pageId
-     * @return \XF\Api\Mvc\Reply\ApiResult
-     */
-    protected function handleHelpPage(string $pageId)
+    protected function handleHelpPage(string $pageId): AbstractReply
     {
         /** @var \XF\Entity\HelpPage|null $page */
         $page = $this->em()->find('XF:HelpPage', $pageId);
@@ -558,7 +555,7 @@ class App extends AbstractController
     /**
      * @return array
      */
-    protected function getNewsFeedsFilters()
+    protected function getNewsFeedsFilters(): array
     {
         $filters = [];
         $input = $this->filter([
@@ -583,7 +580,7 @@ class App extends AbstractController
     /**
      * @return array
      */
-    protected function getNewsFeedsAvailableSorts()
+    protected function getNewsFeedsAvailableSorts(): array
     {
         return [
             'new_threads' => ['post_date', 'DESC'],

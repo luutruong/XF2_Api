@@ -39,7 +39,7 @@ class App
      * @param string $targetUrl
      * @return string
      */
-    public static function buildLinkProxy($targetUrl)
+    public static function buildLinkProxy(string $targetUrl): string
     {
         $payload = [
             self::KEY_LINK_PROXY_USER_ID => \XF::visitor()->user_id,
@@ -66,7 +66,7 @@ class App
      * @param Request|null $request
      * @return bool
      */
-    public static function isRequestFromApp(Request $request = null)
+    public static function isRequestFromApp(?Request $request = null): bool
     {
         $request = $request !== null ? $request : \XF::app()->request();
         $appVersion = $request->getServer(self::HEADER_KEY_APP_VERSION);
@@ -92,7 +92,7 @@ class App
     /**
      * @return array
      */
-    public static function getSupportAlertContentTypes()
+    public static function getSupportAlertContentTypes(): array
     {
         return [
             'conversation',
@@ -107,7 +107,7 @@ class App
      * @param Attachment $attachment
      * @return string
      */
-    public static function buildAttachmentLink(Attachment $attachment)
+    public static function buildAttachmentLink(Attachment $attachment): string
     {
         return \XF::app()->router('public')->buildLink('canonical:attachments', $attachment, [
             'hash' => (strlen($attachment->temp_hash) > 0) ? $attachment->temp_hash : null,
@@ -119,7 +119,7 @@ class App
      * @param Attachment $attachment
      * @return string
      */
-    public static function generateTokenForViewingAttachment(Attachment $attachment)
+    public static function generateTokenForViewingAttachment(Attachment $attachment): string
     {
         $app = \XF::app();
         $apiKey = $app->request()->getServer(self::HEADER_KEY_API_KEY);
@@ -138,7 +138,7 @@ class App
      * @param string $reactionKey
      * @return void
      */
-    public static function attachReactions(EntityResult $result, Entity $entity, $reactionKey = 'reactions')
+    public static function attachReactions(EntityResult $result, Entity $entity, string $reactionKey = 'reactions'): void
     {
         /** @var callable $callable */
         $callable = [$entity, 'getVisitorReactionId'];
@@ -174,7 +174,7 @@ class App
      * @param string $messageKey
      * @return void
      */
-    public static function includeMessageHtmlIfNeeded(EntityResult $result, Entity $entity, $messageKey = 'message')
+    public static function includeMessageHtmlIfNeeded(EntityResult $result, Entity $entity, string $messageKey = 'message'): void
     {
         $isInclude = (bool) $entity->app()->request()->filter(self::PARAM_KEY_INCLUDE_MESSAGE_HTML, 'bool');
         if (!$isInclude) {
