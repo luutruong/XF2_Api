@@ -86,5 +86,22 @@ Response:
 }
 ```
 
+### POST `/tapi-apps/batch`
+Do batch requests. You may pass json to request body. Each batch request has these keys:
+
+* `method`: GET, POST
+* `uri`: Target request
+* `params`: Array of params which for this request
+
+Response:
+
+```
+{
+  "jobs": [
+    ...
+  ]
+}
+```
+
 ### Encrypt password
 Please see the method `Util\PasswordDecrypter::encrypt(...)`
