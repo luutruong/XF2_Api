@@ -5,7 +5,7 @@ namespace Truonglv\Api\XF\Pub\Controller;
 use XF\Entity\User;
 use Truonglv\Api\App;
 use XF\ControllerPlugin\Login;
-use Truonglv\Api\Util\PasswordDecrypter;
+use Truonglv\Api\Util\Encryption;
 
 class Misc extends XFCP_Misc
 {
@@ -25,7 +25,7 @@ class Misc extends XFCP_Misc
         $data = null;
 
         try {
-            $data = PasswordDecrypter::decrypt($payload, $this->app()->options()->tApi_encryptKey);
+            $data = Encryption::decrypt($payload, $this->app()->options()->tApi_encryptKey);
         } catch (\InvalidArgumentException $e) {
         }
 

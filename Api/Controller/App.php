@@ -22,7 +22,7 @@ use Truonglv\Api\Data\Reaction;
 use XF\Service\User\Registration;
 use Truonglv\Api\Entity\AccessToken;
 use Truonglv\Api\Entity\Subscription;
-use Truonglv\Api\Util\PasswordDecrypter;
+use Truonglv\Api\Util\Encryption;
 use XF\Api\Controller\AbstractController;
 
 class App extends AbstractController
@@ -231,7 +231,7 @@ class App extends AbstractController
         $decrypted = '';
 
         try {
-            $decrypted = PasswordDecrypter::decrypt($password, $this->options()->tApi_encryptKey);
+            $decrypted = Encryption::decrypt($password, $this->options()->tApi_encryptKey);
         } catch (\InvalidArgumentException $e) {
         }
 
@@ -272,7 +272,7 @@ class App extends AbstractController
         $password = '';
 
         try {
-            $password = PasswordDecrypter::decrypt($encrypted, $this->options()->tApi_encryptKey);
+            $password = Encryption::decrypt($encrypted, $this->options()->tApi_encryptKey);
         } catch (\InvalidArgumentException $e) {
         }
 

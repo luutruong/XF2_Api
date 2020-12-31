@@ -7,7 +7,7 @@ use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
 use Truonglv\Api\Data\Reaction;
 use XF\Api\Result\EntityResult;
-use Truonglv\Api\Util\PasswordDecrypter;
+use Truonglv\Api\Util\Encryption;
 
 class App
 {
@@ -50,7 +50,7 @@ class App
         $encoded = \strval(\json_encode($payload));
 
         try {
-            $encrypted = PasswordDecrypter::encrypt($encoded, \XF::app()->options()->tApi_encryptKey);
+            $encrypted = Encryption::encrypt($encoded, \XF::app()->options()->tApi_encryptKey);
         } catch (\InvalidArgumentException $e) {
             return $targetUrl;
         }
