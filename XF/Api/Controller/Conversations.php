@@ -54,6 +54,27 @@ class Conversations extends XFCP_Conversations
      */
     protected function setupConversationFinder()
     {
+        $filters = $this->filter([
+            'started_by' => 'str',
+            'received_by' => 'str',
+        ]);
+
+        if ($filters['started_by'] !== '') {
+            /** @var \XF\Entity\User|null $user */
+            $user = $this->em()->findOne('XF:User', [
+                'username' => $filters['started_by']
+            ]);
+
+            $this->request()->set('starter_id', $user->user_id ?? PHP_INT_MAX);
+        } elseif ($filters['received_by'] !== '') {
+            /** @var \XF\Entity\User|null $user */
+            $user = $this->em()->findOne('XF:User', [
+                'username' => $filters['received_by']
+            ]);
+
+            $this->request()->set('receiver_id', $user->user_id ?? PHP_INT_MAX);
+        }
+
         $finder = parent::setupConversationFinder();
 
         if (App::isRequestFromApp()) {
