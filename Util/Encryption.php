@@ -17,7 +17,7 @@ class Encryption
      */
     public static function encrypt($payload, string $key)
     {
-        if (\trim($key) === '') {
+        if (strlen($key) === 0) {
             throw new \InvalidArgumentException('Key must not empty!');
         }
 
@@ -42,11 +42,16 @@ class Encryption
             throw new \InvalidArgumentException('Cannot encrypt data');
         }
 
-        return \base64_encode(json_encode([
+        $encoded = json_encode([
             'iv' => base64_encode($iv),
             'salt' => base64_encode($salt),
             'value' => base64_encode($value),
-        ]));
+        ]);
+        if ($encoded === false) {
+            throw new \InvalidArgumentException('Cannot encode data');
+        }
+
+        return \base64_encode($encoded);
     }
 
     /**
@@ -57,6 +62,10 @@ class Encryption
      */
     public static function decrypt(string $encrypted, string $key)
     {
+        if (strlen($key) === 0) {
+            throw new \InvalidArgumentException('Key must not empty!');
+        }
+
         $decoded = base64_decode($encrypted, true);
         if ($decoded === false) {
             throw new \InvalidArgumentException('Bad encrypted string');
