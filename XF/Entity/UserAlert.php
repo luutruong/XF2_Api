@@ -20,12 +20,11 @@ class UserAlert extends XFCP_UserAlert
         $verbosity = self::VERBOSITY_NORMAL,
         array $options = []
     ) {
-        try {
-            parent::setupApiResultData($result, $verbosity, $options);
-        } catch (\LogicException $e) {
-        }
+        parent::setupApiResultData($result, $verbosity, $options);
 
-        if (!\in_array($this->content_type, App::getSupportAlertContentTypes(), true)) {
+        if (!\in_array($this->content_type, App::getSupportAlertContentTypes(), true)
+            || !App::isRequestFromApp()
+        ) {
             return;
         }
 
@@ -76,7 +75,7 @@ class UserAlert extends XFCP_UserAlert
             }
         }
 
-        $result->tapi_message_html = \trim(\strval($html));
+        $result->tapi_alert_html = \trim(\strval($html));
         foreach ($this->getTApiAlertData() as $key => $value) {
             $result->__set($key, $value);
         }
