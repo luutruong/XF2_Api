@@ -63,9 +63,3 @@ namespace Truonglv\Api\XF\Service\Conversation
 	class XFCP_Notifier extends \XF\Service\Conversation\Notifier {}
 	class XFCP_Pusher extends \XF\Service\Conversation\Pusher {}
 }
-
-namespace Truonglv\Api\XF\Str
-{
-	class XFCP_EmojiFormatter extends \XF\Str\EmojiFormatter {}
-	class XFCP_Formatter extends \XF\Str\Formatter {}
-}

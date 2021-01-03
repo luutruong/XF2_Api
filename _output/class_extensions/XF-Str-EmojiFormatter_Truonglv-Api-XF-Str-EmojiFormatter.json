@@ -1,6 +1,0 @@
-{
-    "from_class": "XF\\Str\\EmojiFormatter",
-    "to_class": "Truonglv\\Api\\XF\\Str\\EmojiFormatter",
-    "execute_order": 10,
-    "active": true
-}
