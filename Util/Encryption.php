@@ -23,14 +23,18 @@ class Encryption
 
         $ivLength = openssl_cipher_iv_length(self::ALGO_AES_256_CBC);
         $iv = Random::getRandomString($ivLength);
+        if ($iv === false) {
+            throw new \InvalidArgumentException('Cannot make random IV');
+        }
         $salt = Random::getRandomString(256);
-
-        $key = hash_pbkdf2('sha512', $key, $salt, self::ITERATIONS, 64);
+        if ($salt === false) {
+            throw new \InvalidArgumentException('Cannot make salt');
+        }
 
         $value = openssl_encrypt(
             $payload,
             self::ALGO_AES_256_CBC,
-            hex2bin($key),
+            self::getKeyBin($key, $salt),
             OPENSSL_RAW_DATA,
             $iv
         );
@@ -64,14 +68,18 @@ class Encryption
         }
 
         $value = base64_decode($payload['value'], true);
+        if ($value === false) {
+            throw new \InvalidArgumentException('Bad encrypted value');
+        }
         $salt = base64_decode($payload['salt'], true);
-
-        $keyHashed = hash_pbkdf2('sha512', $key, $salt, 999, 64);
+        if ($salt === false) {
+            throw new \InvalidArgumentException('Bad salt value');
+        }
 
         $decrypted = openssl_decrypt(
             $value,
             self::ALGO_AES_256_CBC,
-            hex2bin($keyHashed),
+            self::getKeyBin($key, $salt),
             OPENSSL_RAW_DATA,
             $payload['iv']
         );
@@ -80,6 +88,17 @@ class Encryption
         }
 
         return $decrypted;
+    }
+
+    protected static function getKeyBin(string $key, string $salt): string
+    {
+        $keyHashed = hash_pbkdf2('sha512', $key, $salt, self::ITERATIONS, 64);
+        $keyHex = hex2bin($keyHashed);
+        if ($keyHex === false) {
+            throw new \InvalidArgumentException('Cannot hex key');
+        }
+
+        return $keyHex;
     }
 
     /**
