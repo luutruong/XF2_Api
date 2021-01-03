@@ -2,27 +2,27 @@
 
 namespace Truonglv\Api\Api\Controller;
 
-use XF\Api\Mvc\Reply\ApiResult;
-use XF\Finder\Thread;
 use XF\Http\Request;
+use XF\Finder\Thread;
 use XF\Mvc\Dispatcher;
-use XF\Mvc\Reply\AbstractReply;
-use XF\Mvc\Reply\Error;
-use XF\Mvc\Reply\Exception;
-use XF\Mvc\Reply\Message;
 use XF\Repository\Tfa;
+use XF\Mvc\Reply\Error;
 use XF\Repository\Node;
 use XF\Repository\User;
 use XF\Repository\AddOn;
 use XF\Mvc\Entity\Entity;
+use XF\Mvc\Reply\Message;
+use XF\Mvc\Reply\Exception;
 use Truonglv\Api\Util\Token;
 use XF\Repository\Attachment;
 use XF\ControllerPlugin\Login;
 use Truonglv\Api\Data\Reaction;
+use XF\Api\Mvc\Reply\ApiResult;
+use XF\Mvc\Reply\AbstractReply;
+use Truonglv\Api\Util\Encryption;
 use XF\Service\User\Registration;
 use Truonglv\Api\Entity\AccessToken;
 use Truonglv\Api\Entity\Subscription;
-use Truonglv\Api\Util\Encryption;
 use XF\Api\Controller\AbstractController;
 
 class App extends AbstractController

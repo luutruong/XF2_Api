@@ -3,7 +3,6 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use Truonglv\Api\App;
-use XF\Mvc\ParameterBag;
 
 class ConversationMessages extends XFCP_ConversationMessages
 {
