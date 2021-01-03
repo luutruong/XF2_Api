@@ -72,11 +72,11 @@ class Attachment extends XFCP_Attachment
             return false;
         }
 
-        $token = $this->app()->request()->filter('tapi_token', 'str');
+        $token = App::getRequest()->filter('tapi_token', 'str');
         if ($token === '' || \strpos($token, '.') === false) {
             return false;
         }
-        $apiKey = $this->app()->request()->getServer(App::HEADER_KEY_API_KEY);
+        $apiKey = App::getRequest()->getServer(App::HEADER_KEY_API_KEY);
 
         list($timestamp, $token) = \explode('.', $token, 2);
         $timestamp = \intval($timestamp);

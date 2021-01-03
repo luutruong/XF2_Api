@@ -8,15 +8,6 @@ use XF\Service\Thread\Replier;
 
 class Posts extends XFCP_Posts
 {
-    public function actionPost(ParameterBag $params)
-    {
-        if (App::isRequestFromApp()) {
-            $this->request()->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, 1);
-        }
-
-        return parent::actionPost($params);
-    }
-
     /**
      * @param \XF\Entity\Thread $thread
      * @return \XF\Service\Thread\Replier

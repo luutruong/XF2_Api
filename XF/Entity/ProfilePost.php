@@ -20,7 +20,16 @@ class ProfilePost extends XFCP_ProfilePost
         parent::setupApiResultData($result, $verbosity, $options);
 
         App::attachReactions($result, $this);
-        App::includeMessageHtmlIfNeeded($result, $this);
+        $stringFormatter = $this->app()->stringFormatter();
+        $plainText = $stringFormatter->stripBbCode($this->message, [
+            'stripQuote' => true
+        ]);
+
+        $result->tapi_message_plain_text = $plainText;
+        $result->tapi_message_plain_text_preview = $stringFormatter->wholeWordTrim(
+            $plainText,
+            $this->app()->options()->tApi_discussionPreviewLength
+        );
 
         $visitor = \XF::visitor();
         if ($visitor->user_id > 0) {

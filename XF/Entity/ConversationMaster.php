@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use Truonglv\Api\App;
+
 class ConversationMaster extends XFCP_ConversationMaster
 {
     /**
@@ -26,7 +28,7 @@ class ConversationMaster extends XFCP_ConversationMaster
             $result->is_unread = false;
         }
 
-        $hasIncludeLastMessage = $this->app()->request()->filter('tapi_last_message', 'bool');
+        $hasIncludeLastMessage = App::getRequest()->filter('tapi_last_message', 'bool');
         if ($hasIncludeLastMessage === true) {
             $result->includeRelation('LastMessage');
         }

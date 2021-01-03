@@ -15,8 +15,6 @@ class App
     const HEADER_KEY_API_KEY = 'HTTP_XF_TAPI_KEY';
     const HEADER_KEY_ACCESS_TOKEN = 'HTTP_XF_TAPI_TOKEN';
 
-    const PARAM_KEY_INCLUDE_MESSAGE_HTML = 'include_message_html';
-
     const KEY_LINK_PROXY_USER_ID = 'userId';
     const KEY_LINK_PROXY_DATE = 'date';
     const KEY_LINK_PROXY_TARGET_URL = 'url';
@@ -34,6 +32,21 @@ class App
      * @var string
      */
     public static $defaultPushNotificationService = 'Truonglv\Api:FCM';
+
+    /**
+     * @var \XF\Http\Request|null
+     */
+    protected static $request;
+
+    public static function setRequest(?\XF\Http\Request $request): void
+    {
+        self::$request = $request;
+    }
+
+    public static function getRequest(): \XF\Http\Request
+    {
+        return self::$request !== null ? self::$request : \XF::app()->request();
+    }
 
     /**
      * @param string $targetUrl
@@ -68,7 +81,7 @@ class App
      */
     public static function isRequestFromApp(?Request $request = null): bool
     {
-        $request = $request !== null ? $request : \XF::app()->request();
+        $request = $request !== null ? $request : self::getRequest();
         $appVersion = $request->getServer(self::HEADER_KEY_APP_VERSION);
 
         if ($appVersion === false) {
@@ -122,7 +135,7 @@ class App
     public static function generateTokenForViewingAttachment(Attachment $attachment): string
     {
         $app = \XF::app();
-        $apiKey = $app->request()->getServer(self::HEADER_KEY_API_KEY);
+        $apiKey = self::getRequest()->getServer(self::HEADER_KEY_API_KEY);
 
         return \XF::$time . '.' . md5(
             \XF::$time
@@ -166,38 +179,5 @@ class App
         }
 
         $result->tapi_reactions = $reacted;
-    }
-
-    /**
-     * @param EntityResult $result
-     * @param Entity $entity
-     * @param string $messageKey
-     * @return void
-     */
-    public static function includeMessageHtmlIfNeeded(EntityResult $result, Entity $entity, string $messageKey = 'message'): void
-    {
-        $isInclude = (bool) $entity->app()->request()->filter(self::PARAM_KEY_INCLUDE_MESSAGE_HTML, 'bool');
-        if (!$isInclude) {
-            return;
-        }
-
-        $bbCode = $entity->app()->bbCode();
-        $result->tapi_message_html = $bbCode->render(
-            $entity->get($messageKey),
-            'Truonglv\Api:SimpleHtml',
-            'tapi:html',
-            $entity
-        );
-
-        $stringFormatter = $entity->app()->stringFormatter();
-        $plainText = $stringFormatter->stripBbCode($entity->get($messageKey), [
-            'stripQuote' => true
-        ]);
-
-        $result->tapi_message_plain_text = $plainText;
-        $result->tapi_message_plain_text_preview = $stringFormatter->wholeWordTrim(
-            $plainText,
-            $entity->app()->options()->tApi_discussionPreviewLength
-        );
     }
 }

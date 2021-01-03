@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\BbCode\\Renderer\\ApiHtml",
+    "to_class": "Truonglv\\Api\\XF\\BbCode\\Renderer\\ApiHtml",
+    "execute_order": 10,
+    "active": true
+}

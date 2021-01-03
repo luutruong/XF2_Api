@@ -10,8 +10,7 @@ class Conversations extends XFCP_Conversations
     public function actionGet()
     {
         if (App::isRequestFromApp()) {
-            $this->app()->request()->set('tapi_last_message', true);
-            $this->app()->request()->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
+            $this->request()->set('tapi_last_message', true);
         }
 
         return parent::actionGet();

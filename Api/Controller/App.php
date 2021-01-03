@@ -34,7 +34,6 @@ class App extends AbstractController
         return $this->apiResult($data);
     }
 
-    /** @noinspection PhpUnused */
     public function actionGetNewsFeeds()
     {
         $page = $this->filterPage();
@@ -110,8 +109,6 @@ class App extends AbstractController
 
         $threadIds = \array_slice($threadIds, ($page - 1) * $perPage, $perPage, true);
         if (\count($threadIds) > 0) {
-            $this->request()->set(\Truonglv\Api\App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
-
             $newFinder = $this->finder('XF:Thread');
             $threads = $newFinder->whereIds($threadIds)
                 ->with('FirstPost')
@@ -140,19 +137,16 @@ class App extends AbstractController
         return $this->apiResult($data);
     }
 
-    /** @noinspection PhpUnused */
     public function actionGetTerms()
     {
         return $this->handleHelpPage('terms');
     }
 
-    /** @noinspection PhpUnused */
     public function actionGetPrivacy()
     {
         return $this->handleHelpPage('privacy_policy');
     }
 
-    /** @noinspection PhpUnused */
     public function actionPostSubscriptions()
     {
         $this->assertRequiredApiInput([
@@ -209,7 +203,6 @@ class App extends AbstractController
         return $this->apiSuccess($extra);
     }
 
-    /** @noinspection PhpUnused */
     public function actionPostRegister()
     {
         if (!$this->options()->registrationSetup['enabled']) {
@@ -258,7 +251,6 @@ class App extends AbstractController
         ]);
     }
 
-    /** @noinspection PhpUnused */
     public function actionPostAuth()
     {
         $this->assertRequiredApiInput(['username', 'password']);
@@ -327,11 +319,15 @@ class App extends AbstractController
         ]);
 
         $request = new Request($this->app()->inputFilterer(), $job['params'], [], [], $server);
+        \Truonglv\Api\App::setRequest($request);
+
         $request->set('_isApiJob', true);
         $dispatcher = new Dispatcher($this->app(), $request);
 
         $match = $dispatcher->route($job['uri']);
         $reply = $dispatcher->dispatchLoop($match);
+
+        \Truonglv\Api\App::setRequest(null);
 
         if ($reply instanceof ApiResult) {
             return [

@@ -7,15 +7,6 @@ use XF\Mvc\ParameterBag;
 
 class ConversationMessages extends XFCP_ConversationMessages
 {
-    public function actionPost(ParameterBag $params)
-    {
-        if (App::isRequestFromApp()) {
-            $this->request()->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, 1);
-        }
-
-        return parent::actionPost($params);
-    }
-
     /**
      * @param \XF\Entity\ConversationMaster $conversation
      * @return \XF\Service\Conversation\Replier

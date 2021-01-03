@@ -20,7 +20,17 @@ class ConversationMessage extends XFCP_ConversationMessage
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
 
-        App::includeMessageHtmlIfNeeded($result, $this);
+        $stringFormatter = $this->app()->stringFormatter();
+        $plainText = $stringFormatter->stripBbCode($this->message, [
+            'stripQuote' => true
+        ]);
+
+        $result->tapi_message_plain_text = $plainText;
+        $result->tapi_message_plain_text_preview = $stringFormatter->wholeWordTrim(
+            $plainText,
+            $this->app()->options()->tApi_discussionPreviewLength
+        );
+
         App::attachReactions($result, $this);
         $result->tapi_is_visitor_message = (\XF::visitor()->user_id === $this->user_id);
     }

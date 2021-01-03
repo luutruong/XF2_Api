@@ -10,17 +10,6 @@ use XF\Mvc\Entity\AbstractCollection;
 
 class Forum extends XFCP_Forum
 {
-    public function actionGetThreads(ParameterBag $params)
-    {
-        if (App::isRequestFromApp()) {
-            $this->app()
-                ->request()
-                ->set(App::PARAM_KEY_INCLUDE_MESSAGE_HTML, true);
-        }
-
-        return parent::actionGetThreads($params);
-    }
-
     public function actionGetPrefixes(ParameterBag $params)
     {
         $forum = $this->assertViewableForum($params->node_id);

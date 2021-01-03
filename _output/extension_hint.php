@@ -27,6 +27,11 @@ namespace Truonglv\Api\XF\Api\Mvc\Renderer
 	class XFCP_Api extends \XF\Api\Mvc\Renderer\Api {}
 }
 
+namespace Truonglv\Api\XF\BbCode\Renderer
+{
+	class XFCP_ApiHtml extends \XF\BbCode\Renderer\ApiHtml {}
+}
+
 namespace Truonglv\Api\XF\Entity
 {
 	class XFCP_Attachment extends \XF\Entity\Attachment {}
