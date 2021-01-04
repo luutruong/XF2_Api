@@ -8,6 +8,23 @@ use XF\Entity\Attachment;
 class ApiHtml extends XFCP_ApiHtml
 {
     /**
+     * @param array $ast
+     * @param array $options
+     * @return void
+     */
+    protected function setupRenderOptions(array $ast, array &$options)
+    {
+        parent::setupRenderOptions($ast, $options);
+
+        if (App::isRequestFromApp()) {
+            $options['lightbox'] = false;
+            $options['stopSmilies'] = 1;
+            $options['allowUnfurl'] = false;
+            $options['noProxy'] = true;
+        }
+    }
+
+    /**
      * @param array $children
      * @param mixed $option
      * @param array $tag
