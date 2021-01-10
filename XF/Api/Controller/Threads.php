@@ -12,7 +12,7 @@ class Threads extends XFCP_Threads
      */
     protected function setupThreadCreate(\XF\Entity\Forum $forum)
     {
-        if (App::isRequestFromApp() && $this->request()->exists('tag_names')) {
+        if (App::isRequestFromApp($this->request()) && $this->request()->exists('tag_names')) {
             $tagNames = $this->filter('tag_names', 'str');
             $tagNames = \preg_split('/\,/', $tagNames, -1, PREG_SPLIT_NO_EMPTY);
 
@@ -20,5 +20,27 @@ class Threads extends XFCP_Threads
         }
 
         return parent::setupThreadCreate($forum);
+    }
+
+    /**
+     * @param array $filters
+     * @param mixed $sort
+     * @return \XF\Finder\Thread
+     */
+    protected function setupThreadFinder(&$filters = [], &$sort = null)
+    {
+        if (App::isRequestFromApp($this->request())) {
+            $starterName = $this->filter('started_by', 'str');
+            if (strlen($starterName) > 0) {
+                /** @var \XF\Entity\User $user */
+                $user = $this->em()->findOne('XF:User', [
+                    'username' => $starterName
+                ]);
+
+                $this->request()->set('starter_id', $user->user_id ?? \PHP_INT_MAX);
+            }
+        }
+
+        return parent::setupThreadFinder($filters, $sort);
     }
 }
