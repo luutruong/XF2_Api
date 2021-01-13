@@ -41,7 +41,7 @@ class Quote extends AbstractPlugin
 
         $contents = $this->app->findByContentType($contentType, $matchInfo['ids'], 'full');
         foreach ($matchInfo['full'] as $index => $match) {
-            $entityId = $matchInfo[1][$index];
+            $entityId = $matchInfo['ids'][$index];
             /** @var Entity|null $entityRef */
             $entityRef = isset($contents[$entityId]) ? $contents[$entityId] : null;
 
