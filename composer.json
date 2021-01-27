@@ -5,5 +5,14 @@
     },
     "config": {
         "autoloader-suffix": "TruonglvApi"
+    },
+    "prefer-stable": true,
+    "replace": {
+        "guzzlehttp/guzzle": "*",
+        "guzzlehttp/promises": "*",
+        "guzzlehttp/psr7": "*",
+        "psr/log": "*",
+        "psr/http-message": "*",
+        "symfony/polyfill-mbstring": "*"
     }
 }
