@@ -100,6 +100,23 @@ class ApiHtml extends XFCP_ApiHtml
     }
 
     /**
+     * @param mixed $content
+     * @param mixed $title
+     * @return string
+     */
+    protected function getRenderedSpoiler($content, $title = null)
+    {
+        if (App::isRequestFromApp()) {
+            return $this->templater->renderTemplate('public:tapi_bb_code_tag_spoiler', [
+                'content' => new \XF\PreEscaped($content),
+                'title' => ($title !== null) ? new \XF\PreEscaped($title) : null
+            ]);
+        }
+
+        return parent::getRenderedSpoiler($content, $title);
+    }
+
+    /**
      * @param mixed $url
      * @param array $options
      * @return string

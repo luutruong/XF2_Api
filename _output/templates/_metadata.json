@@ -33,5 +33,10 @@
         "version_id": 1000300,
         "version_string": "1.0.3",
         "hash": "2c4ac1fcbf46c69e9453e73498cb09b0"
+    },
+    "public/tapi_bb_code_tag_spoiler.html": {
+        "version_id": 2000700,
+        "version_string": "2.0.7",
+        "hash": "d602e9970a035e7df1e0f8fdf5cca597"
     }
 }

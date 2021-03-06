@@ -23,6 +23,7 @@ class Notifications extends AbstractController
         $alertsFinder->where('content_type', App::getSupportAlertContentTypes());
 
         $total = $alertsFinder->total();
+        /** @var mixed $alerts */
         $alerts = $alertsFinder->limitByPage($page, $perPage)->fetch();
 
         $alertRepo->addContentToAlerts($alerts);

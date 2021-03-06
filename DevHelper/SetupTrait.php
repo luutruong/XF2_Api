@@ -21,7 +21,7 @@ trait SetupTrait
     {
         $sm = \XF::db()->getSchemaManager();
 
-        foreach($tables as $tableName => $apply) {
+        foreach ($tables as $tableName => $apply) {
             $sm->createTable($tableName, $apply);
         }
     }
@@ -34,12 +34,12 @@ trait SetupTrait
     protected function doAlterTables(array $alters)
     {
         $sm = \XF::db()->getSchemaManager();
-        foreach($alters as $tableName => $columns) {
+        foreach ($alters as $tableName => $columns) {
             if (!$sm->tableExists($tableName)) {
                 continue;
             }
 
-            foreach($columns as $applies) {
+            foreach ($columns as $applies) {
                 if (!is_array($applies)) {
                     $applies = [$applies];
                 }
@@ -59,7 +59,7 @@ trait SetupTrait
     protected function doDropTables(array $tables)
     {
         $sm = \XF::db()->getSchemaManager();
-        foreach(array_keys($tables) as $tableName) {
+        foreach (array_keys($tables) as $tableName) {
             $sm->dropTable($tableName);
         }
     }
@@ -72,12 +72,12 @@ trait SetupTrait
     protected function doDropColumns(array $alters)
     {
         $sm = \XF::db()->getSchemaManager();
-        foreach($alters as $tableName => $columns) {
+        foreach ($alters as $tableName => $columns) {
             if (!$sm->tableExists($tableName)) {
                 continue;
             }
 
-            $sm->alterTable($tableName, function(\XF\Db\Schema\Alter $table) use($columns) {
+            $sm->alterTable($tableName, function (\XF\Db\Schema\Alter $table) use ($columns) {
                 $table->dropColumns(array_keys($columns));
             });
         }
@@ -91,7 +91,7 @@ trait SetupTrait
         $tables = [];
 
         $index = 1;
-        while(true) {
+        while (true) {
             $callable = [$this, 'getTables' . $index];
             if (!is_callable($callable)) {
                 break;
@@ -126,7 +126,7 @@ trait SetupTrait
         $alters = [];
 
         $index = 1;
-        while(true) {
+        while (true) {
             $callable = [$this, 'getAlters' . $index];
             if (!is_callable($callable)) {
                 break;
