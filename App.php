@@ -88,7 +88,7 @@ class App
             return false;
         }
 
-        if (\preg_match('#^\d{4}\.\d{2}\.\d{2} \(\d+\)$#', $appVersion) !== 1) {
+        if (\preg_match('#^\d{1,4}\.\d{1,2}\.\d{1,2} \(\d+\)$#', $appVersion) !== 1) {
             return false;
         }
 
