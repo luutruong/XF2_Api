@@ -1,0 +1,11 @@
+{
+    "route_type": "api",
+    "route_prefix": "tapi-bookmarks",
+    "sub_name": "",
+    "format": "",
+    "build_class": "",
+    "build_method": "",
+    "controller": "Truonglv\\Api:Bookmark",
+    "context": "",
+    "action_prefix": ""
+}
