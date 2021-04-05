@@ -40,19 +40,22 @@ class App extends AbstractController
         $perPage = $this->options()->tApi_recordsPerPage;
 
         $filters = $this->getNewsFeedsFilters();
-        $queryHash = \md5('tApi_NewsFeeds_threadIds' . __METHOD__ . \strval(\json_encode($filters)));
+        $queryHash = md5(uniqid('', true));
 
-        // 5 minutes
-        $ttl = 300;
-
+        $searchId = $this->filter('search_id', 'uint');
+        $searchQuery = 'tApi_actionGetNewsFeeds';
+        $visitor = \XF::visitor();
         /** @var \XF\Entity\Search|null $search */
-        $search = $this->em()->findOne('XF:Search', [
-            'query_hash' => $queryHash
-        ]);
-        if ($search !== null) {
-            if (($search->search_date + $ttl) <= \XF::$time || $search->result_count === 0) {
-                $search->delete();
-                $search = null;
+        $search = null;
+        if ($searchId > 0) {
+            /** @var \XF\Entity\Search|null $existingSearch */
+            $existingSearch = $this->em()->find('XF:Search', $searchId);
+            if ($existingSearch !== null
+                && $existingSearch->user_id === $visitor->user_id
+                && $existingSearch->search_query === $searchQuery
+                && ($existingSearch->search_date + 3600) >= time()
+            ) {
+                $search = $existingSearch;
             }
         }
 
@@ -81,12 +84,12 @@ class App extends AbstractController
             /** @var \XF\Entity\Search $search */
             $search = $this->em()->create('XF:Search');
             $search->search_type = 'thread';
+            $search->search_query = $searchQuery;
             $search->query_hash = $queryHash;
             $search->search_results = $searchResults;
             $search->result_count = \count($searchResults);
             $search->search_date = \XF::$time;
-            $search->user_id = 0;
-            $search->search_query = 'tApi_NewsFeeds_threadIds';
+            $search->user_id = $visitor->user_id;
             $search->search_order = 'date';
             $search->search_grouping = true;
             $search->search_constraints = [];
@@ -101,6 +104,7 @@ class App extends AbstractController
                 'current_page' => $page,
                 'last_page' => 1,
             ],
+            'search_id' => $search->search_id,
         ];
 
         foreach ($search->search_results as $result) {
@@ -108,30 +112,42 @@ class App extends AbstractController
         }
 
         $threadIds = \array_slice($threadIds, ($page - 1) * $perPage, $perPage, true);
-        if (\count($threadIds) > 0) {
-            $newFinder = $this->finder('XF:Thread');
-            $threads = $newFinder->whereIds($threadIds)
-                ->with('FirstPost')
-                ->with('api')
-                ->fetch()
-                ->sortByList($threadIds);
-            $posts = $this->em()->getEmptyCollection();
-            /** @var \XF\Entity\Thread $thread */
-            foreach ($threads as $thread) {
-                $posts[$thread->first_post_id] = $thread->FirstPost;
-            }
-
-            /** @var Attachment $attachmentRepo */
-            $attachmentRepo = $this->repository('XF:Attachment');
-            $attachmentRepo->addAttachmentsToContent($posts, 'post');
-
-            $data['threads'] = $threads->filterViewable()->toApiResults(Entity::VERBOSITY_NORMAL, [
-                'tapi_first_post' => true,
-                'tapi_fetch_image' => true
+        if (\count($threadIds) === 0) {
+            return $this->apiResult([
+                'threads' => [],
             ]);
-            if ($search->result_count > $perPage) {
-                $data['pagination'] = $this->getPaginationData($threads, $page, $perPage, $search->result_count);
-            }
+        }
+
+        $newFinder = $this->finder('XF:Thread');
+        $threads = $newFinder->whereIds($threadIds)
+            ->with('FirstPost')
+            ->with('api')
+            ->fetch()
+            ->sortByList($threadIds);
+        $posts = $this->em()->getEmptyCollection();
+        /** @var \XF\Entity\Thread $thread */
+        foreach ($threads as $thread) {
+            $posts[$thread->first_post_id] = $thread->FirstPost;
+        }
+
+        /** @var Attachment $attachmentRepo */
+        $attachmentRepo = $this->repository('XF:Attachment');
+        $attachmentRepo->addAttachmentsToContent($posts, 'post');
+
+        $data['threads'] = $threads->filterViewable()->toApiResults(Entity::VERBOSITY_NORMAL, [
+            'tapi_first_post' => true,
+            'tapi_fetch_image' => true
+        ]);
+        if ($search->result_count > $perPage) {
+            $data['pagination'] = $this->getPaginationData($threads, $page, $perPage, $search->result_count);
+        }
+
+        $maxPages = ceil($search->result_count / $perPage);
+        if ($page < $maxPages) {
+            $data['nextUrl'] = $this->buildLink('canonical:tapi-apps/news-feeds', null, [
+                'search_id' => $searchId,
+                'page' => $page + 1,
+            ]);
         }
 
         return $this->apiResult($data);
