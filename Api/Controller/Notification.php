@@ -32,7 +32,9 @@ class Notification extends AbstractController
 
         return $this->apiResult([
             'notification' => $alert->toApiResult(Entity::VERBOSITY_VERBOSE),
-            'content' => $content === null ? null : $content->toApiResult(Entity::VERBOSITY_VERBOSE)
+            'content' => $content === null
+                ? null
+                : $content->toApiResult(Entity::VERBOSITY_VERBOSE, $this->getContentApiResultOptions($alert))
         ]);
     }
 
@@ -46,6 +48,18 @@ class Notification extends AbstractController
         }
 
         return $this->apiSuccess();
+    }
+
+    protected function getContentApiResultOptions(UserAlert $userAlert): array
+    {
+        switch ($userAlert->content_type) {
+            case 'post':
+                return [
+                    'with_thread' => true,
+                ];
+        }
+
+        return [];
     }
 
     /**
