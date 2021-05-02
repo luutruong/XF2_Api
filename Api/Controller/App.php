@@ -569,43 +569,7 @@ class App extends AbstractController
      */
     protected function getNewsFeedsFilters(): array
     {
-        $filters = [];
-        $input = $this->filter([
-            'order' => 'str'
-        ]);
-
-        $availableOrders = $this->getNewsFeedsAvailableSorts();
-        if (isset($availableOrders[$input['order']])) {
-            $order = $availableOrders[$input['order']];
-
-            if ($order instanceof \Closure) {
-                $filters['orderCallback'] = $order;
-            } else {
-                $filters['order'] = $order[0];
-                $filters['direction'] = $order[1];
-            }
-        }
-
-        return $filters;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getNewsFeedsAvailableSorts(): array
-    {
-        return [
-            'new_threads' => ['post_date', 'DESC'],
-            'recent_threads' => ['last_post_date', 'DESC'],
-            'trending' => function (Thread $finder) {
-                $finder->order('view_count', 'DESC');
-                $cutOff = $this->options()->tApi_trendingCutoff;
-
-                if ($cutOff > 0) {
-                    $finder->where('post_date', '>=', \XF::$time - $cutOff * 86400);
-                }
-            }
-        ];
+        return [];
     }
 
     /**
@@ -641,13 +605,7 @@ class App extends AbstractController
             $finder->whereImpossible();
         }
 
-        if (isset($filters['order']) && isset($filters['direction'])) {
-            $finder->order($filters['order'], $filters['direction']);
-        } elseif (isset($filters['orderCallback'])) {
-            \call_user_func($filters['orderCallback'], $finder);
-        } else {
-            $finder->order('last_post_date', 'DESC');
-            $finder->indexHint('FORCE', 'last_post_date');
-        }
+        $finder->order('last_post_date', 'DESC');
+        $finder->indexHint('FORCE', 'last_post_date');
     }
 }
