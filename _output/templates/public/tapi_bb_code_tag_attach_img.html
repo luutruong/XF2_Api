@@ -1,5 +1,5 @@
 <img src="{{ $full ? $attachmentViewUrl : $attachment.Data.getThumbnailUrl(true) }}"
-     data-source="{$attachmentViewUrl}"
+     data-full-url="{$attachmentViewUrl}"
      data-width="{{ $full ? $attachment.Data.width : $attachment.Data.thumbnail_width }}"
      data-height="{{ $full ? $attachment.Data.height : $attachment.Data.thumbnail_height }}"
      class="bbImage" alt="{$alt}" />
