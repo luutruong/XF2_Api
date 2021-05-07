@@ -178,4 +178,24 @@ class ApiHtml extends XFCP_ApiHtml
 
         return $html;
     }
+
+    /**
+     * @param mixed $content
+     * @param int $userId
+     * @return string
+     */
+    protected function getRenderedUser($content, int $userId)
+    {
+        $rendered = parent::getRenderedUser($content, $userId);
+
+        if (App::isRequestFromApp()) {
+            $params = strval(json_encode(['user_id' => $userId]));
+            $rendered = \substr($rendered, 0, 3)
+                . ' data-tapi-route="XF:Member" class="link--internal"'
+                . ' data-tapi-route-params="' . \htmlspecialchars($params) . '" '
+                . \substr($rendered, 3);
+        }
+
+        return $rendered;
+    }
 }

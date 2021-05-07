@@ -2,9 +2,8 @@
 
 namespace Truonglv\Api\Api\Controller;
 
-use XF\Api\Controller\AbstractController;
 use XF\Mvc\Entity\Entity;
-use ZixVN\Exams\App;
+use XF\Api\Controller\AbstractController;
 
 class Bookmark extends AbstractController
 {
@@ -31,7 +30,7 @@ class Bookmark extends AbstractController
         $results = $finder->limitByPage($page, $perPage)->fetchColumns('content_id');
         $contentIds = array_column($results, 'content_id');
 
-        $contentFinder = $this->finder($this->app()->getContentTypeEntity($contentType));
+        $contentFinder = $this->finder((string) $this->app()->getContentTypeEntity($contentType));
         $contentFinder->with('api');
         $contentFinder->whereIds($contentIds);
 
@@ -83,6 +82,7 @@ class Bookmark extends AbstractController
         }
 
         $creator->save();
+
         return $this->apiSuccess();
     }
 
