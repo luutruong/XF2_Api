@@ -177,9 +177,13 @@ class App extends AbstractController
 
         $cloudEntries = $tagRepo->getTagsForCloud(30, $this->options()->tagCloudMinUses);
         $tagCloud = $tagRepo->getTagCloud($cloudEntries);
+        $tagNames = [];
+        foreach ($tagCloud as $item) {
+            $tagNames[] = $item['tag']['tag'];
+        }
 
         return $this->apiResult([
-            'tags' => array_column($tagCloud, 'tag'),
+            'tags' => $tagNames,
         ]);
     }
 
