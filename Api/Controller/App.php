@@ -164,7 +164,7 @@ class App extends AbstractController
         return $this->handleHelpPage('privacy_policy');
     }
 
-    public function actionTrendingTags()
+    public function actionGetTrendingTags()
     {
         /** @var Tag $tagRepo */
         $tagRepo = $this->repository('XF:Tag');
