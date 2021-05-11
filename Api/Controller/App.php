@@ -5,6 +5,7 @@ namespace Truonglv\Api\Api\Controller;
 use XF\Http\Request;
 use XF\Finder\Thread;
 use XF\Mvc\Dispatcher;
+use XF\Repository\Tag;
 use XF\Repository\Tfa;
 use XF\Mvc\Reply\Error;
 use XF\Repository\Node;
@@ -161,6 +162,25 @@ class App extends AbstractController
     public function actionGetPrivacy()
     {
         return $this->handleHelpPage('privacy_policy');
+    }
+
+    public function actionTrendingTags()
+    {
+        /** @var Tag $tagRepo */
+        $tagRepo = $this->repository('XF:Tag');
+        $enableTagging = (bool) $this->options()->enableTagging;
+        if (!$enableTagging) {
+            return $this->apiResult([
+                'tags' => [],
+            ]);
+        }
+
+        $cloudEntries = $tagRepo->getTagsForCloud(30, $this->options()->tagCloudMinUses);
+        $tagCloud = $tagRepo->getTagCloud($cloudEntries);
+
+        return $this->apiResult([
+            'tags' => array_column($tagCloud, 'tag'),
+        ]);
     }
 
     public function actionPostSubscriptions()

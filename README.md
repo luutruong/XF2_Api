@@ -28,6 +28,22 @@ Response:
 }
 ```
 
+### GET `tapi-apps/trending-tags`
+
+Parameters:
+* N/A
+
+Response:
+```
+{
+  "tags": [
+    "tag a",
+    "tag b",
+    ...
+  ]
+}
+```
+
 ### GET `tapi-apps/newfeeds`
 
 Parameters:
