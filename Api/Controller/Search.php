@@ -27,6 +27,12 @@ class Search extends AbstractController
             $searchType = '';
         }
 
+        $searchOrder = $this->filter('search_order', 'str');
+        $allowedOrders = ['date', 'relevance'];
+        if (!in_array($searchOrder, $allowedOrders, true)) {
+            $searchOrder = 'date';
+        }
+
         $keywords = $this->app()->stringFormatter()->censorText($this->filter('keywords', 'str'), '');
         if ($searchType === self::SEARCH_TYPE_USER) {
             $this->request()->set('name', $keywords);
@@ -61,14 +67,11 @@ class Search extends AbstractController
         }
 
         $urlConstraints = [];
-
-        if ($searchType === 'post') {
-            $typeHandler = $searcher->handler('post');
-        } else {
-            $typeHandler = $searcher->handler('thread');
+        if ($searchType !== '') {
+            $typeHandler = $searcher->handler($searchType);
+            $query->forTypeHandler($typeHandler, $searchRequest, $urlConstraints);
         }
 
-        $query->forTypeHandler($typeHandler, $searchRequest, $urlConstraints);
         $query->withGroupedResults();
 
         if ($tag !== null) {
@@ -76,7 +79,7 @@ class Search extends AbstractController
         } else {
             $query->withKeywords($keywords, $searchType !== 'post');
         }
-        $query->orderedBy('date');
+        $query->orderedBy($searchOrder);
 
         $constraints = [];
 
@@ -121,6 +124,10 @@ class Search extends AbstractController
         } else {
             /** @var Entity $entity */
             foreach ($resultSet->getResultsData() as $entity) {
+                if (!in_array($entity->getEntityContentType(), $this->getAllowedSearchTypes(), true)) {
+                    continue;
+                }
+
                 $results[] = $entity->toApiResult();
             }
         }
