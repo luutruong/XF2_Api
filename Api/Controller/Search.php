@@ -129,8 +129,8 @@ class Search extends AbstractController
                 }
 
                 $result = $entity->toApiResult();
-                $result['content_type'] = $entity->getEntityContentType();
-                $result['content_id'] = $entity->getEntityId();
+                $result->includeExtra('content_type', $entity->getEntityContentType());
+                $result->includeExtra('content_id', $entity->getEntityId());
 
                 $results[] = $result;
             }
