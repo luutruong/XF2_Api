@@ -77,7 +77,7 @@ class Search extends AbstractController
         if ($tag !== null) {
             $query->withTags($tag->tag_id);
         } else {
-            $query->withKeywords($keywords, $searchType !== 'post');
+            $query->withKeywords($keywords);
         }
         $query->orderedBy($searchOrder);
 
