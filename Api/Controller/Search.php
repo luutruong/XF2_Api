@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use XF\Entity\Post;
 use XF\Repository\Tag;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
@@ -128,7 +129,7 @@ class Search extends AbstractController
                     continue;
                 }
 
-                $result = $entity->toApiResult();
+                $result = $entity->toApiResult(Entity::VERBOSITY_VERBOSE, $this->getApiResultOptions($entity));
                 $result->includeExtra('content_type', $entity->getEntityContentType());
                 $result->includeExtra('content_id', $entity->getEntityId());
 
@@ -210,6 +211,17 @@ class Search extends AbstractController
         ]);
     }
 
+    protected function getApiResultOptions(Entity $entity): array
+    {
+        if ($entity instanceof Post) {
+            return [
+                'with_thread' => true,
+            ];
+        }
+
+        return [];
+    }
+
     /**
      * @param mixed $id
      * @return \XF\Entity\Search
@@ -220,7 +232,10 @@ class Search extends AbstractController
         /** @var \XF\Entity\Search $search */
         $search = $this->assertRecordExists('XF:Search', $id);
         if (($search->user_id > 0 && $search->user_id !== \XF::visitor()->user_id)
-            || !in_array($search->search_type, $this->getAllowedSearchTypes(), true)
+            || (
+                $search->search_type !== ''
+                && !in_array($search->search_type, $this->getAllowedSearchTypes(), true)
+            )
         ) {
             throw $this->exception($this->notFound());
         }
