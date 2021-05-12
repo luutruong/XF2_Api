@@ -21,9 +21,7 @@ class ConversationMaster extends XFCP_ConversationMaster
 
         $visitor = \XF::visitor();
         if ($visitor->user_id > 0) {
-            $result->is_unread = isset($this->Users[$visitor->user_id])
-                ? $this->Users[$visitor->user_id]->isUnread()
-                : false;
+            $result->is_unread = isset($this->Users[$visitor->user_id]) && $this->Users[$visitor->user_id]->isUnread();
         } else {
             $result->is_unread = false;
         }

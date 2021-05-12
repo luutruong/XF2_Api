@@ -18,6 +18,7 @@ class Conversations extends XFCP_Conversations
 
     public function actionPost()
     {
+        $this->request()->set('tapi_last_message', 'bool');
         if ($this->request()->exists('recipients')
             && App::isRequestFromApp()
         ) {
