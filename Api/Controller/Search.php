@@ -31,7 +31,7 @@ class Search extends AbstractController
         $searchOrder = $this->filter('search_order', 'str');
         $allowedOrders = ['date', 'relevance'];
         if (!in_array($searchOrder, $allowedOrders, true)) {
-            $searchOrder = 'date';
+            $searchOrder = 'relevance';
         }
 
         $keywords = $this->app()->stringFormatter()->censorText($this->filter('keywords', 'str'), '');
