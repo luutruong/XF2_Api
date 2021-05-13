@@ -94,14 +94,7 @@ class User extends XFCP_User
         $threadRepo = $this->repository('XF:Thread');
 
         $threadFinder = $threadRepo->findThreadsStartedByUser($user->user_id);
-        if (\XF::isApiCheckingPermissions()) {
-            /** @var \XF\Repository\Forum $forumRepo */
-            $forumRepo = $this->repository('XF:Forum');
-            $forums = $forumRepo->getViewableForums();
-
-            $threadFinder->where('node_id', $forums->keys())
-                ->where('discussion_state', 'visible');
-        }
+        $this->setupTApiThreadFinder($threadFinder, $user);
 
         $page = $this->filterPage();
         $perPage = $this->options()->discussionsPerPage;
@@ -117,6 +110,20 @@ class User extends XFCP_User
         ];
 
         return $this->apiResult($data);
+    }
+
+    protected function setupTApiThreadFinder(\XF\Finder\Thread $finder, \XF\Entity\User $user): void
+    {
+        $finder->with('api');
+
+        if (\XF::isApiCheckingPermissions()) {
+            /** @var \XF\Repository\Forum $forumRepo */
+            $forumRepo = $this->repository('XF:Forum');
+            $forums = $forumRepo->getViewableForums();
+
+            $finder->where('node_id', $forums->keys())
+                ->where('discussion_state', 'visible');
+        }
     }
 
     /**
