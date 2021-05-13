@@ -3,6 +3,8 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use Truonglv\Api\App;
+use XF\Api\Result\EntityResults;
+use XF\Mvc\Entity\AbstractCollection;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Follow;
@@ -106,10 +108,15 @@ class User extends XFCP_User
 
         $data = [
             'pagination' => $this->getPaginationData($threads, $page, $perPage, $total),
-            'threads' => $threads->toApiResults(Entity::VERBOSITY_VERBOSE)
+            'threads' => $this->prepareTApiThreadsToResults($threads),
         ];
 
         return $this->apiResult($data);
+    }
+
+    protected function prepareTApiThreadsToResults(AbstractCollection $threads): EntityResults
+    {
+        return $threads->toApiResults(Entity::VERBOSITY_VERBOSE);
     }
 
     protected function setupTApiThreadFinder(\XF\Finder\Thread $finder, \XF\Entity\User $user): void
