@@ -28,10 +28,15 @@ class Search extends AbstractController
             $searchType = '';
         }
 
+        $searcher = $this->app()->search();
+
         $searchOrder = $this->filter('search_order', 'str');
-        $allowedOrders = ['date', 'relevance'];
+        $allowedOrders = ['date'];
+        if ($searcher->isRelevanceSupported()) {
+            $allowedOrders[] = 'relevance';
+        }
         if (!in_array($searchOrder, $allowedOrders, true)) {
-            $searchOrder = 'date';
+            $searchOrder = end($allowedOrders);
         }
 
         $keywords = $this->app()->stringFormatter()->censorText($this->filter('keywords', 'str'), '');
@@ -42,8 +47,6 @@ class Search extends AbstractController
         }
 
         $searchRequest = new \XF\Http\Request($this->app->inputFilterer(), [], [], []);
-
-        $searcher = $this->app()->search();
         $query = $searcher->getQuery();
         /** @var \XF\Entity\Tag|null $tag */
         $tag = null;
