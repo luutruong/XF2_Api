@@ -160,14 +160,7 @@ class ApiHtml extends XFCP_ApiHtml
             $match = $app->router('public')->routeToController($url, $request);
             $matchController = $match->getController();
 
-            $supportControllers = [
-                'XF:Category',
-                'XF:Forum',
-                'XF:Member',
-                'XF:Post',
-                'XF:Thread',
-            ];
-            if (\in_array($matchController, $supportControllers, true)) {
+            if (\in_array($matchController, $this->getTApiSupportedControllers(), true)) {
                 $params = (string) \json_encode($match->getParams());
                 $html = \substr($html, 0, 3)
                     . ' data-tapi-route="' . \htmlspecialchars($matchController) . '"'
@@ -177,6 +170,21 @@ class ApiHtml extends XFCP_ApiHtml
         }
 
         return $html;
+    }
+
+    /**
+     * List of controllers which supported in app
+     * @return string[]
+     */
+    protected function getTApiSupportedControllers(): array
+    {
+        return [
+            'XF:Category',
+            'XF:Forum',
+            'XF:Member',
+            'XF:Post',
+            'XF:Thread',
+        ];
     }
 
     /**
