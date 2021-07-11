@@ -151,13 +151,11 @@ class ApiHtml extends XFCP_ApiHtml
 
         if ($linkInfo['type'] === 'internal') {
             $app = \XF::app();
-            if (\strpos($url, $app->options()->boardUrl) === 0) {
-                $url = \substr($url, \strlen($app->options()->boardUrl));
-            }
-            $url = \ltrim($url, '/');
+            $path = (string) parse_url($url, PHP_URL_PATH);
+            $path = ltrim($path, '/');
 
             $request = new \XF\Http\Request(\XF::app()->inputFilterer(), [], [], [], []);
-            $match = $app->router('public')->routeToController($url, $request);
+            $match = $app->router('public')->routeToController($path, $request);
             $matchController = $match->getController();
 
             if (\in_array($matchController, $this->getTApiSupportedControllers(), true)) {
