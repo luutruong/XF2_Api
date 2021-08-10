@@ -526,6 +526,10 @@ class App extends AbstractController
 
         $accountDetails = $this->app()->router('public')->buildLink('canonical:account/account-details');
 
+        /** @var Attachment $attachmentRepo */
+        $attachmentRepo = $this->repository('XF:Attachment');
+        $constraints = $attachmentRepo->getDefaultAttachmentConstraints();
+
         return [
             'reactions' => $reactions,
             'apiVersion' => $addOns['Truonglv/Api']['version_id'],
@@ -534,6 +538,7 @@ class App extends AbstractController
             'defaultReactionText' => $reactions[\Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID]['text'],
             'accountUpdateUrl' => \Truonglv\Api\App::buildLinkProxy($accountDetails),
             'quotePlaceholderTemplate' => \Truonglv\Api\App::QUOTE_PLACEHOLDER_TEMPLATE,
+            'allowedAttachmentExtensions' => $constraints['extensions'],
         ];
     }
 
