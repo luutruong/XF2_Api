@@ -67,7 +67,7 @@ class Search extends AbstractController
 
             $tag = $foundTag;
         } elseif (\strlen($keywords) <= $this->options()->searchMinWordLength) {
-            return $this->message(\XF::phrase('no_results_found'));
+            return $this->message(\XF::phrase('search_could_not_be_completed_because_search_keywords_were_too'));
         }
 
         $urlConstraints = [];
