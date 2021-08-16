@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api;
 
+use Truonglv\Api\Repository\AlertQueue;
 use XF\Http\Request;
 use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
@@ -107,13 +108,10 @@ class App
      */
     public static function getSupportAlertContentTypes(): array
     {
-        return [
-            'conversation',
-            'conversation_message',
-            'post',
-            'thread',
-            'user'
-        ];
+        /** @var AlertQueue $alertQueueRepo */
+        $alertQueueRepo = \XF::repository('Truonglv\Api:AlertQueue');
+
+        return $alertQueueRepo->getSupportedAlertContentTypes();
     }
 
     /**

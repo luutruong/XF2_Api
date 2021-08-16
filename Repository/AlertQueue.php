@@ -7,6 +7,17 @@ use XF\Mvc\Entity\ArrayCollection;
 
 class AlertQueue extends Repository
 {
+    public function getSupportedAlertContentTypes(): array
+    {
+        return [
+            'conversation',
+            'conversation_message',
+            'post',
+            'thread',
+            'user'
+        ];
+    }
+
     /**
      * @param string $contentType
      * @param int $contentId
@@ -51,9 +62,7 @@ class AlertQueue extends Repository
         /** @var \Truonglv\Api\Entity\AlertQueue $queue */
         foreach ($queues as $queue) {
             $content = null;
-            $entities = isset($contents[$queue->content_type])
-                ? $contents[$queue->content_type]
-                : [];
+            $entities = $contents[$queue->content_type] ?? [];
             if (isset($entities[$queue->content_id])) {
                 $content = $entities[$queue->content_id];
             }
@@ -95,10 +104,6 @@ class AlertQueue extends Repository
         $entity->content_id = $contentId;
         $entity->payload = $payload;
         $entity->queue_date = $queueDate > 0 ? $queueDate : \XF::$time;
-
-        try {
-            $entity->save(false);
-        } catch (\XF\Db\DuplicateKeyException $e) {
-        }
+        $entity->save(false);
     }
 }
