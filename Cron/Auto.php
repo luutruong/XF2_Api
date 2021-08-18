@@ -51,7 +51,9 @@ class Auto
             ->jobManager()
             ->enqueueUnique(
                 'tapi_pushNotifications',
-                'Truonglv\Api:PushNotification'
+                'Truonglv\Api:PushNotification',
+                [],
+                false
             );
     }
 }
