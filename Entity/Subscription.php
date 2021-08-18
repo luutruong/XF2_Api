@@ -85,8 +85,9 @@ class Subscription extends Entity
             // TODO: Remove support OneSignal
             $this->app()
                 ->jobManager()
-                ->enqueueUnique(
+                ->enqueueLater(
                     'tapi_unsubscribe' . $this->subscription_id,
+                    \XF::$time,
                     'Truonglv\Api:Unsubscribe',
                     [
                         'provider' => $this->provider,

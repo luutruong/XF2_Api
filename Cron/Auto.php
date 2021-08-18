@@ -49,11 +49,10 @@ class Auto
     {
         \XF::app()
             ->jobManager()
-            ->enqueueUnique(
+            ->enqueueLater(
                 'tapi_pushNotifications',
-                'Truonglv\Api:PushNotification',
-                [],
-                false
+                \XF::$time,
+                'Truonglv\Api:PushNotification'
             );
     }
 }

@@ -89,8 +89,9 @@ class AlertQueue extends Repository
 
             $this->app()
                 ->jobManager()
-                ->enqueueUnique(
+                ->enqueueLater(
                     'tApi_PN_' . $contentType . $contentId,
+                    \XF::$time,
                     'Truonglv\Api:PushNotification',
                     $payload
                 );
