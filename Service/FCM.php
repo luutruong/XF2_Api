@@ -47,6 +47,13 @@ class FCM extends AbstractPushNotification
         $messages = [];
         $dataTransformed = [];
         foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                if (count($value) === 0) {
+                    continue;
+                }
+
+                $value = json_encode($value);
+            }
             $dataTransformed[\strval($key)] = \strval($value);
         }
 
