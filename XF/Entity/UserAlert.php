@@ -85,7 +85,8 @@ class UserAlert extends XFCP_UserAlert
         $data = [
             'alert_id' => $this->alert_id,
             'content_id' => $this->content_id,
-            'content_type' => $this->content_type
+            'content_type' => $this->content_type,
+            'tapi_extra' => [],
         ];
 
         if ($this->content_type === 'user'
