@@ -2,13 +2,13 @@
 
 namespace Truonglv\Api;
 
-use Truonglv\Api\Repository\AlertQueue;
 use XF\Http\Request;
 use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
 use Truonglv\Api\Data\Reaction;
 use XF\Api\Result\EntityResult;
 use Truonglv\Api\Util\Encryption;
+use Truonglv\Api\Repository\AlertQueue;
 
 class App
 {
@@ -177,5 +177,13 @@ class App
         }
 
         $result->tapi_reactions = $reacted;
+    }
+
+    public static function alertQueueRepo(): AlertQueue
+    {
+        /** @var AlertQueue $repo */
+        $repo = \XF::repository('Truonglv\Api:AlertQueue');
+
+        return $repo;
     }
 }

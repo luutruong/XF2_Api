@@ -5,7 +5,6 @@ namespace Truonglv\Api\XF\Entity;
 use Truonglv\Api\App;
 use XF\Mvc\Entity\Structure;
 use Truonglv\Api\Data\Reaction;
-use Truonglv\Api\Repository\AlertQueue;
 
 class UserAlert extends XFCP_UserAlert
 {
@@ -81,11 +80,7 @@ class UserAlert extends XFCP_UserAlert
         }
     }
 
-    /**
-     * @param bool $forPush
-     * @return array
-     */
-    public function getTApiAlertData($forPush = false)
+    public function getTApiAlertData(bool $forPush = false): array
     {
         $data = [
             'alert_id' => $this->alert_id,
@@ -143,7 +138,7 @@ class UserAlert extends XFCP_UserAlert
         if ($this->isInsert()
             && \in_array($this->content_type, App::getSupportAlertContentTypes(), true)
         ) {
-            AlertQueue::queue('alert', $this->alert_id);
+            App::alertQueueRepo()->insertQueue('alert', $this->alert_id, $this->extra_data);
         }
     }
 }

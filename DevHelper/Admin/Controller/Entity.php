@@ -2,14 +2,13 @@
 
 namespace Truonglv\Api\DevHelper\Admin\Controller;
 
-use XF\Admin\Controller\AbstractController;
-use XF\Mvc\Entity\Entity as MvcEntity;
-use XF\Mvc\Entity\Finder;
 use XF\Mvc\FormAction;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Entity\Entity as MvcEntity;
+use XF\Admin\Controller\AbstractController;
 
 /**
- * @version 2020052301
+ * @version 2021022002
  * @see \DevHelper\Autogen\Admin\Controller\Entity
  */
 abstract class Entity extends AbstractController
@@ -94,6 +93,7 @@ abstract class Entity extends AbstractController
 
         $entityId = $this->getEntityIdFromParams($params);
         $entity = $this->assertEntityExists($entityId);
+
         return $this->entityAddEdit($entity);
     }
 
@@ -131,6 +131,7 @@ abstract class Entity extends AbstractController
         $callback = [$unknownEntity, 'getEntityColumnLabel'];
         if (!is_callable($callback)) {
             $shortName = $entity->structure()->shortName;
+
             throw new \InvalidArgumentException("Entity {$shortName} does not implement {$callback[1]}");
         }
 
@@ -171,6 +172,7 @@ abstract class Entity extends AbstractController
         $callback = [$unknownEntity, 'getEntityLabel'];
         if (!is_callable($callback)) {
             $shortName = $entity->structure()->shortName;
+
             throw new \InvalidArgumentException("Entity {$shortName} does not implement {$callback[1]}");
         }
 
@@ -247,7 +249,7 @@ abstract class Entity extends AbstractController
                 continue;
             }
             $columnViewParamRef = &$viewParams['columns'][$columnName];
-            list ($relationTag, $relationTagOptions) = $this->entityAddEditRelationColumn(
+            list($relationTag, $relationTagOptions) = $this->entityAddEditRelationColumn(
                 $entity,
                 $columnViewParamRef['_structureData'],
                 $relationKey,
@@ -280,12 +282,14 @@ abstract class Entity extends AbstractController
                 /** @var \XF\Repository\Node $nodeRepo */
                 $nodeRepo = $entity->repository('XF:Node');
                 $tagOptions['choices'] = $nodeRepo->getNodeOptionsData(false, ['Forum']);
+
                 break;
             case 'XF:User':
                 $tag = 'username';
                 /** @var \XF\Entity\User|null $user */
                 $user = $entity->getRelation($relationKey);
                 $tagOptions['username'] = $user !== null ? $user->username : '';
+
                 break;
             default:
                 if (strpos($relation['entity'], $this->getPrefixForClasses()) === 0) {
@@ -366,15 +370,18 @@ abstract class Entity extends AbstractController
                     ]
                 ];
                 $columnFilter = 'bool';
+
                 break;
             case MvcEntity::INT:
                 $columnTag = 'number-box';
                 $columnFilter = 'int';
+
                 break;
             case MvcEntity::UINT:
                 $columnTag = 'number-box';
                 $columnTagOptions['min'] = 0;
                 $columnFilter = 'uint';
+
                 break;
             case MvcEntity::STR:
                 if (isset($column['allowedValues'])) {
@@ -408,6 +415,7 @@ abstract class Entity extends AbstractController
                     $columnTag = 'text-area';
                 }
                 $columnFilter = 'str';
+
                 break;
         }
 
@@ -456,7 +464,9 @@ abstract class Entity extends AbstractController
 
         $getterColumns = [];
         foreach ($structure->getters as $getterKey => $getterCacheable) {
-            if (!$getterCacheable) {
+            if ((is_array($getterCacheable) && !$getterCacheable['cache'])
+                || !$getterCacheable
+            ) {
                 continue;
             }
 
@@ -485,11 +495,21 @@ abstract class Entity extends AbstractController
                 continue;
             }
 
+            $value = $entity->get($columnName);
+            if ($value instanceof \XF\Phrase) {
+                $value = $value->render('html', [
+                    // fix the issue when creating entity which used getter as phrase
+                    // in this case the phrase does not exists so the input are fill
+                    // with phrase title.
+                    'nameOnInvalid' => false,
+                ]);
+            }
+
             $columns[$columnName] = $metadata;
             $columns[$columnName] += [
                 '_structureData' => $column,
                 'name' => sprintf('values[%s]', $columnName),
-                'value' => $entity->get($columnName),
+                'value' => $value,
             ];
         }
 
@@ -754,6 +774,7 @@ abstract class Entity extends AbstractController
     {
         /** @var mixed $unknownFinder */
         $unknownFinder = $this->finder($this->getShortName());
+
         return is_callable([$unknownFinder, 'entityDoXfFilter']);
     }
 
@@ -781,152 +802,4 @@ abstract class Entity extends AbstractController
      * @return string
      */
     abstract protected function getRoutePrefix();
-
-    // DevHelper/Autogen begins
-
-    /**
-     * @param \DevHelper\Util\AutogenContext $context
-     * @return void
-     * @throws \XF\PrintableException
-     * @throws \ReflectionException
-     */
-    public function devHelperAutogen($context)
-    {
-        $context->gitignoreDeletes[] = '/DevHelper/Admin/Controller/Entity.php';
-
-        $entity = $this->createEntity();
-
-        $implementHints = $this->devHelperGetImplementHints($entity);
-        if (count($implementHints) > 0) {
-            $context->writeln(sprintf("%s should implement these:\n", $this->getShortName()));
-            $context->writeln(implode("\n", $implementHints));
-        }
-
-        $structure = $entity->structure();
-        \DevHelper\Util\Autogen\AdminRoute::autogen(
-            $context,
-            $this->getRoutePrefix(),
-            $structure->primaryKey,
-            str_replace('\Admin\Controller\\', ':', get_class($this))
-        );
-
-        $phraseTitlePartials = ['_entities', '_entity'];
-        if ($this->supportsAdding()) {
-            $phraseTitlePartials[] = '_add';
-        }
-        if ($this->supportsEditing()) {
-            $phraseTitlePartials[] = '_edit';
-        }
-        foreach ($phraseTitlePartials as $phraseTitlePartial) {
-            \DevHelper\Util\Autogen\Phrase::autogen($context, $this->getPrefixForPhrases() . $phraseTitlePartial);
-        }
-
-        $prefixForTemplates = $this->getPrefixForTemplates();
-        $templateTitlePartials = ['list'];
-        if ($this->supportsDeleting()) {
-            $templateTitlePartials[] = 'delete';
-        }
-        if ($this->supportsEditing()) {
-            $templateTitlePartials[] = 'edit';
-        }
-        foreach ($templateTitlePartials as $templateTitlePartial) {
-            $templateTitleSource = "devhelper_autogen_ace_{$templateTitlePartial}";
-            $templateTitleTarget = "{$prefixForTemplates}_entity_{$templateTitlePartial}";
-            \DevHelper\Util\Autogen\AdminTemplate::autogen($context, $templateTitleSource, $templateTitleTarget);
-        }
-
-        $context->writeln(
-            '<info>' . get_class($this) . ' OK</info>',
-            \Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERY_VERBOSE
-        );
-    }
-
-    /**
-     * @param MvcEntity $entity
-     * @return array
-     * @throws \ReflectionException
-     */
-    protected function devHelperGetImplementHints(MvcEntity $entity)
-    {
-        $implementHints = [];
-        $docComments = [];
-        $methods = [];
-
-        $entityClass = get_class($entity);
-        /** @var \ReflectionClass|null $rc */
-        $rc = new \ReflectionClass($entityClass);
-        if ($rc === null) {
-            throw new \LogicException('$rc has gone away');
-        }
-
-        while (true) {
-            $parent = $rc->getParentClass();
-            if ($parent === false || $parent->getName() === 'XF\Mvc\Entity\Entity' || $parent->isAbstract()) {
-                break;
-            }
-
-            $rc = $parent;
-            $entityClass = $rc->getName();
-        }
-
-        $rcDocComment = $rc->getDocComment();
-        if ($rcDocComment === false) {
-            $entityClassAsArg = $entityClass;
-            $entityClassAsArg = str_replace('\\Entity\\', ':', $entityClassAsArg);
-            $entityClassAsArg = str_replace('\\', '\\\\', $entityClassAsArg);
-            $docComments[] = "/**\n * Run `xf-dev--entity-class-properties.sh {$entityClassAsArg}`\n */";
-        }
-
-        $t = str_repeat(' ', 4);
-        if ($this->supportsAdding() || $this->supportsEditing()) {
-            try {
-                $this->getEntityColumnLabel($entity, __METHOD__);
-            } catch (\InvalidArgumentException $e) {
-                $methods[] = "{$t}public function getEntityColumnLabel(\$columnName)\n{$t}{\n" .
-                    "{$t}{$t}switch (\$columnName) {\n" .
-                    "{$t}{$t}{$t}case 'column_1':\n" .
-                    "{$t}{$t}{$t}case 'column_2':\n" .
-                    "{$t}{$t}{$t}{$t}return \\XF::phrase('{$this->getPrefixForPhrases()}_' . \$columnName);\n" .
-                    "{$t}{$t}}\n\n" .
-                    "{$t}{$t}return null;\n" .
-                    "{$t}}\n";
-            } catch (\Exception $e) {
-                // ignore
-            }
-        }
-
-        try {
-            $this->getEntityLabel($entity);
-        } catch (\InvalidArgumentException $e) {
-            $methods[] = "{$t}public function getEntityLabel()\n{$t}{\n{$t}{$t}return \$this->column_name;\n{$t}}\n";
-        } catch (\Exception $e) {
-            // ignore
-        }
-
-        if (count($docComments) === 0 && count($methods) === 0) {
-            return $implementHints;
-        }
-
-        if (count($docComments) > 0) {
-            foreach ($docComments as $docComment) {
-                $implementHints[] = $docComment;
-            }
-        }
-
-        $implementHints[] = "class X extends Entity\n{\n";
-
-        if (count($methods) > 0) {
-            $implementHints[] = "{$t}...\n";
-            foreach ($methods as $method) {
-                $implementHints[] = $method;
-            }
-            $implementHints[] = "{$t}...\n";
-        }
-
-        $implementHints[] = '}';
-
-        return $implementHints;
-    }
-
-    // DevHelper/Autogen ends
 }

@@ -2,8 +2,13 @@
 
 namespace Truonglv\Api\Repository;
 
+use XF\Timer;
+use Truonglv\Api\App;
+use XF\Entity\UserAlert;
 use XF\Mvc\Entity\Repository;
-use XF\Mvc\Entity\ArrayCollection;
+use XF\Entity\ConversationMessage;
+use XF\Mvc\Entity\AbstractCollection;
+use Truonglv\Api\Service\AbstractPushNotification;
 
 class AlertQueue extends Repository
 {
@@ -18,26 +23,102 @@ class AlertQueue extends Repository
         ];
     }
 
-    /**
-     * @param string $contentType
-     * @param int $contentId
-     * @param array $payload
-     * @param null|int $queueDate
-     * @return void
-     */
-    public static function queue($contentType, $contentId, array $payload = [], $queueDate = null)
+    public function getFirstRunTime(): int
     {
-        /** @var static $repo */
-        $repo = \XF::app()->repository('Truonglv\Api:AlertQueue');
+        return (int) $this->db()->fetchOne('
+            SELECT MIN(`queue_date`)
+            FROM `xf_tapi_alert_queue`
+        ');
+    }
 
-        $repo->insertQueue($contentType, $contentId, $payload, $queueDate);
+    public function scheduleNextRun(): void
+    {
+        $runTime = $this->getFirstRunTime();
+        if ($runTime <= 0) {
+            return;
+        }
+
+        $this->app()->jobManager()
+            ->enqueueLater(
+                'tapi_alertQueue',
+                $runTime,
+                'Truonglv\Api:AlertQueue'
+            );
+    }
+
+    public function run(int $maxRunTime): void
+    {
+        $timer = $maxRunTime > 0 ? new Timer($maxRunTime) : null;
+        $records = $this->finder('Truonglv\Api:AlertQueue')
+            ->where('queue_date', '<=', \XF::$time)
+            ->order('queue_date')
+            ->limit($timer === null ? null : 20)
+            ->fetch();
+
+        if ($records->count() === 0) {
+            return;
+        }
+
+        /** @var \Truonglv\Api\Entity\AlertQueue $record */
+        foreach ($records as $record) {
+            $delete = $this->db()->delete(
+                'xf_tapi_alert_queue',
+                'content_type = ? AND content_id = ?',
+                [$record->content_type, $record->content_id]
+            );
+            if ($delete <= 0) {
+                continue;
+            }
+
+            try {
+                $this->runQueueEntry($record->content_type, $record->content_id, $record->payload);
+            } catch (\Throwable $e) {
+            }
+
+            if ($timer !== null && $timer->limitExceeded()) {
+                break;
+            }
+        }
+    }
+
+    public function runQueueEntry(string $contentType, int $contentId, array $data = []): void
+    {
+        switch ($contentType) {
+            case 'alert':
+                /** @var UserAlert|null $userAlert */
+                $userAlert = $this->em->find('XF:UserAlert', $contentId);
+                if ($userAlert === null || $userAlert->view_date > 0) {
+                    return;
+                }
+
+                /** @var AbstractPushNotification $service */
+                $service = $this->app()->service(App::$defaultPushNotificationService);
+                $service->sendNotification($userAlert);
+
+                break;
+            case 'conversation_message':
+                if (!isset($data['action'])) {
+                    throw new \LogicException('Must be specified `action`');
+                }
+                /** @var ConversationMessage|null $convoMessage */
+                $convoMessage = $this->em->find('XF:ConversationMessage', $contentId);
+                if ($convoMessage !== null) {
+                    /** @var AbstractPushNotification $service */
+                    $service = $this->app()->service(App::$defaultPushNotificationService);
+                    $service->sendConversationNotification($convoMessage, $data['action']);
+                }
+
+                break;
+            default:
+                throw new \LogicException('Must be implemented!');
+        }
     }
 
     /**
-     * @param ArrayCollection $queues
+     * @param AbstractCollection $queues
      * @return void
      */
-    public function addContentIntoQueues(ArrayCollection $queues)
+    public function addContentIntoQueues(AbstractCollection $queues)
     {
         if ($queues->count() < 1) {
             return;
@@ -71,40 +152,28 @@ class AlertQueue extends Repository
         }
     }
 
-    /**
-     * @param string $contentType
-     * @param int $contentId
-     * @param array $payload
-     * @param null|int $queueDate
-     * @throws \XF\PrintableException
-     * @return void
-     */
-    public function insertQueue($contentType, $contentId, array $payload = [], $queueDate = null)
+    public function insertQueue(string $contentType, int $contentId, array $payload = [], ?int $queueDate = null): void
     {
-        if (!$this->app()->options()->tApi_delayPushNotifications) {
-            $payload = \array_replace($payload, [
+        if ($queueDate <= 0) {
+            $queueDate = \XF::$time;
+        }
+        $delayed = $this->app()->options()->tApi_delayPushNotifications == 1;
+        if ($delayed) {
+            $this->db()->insert('xf_tapi_alert_queue', [
                 'content_type' => $contentType,
-                'content_id' => $contentId
-            ]);
+                'content_id' => $contentId,
+                'payload' => json_encode($payload),
+                'queue_date' => $queueDate,
+            ], false, '
+                `payload` = VALUES(`payload`),
+                `queue_date` = VALUES(`queue_date`)
+            ');
 
-            $this->app()
-                ->jobManager()
-                ->enqueueLater(
-                    'tApi_PN_' . $contentType . $contentId,
-                    \XF::$time,
-                    'Truonglv\Api:PushNotification',
-                    $payload
-                );
+            $this->scheduleNextRun();
 
             return;
         }
 
-        /** @var \Truonglv\Api\Entity\AlertQueue $entity */
-        $entity = $this->em->create('Truonglv\Api:AlertQueue');
-        $entity->content_type = $contentType;
-        $entity->content_id = $contentId;
-        $entity->payload = $payload;
-        $entity->queue_date = $queueDate > 0 ? $queueDate : \XF::$time;
-        $entity->save(false);
+        $this->runQueueEntry($contentType, $contentId, $payload);
     }
 }
