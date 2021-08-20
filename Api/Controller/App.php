@@ -146,7 +146,7 @@ class App extends AbstractController
         $maxPages = ceil($search->result_count / $perPage);
         if ($page < $maxPages) {
             $data['next_url'] = $this->buildLink('canonical:tapi-apps/news-feeds', null, [
-                'search_id' => $searchId,
+                'search_id' => $search->search_id,
                 'page' => $page + 1,
             ]);
         }
