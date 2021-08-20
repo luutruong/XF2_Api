@@ -133,9 +133,9 @@
     },
     "option_explain.tApi_firebaseConfigPath.txt": {
         "global_cache": false,
-        "version_id": 1020900,
-        "version_string": "1.2.9",
-        "hash": "8010719cf30f8cfd740abc7d9976f9f4"
+        "version_id": 2010200,
+        "version_string": "2.1.2",
+        "hash": "54baaa55344818da4f6688a361f340d6"
     },
     "option_explain.tApi_inactiveDeviceLength.txt": {
         "global_cache": false,

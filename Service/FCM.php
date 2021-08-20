@@ -28,7 +28,10 @@ class FCM extends AbstractPushNotification
      */
     protected function doSendNotification($subscriptions, $title, $body, array $data)
     {
-        $fbConfigFile = $this->app->options()->tApi_firebaseConfigPath;
+        $fbConfigFile = $this->app->config('tApi_firebaseConfigPath');
+        if ($fbConfigFile === null) {
+            $fbConfigFile = $this->app->options()->tApi_firebaseConfigPath;
+        }
         if (\strlen($fbConfigFile) === 0) {
             return;
         }

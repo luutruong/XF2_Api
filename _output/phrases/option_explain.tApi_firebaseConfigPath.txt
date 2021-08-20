@@ -1,1 +1,3 @@
-The absolute path to Firebase config file. To create a config file go to Firebase projects > Settings > Service accounts > Generate new private key.
+The absolute path to Firebase config file. To create a config file go to Firebase projects > Settings > Service accounts > Generate new private key.<br/>
+Or you can put new config key <b>tApi_firebaseConfigPath</b>. Eg:<br/>
+<code>$config['tApi_firebaseConfigPath'] = '/path/to/firebase.json';</code>
