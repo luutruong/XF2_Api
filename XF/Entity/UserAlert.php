@@ -30,6 +30,8 @@ class UserAlert extends XFCP_UserAlert
         $result->includeRelation('User');
 
         $result->is_unviewed = $this->isUnviewed();
+        $result->is_unread = $this->isUnread();
+
         /** @var mixed $html */
         $html = $this->isAlertRenderable()
             ? \trim($this->render())

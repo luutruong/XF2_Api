@@ -29,6 +29,12 @@ class Conversation extends XFCP_Conversation
             $convoRepo->markUserConversationRead($this->tApiUserConvo);
         }
 
+        if ($response instanceof ApiResult) {
+            /** @var \Truonglv\Api\Api\ControllerPlugin\Conversation $conversationPlugin */
+            $conversationPlugin = $this->plugin('Truonglv\Api:Api:Conversation');
+            $conversationPlugin->addRecipientsIntoResult($response);
+        }
+
         return $response;
     }
 

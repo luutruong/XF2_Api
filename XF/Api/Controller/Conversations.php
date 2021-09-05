@@ -3,6 +3,10 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use Truonglv\Api\App;
+use XF\Api\Result\ArrayResult;
+use XF\Api\Result\EntityResults;
+use XF\Entity\ConversationMaster;
+use XF\Entity\ConversationRecipient;
 use XF\Repository\User;
 
 class Conversations extends XFCP_Conversations
@@ -13,7 +17,13 @@ class Conversations extends XFCP_Conversations
             $this->request()->set('tapi_last_message', true);
         }
 
-        return parent::actionGet();
+        $response = parent::actionGet();
+
+        /** @var \Truonglv\Api\Api\ControllerPlugin\Conversation $conversationPlugin */
+        $conversationPlugin = $this->plugin('Truonglv\Api:Api:Conversation');
+        $conversationPlugin->addRecipientsIntoResult($response);
+
+        return $response;
     }
 
     public function actionPost()
