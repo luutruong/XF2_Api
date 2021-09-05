@@ -42,10 +42,9 @@ class Notification extends AbstractController
     {
         $alert = $this->assertViewableAlert($params['alert_id']);
 
-        if ($alert->view_date <= 0) {
-            $alert->view_date = \XF::$time;
-            $alert->save();
-        }
+        /** @var \XF\Repository\UserAlert $alertRepo */
+        $alertRepo = $this->repository('XF:UserAlert');
+        $alertRepo->markUserAlertRead($alert);
 
         return $this->apiSuccess();
     }

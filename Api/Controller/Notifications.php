@@ -38,4 +38,15 @@ class Notifications extends AbstractController
 
         return $this->apiResult($data);
     }
+
+    public function actionPostViewed()
+    {
+        $this->assertRegisteredUser();
+
+        /** @var \XF\Repository\UserAlert $alertRepo */
+        $alertRepo = $this->repository('XF:UserAlert');
+        $alertRepo->markUserAlertsViewed(\XF::visitor());
+
+        return $this->apiSuccess();
+    }
 }
