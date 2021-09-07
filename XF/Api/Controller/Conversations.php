@@ -3,10 +3,6 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use Truonglv\Api\App;
-use XF\Api\Result\ArrayResult;
-use XF\Api\Result\EntityResults;
-use XF\Entity\ConversationMaster;
-use XF\Entity\ConversationRecipient;
 use XF\Repository\User;
 
 class Conversations extends XFCP_Conversations

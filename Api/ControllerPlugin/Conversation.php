@@ -2,14 +2,14 @@
 
 namespace Truonglv\Api\Api\ControllerPlugin;
 
-use XF\Api\ControllerPlugin\AbstractPlugin;
-use XF\Api\Mvc\Reply\ApiResult;
+use XF\Entity\User;
 use XF\Api\Result\ArrayResult;
+use XF\Api\Mvc\Reply\ApiResult;
 use XF\Api\Result\EntityResult;
 use XF\Api\Result\EntityResults;
 use XF\Entity\ConversationMaster;
 use XF\Entity\ConversationRecipient;
-use XF\Entity\User;
+use XF\Api\ControllerPlugin\AbstractPlugin;
 
 class Conversation extends AbstractPlugin
 {
@@ -101,7 +101,7 @@ class Conversation extends AbstractPlugin
             'username' => $user->username,
             'avatar_urls' => [],
         ];
-        foreach (array_keys($this->app()->container('avatarSizeMap')) AS $avatarSize) {
+        foreach (array_keys($this->app->container('avatarSizeMap')) as $avatarSize) {
             $data['avatar_urls'][$avatarSize] = $user->getAvatarUrl($avatarSize, null, true);
         }
 
