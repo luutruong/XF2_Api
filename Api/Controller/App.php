@@ -279,13 +279,17 @@ class App extends AbstractController
         $registration->setPassword($decrypted, '', false);
 
         if ($this->request()->exists('birthday')) {
-            // expect birthday format Y-m-d
-            $birthday = $this->filter('birthday', 'datetime');
-            if ($birthday <= 0) {
+            /** @var \DateTime|null $birthday */
+            $birthday = $this->filter('birthday', 'datetime,obj');
+            if ($birthday === null) {
                 return $this->error(\XF::phrase('please_enter_valid_date_of_birth'));
             }
 
-            $registration->setDob(date('d', $birthday), date('n', $birthday), date('Y', $birthday));
+            $registration->setDob(
+                $birthday->format('j'),
+                $birthday->format('n'),
+                $birthday->format('Y')
+            );
         }
 
         if (!$registration->validate($errors)) {
