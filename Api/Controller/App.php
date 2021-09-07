@@ -278,6 +278,16 @@ class App extends AbstractController
         $registration->setFromInput($input);
         $registration->setPassword($decrypted, '', false);
 
+        if ($this->request()->exists('birthday')) {
+            // expect birthday format Y-m-d
+            $birthday = $this->filter('birthday', 'datetime');
+            if ($birthday <= 0) {
+                return $this->error(\XF::phrase('please_enter_valid_date_of_birth'));
+            }
+
+            $registration->setDob(date('d', $birthday), date('n', $birthday), date('Y', $birthday));
+        }
+
         if (!$registration->validate($errors)) {
             return $this->error($errors, 400);
         }
@@ -530,6 +540,8 @@ class App extends AbstractController
         $attachmentRepo = $this->repository('XF:Attachment');
         $constraints = $attachmentRepo->getDefaultAttachmentConstraints();
 
+        $registrationSetup = $this->app()->options()->registrationSetup;
+
         return [
             'reactions' => $reactions,
             'apiVersion' => $addOns['Truonglv/Api']['version_id'],
@@ -539,6 +551,9 @@ class App extends AbstractController
             'accountUpdateUrl' => \Truonglv\Api\App::buildLinkProxy($accountDetails),
             'quotePlaceholderTemplate' => \Truonglv\Api\App::QUOTE_PLACEHOLDER_TEMPLATE,
             'allowedAttachmentExtensions' => $constraints['extensions'],
+            'registerMinimumAge' => $registrationSetup['requireDob'] > 0
+                ? intval($registrationSetup['minimumAge'])
+                : 0,
         ];
     }
 
