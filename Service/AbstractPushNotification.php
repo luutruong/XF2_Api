@@ -128,14 +128,14 @@ abstract class AbstractPushNotification extends AbstractService
      * @param User $user
      * @return int
      */
-    protected function getTotalUnreadNotifications(User $user)
+    protected function getTotalViewedNotifications(User $user): int
     {
         if (!\array_key_exists($user->user_id, $this->userAlertsCache)) {
             /** @var \XF\Repository\UserAlert $alertRepo */
             $alertRepo = \XF::app()->repository('XF:UserAlert');
 
             $total = $alertRepo->findAlertsForUser($user->user_id)
-                ->where('read_date', 0)
+                ->where('view_date', 0)
                 ->where('content_type', App::getSupportAlertContentTypes())
                 ->total();
             $this->userAlertsCache[$user->user_id] = $total + $user->conversations_unread;

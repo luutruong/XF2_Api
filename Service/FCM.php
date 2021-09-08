@@ -71,7 +71,7 @@ class FCM extends AbstractPushNotification
                 $message = $message->withApnsConfig([
                     'payload' => [
                         'aps' => [
-                            'badge' => $this->getTotalUnreadNotifications($receiver),
+                            'badge' => $this->getTotalViewedNotifications($receiver),
                             'sound' => 'default',
                         ]
                     ]
@@ -79,7 +79,7 @@ class FCM extends AbstractPushNotification
             } elseif ($subscription->device_type === 'android') {
                 $message = $message->withAndroidConfig([
                     'notification' => [
-                        'notification_count' => $this->getTotalUnreadNotifications($receiver),
+                        'notification_count' => $this->getTotalViewedNotifications($receiver),
                         'sound' => 'default',
                     ],
                 ]);
