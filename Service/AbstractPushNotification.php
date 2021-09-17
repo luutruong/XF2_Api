@@ -128,7 +128,7 @@ abstract class AbstractPushNotification extends AbstractService
      * @param User $user
      * @return int
      */
-    protected function getTotalViewedNotifications(User $user): int
+    protected function getTotalUnviewedNotifications(User $user): int
     {
         if (!\array_key_exists($user->user_id, $this->userAlertsCache)) {
             /** @var \XF\Repository\UserAlert $alertRepo */
