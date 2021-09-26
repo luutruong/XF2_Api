@@ -86,10 +86,11 @@ class ApiHtml extends XFCP_ApiHtml
 
             return $this->wrapHtml(
                 sprintf(
-                    '<video src="%s" data-thumbnail="%s" data-provider="%s">',
+                    '<video src="%s" data-thumbnail="%s" data-provider="%s" data-provider-id="%s">',
                     htmlspecialchars($viewUrl),
                     htmlspecialchars($thumbnailUrl),
-                    htmlspecialchars($provider)
+                    htmlspecialchars($provider),
+                    htmlspecialchars($mediaKey)
                 ),
                 '',
                 '</video>'
