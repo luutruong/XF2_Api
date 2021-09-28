@@ -57,50 +57,6 @@ class ApiHtml extends XFCP_ApiHtml
     }
 
     /**
-     * @param array $children
-     * @param mixed $option
-     * @param array $tag
-     * @param array $options
-     * @return mixed
-     */
-    public function renderTagMedia(array $children, $option, array $tag, array $options)
-    {
-        if (!App::isRequestFromApp()) {
-            return parent::renderTagMedia($children, $option, $tag, $options);
-        }
-
-        $mediaKey = \trim($this->renderSubTreePlain($children));
-        if (\preg_match('#[&?"\'<>\r\n]#', $mediaKey) === 1 || \strpos($mediaKey, '..') !== false) {
-            return '';
-        }
-
-        $censored = $this->formatter->censorText($mediaKey);
-        if ($censored != $mediaKey) {
-            return '';
-        }
-
-        $provider = \strtolower($option);
-        if ($provider === 'youtube') {
-            $viewUrl = 'https://youtube.com/watch?v=' . $mediaKey;
-            $thumbnailUrl = 'https://img.youtube.com/vi/' . $mediaKey . '/hqdefault.jpg';
-
-            return $this->wrapHtml(
-                sprintf(
-                    '<video src="%s" data-thumbnail="%s" data-provider="%s" data-provider-id="%s">',
-                    htmlspecialchars($viewUrl),
-                    htmlspecialchars($thumbnailUrl),
-                    htmlspecialchars($provider),
-                    htmlspecialchars($mediaKey)
-                ),
-                '',
-                '</video>'
-            );
-        }
-
-        return '[EMBED MEDIA]';
-    }
-
-    /**
      * @param mixed $content
      * @param mixed $title
      * @return string
