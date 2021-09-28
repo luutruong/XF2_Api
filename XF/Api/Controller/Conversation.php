@@ -98,7 +98,7 @@ class Conversation extends XFCP_Conversation
                 && $message->conversation_id === $conversation->conversation_id
             ) {
                 $messagesBefore = $convMessageRepo->findEarlierMessages($conversation, $message)->total();
-                $page = floor($messagesBefore / $this->options()->messagesPerPage) + 1;
+                $page = floor($messagesBefore / $perPage) + 1;
             }
         } elseif ($unread) {
             /** @var \XF\Entity\ConversationMessage|null $firstUnread */
@@ -109,7 +109,7 @@ class Conversation extends XFCP_Conversation
                 $messagesBefore = $convMessageRepo->findEarlierMessages($conversation, $firstUnread)->total();
             }
 
-            $page = floor($messagesBefore / $this->options()->messagesPerPage) + 1;
+            $page = floor($messagesBefore / $perPage) + 1;
         }
 
         return parent::getMessagesInConversationPaginated($conversation, $page, $perPage);

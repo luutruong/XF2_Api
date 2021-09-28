@@ -88,7 +88,7 @@ class Thread extends XFCP_Thread
                 && $post->thread_id === $thread->thread_id
             ) {
                 if (\XF::isApiCheckingPermissions() && $post->canView()) {
-                    $page = \floor($post->position / $this->options()->messagesPerPage) + 1;
+                    $page = \floor($post->position / $perPage) + 1;
                 }
             }
         } elseif ($isUnread) {
@@ -106,13 +106,13 @@ class Thread extends XFCP_Thread
                 }
 
                 if ($firstUnread !== null) {
-                    $page = \floor($firstUnread->position / $this->options()->messagesPerPage) + 1;
+                    $page = \floor($firstUnread->position / $perPage) + 1;
                 }
             } else {
                 /** @var \XF\Entity\Post|null $firstUnread */
                 $firstUnread = $thread->LastPost;
                 if ($firstUnread !== null) {
-                    $page = \floor($firstUnread->position / $this->options()->messagesPerPage) + 1;
+                    $page = \floor($firstUnread->position / $perPage) + 1;
                 }
             }
         }
