@@ -84,10 +84,29 @@ class Forum extends XFCP_Forum
      */
     protected function setupThreadFinder(\XF\Entity\Forum $forum, &$filters = [], &$sort = null)
     {
+        $notFound = false;
+        if ($this->request()->exists('started_by')) {
+            $startedBy = $this->filter('started_by', 'str');
+            if (utf8_strlen($startedBy) > 0) {
+                /** @var \XF\Entity\User|null $user */
+                $user = $this->em()->findOne('XF:User', [
+                    'username' => $startedBy
+                ]);
+                if ($user === null) {
+                    $notFound = true;
+                } else {
+                    $this->request()->set('starter_id', $user->user_id);
+                }
+            }
+        }
+
         $finder = parent::setupThreadFinder($forum, $filters, $sort);
 
         if (App::isRequestFromApp()) {
             $finder->with('FirstPost');
+        }
+        if ($notFound) {
+            $finder->whereImpossible();
         }
 
         return $finder;
