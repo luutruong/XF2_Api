@@ -80,7 +80,7 @@ class Conversation extends XFCP_Conversation
      */
     protected function getMessagesInConversationPaginated(\XF\Entity\ConversationMaster $conversation, $page = 1, $perPage = null)
     {
-        if (App::isRequestFromApp()) {
+        if ($perPage === null) {
             $perPage = $this->options()->tApi_recordsPerPage;
         }
 

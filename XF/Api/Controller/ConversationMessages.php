@@ -14,7 +14,7 @@ class ConversationMessages extends XFCP_ConversationMessages
     {
         $replier = parent::setupConversationReply($conversation);
 
-        if (App::isRequestFromApp()) {
+        if ($this->request()->exists('quote_message_id')) {
             $quoteMessageId = $this->filter('quote_message_id', 'uint');
             $defaultMessage = null;
             if ($quoteMessageId > 0) {

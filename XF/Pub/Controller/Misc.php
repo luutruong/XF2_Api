@@ -11,10 +11,6 @@ class Misc extends XFCP_Misc
 {
     public function actionTApiGoto()
     {
-        if (!App::isRequestFromApp()) {
-            return $this->redirect($this->buildLink('index'));
-        }
-
         $payload = $this->filter(App::KEY_LINK_PROXY_INPUT_DATA, 'str');
         $sign = $this->filter(App::KEY_LINK_PROXY_INPUT_SIGNATURE, 'str');
         if ($sign === '') {

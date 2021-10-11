@@ -25,9 +25,7 @@ class Conversations extends XFCP_Conversations
     public function actionPost()
     {
         $this->request()->set('tapi_last_message', 'bool');
-        if ($this->request()->exists('recipients')
-            && App::isRequestFromApp()
-        ) {
+        if ($this->request()->exists('recipients')) {
             $names = $this->filter('recipients', 'str');
             $names = \explode(',', $names);
             $names = \array_map('trim', $names);
@@ -83,7 +81,7 @@ class Conversations extends XFCP_Conversations
 
         $finder = parent::setupConversationFinder();
 
-        if (App::isRequestFromApp()) {
+        if (App::isRequestFromApp() || $this->request()->exists('with_last_message')) {
             $finder->with('Master.Users|' . \XF::visitor()->user_id);
             $finder->with('Master.LastMessage');
         }

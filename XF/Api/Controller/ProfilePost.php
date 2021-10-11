@@ -41,7 +41,7 @@ class ProfilePost extends XFCP_ProfilePost
      */
     protected function getCommentsOnProfilePostPaginated(\XF\Entity\ProfilePost $profilePost, $page = 1, $perPage = null)
     {
-        if (App::isRequestFromApp()) {
+        if ($perPage === null) {
             $perPage = $this->options()->tApi_recordsPerPage;
         }
 

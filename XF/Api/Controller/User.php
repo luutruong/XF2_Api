@@ -142,7 +142,7 @@ class User extends XFCP_User
      */
     protected function getProfilePostsForUserPaginated(\XF\Entity\User $user, $page = 1, $perPage = null)
     {
-        if (App::isRequestFromApp()) {
+        if ($perPage === null) {
             $perPage = $this->options()->tApi_recordsPerPage;
         }
 

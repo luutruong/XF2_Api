@@ -14,10 +14,7 @@ class Posts extends XFCP_Posts
     protected function setupThreadReply(\XF\Entity\Thread $thread)
     {
         $replier = parent::setupThreadReply($thread);
-
-        if (App::isRequestFromApp()) {
-            $this->tApiPrepareMessageForReply($replier);
-        }
+        $this->tApiPrepareMessageForReply($replier);
 
         return $replier;
     }
