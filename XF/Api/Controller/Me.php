@@ -138,7 +138,7 @@ class Me extends XFCP_Me
      *
      * @throws \XF\Mvc\Reply\Exception
      */
-    protected function tApiAssertViewableUser($id, array $with = ['api'], bool $basicProfileOnly = true)
+    protected function tApiAssertViewableUser($id, $with = 'api', bool $basicProfileOnly = true)
     {
         /** @var \XF\Entity\User $user */
         $user = $this->assertRecordExists('XF:User', $id, $with);

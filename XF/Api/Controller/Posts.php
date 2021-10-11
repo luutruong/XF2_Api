@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\App;
 use XF\Service\Thread\Replier;
 
 class Posts extends XFCP_Posts

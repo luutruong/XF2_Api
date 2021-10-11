@@ -2,8 +2,6 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\App;
-
 class ConversationMessages extends XFCP_ConversationMessages
 {
     /**

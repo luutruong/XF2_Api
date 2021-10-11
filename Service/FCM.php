@@ -77,12 +77,14 @@ class FCM extends AbstractPushNotification
                     ]
                 ]);
             } elseif ($subscription->device_type === 'android') {
-                $message = $message->withAndroidConfig([
+                /** @var mixed $androidConfig */
+                $androidConfig = [
                     'notification' => [
                         'notification_count' => $this->getTotalUnviewedNotifications($receiver),
                         'sound' => 'default',
                     ],
-                ]);
+                ];
+                $message = $message->withAndroidConfig($androidConfig);
             }
 
             \array_push($messages, $message);
