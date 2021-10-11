@@ -2,8 +2,6 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\App;
-
 class Threads extends XFCP_Threads
 {
     /**
@@ -12,7 +10,7 @@ class Threads extends XFCP_Threads
      */
     protected function setupThreadCreate(\XF\Entity\Forum $forum)
     {
-        if (App::isRequestFromApp($this->request()) && $this->request()->exists('tag_names')) {
+        if ($this->request()->exists('tag_names')) {
             $tagNames = $this->filter('tag_names', 'str');
             $tagNames = \preg_split('/\,/', $tagNames, -1, PREG_SPLIT_NO_EMPTY);
 
@@ -29,7 +27,7 @@ class Threads extends XFCP_Threads
      */
     protected function setupThreadFinder(&$filters = [], &$sort = null)
     {
-        if (App::isRequestFromApp($this->request())) {
+        if ($this->request()->exists('started_by')) {
             $starterName = $this->filter('started_by', 'str');
             if (strlen($starterName) > 0) {
                 /** @var \XF\Entity\User $user */

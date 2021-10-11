@@ -121,7 +121,7 @@ class Forum extends XFCP_Forum
     {
         parent::adjustThreadListApiResults($forum, $result);
 
-        if (App::isRequestFromApp()) {
+        if (App::isRequestFromApp() || $this->filter('with_first_post', 'bool') === true) {
             $result->includeRelation('FirstPost');
         }
     }

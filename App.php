@@ -79,6 +79,7 @@ class App
     /**
      * @param Request|null $request
      * @return bool
+     * @deprecated 3.0.0 bring add-on not just for mobile app its welcome to use any projects
      */
     public static function isRequestFromApp(?Request $request = null): bool
     {
