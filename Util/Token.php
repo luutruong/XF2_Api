@@ -15,7 +15,7 @@ class Token
      * @throws \ErrorException
      * @throws \XF\PrintableException
      */
-    public static function generateAccessToken($userId, $ttl = 60, $limit = 10)
+    public static function generateAccessToken(int $userId, int $ttl = 60, int $limit = 10): string
     {
         $retried = 0;
         $app = \XF::app();
