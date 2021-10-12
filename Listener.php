@@ -36,7 +36,8 @@ class Listener
      */
     public static function appApiValidateRequest(\XF\Http\Request $request, &$result, &$error, &$code)
     {
-        if (!App::isRequestFromApp($request)) {
+        $requestApiKey = $request->getServer('HTTP_XF_TAPI_KEY');
+        if (strlen($requestApiKey) === 0) {
             return;
         }
 
