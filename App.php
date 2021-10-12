@@ -25,11 +25,6 @@ class App
     const QUOTE_PLACEHOLDER_TEMPLATE = '[MBQUOTE={content_type},{content_id}]';
 
     /**
-     * @var bool
-     */
-    public static $enableLogging = false;
-
-    /**
      * @var string
      */
     public static $defaultPushNotificationService = 'Truonglv\Api:FCM';

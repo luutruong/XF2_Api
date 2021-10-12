@@ -76,20 +76,6 @@ class Listener
         }
     }
 
-    /**
-     * @param \XF\Mvc\Controller $controller
-     * @param mixed $action
-     * @param \XF\Mvc\ParameterBag $params
-     * @return void
-     */
-    public static function onControllerPreDispatch(\XF\Mvc\Controller $controller, $action, \XF\Mvc\ParameterBag $params)
-    {
-        if (!$controller instanceof AbstractController) {
-            return;
-        }
-
-        App::$enableLogging = App::isRequestFromApp($controller->request());
-    }
 
     /**
      * @param \XF\Api\App $app
@@ -99,42 +85,9 @@ class Listener
      */
     public static function onAppApiComplete(\XF\Api\App $app, \XF\Http\Response &$response)
     {
-        if (!App::$enableLogging) {
-            return;
-        }
-
         $request = $app->request();
         /** @var \Truonglv\Api\Repository\Log $logRepo */
         $logRepo = $app->repository('Truonglv\Api:Log');
-
-        /** @var Log $log */
-        $log = $app->em()->create('Truonglv\Api:Log');
-        $log->user_id = \XF::visitor()->user_id;
-
-        $log->app_version = $request->getServer(App::HEADER_KEY_APP_VERSION);
-
-        $log->end_point = $request->getRequestUri();
-        $log->method = \strtoupper($request->getRequestMethod());
-
-        $post = $_POST;
-        if (isset($post['password'])) {
-            $post['password'] = '******';
-        }
-
-        $log->payload = [
-            '_POST' => $post
-        ];
-
-        $log->response_code = $response->httpCode();
-        $body = $response->body();
-        if ($body instanceof ResponseFile
-            || $body instanceof ResponseStream
-        ) {
-            $log->response = '';
-        } else {
-            $log->response = trim($logRepo->prepareDataForLog($body));
-        }
-
-        $log->save();
+        $logRepo->log($request, $response);
     }
 }

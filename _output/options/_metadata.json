@@ -14,6 +14,9 @@
     "tApi_discussionPreviewLength.json": {
         "hash": "08b2dd30e36518bbbd2b2dbb8b078d87"
     },
+    "tApi_enableLogRequests.json": {
+        "hash": "113088d676f2f5bafa81266c935bb480"
+    },
     "tApi_encryptKey.json": {
         "hash": "fbd33522f1191074345cb90e19a92a7b"
     },
