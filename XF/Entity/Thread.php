@@ -42,6 +42,12 @@ class Thread extends XFCP_Thread
         // the image MUST be viewable by guest as well
         $result->tapi_thread_image_url = null;
 
+        if (!array_key_exists('tapi_first_post', $options)
+            && $this->app()->request()->filter('with_first_post', 'bool') === true
+        ) {
+            $options['tapi_first_post'] = 1;
+        }
+
         if (isset($options['tapi_first_post'])
             && $this->FirstPost !== null
         ) {

@@ -39,6 +39,11 @@ class Threads extends XFCP_Threads
             }
         }
 
-        return parent::setupThreadFinder($filters, $sort);
+        $finder = parent::setupThreadFinder($filters, $sort);
+        if ($this->filter('with_first_post', 'bool') === true) {
+            $finder->with('FirstPost');
+        }
+
+        return $finder;
     }
 }
