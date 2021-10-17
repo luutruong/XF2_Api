@@ -25,6 +25,8 @@ class User extends XFCP_User
             $result->can_upload_avatar = false;
         }
 
+        $result->can_view_current_activity = $this->canViewCurrentActivity();
+
         $result->ignoring = $this->Profile !== null ? $this->Profile->ignored : [];
         $result->following = $this->Profile !== null ? $this->Profile->following : [];
         // if this key is TRUE in the user profile will have a tick icon
