@@ -22,7 +22,7 @@ class App
     const KEY_LINK_PROXY_INPUT_DATA = '_d';
     const KEY_LINK_PROXY_INPUT_SIGNATURE = '_s';
 
-    const QUOTE_PLACEHOLDER_TEMPLATE = '[MBQUOTE={content_type},{content_id}]';
+    const QUOTE_PLACEHOLDER_TEMPLATE = '[QUOTE={content_type},{content_id}]';
 
     /**
      * @var bool
