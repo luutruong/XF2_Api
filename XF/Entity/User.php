@@ -26,12 +26,10 @@ class User extends XFCP_User
         }
 
         $result->can_view_current_activity = $this->canViewCurrentActivity();
+        $result->can_upload_attachment_on_profile = $this->canUploadAndManageAttachmentsOnProfile();
 
         $result->ignoring = $this->Profile !== null ? $this->Profile->ignored : [];
         $result->following = $this->Profile !== null ? $this->Profile->following : [];
-        // if this key is TRUE in the user profile will have a tick icon
-        // make this option config from server to support third party add-on
-        $result->tapi_is_verified = $this->is_staff;
 
         if ($verbosity >= self::VERBOSITY_VERBOSE) {
             $result->tapi_about_data = $this->getTApiAboutTabData();
