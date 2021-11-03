@@ -56,6 +56,13 @@ class ApiHtml extends XFCP_ApiHtml
         return parent::renderTagAttach($children, $option, $tag, $options);
     }
 
+    /**
+     * @param array $children
+     * @param mixed $option
+     * @param array $tag
+     * @param array $options
+     * @return mixed
+     */
     public function renderTagMedia(array $children, $option, array $tag, array $options)
     {
         $this->mediaSites['youtube']['callback'] = [$this, 'renderTApiEmbedYoutube'];
@@ -68,7 +75,7 @@ class ApiHtml extends XFCP_ApiHtml
         $embedUrl = 'https://www.youtube.com/embed/' . urlencode($id) . '?wmode=opaque';
 
         $iframe = $this->wrapHtml(
-            '<iframe src="'. htmlspecialchars($embedUrl) .'" width="560" height="315" frameborder="0" allowfullscreen="true">',
+            '<iframe src="' . htmlspecialchars($embedUrl) . '" width="560" height="315" frameborder="0" allowfullscreen="true">',
             '',
             '</iframe>'
         );
