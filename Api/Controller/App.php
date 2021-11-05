@@ -530,6 +530,8 @@ class App extends AbstractController
      */
     protected function getAppInfo(): array
     {
+        $visitor = \XF::visitor();
+
         /** @var Reaction $reactionData */
         $reactionData = $this->data('Truonglv\Api:Reaction');
         $reactions = $reactionData->getReactions();
@@ -558,6 +560,7 @@ class App extends AbstractController
             'registerMinimumAge' => $registrationSetup['requireDob'] > 0
                 ? intval($registrationSetup['minimumAge'])
                 : 0,
+            'enableAds' => !$visitor->hasPermission('general', 'tapi_disableAdsInApp'),
         ];
     }
 

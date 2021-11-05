@@ -179,6 +179,12 @@
         "version_string": "1.0.0",
         "hash": "eeb409a48d7dd472bcd45f820bf83be8"
     },
+    "permission.general_tapi_disableAdsInApp.txt": {
+        "global_cache": false,
+        "version_id": 2020000,
+        "version_string": "2.2.0",
+        "hash": "84533759a60c5d2b9b5c87890137bdc5"
+    },
     "tapi_associate_with_xenforo_api_key.txt": {
         "global_cache": false,
         "version_id": 1000800,
