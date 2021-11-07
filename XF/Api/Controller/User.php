@@ -49,7 +49,7 @@ class User extends XFCP_User
 
         /** @var \XF\Entity\UserFollow $entity */
         foreach ($entities as $entity) {
-            $users[$entity->user_id] = $entity->FollowUser;
+            $users[$entity->follow_user_id] = $entity->FollowUser;
         }
 
         return $this->apiResult([
