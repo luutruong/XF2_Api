@@ -9,10 +9,7 @@ class Reaction
      */
     protected $reactions;
 
-    /**
-     * @return array
-     */
-    public function getReactions()
+    public function getReactions(): array
     {
         if ($this->reactions === null) {
             $reactions = [];
