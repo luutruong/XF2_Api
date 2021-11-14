@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Entity\\Node",
+    "to_class": "Truonglv\\Api\\XF\\Entity\\Node",
+    "execute_order": 10,
+    "active": true
+}
