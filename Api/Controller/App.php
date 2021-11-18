@@ -121,7 +121,7 @@ class App extends AbstractController
 
         $newFinder = $this->finder('XF:Thread');
         $threads = $newFinder->whereIds($threadIds)
-            ->with('FirstPost')
+            ->with(['FirstPost', 'LastPost'])
             ->with('api')
             ->fetch()
             ->sortByList($threadIds);
@@ -129,6 +129,9 @@ class App extends AbstractController
         /** @var \XF\Entity\Thread $thread */
         foreach ($threads as $thread) {
             $posts[$thread->first_post_id] = $thread->FirstPost;
+            if ($thread->last_post_id > 0) {
+                $posts[$thread->last_post_id] = $thread->LastPost;
+            }
         }
 
         /** @var Attachment $attachmentRepo */
@@ -137,7 +140,8 @@ class App extends AbstractController
 
         $data['threads'] = $threads->filterViewable()->toApiResults(Entity::VERBOSITY_NORMAL, [
             'tapi_first_post' => true,
-            'tapi_fetch_image' => true
+            'tapi_fetch_image' => true,
+            'tapi_last_post' => true,
         ]);
         if ($search->result_count > $perPage) {
             $data['pagination'] = $this->getPaginationData($threads, $page, $perPage, $search->result_count);
