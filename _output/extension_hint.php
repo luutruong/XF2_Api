@@ -54,6 +54,11 @@ namespace Truonglv\Api\XF\Pub\Controller
 	class XFCP_Misc extends \XF\Pub\Controller\Misc {}
 }
 
+namespace Truonglv\Api\XF\Repository
+{
+	class XFCP_Tag extends \XF\Repository\Tag {}
+}
+
 namespace Truonglv\Api\XF\Service\Alert
 {
 	class XFCP_Pusher extends \XF\Service\Alert\Pusher {}

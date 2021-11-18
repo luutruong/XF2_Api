@@ -166,7 +166,7 @@ class App extends AbstractController
 
     public function actionGetTrendingTags()
     {
-        /** @var Tag $tagRepo */
+        /** @var \Truonglv\Api\XF\Repository\Tag $tagRepo */
         $tagRepo = $this->repository('XF:Tag');
         $enableTagging = (bool) $this->options()->enableTagging;
         if (!$enableTagging) {
@@ -175,15 +175,8 @@ class App extends AbstractController
             ]);
         }
 
-        $cloudEntries = $tagRepo->getTagsForCloud(30, $this->options()->tagCloudMinUses);
-        $tagCloud = $tagRepo->getTagCloud($cloudEntries);
-        $tagNames = [];
-        foreach ($tagCloud as $item) {
-            $tagNames[] = $item['tag']['tag'];
-        }
-
         return $this->apiResult([
-            'tags' => $tagNames,
+            'tags' => $tagRepo->getTApiTrendingTags(['thread'], 7, 30),
         ]);
     }
 
