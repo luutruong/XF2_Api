@@ -5,7 +5,6 @@ namespace Truonglv\Api\Api\Controller;
 use XF\Http\Request;
 use XF\Finder\Thread;
 use XF\Mvc\Dispatcher;
-use XF\Repository\Tag;
 use XF\Repository\Tfa;
 use XF\Mvc\Reply\Error;
 use XF\Repository\Node;
