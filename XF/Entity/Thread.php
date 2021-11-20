@@ -48,7 +48,9 @@ class Thread extends XFCP_Thread
             $options['tapi_first_post'] = 1;
         }
 
-        if (isset($options['tapi_last_post'])) {
+        if (isset($options['tapi_last_post'])
+            && $this->first_post_id !== $this->last_post_id
+        ) {
             $result->includeRelation('LastPost', $verbosity, $options);
         }
 
