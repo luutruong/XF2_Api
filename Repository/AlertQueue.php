@@ -19,7 +19,8 @@ class AlertQueue extends Repository
             'conversation_message',
             'post',
             'thread',
-            'user'
+            'user',
+            'trophy',
         ];
     }
 
