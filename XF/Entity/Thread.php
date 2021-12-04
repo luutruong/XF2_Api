@@ -8,6 +8,58 @@ use Truonglv\Api\Util\BinarySearch;
 class Thread extends XFCP_Thread
 {
     /**
+     * @return string|null
+     */
+    public function getCoverImage()
+    {
+        /** @var mixed $parent */
+        $parent = 'parent::getCoverImage';
+        if (is_callable($parent)) {
+            return call_user_func($parent);
+        }
+
+        // Base image height (pixels) which support in mobile app
+        $baseRatio = 0.8;
+
+        $imageRatios = [];
+        $ratioIndexMap = [];
+        $ratioIndex = 0;
+
+        foreach ($this->FirstPost->Attachments as $attachment) {
+            if ($attachment->Data === null
+                || $attachment->Data->width === 0
+                || $attachment->Data->height === 0
+            ) {
+                continue;
+            }
+
+            $ratio = \min(
+                $attachment->Data->width / $attachment->Data->height,
+                $attachment->Data->height / $attachment->Data->width
+            );
+            $imageRatios[$ratioIndex] = $ratio;
+            $ratioIndexMap[$ratioIndex] = $attachment;
+
+            $ratioIndex++;
+        }
+
+        if (\count($imageRatios) === 0) {
+            return null;
+        }
+
+        \sort($imageRatios, SORT_ASC);
+
+        $best = BinarySearch::findClosestNumber($imageRatios, $baseRatio);
+        foreach ($imageRatios as $index => $ratio) {
+            if ($best === $ratio) {
+                return App::buildAttachmentLink($ratioIndexMap[$index]);
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param \XF\Api\Result\EntityResult $result
      * @param int $verbosity
      * @param array $options
@@ -59,45 +111,7 @@ class Thread extends XFCP_Thread
         ) {
             $result->includeRelation('FirstPost', $verbosity, $options);
             if (isset($options['tapi_fetch_image'])) {
-                // Base image height (pixels) which support in mobile app
-                $baseRatio = 0.8;
-
-                $imageRatios = [];
-                $ratioIndexMap = [];
-                $ratioIndex = 0;
-
-                foreach ($this->FirstPost->Attachments as $attachment) {
-                    if ($attachment->Data === null
-                        || $attachment->Data->width === 0
-                        || $attachment->Data->height === 0
-                    ) {
-                        continue;
-                    }
-
-                    $ratio = \min(
-                        $attachment->Data->width / $attachment->Data->height,
-                        $attachment->Data->height / $attachment->Data->width
-                    );
-                    $imageRatios[$ratioIndex] = $ratio;
-                    $ratioIndexMap[$ratioIndex] = $attachment;
-
-                    $ratioIndex++;
-                }
-
-                if (\count($imageRatios) === 0) {
-                    return;
-                }
-
-                \sort($imageRatios, SORT_ASC);
-
-                $best = BinarySearch::findClosestNumber($imageRatios, $baseRatio);
-                foreach ($imageRatios as $index => $ratio) {
-                    if ($best === $ratio) {
-                        $result->tapi_thread_image_url = App::buildAttachmentLink($ratioIndexMap[$index]);
-
-                        break;
-                    }
-                }
+                $result->tapi_thread_image_url = $this->getCoverImage();
             }
         }
 
