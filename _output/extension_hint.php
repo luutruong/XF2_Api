@@ -50,6 +50,7 @@ namespace Truonglv\Api\XF\Entity
 
 namespace Truonglv\Api\XF\Pub\Controller
 {
+	class XFCP_Attachment extends \XF\Pub\Controller\Attachment {}
 	class XFCP_Misc extends \XF\Pub\Controller\Misc {}
 }
 

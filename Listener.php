@@ -70,7 +70,7 @@ class Listener
                 ])
                 ->fetchOne();
 
-            if ($token !== null) {
+            if ($token !== null && !$token->isExpired()) {
                 $ourRequest->setApiUser($token->user_id);
             }
         }

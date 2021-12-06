@@ -30,6 +30,11 @@ class AccessToken extends Entity
         }
     }
 
+    public function isExpired(): bool
+    {
+        return $this->expire_date <= \XF::$time;
+    }
+
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_tapi_access_token';

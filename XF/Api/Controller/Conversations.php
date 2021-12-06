@@ -81,7 +81,7 @@ class Conversations extends XFCP_Conversations
 
         $finder = parent::setupConversationFinder();
 
-        if (App::isRequestFromApp() || $this->request()->exists('with_last_message')) {
+        if ($this->request()->exists('with_last_message')) {
             $finder->with('Master.Users|' . \XF::visitor()->user_id);
             $finder->with('Master.LastMessage');
         }
