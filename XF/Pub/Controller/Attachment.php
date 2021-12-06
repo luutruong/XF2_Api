@@ -3,9 +3,9 @@
 namespace Truonglv\Api\XF\Pub\Controller;
 
 use Truonglv\Api\App;
-use Truonglv\Api\Entity\AccessToken;
-use XF\Mvc\ParameterBag;
 use XF\Repository\User;
+use XF\Mvc\ParameterBag;
+use Truonglv\Api\Entity\AccessToken;
 
 class Attachment extends XFCP_Attachment
 {
