@@ -25,7 +25,13 @@ class Thread extends XFCP_Thread
         $ratioIndexMap = [];
         $ratioIndex = 0;
 
-        foreach ($this->FirstPost->Attachments as $attachment) {
+        /** @var Post|null $firstPost */
+        $firstPost = $this->FirstPost;
+        if ($firstPost === null) {
+            return null;
+        }
+
+        foreach ($firstPost->Attachments as $attachment) {
             if ($attachment->Data === null
                 || $attachment->Data->width === 0
                 || $attachment->Data->height === 0
