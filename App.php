@@ -121,27 +121,7 @@ class App
      */
     public static function buildAttachmentLink(Attachment $attachment): string
     {
-        return \XF::app()->router('public')->buildLink('canonical:attachments', $attachment, [
-            'hash' => (strlen($attachment->temp_hash) > 0) ? $attachment->temp_hash : null,
-            'tapi_token' => self::generateTokenForViewingAttachment($attachment)
-        ]);
-    }
-
-    /**
-     * @param Attachment $attachment
-     * @return string
-     */
-    public static function generateTokenForViewingAttachment(Attachment $attachment): string
-    {
-        $app = \XF::app();
-        $apiKey = self::getRequest()->getServer(self::HEADER_KEY_API_KEY);
-
-        return \XF::$time . '.' . md5(
-            \XF::$time
-                . $apiKey
-                . $attachment->attachment_id
-                . $app->config('globalSalt')
-        );
+        return \XF::app()->router('public')->buildLink('canonical:attachments', $attachment);
     }
 
     /**

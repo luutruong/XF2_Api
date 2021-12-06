@@ -1,6 +1,0 @@
-{
-    "from_class": "XF\\Entity\\Attachment",
-    "to_class": "Truonglv\\Api\\XF\\Entity\\Attachment",
-    "execute_order": 10,
-    "active": true
-}
