@@ -56,7 +56,13 @@ class Thread extends XFCP_Thread
         ) {
             $result->includeRelation('FirstPost', $verbosity, $options);
             if (isset($options['tapi_fetch_image'])) {
-                $result->tapi_thread_image_url = $this->getCoverImage();
+                $coverImage = $this->getCoverImage();
+                if ($coverImage !== null && substr($coverImage, 0, 1) === '/') {
+                    // https://xenforo.com/community/threads/200983/
+                    $coverImage = \XF::canonicalizeUrl($coverImage);
+                }
+
+                $result->tapi_thread_image_url = $coverImage;
             }
         }
 
