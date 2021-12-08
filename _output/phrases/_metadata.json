@@ -35,12 +35,6 @@
         "version_string": "1.0.8",
         "hash": "62c7594948c1231bbae9f948b1535b7e"
     },
-    "option.tApi_attachmentTokenExpires.txt": {
-        "global_cache": false,
-        "version_id": 1000001,
-        "version_string": "1.0.0",
-        "hash": "0b86a7298c7794dd2056b908c39159d8"
-    },
     "option.tApi_delayPushNotifications.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -106,12 +100,6 @@
         "version_id": 1000800,
         "version_string": "1.0.8",
         "hash": "70a12661034211156a1792bad2992ac2"
-    },
-    "option_explain.tApi_attachmentTokenExpires.txt": {
-        "global_cache": false,
-        "version_id": 1000001,
-        "version_string": "1.0.0",
-        "hash": "f1aac6e6eba3117393b6c7201aacdfe3"
     },
     "option_explain.tApi_delayPushNotifications.txt": {
         "global_cache": false,

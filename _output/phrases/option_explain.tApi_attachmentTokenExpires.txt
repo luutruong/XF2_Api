@@ -1,1 +1,0 @@
-This add-on will extend viewing attachment permission which allow all users can view attachments (only images) inside app. The link viewing contains a token which controlled by this option.
