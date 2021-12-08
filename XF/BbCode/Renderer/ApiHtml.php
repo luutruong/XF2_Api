@@ -42,13 +42,12 @@ class ApiHtml extends XFCP_ApiHtml
                 $attachmentRef = $attachments[$id];
 
                 $params = [
-                    'id' => $id,
                     'attachment' => $attachmentRef,
                     'full' => $attachmentRef->canView() && $this->isFullAttachView($option),
                     'alt' => $attachmentRef->filename,
                     'attachmentViewUrl' => $attachmentRef->canView()
                         ? App::buildAttachmentLink($attachmentRef)
-                        : $attachmentRef->thumbnail_url_full,
+                        : '',
                 ];
 
                 return $this->templater->renderTemplate('public:tapi_bb_code_tag_attach_img', $params);
