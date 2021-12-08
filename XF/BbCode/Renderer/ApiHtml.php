@@ -34,7 +34,7 @@ class ApiHtml extends XFCP_ApiHtml
     public function renderTagAttach(array $children, $option, array $tag, array $options)
     {
         $id = \intval($this->renderSubTreePlain($children));
-        if ($id > 0 && App::isRequestFromApp()) {
+        if ($id > 0) {
             $attachments = $options['attachments'];
 
             if (isset($attachments[$id])) {
@@ -44,9 +44,11 @@ class ApiHtml extends XFCP_ApiHtml
                 $params = [
                     'id' => $id,
                     'attachment' => $attachmentRef,
-                    'full' => $this->isFullAttachView($option),
+                    'full' => $attachmentRef->canView() && $this->isFullAttachView($option),
                     'alt' => $attachmentRef->filename,
-                    'attachmentViewUrl' => App::buildAttachmentLink($attachmentRef),
+                    'attachmentViewUrl' => $attachmentRef->canView()
+                        ? App::buildAttachmentLink($attachmentRef)
+                        : $attachmentRef->thumbnail_url_full,
                 ];
 
                 return $this->templater->renderTemplate('public:tapi_bb_code_tag_attach_img', $params);
