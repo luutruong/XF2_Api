@@ -16,12 +16,10 @@ class ApiHtml extends XFCP_ApiHtml
     {
         parent::setupRenderOptions($ast, $options);
 
-        if (App::isRequestFromApp()) {
-            $options['lightbox'] = false;
-            $options['stopSmilies'] = 1;
-            $options['allowUnfurl'] = false;
-            $options['noProxy'] = true;
-        }
+        $options['lightbox'] = false;
+        $options['stopSmilies'] = 1;
+        $options['allowUnfurl'] = false;
+        $options['noProxy'] = true;
     }
 
     /**
@@ -64,14 +62,10 @@ class ApiHtml extends XFCP_ApiHtml
      */
     protected function getRenderedSpoiler($content, $title = null)
     {
-        if (App::isRequestFromApp()) {
-            return $this->templater->renderTemplate('public:tapi_bb_code_tag_spoiler', [
-                'content' => new \XF\PreEscaped($content),
-                'title' => ($title !== null) ? new \XF\PreEscaped($title) : null
-            ]);
-        }
-
-        return parent::getRenderedSpoiler($content, $title);
+        return $this->templater->renderTemplate('public:tapi_bb_code_tag_spoiler', [
+            'content' => new \XF\PreEscaped($content),
+            'title' => ($title !== null) ? new \XF\PreEscaped($title) : null
+        ]);
     }
 
     /**
@@ -81,9 +75,7 @@ class ApiHtml extends XFCP_ApiHtml
      */
     protected function prepareTextFromUrlExtended($url, array $options)
     {
-        if (App::isRequestFromApp()) {
-            $options['shortenUrl'] = true;
-        }
+        $options['shortenUrl'] = true;
 
         return parent::prepareTextFromUrlExtended($url, $options);
     }
@@ -100,7 +92,7 @@ class ApiHtml extends XFCP_ApiHtml
         $proxyUrl = $url;
         $linkInfo = $this->formatter->getLinkClassTarget($url);
 
-        if ($visitor->user_id > 0 && $linkInfo['trusted'] === true && App::isRequestFromApp()) {
+        if ($visitor->user_id > 0 && $linkInfo['trusted'] === true) {
             $proxyUrl = App::buildLinkProxy($url);
         }
 
@@ -151,15 +143,11 @@ class ApiHtml extends XFCP_ApiHtml
     protected function getRenderedUser($content, int $userId)
     {
         $rendered = parent::getRenderedUser($content, $userId);
+        $params = strval(json_encode(['user_id' => $userId]));
 
-        if (App::isRequestFromApp()) {
-            $params = strval(json_encode(['user_id' => $userId]));
-            $rendered = \substr($rendered, 0, 3)
-                . ' data-tapi-route="XF:Member" class="link--internal"'
-                . ' data-tapi-route-params="' . \htmlspecialchars($params) . '" '
-                . \substr($rendered, 3);
-        }
-
-        return $rendered;
+        return \substr($rendered, 0, 3)
+            . ' data-tapi-route="XF:Member" class="link--internal"'
+            . ' data-tapi-route-params="' . \htmlspecialchars($params) . '" '
+            . \substr($rendered, 3);
     }
 }
