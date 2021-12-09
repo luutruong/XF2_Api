@@ -34,6 +34,8 @@ class User extends XFCP_User
         if ($verbosity >= self::VERBOSITY_VERBOSE) {
             $result->tapi_about_data = $this->getTApiAboutTabData();
         }
+
+        $result->tapi_enable_ads = !$this->hasPermission('general', 'tapi_disableAdsInApp');
     }
 
     /**
