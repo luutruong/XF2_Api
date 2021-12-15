@@ -1,10 +1,9 @@
 # Add-on enhancement to XenForo API
 
-Official XenForo API docs: https://xenforo.com/community/pages/api-endpoints/
+This document only provides API which the add-on makes an enhancement. To view other API end points please go to [Official XenForo API docs](https://xenforo.com/community/pages/api-endpoints/)
 
 All requests must be include there keys in headers:
 * `XF-TApi-Key`
-* `XF-TApi-Version`
 * `XF-TApi-Token`: If omitted the request processed for Guest user.
 
 ## Auth
