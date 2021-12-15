@@ -373,57 +373,6 @@ Response:
 
 ## Users
 
-### GET `tapi-apps/`
-
-Parameters:
-* N/A
-
-Response:
-```
-{
-  "reactions": [
-    {
-      "reactionId": number,
-      "text": string,
-      "imageUrl": url
-    },
-    ...
-  ],
-  "apiVersion": number,
-  "homeTabActive": string,
-  "allowRegistration": boolean,
-  "googleAnalyticsWebPropertyId": string
-}
-```
-
-### GET `tapi-apps/trending-tags`
-
-Parameters:
-* N/A
-
-Response:
-```
-{
-  "tags": [
-    "tag a",
-    "tag b",
-    ...
-  ]
-}
-```
-
-### GET `tapi-apps/newfeeds`
-
-Parameters:
-* order: (string) Currently support: new_threads, recent_threads, trending
-
-Response:
-```
-{
-    "threads": array
-    "pagintion": object
-}
-```
 
 ### Encrypt password
 Please see the method `Util\PasswordDecrypter::encrypt(...)`
