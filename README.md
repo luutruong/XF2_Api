@@ -373,6 +373,87 @@ Response:
 
 ## Users
 
+### GET `/users/:userId/following`
+
+Parameters:
+
+* `page` (int) __optional__
+
+Response:
+
+```
+{
+  "users": [
+    (user),
+    ...
+  ],
+  "pagination": (pagination)
+}
+```
+
+### POST `/users/:userId/following`
+
+Make current visitor follow this user
+
+Parameters:
+
+* N/A
+
+Response:
+
+```
+{
+  "message": (string)
+}
+```
+
+### DELETE `/users/:userId/following`
+
+Make current visitor unfollow this user
+
+Parameters:
+
+* N/A
+
+Response:
+
+```
+{
+  "message": (string)
+}
+```
+
+### POST `/users/:userId/report`
+
+Parameters:
+
+* `message` (string) __required__
+
+Response:
+
+```
+{
+  "message": (string)
+}
+```
+
+### GET `/users/:userId/threads`
+
+Parameters:
+
+* `page` (int) __optional__
+
+Response:
+
+```
+{
+  "threads": [
+    (thread),
+    ...
+  ],
+  "pagination": (pagination)
+}
+```
 
 ### Encrypt password
 Please see the method `Util\PasswordDecrypter::encrypt(...)`
