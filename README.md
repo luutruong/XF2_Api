@@ -1,9 +1,118 @@
-## Extended endpoints
+# Add-on enhancement to XenForo API
+
+Official XenForo API docs: https://xenforo.com/community/pages/api-endpoints/
 
 All requests must be include there keys in headers:
 * `XF-TApi-Key`
 * `XF-TApi-Version`
 * `XF-TApi-Token`: If omitted the request processed for Guest user.
+
+## Auth
+
+### POST `/tapi-apps/auth`
+
+Parameters:
+
+* `username` (string) __required__
+* `password` (string) __required__: Password must be encrypted.
+
+Response:
+
+```
+{
+  user: (user),
+  accessToken: (string)
+}
+```
+
+### POST `/tapi-apps/register`
+
+Parameters:
+
+* `username` (string) __required__
+* `email` (string) __required__
+* `password` (string) __required__: Password must be encrypted.
+* `birthday` (string) __optional__: Birthday must be formatted `Y-m-d`. Eg: `2021-12-15`
+
+Response:
+
+```
+{
+  user: (user),
+  accessToken: (string)
+}
+```
+
+## Conversations
+
+### GET `/conversations`
+
+Get list conversations by current visitor. Requires valid user access token.
+https://xenforo.com/community/pages/api-endpoints/#route_get_conversations_
+
+### POST `/conversations`
+
+Creating a conversation. https://xenforo.com/community/pages/api-endpoints/#route_post_conversations_
+
+Extra parameters:
+
+* `recipients` (string) __optional__: Create with conversation with many recipients. Each recipient name separate by comma (,).
+* `tapi_recipients` (bool) __optional__: Include recipients in conversation object.
+
+Response:
+
+```
+{
+  "conversation: (conversation)
+}
+```
+
+### GET `/conversations/:conversationId`
+
+Get specific conversation details. https://xenforo.com/community/pages/api-endpoints/#route_get_conversations_id_
+
+Extra parameters:
+
+* `tapi_recipients` (bool) __optional__: Include recipients in conversation object.
+
+Response:
+
+```
+{
+  "conversation": (conversation)
+}
+```
+
+
+## Forums
+
+## MISC
+
+### POST `/tapi-batch`
+
+Send a numerous requests in a single request. This API requires body is JSON which contains the following info:
+
+```
+[
+  {
+    "uri": (string),
+    "method": (string),
+    "params": {
+      "foo": "baz",
+      ...
+    }
+  }
+]
+```
+
+
+## Posts
+
+## Profile Posts
+
+## Threads
+
+## Users
 
 ### GET `tapi-apps/`
 
