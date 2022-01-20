@@ -117,9 +117,7 @@ class Me extends XFCP_Me
     public function actionPostAvatar()
     {
         $response = parent::actionPostAvatar();
-        if ($response instanceof ApiResult
-            && App::isRequestFromApp()
-        ) {
+        if ($response instanceof ApiResult) {
             $result = $response->getApiResult()->render();
             $result['user'] = \XF::visitor()->toApiResult();
 

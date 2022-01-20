@@ -88,7 +88,7 @@ class Listener
             return;
         }
 
-        App::$enableLogging = App::isRequestFromApp($controller->request());
+        App::$enableLogging = true;
     }
 
     /**

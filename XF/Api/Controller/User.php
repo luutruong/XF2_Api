@@ -148,27 +148,4 @@ class User extends XFCP_User
 
         return parent::getProfilePostsForUserPaginated($user, $page, $perPage);
     }
-
-    /**
-     * @param \XF\Entity\User $user
-     * @return \XF\Finder\ProfilePost
-     */
-    protected function setupProfilePostFinder(\XF\Entity\User $user)
-    {
-        $finder = parent::setupProfilePostFinder($user);
-        if (App::isRequestFromApp()) {
-            $finder->resetWhere();
-
-            $finder->where('profile_user_id', $user->user_id);
-            $finder->whereOr([
-                ['message_state', '=', 'visible'],
-                [
-                    'message_state' => 'moderated',
-                    'user_id' => \XF::visitor()->user_id
-                ]
-            ]);
-        }
-
-        return $finder;
-    }
 }

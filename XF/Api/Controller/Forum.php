@@ -63,21 +63,6 @@ class Forum extends XFCP_Forum
 
     /**
      * @param \XF\Entity\Forum $forum
-     * @param mixed $page
-     * @param mixed $perPage
-     * @return array
-     */
-    protected function getThreadsInForumPaginated(\XF\Entity\Forum $forum, $page = 1, $perPage = null)
-    {
-        if (App::isRequestFromApp()) {
-            $perPage = $this->options()->tApi_recordsPerPage;
-        }
-
-        return parent::getThreadsInForumPaginated($forum, $page, $perPage);
-    }
-
-    /**
-     * @param \XF\Entity\Forum $forum
      * @param array $filters
      * @param mixed $sort
      * @return \XF\Finder\Thread
@@ -102,7 +87,7 @@ class Forum extends XFCP_Forum
 
         $finder = parent::setupThreadFinder($forum, $filters, $sort);
 
-        if (App::isRequestFromApp()) {
+        if ($this->request()->exists('with_first_post')) {
             $finder->with('FirstPost');
         }
         if ($notFound) {
@@ -121,7 +106,7 @@ class Forum extends XFCP_Forum
     {
         parent::adjustThreadListApiResults($forum, $result);
 
-        if (App::isRequestFromApp() || $this->filter('with_first_post', 'bool') === true) {
+        if ($this->filter('with_first_post', 'bool') === true) {
             $result->includeRelation('FirstPost');
         }
     }

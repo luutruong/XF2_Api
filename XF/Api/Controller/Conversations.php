@@ -9,7 +9,7 @@ class Conversations extends XFCP_Conversations
 {
     public function actionGet()
     {
-        if (App::isRequestFromApp()) {
+        if ($this->filter('with_last_message', 'bool') === true) {
             $this->request()->set('tapi_last_message', true);
         }
 

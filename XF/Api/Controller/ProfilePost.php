@@ -47,27 +47,4 @@ class ProfilePost extends XFCP_ProfilePost
 
         return parent::getCommentsOnProfilePostPaginated($profilePost, $page, $perPage);
     }
-
-    /**
-     * @param \XF\Entity\ProfilePost $profilePost
-     * @return \XF\Finder\ProfilePostComment
-     */
-    protected function setupCommentsFinder(\XF\Entity\ProfilePost $profilePost)
-    {
-        $finder = parent::setupCommentsFinder($profilePost);
-        if (App::isRequestFromApp()) {
-            $finder->resetWhere();
-
-            $finder->where('profile_post_id', $profilePost->profile_post_id);
-            $finder->whereOr([
-                ['message_state', '=', 'visible'],
-                [
-                    'message_state' => 'moderated',
-                    'user_id' => \XF::visitor()->user_id
-                ]
-            ]);
-        }
-
-        return $finder;
-    }
 }

@@ -21,9 +21,7 @@ class UserAlert extends XFCP_UserAlert
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
 
-        if (!\in_array($this->content_type, App::getSupportAlertContentTypes(), true)
-            || !App::isRequestFromApp()
-        ) {
+        if (!\in_array($this->content_type, App::getSupportAlertContentTypes(), true)) {
             return;
         }
 
