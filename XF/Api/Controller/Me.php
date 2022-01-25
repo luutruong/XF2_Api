@@ -139,6 +139,7 @@ class Me extends XFCP_Me
         /** @var \XF\Service\User\Delete $deleter */
         $deleter = $this->service('XF:User\Delete', $visitor);
         $deleter->renameTo('guest-' . time());
+        $deleter->getUser()->setOption('allow_self_delete', true);
 
         if (!$deleter->delete($errors)) {
             return $this->error($errors);
