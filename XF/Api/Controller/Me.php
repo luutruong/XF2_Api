@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use Truonglv\Api\App;
+use Truonglv\Api\Repository\Token;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Ignore;
 use XF\Api\Mvc\Reply\ApiResult;
@@ -125,6 +126,29 @@ class Me extends XFCP_Me
         }
 
         return $response;
+    }
+
+    public function actionDelete()
+    {
+        // allow self-delete account.
+        $visitor = \XF::visitor();
+        if ($visitor->is_admin || $visitor->is_moderator) {
+            return $this->noPermission();
+        }
+
+        /** @var \XF\Service\User\Delete $deleter */
+        $deleter = $this->service('XF:User\Delete', $visitor);
+        $deleter->renameTo('guest-' . time());
+
+        if (!$deleter->delete($errors)) {
+            return $this->error($errors);
+        }
+
+        /** @var Token $tokenRepo */
+        $tokenRepo = $this->repository('Truonglv\Api:Token');
+        $tokenRepo->deleteUserTokens($visitor->user_id);
+
+        return $this->apiSuccess();
     }
 
     /**

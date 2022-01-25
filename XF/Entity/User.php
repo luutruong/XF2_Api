@@ -30,6 +30,7 @@ class User extends XFCP_User
 
         $result->ignoring = $this->Profile !== null ? $this->Profile->ignored : [];
         $result->following = $this->Profile !== null ? $this->Profile->following : [];
+        $result->can_delete = !$this->is_admin && !$this->is_moderator;
 
         if ($verbosity >= self::VERBOSITY_VERBOSE) {
             $result->tapi_about_data = $this->getTApiAboutTabData();

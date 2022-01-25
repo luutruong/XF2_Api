@@ -454,5 +454,21 @@ Response:
 }
 ```
 
+### DELETE `/me`
+
+Self-delete user account.
+
+Parameters:
+
+* N/A
+
+Response:
+
+```
+{
+  "message": (string)
+}
+```
+
 ### Encrypt password
 Please see the method `Util\PasswordDecrypter::encrypt(...)`
