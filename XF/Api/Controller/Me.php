@@ -2,11 +2,10 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\App;
-use Truonglv\Api\Repository\Token;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Ignore;
 use XF\Api\Mvc\Reply\ApiResult;
+use Truonglv\Api\Repository\Token;
 
 class Me extends XFCP_Me
 {

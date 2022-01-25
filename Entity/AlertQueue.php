@@ -7,13 +7,13 @@ use XF\Mvc\Entity\Structure;
 
 /**
  * COLUMNS
- * @property string content_type
- * @property int content_id
- * @property array payload
- * @property int queue_date
+ * @property string $content_type
+ * @property int $content_id
+ * @property array $payload
+ * @property int $queue_date
  *
  * GETTERS
- * @property Entity|null Content
+ * @property Entity|null $Content
  */
 class AlertQueue extends Entity
 {

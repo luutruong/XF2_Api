@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
 use Truonglv\Api\Api\ControllerPlugin\Report;
 use Truonglv\Api\Api\ControllerPlugin\Reaction;

@@ -8,7 +8,7 @@ use XF\Mvc\Entity\Entity as MvcEntity;
 use XF\Admin\Controller\AbstractController;
 
 /**
- * @version 2021022002
+ * @version 2021121601
  * @see \DevHelper\Autogen\Admin\Controller\Entity
  */
 abstract class Entity extends AbstractController
@@ -398,6 +398,7 @@ abstract class Entity extends AbstractController
                         } elseif (is_object($columnLabel) && $columnLabel instanceof \XF\Phrase) {
                             $labelPhraseName = $columnLabel->getName() . '_' .
                                 preg_replace('/[^a-z]+/i', '_', $allowedValue);
+                            // @phpstan-ignore-next-line
                             $label = \XF::phraseDeferred($labelPhraseName);
                         }
 
@@ -712,6 +713,7 @@ abstract class Entity extends AbstractController
                      'entities',
                      'entity',
                  ] as $partial) {
+            // @phpstan-ignore-next-line
             $phrases[$partial] = \XF::phrase(sprintf('%s_%s', $prefix, $partial));
         }
 

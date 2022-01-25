@@ -65,6 +65,7 @@ class FCM extends AbstractPushNotification
             /** @var User $receiver */
             $receiver = $subscription->User;
             $message = CloudMessage::withTarget('token', $subscription->device_token)
+                // @phpstan-ignore-next-line
                 ->withNotification(Notification::create($title, $body))
                 ->withData($dataTransformed);
             if ($subscription->device_type === 'ios') {
@@ -87,12 +88,13 @@ class FCM extends AbstractPushNotification
                 $message = $message->withAndroidConfig($androidConfig);
             }
 
-            \array_push($messages, $message);
+            $messages[] = $message;
         }
 
         $messaging = $factory->createMessaging();
 
         try {
+            // @phpstan-ignore-next-line
             $messaging->sendAll($messages);
         } catch (\Exception $e) {
             \XF::logException($e, false, '[tl] Api: ');

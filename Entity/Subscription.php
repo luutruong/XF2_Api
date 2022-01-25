@@ -7,19 +7,19 @@ use XF\Mvc\Entity\Structure;
 
 /**
  * COLUMNS
- * @property int|null subscription_id
- * @property int user_id
- * @property string username
- * @property string app_version
- * @property string device_token
- * @property string device_type
- * @property bool is_device_test
- * @property string provider
- * @property string provider_key
- * @property int subscribed_date
+ * @property int|null $subscription_id
+ * @property int $user_id
+ * @property string $username
+ * @property string $app_version
+ * @property string $device_token
+ * @property string $device_type
+ * @property bool $is_device_test
+ * @property string $provider
+ * @property string $provider_key
+ * @property int $subscribed_date
  *
  * RELATIONS
- * @property \XF\Entity\User User
+ * @property \XF\Entity\User $User
  */
 class Subscription extends Entity
 {

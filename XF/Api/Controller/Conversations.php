@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\App;
 use XF\Repository\User;
 
 class Conversations extends XFCP_Conversations
@@ -29,10 +28,11 @@ class Conversations extends XFCP_Conversations
             $names = $this->filter('recipients', 'str');
             $names = \explode(',', $names);
             $names = \array_map('trim', $names);
+            $names = array_diff($names, ['']);
 
             /** @var User $userRepo */
             $userRepo = $this->repository('XF:User');
-            if (\count($names)> 0) {
+            if (\count($names) > 0) {
                 $users = $userRepo->getUsersByNames($names, $notFound);
                 if (\count($notFound) > 0) {
                     return $this->apiError(\XF::phrase('following_members_not_found_x', [

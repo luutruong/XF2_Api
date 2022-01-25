@@ -7,13 +7,13 @@ use XF\Mvc\Entity\Structure;
 
 /**
  * COLUMNS
- * @property string token
- * @property int user_id
- * @property int expire_date
- * @property int created_date
+ * @property string $token
+ * @property int $user_id
+ * @property int $expire_date
+ * @property int $created_date
  *
  * RELATIONS
- * @property \XF\Entity\User User
+ * @property \XF\Entity\User $User
  */
 class AccessToken extends Entity
 {

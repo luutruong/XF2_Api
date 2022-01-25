@@ -3,7 +3,6 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use XF\Entity\Poll;
-use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
 

@@ -7,18 +7,18 @@ use XF\Mvc\Entity\Structure;
 
 /**
  * COLUMNS
- * @property int|null log_id
- * @property int user_id
- * @property string app_version
- * @property string end_point
- * @property string method
- * @property array payload
- * @property int response_code
- * @property string response
- * @property int log_date
+ * @property int|null $log_id
+ * @property int $user_id
+ * @property string $app_version
+ * @property string $end_point
+ * @property string $method
+ * @property array $payload
+ * @property int $response_code
+ * @property string $response
+ * @property int $log_date
  *
  * RELATIONS
- * @property \XF\Entity\User User
+ * @property \XF\Entity\User $User
  */
 class Log extends Entity
 {
