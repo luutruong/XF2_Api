@@ -1,0 +1,1 @@
+If enabled, users can delete their account through API request.

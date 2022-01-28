@@ -5,6 +5,29 @@ namespace Truonglv\Api\XF\Entity;
 class User extends XFCP_User
 {
     /**
+     * @var bool
+     */
+    private $tapiAllowSelfDelete = false;
+
+    public function setTapiAllowSelfDelete(bool $tapiAllowSelfDelete): void
+    {
+        $this->tapiAllowSelfDelete = $tapiAllowSelfDelete;
+    }
+
+    /**
+     * @param mixed $error
+     * @return bool
+     */
+    public function canTapiDelete(&$error = null): bool
+    {
+        if ($this->is_super_admin || $this->is_admin || $this->is_moderator) {
+            return false;
+        }
+
+        return $this->app()->options()->tApi_allowSelfDelete > 0;
+    }
+
+    /**
      * @param \XF\Api\Result\EntityResult $result
      * @param int $verbosity
      * @param array $options
@@ -30,13 +53,31 @@ class User extends XFCP_User
 
         $result->ignoring = $this->Profile !== null ? $this->Profile->ignored : [];
         $result->following = $this->Profile !== null ? $this->Profile->following : [];
-        $result->can_be_delete = !$this->is_admin && !$this->is_moderator;
+        $result->can_be_delete = $this->canTapiDelete();
 
         if ($verbosity >= self::VERBOSITY_VERBOSE) {
             $result->tapi_about_data = $this->getTApiAboutTabData();
         }
 
         $result->tapi_enable_ads = !$this->hasPermission('general', 'tapi_disableAdsInApp');
+    }
+
+    /**
+     * @param mixed $message
+     * @param mixed $key
+     * @param mixed $specificError
+     * @return void
+     */
+    public function error($message, $key = null, $specificError = true)
+    {
+        if ($message instanceof \XF\Phrase
+            && $this->tapiAllowSelfDelete
+            && $message->getName() === 'you_cannot_delete_your_own_account'
+        ) {
+            return;
+        }
+
+        parent::error($message, $key, $specificError);
     }
 
     /**

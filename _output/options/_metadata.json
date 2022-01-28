@@ -2,6 +2,9 @@
     "tApi_accessTokenTtl.json": {
         "hash": "30ee955812a0a53a51d9ed19c689b5a5"
     },
+    "tApi_allowSelfDelete.json": {
+        "hash": "4f815b6935b6f4447046cbe1431dd5fe"
+    },
     "tApi_apiKey.json": {
         "hash": "751e255ea0476b16315e5867d43583a2"
     },

@@ -29,6 +29,12 @@
         "version_string": "1.0.8",
         "hash": "4aac7dab9e5c4a3b7c9802921be9a949"
     },
+    "option.tApi_allowSelfDelete.txt": {
+        "global_cache": false,
+        "version_id": 2020600,
+        "version_string": "2.2.6",
+        "hash": "cdad84a398552b400aacefbe344a9bcf"
+    },
     "option.tApi_apiKey.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -94,6 +100,12 @@
         "version_id": 1000800,
         "version_string": "1.0.8",
         "hash": "a7af45e7ba0d04b77fb56068e1054bab"
+    },
+    "option_explain.tApi_allowSelfDelete.txt": {
+        "global_cache": false,
+        "version_id": 2020600,
+        "version_string": "2.2.6",
+        "hash": "a6a9b8ae5f7e845017cd0f9bc67c8582"
     },
     "option_explain.tApi_apiKey.txt": {
         "global_cache": false,

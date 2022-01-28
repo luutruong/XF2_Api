@@ -1,0 +1,1 @@
+Allow self-delete account via API?

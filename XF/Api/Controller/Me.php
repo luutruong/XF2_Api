@@ -120,16 +120,20 @@ class Me extends XFCP_Me
 
     public function actionDelete()
     {
-        // allow self-delete account.
+        /** @var \Truonglv\Api\XF\Entity\User $visitor */
         $visitor = \XF::visitor();
-        if ($visitor->is_admin || $visitor->is_moderator) {
-            return $this->noPermission();
+        if (!$visitor->canTapiDelete($error)) {
+            return $this->noPermission($error);
         }
 
         /** @var \XF\Service\User\Delete $deleter */
         $deleter = $this->service('XF:User\Delete', $visitor);
         $deleter->renameTo('guest-' . time());
-        $deleter->getUser()->setOption('allow_self_delete', true);
+        /** @var \Truonglv\Api\XF\Entity\User $user */
+        $user = $deleter->getUser();
+        $user->setOption('allow_self_delete', true);
+        // XF bug: https://xenforo.com/community/threads/service-xf-service-user-delete-prevent-delete-self-account.202718/
+        $user->setTapiAllowSelfDelete(true);
 
         if (!$deleter->delete($errors)) {
             return $this->error($errors);
