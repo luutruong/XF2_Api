@@ -64,6 +64,7 @@ class FCM extends AbstractPushNotification
         foreach ($subscriptions as $subscription) {
             /** @var User $receiver */
             $receiver = $subscription->User;
+            // @phpstan-ignore-next-line
             $message = CloudMessage::withTarget('token', $subscription->device_token)
                 // @phpstan-ignore-next-line
                 ->withNotification(Notification::create($title, $body))
