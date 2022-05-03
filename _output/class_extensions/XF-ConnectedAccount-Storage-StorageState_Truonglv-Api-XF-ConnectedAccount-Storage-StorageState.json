@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\ConnectedAccount\\Storage\\StorageState",
+    "to_class": "Truonglv\\Api\\XF\\ConnectedAccount\\Storage\\StorageState",
+    "execute_order": 10,
+    "active": true
+}

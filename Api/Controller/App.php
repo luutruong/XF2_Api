@@ -21,9 +21,14 @@ use XF\Api\Mvc\Reply\ApiResult;
 use XF\Mvc\Reply\AbstractReply;
 use Truonglv\Api\Util\Encryption;
 use XF\Service\User\Registration;
+use XF\Entity\UserConnectedAccount;
+use XF\Repository\ConnectedAccount;
 use Truonglv\Api\Entity\AccessToken;
 use Truonglv\Api\Entity\Subscription;
+use OAuth\OAuth2\Token\StdOAuth2Token;
+use XF\Entity\ConnectedAccountProvider;
 use XF\Api\Controller\AbstractController;
+use Truonglv\Api\XF\ConnectedAccount\Storage\StorageState;
 
 class App extends AbstractController
 {
@@ -351,6 +356,105 @@ class App extends AbstractController
         return $this->apiResult([
             'jobs' => $jobResults,
             '_job_timing' => microtime(true) - $start,
+        ]);
+    }
+
+    public function actionPostConnectedAccounts()
+    {
+        $this->assertRequiredApiInput(['provider', 'token']);
+
+        /** @var ConnectedAccountProvider|null $provider */
+        $provider = $this->em()->find('XF:ConnectedAccountProvider', $this->filter('provider', 'str'));
+        if ($provider === null) {
+            return $this->error(\XF::phrase('connected_account_provider_specified_cannot_be_found'), 404);
+        }
+
+        $handler = $provider->getHandler();
+        if (!$provider->isUsable()) {
+            throw $this->exception(
+                $this->error(\XF::phrase('this_connected_account_provider_is_not_currently_available'))
+            );
+        }
+
+        $visitor = \XF::visitor();
+        /** @var StorageState $storageState */
+        $storageState = $handler->getStorageState($provider, $visitor);
+        $storageState->setTApiStorageType('local');
+
+        $token = new StdOAuth2Token();
+        $token->setAccessToken($this->filter('token', 'str'));
+        $token->setEndOfLife(StdOAuth2Token::EOL_UNKNOWN);
+        $storageState->storeToken($token);
+
+        $providerData = $handler->getProviderData($storageState);
+
+        if (!$storageState->getProviderToken()) {
+            return $this->error(\XF::phrase('error_occurred_while_connecting_with_x', ['provider' => $provider->title]));
+        }
+
+        /** @var ConnectedAccount $connectedAccountRepo */
+        $connectedAccountRepo = $this->repository('XF:ConnectedAccount');
+
+        /** @var UserConnectedAccount|null $userConnected */
+        $userConnected = $connectedAccountRepo->getUserConnectedAccountFromProviderData($providerData);
+        if ($userConnected !== null && $userConnected->User !== null) {
+            return $this->apiSuccess([
+                'user' => $userConnected->User->toApiResult(Entity::VERBOSITY_VERBOSE),
+                'accessToken' => Token::generateAccessToken($userConnected->User->user_id, $this->options()->tApi_accessTokenTtl)
+            ]);
+        }
+
+        $input = $this->filter([
+            'username' => 'str',
+            'email' => 'str',
+            'timezone' => 'str',
+            'location' => 'str',
+            'dob_day' => 'uint',
+            'dob_month' => 'uint',
+            'dob_year' => 'uint',
+            'custom_fields' => 'array',
+        ]);
+
+        $filterer = $this->app->inputFilterer();
+
+        if ($providerData->email) {
+            $input['email'] = $filterer->cleanString($providerData->email);
+        }
+        if ($providerData->location) {
+            $input['location'] = $filterer->cleanString($providerData->location);
+        }
+        if ($providerData->dob) {
+            $dob = $providerData->dob;
+            $input['dob_day'] = $dob['dob_day'];
+            $input['dob_month'] = $dob['dob_month'];
+            $input['dob_year'] = $dob['dob_year'];
+        }
+
+        /** @var \XF\Service\User\Registration $registration */
+        $registration = $this->service('XF:User\Registration');
+        $registration->setFromInput($input);
+        $registration->setNoPassword();
+
+        if ($providerData->email) {
+            $registration->skipEmailConfirmation();
+        }
+
+        $avatarUrl = $providerData->avatar_url;
+        if ($avatarUrl) {
+            $registration->setAvatarUrl($avatarUrl);
+        }
+
+        if (!$registration->validate($errors)) {
+            return $this->error($errors);
+        }
+
+        /** @var \XF\Entity\User $user */
+        $user = $registration->save();
+        $connectedAccountRepo->associateConnectedAccountWithUser($user, $providerData);
+
+        return $this->apiSuccess([
+            'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE),
+            'accessToken' => Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
         ]);
     }
 

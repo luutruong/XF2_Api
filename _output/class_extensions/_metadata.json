@@ -50,6 +50,9 @@
     "XF-BbCode-Renderer-ApiHtml_Truonglv-Api-XF-BbCode-Renderer-ApiHtml.json": {
         "hash": "b1b95bbf3e4ed50fc96607919ff7a593"
     },
+    "XF-ConnectedAccount-Storage-StorageState_Truonglv-Api-XF-ConnectedAccount-Storage-StorageState.json": {
+        "hash": "1e51c2452ec0c533c1d73a0752e5b5d0"
+    },
     "XF-Entity-ConversationMaster_Truonglv-Api-XF-Entity-ConversationMaster.json": {
         "hash": "bb197bd18f5500bf92979a0a6f4d8585"
     },

@@ -470,9 +470,6 @@ Response:
 }
 ```
 
-### Encrypt password
-Please see the method `Util\PasswordDecrypter::encrypt(...)`
-
 ### POST `/tapi-apps/search`
 
 Searching content...
@@ -493,3 +490,24 @@ Response:
   "pagination": (pagination)
 }
 ```
+
+### POST `/tapi-apps/connected-accounts`
+
+Associate with external account.
+
+Parameters:
+
+* `provider` __required__. Connected account provider ID.
+* `token` __required__. The access token.
+
+Response:
+
+```
+{
+  "user": (user),
+  "accessToken": (string)
+}
+```
+
+### Encrypt password
+Please see the method `Util\PasswordDecrypter::encrypt(...)`

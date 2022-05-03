@@ -32,6 +32,11 @@ namespace Truonglv\Api\XF\BbCode\Renderer
 	class XFCP_ApiHtml extends \XF\BbCode\Renderer\ApiHtml {}
 }
 
+namespace Truonglv\Api\XF\ConnectedAccount\Storage
+{
+	class XFCP_StorageState extends \XF\ConnectedAccount\Storage\StorageState {}
+}
+
 namespace Truonglv\Api\XF\Entity
 {
 	class XFCP_ConversationMaster extends \XF\Entity\ConversationMaster {}
