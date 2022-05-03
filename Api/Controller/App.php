@@ -300,10 +300,7 @@ class App extends AbstractController
         /** @var \XF\Entity\User $user */
         $user = $registration->save();
 
-        return $this->apiSuccess([
-            'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE),
-            'accessToken' => Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
-        ]);
+        return $this->apiSuccess($this->getAuthResultData($user));
     }
 
     public function actionPostAuth()
@@ -326,10 +323,7 @@ class App extends AbstractController
         $username = $this->filter('username', 'str');
         $user = $this->verifyUserCredentials($username, $password);
 
-        return $this->apiSuccess([
-            'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE),
-            'accessToken' => Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
-        ]);
+        return $this->apiSuccess($this->getAuthResultData($user));
     }
 
     public function actionPostBatch()
@@ -377,6 +371,11 @@ class App extends AbstractController
         }
 
         $visitor = \XF::visitor();
+
+        if ($visitor->user_id > 0 && $provider->isAssociated($visitor)) {
+            return $this->apiSuccess($this->getAuthResultData($visitor));
+        }
+
         /** @var StorageState $storageState */
         $storageState = $handler->getStorageState($provider, $visitor);
         $storageState->setTApiStorageType('local');
@@ -398,30 +397,31 @@ class App extends AbstractController
         /** @var UserConnectedAccount|null $userConnected */
         $userConnected = $connectedAccountRepo->getUserConnectedAccountFromProviderData($providerData);
         if ($userConnected !== null && $userConnected->User !== null) {
-            return $this->apiSuccess([
-                'user' => $userConnected->User->toApiResult(Entity::VERBOSITY_VERBOSE),
-                'accessToken' => Token::generateAccessToken($userConnected->User->user_id, $this->options()->tApi_accessTokenTtl)
-            ]);
+            $userConnected->extra_data = $providerData->getExtraData();
+            $userConnected->save();
+
+            return $this->apiSuccess($this->getAuthResultData($userConnected->User));
+        }
+
+        if (!$this->options()->registrationSetup['enabled']) {
+            return $this->error(\XF::phrase('new_registrations_currently_not_being_accepted'), 400);
         }
 
         $input = $this->filter([
             'username' => 'str',
             'email' => 'str',
-            'timezone' => 'str',
-            'location' => 'str',
-            'dob_day' => 'uint',
-            'dob_month' => 'uint',
-            'dob_year' => 'uint',
-            'custom_fields' => 'array',
         ]);
 
         $filterer = $this->app->inputFilterer();
 
         if ($providerData->email) {
+            /** @var \XF\Entity\User|null $emailUser */
+            $emailUser = $this->finder('XF:User')->where('email', $providerData->email)->fetchOne();
+            if ($emailUser !== null && $emailUser->user_id !== \XF::visitor()->user_id) {
+                return $this->error(\XF::phrase('this_accounts_email_is_already_associated_with_another_member'));
+            }
+
             $input['email'] = $filterer->cleanString($providerData->email);
-        }
-        if ($providerData->location) {
-            $input['location'] = $filterer->cleanString($providerData->location);
         }
         if ($providerData->dob) {
             $dob = $providerData->dob;
@@ -452,10 +452,15 @@ class App extends AbstractController
         $user = $registration->save();
         $connectedAccountRepo->associateConnectedAccountWithUser($user, $providerData);
 
-        return $this->apiSuccess([
+        return $this->apiSuccess($this->getAuthResultData($user));
+    }
+
+    protected function getAuthResultData(\XF\Entity\User $user): array
+    {
+        return [
             'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE),
             'accessToken' => Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
-        ]);
+        ];
     }
 
     /**
