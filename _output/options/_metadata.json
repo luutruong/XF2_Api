@@ -8,6 +8,9 @@
     "tApi_apiKey.json": {
         "hash": "751e255ea0476b16315e5867d43583a2"
     },
+    "tApi_caAppleProviderId.json": {
+        "hash": "4a507c8c2671e5c80c2a32475bf37dbb"
+    },
     "tApi_delayPushNotifications.json": {
         "hash": "1fee8c75d46a4b56fc5ed456b018d6ba"
     },

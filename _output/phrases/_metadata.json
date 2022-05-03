@@ -41,6 +41,12 @@
         "version_string": "1.0.8",
         "hash": "62c7594948c1231bbae9f948b1535b7e"
     },
+    "option.tApi_caAppleProviderId.txt": {
+        "global_cache": false,
+        "version_id": 3000100,
+        "version_string": "3.0.1",
+        "hash": "da8df46cdeb116f803fe5bda76adb9ac"
+    },
     "option.tApi_delayPushNotifications.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -112,6 +118,12 @@
         "version_id": 1000800,
         "version_string": "1.0.8",
         "hash": "70a12661034211156a1792bad2992ac2"
+    },
+    "option_explain.tApi_caAppleProviderId.txt": {
+        "global_cache": false,
+        "version_id": 3000100,
+        "version_string": "3.0.1",
+        "hash": "e4b2f1accfb9e0d0cd835d71f780f309"
     },
     "option_explain.tApi_delayPushNotifications.txt": {
         "global_cache": false,

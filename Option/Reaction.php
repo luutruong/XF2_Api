@@ -4,6 +4,7 @@ namespace Truonglv\Api\Option;
 
 use XF\PrintableException;
 use XF\Option\AbstractOption;
+use XF\Mvc\Entity\AbstractCollection;
 
 class Reaction extends AbstractOption
 {
@@ -74,10 +75,7 @@ class Reaction extends AbstractOption
         return true;
     }
 
-    /**
-     * @return \XF\Mvc\Entity\ArrayCollection
-     */
-    protected static function getReactions()
+    protected static function getReactions(): AbstractCollection
     {
         return \XF::finder('XF:Reaction')
             ->where('active', true)

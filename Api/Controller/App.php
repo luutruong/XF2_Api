@@ -663,6 +663,9 @@ class App extends AbstractController
             'registerMinimumAge' => $registrationSetup['requireDob'] > 0
                 ? intval($registrationSetup['minimumAge'])
                 : 0,
+            'connectedAccountProviders' => [
+                'apple' => $this->options()->tApi_caAppleProviderId,
+            ],
         ];
     }
 
