@@ -472,3 +472,24 @@ Response:
 
 ### Encrypt password
 Please see the method `Util\PasswordDecrypter::encrypt(...)`
+
+### POST `/tapi-apps/search`
+
+Searching content...
+
+Parameters:
+
+* `keywords` __required__
+* `search_type` __optional__. Allowed values: thread, post, user.
+* `search_order` __optional__. Allowed values: date, relevance*
+
+Response:
+
+```
+{
+  "keywords": (string),
+  "search_id": (int),
+  "results": (any),
+  "pagination": (pagination)
+}
+```
