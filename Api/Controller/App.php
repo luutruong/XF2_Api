@@ -376,12 +376,14 @@ class App extends AbstractController
             return $this->apiSuccess($this->getAuthResultData($visitor));
         }
 
+        $tokenText = $this->filter('token', 'str');
+
         /** @var StorageState $storageState */
         $storageState = $handler->getStorageState($provider, $visitor);
         $storageState->setTApiStorageType('local');
 
         $token = new StdOAuth2Token();
-        $token->setAccessToken($this->filter('token', 'str'));
+        $token->setAccessToken($tokenText);
         $token->setEndOfLife(StdOAuth2Token::EOL_UNKNOWN);
         $storageState->storeToken($token);
 
@@ -423,12 +425,23 @@ class App extends AbstractController
 
             $input['email'] = $filterer->cleanString($providerData->email);
         }
+
+        $options = $this->options();
+
         if ($providerData->dob) {
             $dob = $providerData->dob;
             $input['dob_day'] = $dob['dob_day'];
             $input['dob_month'] = $dob['dob_month'];
             $input['dob_year'] = $dob['dob_year'];
+        } else {
+            $options->offsetSet('registrationSetup', array_replace($options->registrationSetup, [
+                'requireDob' => false,
+            ]));
         }
+
+        $options->offsetSet('registrationSetup', array_replace($options->registrationSetup, [
+            'requireLocation' => false,
+        ]));
 
         /** @var \XF\Service\User\Registration $registration */
         $registration = $this->service('XF:User\Registration');
@@ -455,11 +468,17 @@ class App extends AbstractController
         return $this->apiSuccess($this->getAuthResultData($user));
     }
 
-    protected function getAuthResultData(\XF\Entity\User $user): array
+    protected function getAuthResultData(\XF\Entity\User $user, ?string $token = null): array
     {
         return [
-            'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE),
-            'accessToken' => Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
+            'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE, [
+                'tapi_permissions' => [
+                    'username' => true,
+                ],
+            ]),
+            'accessToken' => $token === null
+                ? Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
+                : $token,
         ];
     }
 
@@ -624,10 +643,7 @@ class App extends AbstractController
         /** @var \XF\Entity\User $user */
         $user = $token->User;
 
-        return $this->apiSuccess([
-            'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE),
-            'accessToken' => $token->token
-        ]);
+        return $this->apiSuccess($this->getAuthResultData($user, $token->token));
     }
 
     /**

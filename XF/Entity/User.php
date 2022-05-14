@@ -60,6 +60,10 @@ class User extends XFCP_User
         }
 
         $result->tapi_enable_ads = !$this->hasPermission('general', 'tapi_disableAdsInApp');
+
+        if (isset($options['tapi_permissions'], $options['tapi_permissions']['username'])) {
+            $result->can_change_username = $this->canChangeUsername();
+        }
     }
 
     /**
