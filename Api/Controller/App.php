@@ -5,6 +5,7 @@ namespace Truonglv\Api\Api\Controller;
 use XF\Http\Request;
 use XF\Finder\Thread;
 use XF\Mvc\Dispatcher;
+use XF\Mvc\Entity\AbstractCollection;
 use XF\Repository\Tfa;
 use XF\Mvc\Reply\Error;
 use XF\Repository\Node;
@@ -32,6 +33,11 @@ use Truonglv\Api\XF\ConnectedAccount\Storage\StorageState;
 
 class App extends AbstractController
 {
+    /**
+     * @var null|array
+     */
+    protected $viewableNodeIds = null;
+
     public function actionGet()
     {
         $data = $this->getAppInfo();
@@ -754,6 +760,23 @@ class App extends AbstractController
         $finder->where('discussion_state', 'visible');
         $finder->where('discussion_type', '<>', 'redirect');
 
+        $forumIds = $this->getViewableNodeIds();
+        if (\count($forumIds) > 0) {
+            $finder->where('node_id', $forumIds);
+        } else {
+            $finder->whereImpossible();
+        }
+
+        $finder->order('last_post_date', 'DESC');
+        $finder->indexHint('FORCE', 'last_post_date');
+    }
+
+    protected function getViewableNodeIds(): array
+    {
+        if ($this->viewableNodeIds !== null) {
+            return $this->viewableNodeIds;
+        }
+
         /** @var Node $nodeRepo */
         $nodeRepo = $this->repository('XF:Node');
         /** @var User $userRepo */
@@ -764,20 +787,14 @@ class App extends AbstractController
             return $nodeRepo->getNodeList();
         });
 
-        $forumIds = [];
+        $nodeIds = [];
         /** @var \XF\Entity\Node $node */
         foreach ($nodes as $node) {
-            if ($node->node_type_id === 'Forum') {
-                $forumIds[] = $node->node_id;
-            }
-        }
-        if (\count($forumIds) > 0) {
-            $finder->where('node_id', $forumIds);
-        } else {
-            $finder->whereImpossible();
+            $nodeIds[] = $node->node_id;
         }
 
-        $finder->order('last_post_date', 'DESC');
-        $finder->indexHint('FORCE', 'last_post_date');
+        $this->viewableNodeIds = $nodeIds;
+
+        return $nodeIds;
     }
 }
