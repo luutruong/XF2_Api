@@ -509,5 +509,23 @@ Response:
 }
 ```
 
+### POST `/me/username`
+
+Request to change username
+
+Parameters:
+
+* `username` __required__: New username
+* `change_reason` __required__
+
+Response:
+
+```
+{
+  "message": (string),
+  "changeState": (string),
+}
+```
+
 ### Encrypt password
 Please see the method `Util\PasswordDecrypter::encrypt(...)`

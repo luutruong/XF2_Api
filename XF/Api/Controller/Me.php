@@ -122,7 +122,7 @@ class Me extends XFCP_Me
     {
         /** @var \Truonglv\Api\XF\Entity\User $visitor */
         $visitor = \XF::visitor();
-        if (!$visitor->canTapiDelete($error)) {
+        if (\XF::isApiCheckingPermissions() && !$visitor->canTapiDelete($error)) {
             return $this->noPermission($error);
         }
 
@@ -144,6 +144,45 @@ class Me extends XFCP_Me
         $tokenRepo->deleteUserTokens($visitor->user_id);
 
         return $this->apiSuccess();
+    }
+
+    public function actionPostUsername()
+    {
+        $this->assertRequiredApiInput(['username']);
+
+        $visitor = \XF::visitor();
+        if (\XF::isApiCheckingPermissions() && !$visitor->canChangeUsername($error)) {
+            return $this->noPermission($error);
+        }
+
+        /** @var \XF\Service\User\UsernameChange $service */
+        $service = $this->service('XF:User\UsernameChange', \XF::visitor());
+
+        $service->setNewUsername($this->filter('username', 'str'));
+        $reason = $this->filter('change_reason', 'str');
+        if ($this->options()->usernameChangeRequireReason > 0 && strlen($reason) === 0) {
+            throw $this->exception($this->error(\XF::phrase('please_provide_reason_for_this_username_change')));
+        }
+        $service->setChangeReason($reason);
+
+        if (!$service->validate($errors)) {
+            return $this->error($errors);
+        }
+
+        /** @var \XF\Entity\UsernameChange $usernameChange */
+        $usernameChange = $service->save();
+
+        if ($usernameChange->change_state == 'approved') {
+            return $this->apiSuccess([
+                'message' => \XF::phrase('your_username_has_been_changed_successfully'),
+                'changeState' => $usernameChange->change_state,
+            ]);
+        }
+
+        return $this->apiSuccess([
+            'message' => \XF::phrase('your_username_change_must_be_approved_by_moderator'),
+            'changeState' => $usernameChange->change_state,
+        ]);
     }
 
     /**
