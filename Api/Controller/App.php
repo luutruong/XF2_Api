@@ -664,8 +664,6 @@ class App extends AbstractController
         $addOnRepo = $this->repository('XF:AddOn');
         $addOns = $addOnRepo->getInstalledAddOnData();
 
-        $accountDetails = $this->app()->router('public')->buildLink('canonical:account/account-details');
-
         /** @var Attachment $attachmentRepo */
         $attachmentRepo = $this->repository('XF:Attachment');
         $constraints = $attachmentRepo->getDefaultAttachmentConstraints();
@@ -678,7 +676,6 @@ class App extends AbstractController
             'allowRegistration' => (bool) $this->options()->registrationSetup['enabled'],
             'defaultReactionId' => \Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID,
             'defaultReactionText' => $reactions[\Truonglv\Api\Option\Reaction::DEFAULT_REACTION_ID]['text'],
-            'accountUpdateUrl' => \Truonglv\Api\App::buildLinkProxy($accountDetails),
             'quotePlaceholderTemplate' => \Truonglv\Api\App::QUOTE_PLACEHOLDER_TEMPLATE,
             'allowedAttachmentExtensions' => $constraints['extensions'],
             'registerMinimumAge' => $registrationSetup['requireDob'] > 0
