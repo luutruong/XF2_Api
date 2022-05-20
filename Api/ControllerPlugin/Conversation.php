@@ -34,7 +34,7 @@ class Conversation extends AbstractPlugin
 
             $entityResult->includeExtra(
                 'tapi_recipients',
-                $this->filterRemoveVisitor($recipients[$conversation->conversation_id])
+                $recipients[$conversation->conversation_id]
             );
 
             $result['conversation'] = $entityResult;
@@ -51,7 +51,7 @@ class Conversation extends AbstractPlugin
                 $conversation = $entityResult->getEntity();
                 $entityResult->includeExtra(
                     'tapi_recipients',
-                    $this->filterRemoveVisitor($recipients[$conversation->conversation_id])
+                    $recipients[$conversation->conversation_id]
                 );
             }
 
@@ -59,15 +59,6 @@ class Conversation extends AbstractPlugin
             $apiResult->setResult($result);
             $response->setApiResult($apiResult);
         }
-    }
-
-    protected function filterRemoveVisitor(array $users): array
-    {
-        $users = array_filter($users, function ($user) {
-            return $user['user_id'] !== \XF::visitor()->user_id;
-        });
-
-        return array_values($users);
     }
 
     protected function getConversationRecipients(array $conversations): array
