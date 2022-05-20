@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Pub\Controller;
 
+use Truonglv\Api\Entity\AccessToken;
 use XF\Entity\User;
 use Truonglv\Api\App;
 use XF\ControllerPlugin\Login;
@@ -29,27 +30,27 @@ class Misc extends XFCP_Misc
             return $this->redirect($this->buildLink('index'));
         }
 
+        $computeSign = \md5($payload);
+        if (!\hash_equals($sign, $computeSign)) {
+            return $this->redirect($this->buildLink('index'));
+        }
+
         $data = \json_decode($data, true);
         if (!\is_array($data)) {
             return $this->redirect($this->buildLink('index'));
         }
 
-        $computeSign = \md5(\strval(\json_encode($data)));
-        if (!\hash_equals($sign, $computeSign)) {
-            return $this->redirect($this->buildLink('index'));
-        }
-
         $targetUrl = $data[App::KEY_LINK_PROXY_TARGET_URL];
+        $isActive = ($data[App::KEY_LINK_PROXY_DATE] + 1300) > \XF::$time;
 
-        if (\XF::visitor()->user_id === 0) {
-            $userId = $data[App::KEY_LINK_PROXY_USER_ID];
-            /** @var User|null $user */
-            $user = $this->app->em()->find('XF:User', $userId);
-            $isActive = ($data[App::KEY_LINK_PROXY_DATE] + 3600) > \XF::$time;
-            if ($user !== null && $isActive) {
+        if ($isActive) {
+            $accessToken = $data[App::KEY_LINK_PROXY_ACCESS_TOKEN];
+            /** @var AccessToken|null $token */
+            $token = $this->em()->find('Truonglv\Api:AccessToken', $accessToken);
+            if ($token !== null && !$token->isExpired() && $token->User !== null) {
                 /** @var Login $loginPlugin */
                 $loginPlugin = $this->plugin('XF:Login');
-                $loginPlugin->completeLogin($user, false);
+                $loginPlugin->completeLogin($token->User, false);
             }
         }
 

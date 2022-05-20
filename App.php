@@ -16,7 +16,7 @@ class App
     const HEADER_KEY_API_KEY = 'HTTP_XF_TAPI_KEY';
     const HEADER_KEY_ACCESS_TOKEN = 'HTTP_XF_TAPI_TOKEN';
 
-    const KEY_LINK_PROXY_USER_ID = 'userId';
+    const KEY_LINK_PROXY_ACCESS_TOKEN = 'token';
     const KEY_LINK_PROXY_DATE = 'date';
     const KEY_LINK_PROXY_TARGET_URL = 'url';
     const KEY_LINK_PROXY_INPUT_DATA = '_d';
@@ -55,8 +55,10 @@ class App
      */
     public static function buildLinkProxy(string $targetUrl): string
     {
+        $accessToken = static::getRequest()->getServer(static::HEADER_KEY_ACCESS_TOKEN);
+
         $payload = [
-            self::KEY_LINK_PROXY_USER_ID => \XF::visitor()->user_id,
+            self::KEY_LINK_PROXY_ACCESS_TOKEN => $accessToken,
             self::KEY_LINK_PROXY_DATE => \XF::$time,
             self::KEY_LINK_PROXY_TARGET_URL => $targetUrl,
         ];
@@ -74,34 +76,6 @@ class App
                 self::KEY_LINK_PROXY_INPUT_DATA => $encrypted,
                 self::KEY_LINK_PROXY_INPUT_SIGNATURE => \md5($encoded)
             ]);
-    }
-
-    /**
-     * @param Request|null $request
-     * @return bool
-     * @deprecated 3.0.0 bring add-on not just for mobile app its welcome to use any projects
-     */
-    public static function isRequestFromApp(?Request $request = null): bool
-    {
-        $request = $request !== null ? $request : self::getRequest();
-        $appVersion = $request->getServer(self::HEADER_KEY_APP_VERSION);
-
-        if ($appVersion === false) {
-            return false;
-        }
-
-        if (\preg_match('#^\d{1,4}\.\d{1,2}\.\d{1,2} \(\d+\)$#', $appVersion) !== 1) {
-            return false;
-        }
-
-        $apiKey = $request->getServer(self::HEADER_KEY_API_KEY);
-        if ($apiKey === false
-            || $apiKey !== \XF::app()->options()->tApi_apiKey['key']
-        ) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
