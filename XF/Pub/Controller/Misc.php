@@ -2,11 +2,10 @@
 
 namespace Truonglv\Api\XF\Pub\Controller;
 
-use Truonglv\Api\Entity\AccessToken;
-use XF\Entity\User;
 use Truonglv\Api\App;
 use XF\ControllerPlugin\Login;
 use Truonglv\Api\Util\Encryption;
+use Truonglv\Api\Entity\AccessToken;
 
 class Misc extends XFCP_Misc
 {
