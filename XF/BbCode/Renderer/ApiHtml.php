@@ -88,15 +88,9 @@ class ApiHtml extends XFCP_ApiHtml
      */
     protected function getRenderedLink($text, $url, array $options)
     {
-        $visitor = \XF::visitor();
-        $proxyUrl = $url;
         $linkInfo = $this->formatter->getLinkClassTarget($url);
 
-        if ($visitor->user_id > 0 && $linkInfo['trusted'] === true) {
-            $proxyUrl = App::buildLinkProxy($url);
-        }
-
-        $html = parent::getRenderedLink($text, $proxyUrl, $options);
+        $html = parent::getRenderedLink($text, $url, $options);
         $html = \trim($html);
 
         if ($linkInfo['type'] === 'internal') {
