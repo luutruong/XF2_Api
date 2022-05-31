@@ -7,22 +7,12 @@ use XF\Mvc\Entity\Structure;
 
 class Post extends XFCP_Post
 {
-    /**
-     * @param \XF\Api\Result\EntityResult $result
-     * @param int $verbosity
-     * @param array $options
-     * @return void
-     */
     protected function setupApiResultData(
         \XF\Api\Result\EntityResult $result,
         $verbosity = \XF\Entity\Post::VERBOSITY_NORMAL,
         array $options = []
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
-
-        $result->view_url = $this->app()
-            ->router('public')
-            ->buildLink('canonical:posts', $this);
 
         $visitor = \XF::visitor();
         if ($visitor->user_id > 0) {

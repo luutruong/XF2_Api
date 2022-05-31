@@ -7,12 +7,6 @@ use XF\Mvc\Entity\Structure;
 
 class ConversationMessage extends XFCP_ConversationMessage
 {
-    /**
-     * @param \XF\Api\Result\EntityResult $result
-     * @param int $verbosity
-     * @param array $options
-     * @return void
-     */
     protected function setupApiResultData(
         \XF\Api\Result\EntityResult $result,
         $verbosity = \XF\Entity\ConversationMessage::VERBOSITY_NORMAL,

@@ -27,12 +27,6 @@ class User extends XFCP_User
         return $this->app()->options()->tApi_allowSelfDelete > 0;
     }
 
-    /**
-     * @param \XF\Api\Result\EntityResult $result
-     * @param int $verbosity
-     * @param array $options
-     * @return void
-     */
     protected function setupApiResultData(
         \XF\Api\Result\EntityResult $result,
         $verbosity = \XF\Entity\User::VERBOSITY_NORMAL,

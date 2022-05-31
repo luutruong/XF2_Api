@@ -4,22 +4,12 @@ namespace Truonglv\Api\XF\Entity;
 
 class Thread extends XFCP_Thread
 {
-    /**
-     * @param \XF\Api\Result\EntityResult $result
-     * @param int $verbosity
-     * @param array $options
-     * @return void
-     */
     protected function setupApiResultData(
         \XF\Api\Result\EntityResult $result,
         $verbosity = \XF\Entity\Thread::VERBOSITY_NORMAL,
         array $options = []
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
-
-        $result->can_watch = $this->canWatch();
-        $result->view_url = $this->app()->router('public')
-            ->buildLink('canonical:threads', $this);
 
         $visitor = \XF::visitor();
         if ($visitor->user_id > 0) {
@@ -30,6 +20,7 @@ class Thread extends XFCP_Thread
             $result->can_upload_attachments = $this->Forum !== null && $this->Forum->canUploadAndManageAttachments();
             $result->can_stick_unstick = $this->canStickUnstick();
             $result->can_lock_unlock = $this->canLockUnlock();
+            $result->can_watch = $this->canWatch();
         } else {
             $result->can_report = false;
             $result->can_ignore = false;
@@ -37,6 +28,7 @@ class Thread extends XFCP_Thread
             $result->can_upload_attachments = false;
             $result->can_stick_unstick = false;
             $result->can_lock_unlock = false;
+            $result->can_watch = false;
         }
 
         // If specified the image will display in thread card in mobile app
