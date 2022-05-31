@@ -28,11 +28,15 @@ class Thread extends XFCP_Thread
             $result->can_ignore = $this->User !== null && $visitor->canIgnoreUser($this->User);
             $result->is_ignored = $visitor->isIgnoring($this->user_id);
             $result->can_upload_attachments = $this->Forum !== null && $this->Forum->canUploadAndManageAttachments();
+            $result->can_stick_unstick = $this->canStickUnstick();
+            $result->can_lock_unlock = $this->canLockUnlock();
         } else {
             $result->can_report = false;
             $result->can_ignore = false;
             $result->is_ignored = false;
             $result->can_upload_attachments = false;
+            $result->can_stick_unstick = false;
+            $result->can_lock_unlock = false;
         }
 
         // If specified the image will display in thread card in mobile app
