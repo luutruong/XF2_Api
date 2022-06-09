@@ -19,10 +19,5 @@ class ConversationMaster extends XFCP_ConversationMaster
         } else {
             $result->is_unread = false;
         }
-
-        $hasIncludeLastMessage = App::getRequest()->filter('tapi_last_message', 'bool');
-        if ($hasIncludeLastMessage === true) {
-            $result->includeRelation('LastMessage');
-        }
     }
 }
