@@ -13,15 +13,41 @@ use XF\Api\ControllerPlugin\AbstractPlugin;
 
 class Conversation extends AbstractPlugin
 {
-    public function addRecipientsIntoResult(ApiResult $response): void
+    public function includeLastMessage(ApiResult $response): ApiResult
+    {
+        $apiResult = $response->getApiResult();
+        if (!$apiResult instanceof ArrayResult
+            || $this->filter('with_last_message', 'bool') !== true
+        ) {
+            return $response;
+        }
+
+        $result = $apiResult->getResult();
+        if (!isset($result['conversations'])) {
+            return $response;
+        }
+
+        /** @var EntityResults[] $entityResults */
+        $entityResults =& $result['conversations'];
+        foreach ($entityResults as $entityResult) {
+            $entityResult->includeRelation('LastMessage');
+        }
+
+        $apiResult->setResult($result);
+        $response->setApiResult($apiResult);
+
+        return $response;
+    }
+
+    public function addRecipientsIntoResult(ApiResult $response): ApiResult
     {
         $apiResult = $response->getApiResult();
         if (!$apiResult instanceof ArrayResult) {
-            return;
+            return $response;
         }
 
         if ($this->filter('tapi_recipients', 'bool') !== true) {
-            return;
+            return $response;
         }
 
         $result = $apiResult->getResult();
@@ -59,6 +85,8 @@ class Conversation extends AbstractPlugin
             $apiResult->setResult($result);
             $response->setApiResult($apiResult);
         }
+
+        return $response;
     }
 
     protected function getConversationRecipients(array $conversations): array
