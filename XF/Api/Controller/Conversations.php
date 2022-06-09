@@ -8,15 +8,12 @@ class Conversations extends XFCP_Conversations
 {
     public function actionGet()
     {
-        if ($this->filter('with_last_message', 'bool') === true) {
-            $this->request()->set('tapi_last_message', true);
-        }
-
         $response = parent::actionGet();
-
+\XF::logError('dump.');
         /** @var \Truonglv\Api\Api\ControllerPlugin\Conversation $conversationPlugin */
         $conversationPlugin = $this->plugin('Truonglv\Api:Api:Conversation');
-        $conversationPlugin->addRecipientsIntoResult($response);
+        $response = $conversationPlugin->addRecipientsIntoResult($response);
+        $response = $conversationPlugin->includeLastMessage($response);
 
         return $response;
     }
