@@ -684,6 +684,7 @@ class App extends AbstractController
             'connectedAccountProviders' => [
                 'apple' => $this->options()->tApi_caAppleProviderId,
             ],
+            'appName' => $this->options()->tApi_appName,
         ];
     }
 

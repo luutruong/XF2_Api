@@ -41,6 +41,12 @@
         "version_string": "1.0.8",
         "hash": "62c7594948c1231bbae9f948b1535b7e"
     },
+    "option.tApi_appName.txt": {
+        "global_cache": false,
+        "version_id": 3000300,
+        "version_string": "3.0.3",
+        "hash": "9b0fb9611977a71c1f36cb03278fa965"
+    },
     "option.tApi_caAppleProviderId.txt": {
         "global_cache": false,
         "version_id": 3000100,
@@ -118,6 +124,12 @@
         "version_id": 1000800,
         "version_string": "1.0.8",
         "hash": "70a12661034211156a1792bad2992ac2"
+    },
+    "option_explain.tApi_appName.txt": {
+        "global_cache": false,
+        "version_id": 3000300,
+        "version_string": "3.0.3",
+        "hash": "0b67003471dfd1fef3c7835303d6e849"
     },
     "option_explain.tApi_caAppleProviderId.txt": {
         "global_cache": false,
