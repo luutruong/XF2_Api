@@ -9,7 +9,7 @@ class Conversations extends XFCP_Conversations
     public function actionGet()
     {
         $response = parent::actionGet();
-\XF::logError('dump.');
+        \XF::logError('dump.');
         /** @var \Truonglv\Api\Api\ControllerPlugin\Conversation $conversationPlugin */
         $conversationPlugin = $this->plugin('Truonglv\Api:Api:Conversation');
         $response = $conversationPlugin->addRecipientsIntoResult($response);

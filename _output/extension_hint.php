@@ -57,6 +57,7 @@ namespace Truonglv\Api\XF\Pub\Controller
 {
 	class XFCP_Attachment extends \XF\Pub\Controller\Attachment {}
 	class XFCP_Misc extends \XF\Pub\Controller\Misc {}
+	class XFCP_Search extends \XF\Pub\Controller\Search {}
 }
 
 namespace Truonglv\Api\XF\Repository
