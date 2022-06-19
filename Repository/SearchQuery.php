@@ -12,13 +12,13 @@ class SearchQuery extends Repository
         $db = $this->app()->db();
 
         $results = $db->fetchAll($db->limit('
-            SELECT `search_query`, COUNT(*) AS `total`
+            SELECT `query_text`, COUNT(*) AS `total`
             FROM `xf_tapi_search_query`
             WHERE `created_date` >= ?
-            GROUP BY `search_query`
+            GROUP BY `query_text`
             ORDER BY `total` DESC
         ', 20), [$cutOff]);
 
-        return array_column($results, 'search_query');
+        return array_column($results, 'query_text');
     }
 }
