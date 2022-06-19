@@ -33,6 +33,11 @@ class Setup extends AbstractSetup
         $this->doAlterTables($this->getAlters1());
     }
 
+    public function upgrade3000300Step1()
+    {
+        $this->doCreateTables($this->getTables2());
+    }
+
     /**
      * @return array
      */
@@ -98,6 +103,20 @@ class Setup extends AbstractSetup
         };
 
         return $tables;
+    }
+
+    protected function getTables2(): array
+    {
+        return [
+            'xf_tapi_search_query' => function (Create $table) {
+                $table->addColumn('search_query_id', 'int')->autoIncrement();
+                $table->addColumn('query_text', 'varchar', 255);
+                $table->addColumn('user_id', 'int');
+                $table->addColumn('created_date', 'int')->setDefault(0);
+
+                $table->addKey('created_date');
+            },
+        ];
     }
 
     /**

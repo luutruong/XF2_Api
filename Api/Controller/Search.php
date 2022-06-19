@@ -6,6 +6,7 @@ use XF\Entity\Post;
 use XF\Repository\Tag;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
+use Truonglv\Api\Entity\SearchQuery;
 use XF\Api\Controller\AbstractController;
 
 class Search extends AbstractController
@@ -77,12 +78,19 @@ class Search extends AbstractController
         }
 
         $query->withGroupedResults();
+        /** @var SearchQuery $searchQueryLogger */
+        $searchQueryLogger = $this->em()->create('Truonglv\Api:SearchQuery');
+        $searchQueryLogger->user_id = \XF::visitor()->user_id;
 
         if ($tag !== null) {
             $query->withTags($tag->tag_id);
+            $searchQueryLogger->query_text = 'tag:' . $tag->tag;
         } else {
             $query->withKeywords($keywords);
+            $searchQueryLogger->query_text = $keywords;
         }
+
+        $searchQueryLogger->save();
         $query->orderedBy($searchOrder);
 
         $constraints = [];
@@ -148,6 +156,16 @@ class Search extends AbstractController
         ];
 
         return $this->apiResult($data);
+    }
+
+    public function actionGetTrendingQueries()
+    {
+        /** @var \Truonglv\Api\Repository\SearchQuery $searchQueryRepo*/
+        $searchQueryRepo = $this->repository('Truonglv\Api:SearchQuery');
+
+        return $this->apiResult([
+            'queries' => $searchQueryRepo->getTrendingQueries(),
+        ]);
     }
 
     public function actionUser()

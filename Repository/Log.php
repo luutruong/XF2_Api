@@ -9,11 +9,7 @@ class Log extends Repository
     const MAX_ARRAY_ELEMENTS = 10;
     const MAX_STRING_LENGTH = 200;
 
-    /**
-     * @param string $data
-     * @return string
-     */
-    public function prepareDataForLog($data)
+    public function prepareDataForLog(string $data): string
     {
         $json = \json_decode($data, true);
         if (!\is_array($json)) {
@@ -49,12 +45,7 @@ class Log extends Repository
         return $value;
     }
 
-    /**
-     * @param array $data
-     * @param int $depth
-     * @return array
-     */
-    protected function prepareArrayForLogging(array $data, $depth = 1)
+    protected function prepareArrayForLogging(array $data, int $depth = 1): array
     {
         if ($depth > 3) {
             return ['(...) (Too many depths)'];

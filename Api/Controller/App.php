@@ -738,9 +738,6 @@ class App extends AbstractController
         ]);
     }
 
-    /**
-     * @return array
-     */
     protected function getNewsFeedsFilters(): array
     {
         return [];
