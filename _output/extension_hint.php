@@ -41,6 +41,7 @@ namespace Truonglv\Api\XF\Entity
 {
 	class XFCP_ConversationMaster extends \XF\Entity\ConversationMaster {}
 	class XFCP_ConversationMessage extends \XF\Entity\ConversationMessage {}
+	class XFCP_Forum extends \XF\Entity\Forum {}
 	class XFCP_Node extends \XF\Entity\Node {}
 	class XFCP_Poll extends \XF\Entity\Poll {}
 	class XFCP_Post extends \XF\Entity\Post {}
