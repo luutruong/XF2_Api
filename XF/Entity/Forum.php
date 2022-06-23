@@ -14,6 +14,12 @@ class Forum extends XFCP_Forum
         $result = parent::getNodeTypeApiData($verbosity, $options);
 
         $result->can_watch = $this->canWatch();
+        $result->is_watched = false;
+
+        $visitor = \XF::visitor();
+        if ($visitor->user_id > 0) {
+            $result->is_watched = isset($this->Watch[$visitor->user_id]);
+        }
 
         return $result;
     }
