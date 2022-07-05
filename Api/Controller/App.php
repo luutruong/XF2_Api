@@ -193,6 +193,19 @@ class App extends AbstractController
         ]);
     }
 
+    public function actionPostLogOut()
+    {
+        $accessToken = $this->request()->getServer(\Truonglv\Api\App::HEADER_KEY_ACCESS_TOKEN);
+
+        /** @var AccessToken|null $token */
+        $token = $this->em()->find('Truonglv\Api:AccessToken', $accessToken);
+        if ($token !== null) {
+            $token->delete();
+        }
+
+        return $this->apiSuccess();
+    }
+
     public function actionPostSubscriptions()
     {
         $this->assertRequiredApiInput([
