@@ -41,7 +41,7 @@ class Forum extends XFCP_Forum
     public function actionPostWatch(ParameterBag $params)
     {
         $forum = $this->assertViewableForum($params->node_id);
-        if (\XF::isApiCheckingPermissions() && $forum->canWatch()) {
+        if (\XF::isApiCheckingPermissions() && !$forum->canWatch()) {
             return $this->noPermission();
         }
 
@@ -51,9 +51,9 @@ class Forum extends XFCP_Forum
         $visitor = \XF::visitor();
         /** @var \XF\Entity\ForumWatch|null $forumWatchEntity */
         $forumWatchEntity = $forum->Watch[$visitor->user_id];
-        $newState = ($forumWatchEntity !== null) ? 'delete' : 'watch_no_email';
+        $newState = ($forumWatchEntity !== null) ? 'delete' : 'thread';
 
-        $forumWatch->setWatchState($forum, $visitor, $newState);
+        $forumWatch->setWatchState($forum, $visitor, $newState, true, false);
 
         return $this->apiSuccess([
             'is_watched' => $newState !== 'delete'
