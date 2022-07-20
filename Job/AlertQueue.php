@@ -13,7 +13,7 @@ class AlertQueue extends AbstractJob
     {
         /** @var \Truonglv\Api\Repository\AlertQueue $alertQueueRepo */
         $alertQueueRepo = $this->app->repository('Truonglv\Api:AlertQueue');
-        $alertQueueRepo->run($maxRunTime > 0 ? $maxRunTime : 0);
+        $alertQueueRepo->run(max($maxRunTime, 0));
 
         $nextRunTime = $alertQueueRepo->getFirstRunTime();
         if ($nextRunTime > 0) {
