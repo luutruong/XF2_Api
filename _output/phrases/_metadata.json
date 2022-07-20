@@ -23,6 +23,12 @@
         "version_string": "1.0.5",
         "hash": "1ab31b0de5c6db3925bea69d1af794d7"
     },
+    "cron_entry.tApi_runQueues.txt": {
+        "global_cache": false,
+        "version_id": 3000500,
+        "version_string": "3.0.5",
+        "hash": "f3465192af0ffb82e4fb80f6579a7880"
+    },
     "option.tApi_accessTokenTtl.txt": {
         "global_cache": false,
         "version_id": 1000800,

@@ -45,14 +45,14 @@ class Auto
     /**
      * @return void
      */
-    public static function sendNotifications()
+    public static function runMinutely()
     {
         \XF::app()
             ->jobManager()
             ->enqueueLater(
-                'tapi_pushNotifications',
+                'tapi_alertQueue',
                 \XF::$time,
-                'Truonglv\Api:PushNotification'
+                'Truonglv\Api:AlertQueue'
             );
     }
 }
