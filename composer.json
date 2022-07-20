@@ -1,7 +1,7 @@
 {
     "require": {
-        "kreait/firebase-php": "^5.26.1",
-        "php": ">=7.1"
+        "php": ">=7.2",
+        "kreait/firebase-php": "5.19.0"
     },
     "config": {
         "autoloader-suffix": "TruonglvApi"
