@@ -167,16 +167,6 @@ class App extends AbstractController
         return $this->apiResult($data);
     }
 
-    public function actionGetTerms()
-    {
-        return $this->handleHelpPage('terms');
-    }
-
-    public function actionGetPrivacy()
-    {
-        return $this->handleHelpPage('privacy_policy');
-    }
-
     public function actionGetTrendingTags()
     {
         /** @var \Truonglv\Api\XF\Repository\Tag $tagRepo */
@@ -683,7 +673,10 @@ class App extends AbstractController
 
         $registrationSetup = $this->app()->options()->registrationSetup;
 
-        return [
+        $privacyPolicyUrl = $this->app()->options()->privacyPolicyUrl;
+        $tosUrl = $this->app()->options()->tosUrl;
+
+        $info = [
             'reactions' => $reactions,
             'apiVersion' => $addOns['Truonglv/Api']['version_id'],
             'allowRegistration' => (bool) $this->options()->registrationSetup['enabled'],
@@ -699,57 +692,24 @@ class App extends AbstractController
             ],
             'appName' => $this->options()->tApi_appName,
         ];
-    }
 
-    protected function handleHelpPage(string $pageId): AbstractReply
-    {
-        /** @var \XF\Entity\HelpPage|null $page */
-        $page = $this->em()->find('XF:HelpPage', $pageId);
-
-        $html = '';
-        if ($page === null) {
-            \XF::logError(\sprintf(
-                '[tl] Api: Unknown help page with page_id=%s',
-                $pageId
-            ));
+        if ($privacyPolicyUrl['type'] === 'custom') {
+            $info['privacyPolicyUrl'] = $privacyPolicyUrl['custom'];
+        } elseif ($privacyPolicyUrl['type'] === 'default') {
+            $info['privacyPolicyUrl'] = $this->app()->router('public')->buildLink('canonical:help/privacy-policy');
         } else {
-            $templater = $this->app()->templater();
-            $container = $this->app()->container();
-
-            $container
-                ->set('contactUrl', function () use ($container) {
-                    $options = $container['options'];
-                    $router = $container['router.public'];
-
-                    if (!isset($options->contactUrl['type'])) {
-                        return '';
-                    }
-
-                    switch ($options->contactUrl['type']) {
-                        case 'default':
-                            $url = $router->buildLink('canonical:misc/contact/');
-
-                            break;
-                        case 'custom':
-                            $url = $options->contactUrl['custom'];
-
-                            break;
-                        default: $url = '';
-                    }
-
-                    return $url;
-                });
-
-            $templater->addDefaultParam('xf', $this->app()->getGlobalTemplateData());
-
-            $html = $templater->renderTemplate('public:_help_page_' . $page->page_id, [
-                'page' => $page
-            ]);
+            $info['privacyPolicyUrl'] = '';
         }
 
-        return $this->apiResult([
-            'content' => $html
-        ]);
+        if ($tosUrl['type'] === 'custom') {
+            $info['tosUrl'] =  $tosUrl['custom'];
+        } elseif ($tosUrl['type'] === 'default') {
+            $info['tosUrl'] = $this->app()->router('public')->buildLink('canonical:help/terms');
+        } else {
+            $info['tosUrl'] = '';
+        }
+
+        return $info;
     }
 
     protected function getNewsFeedsFilters(): array
