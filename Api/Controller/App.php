@@ -18,7 +18,6 @@ use XF\Repository\Attachment;
 use XF\ControllerPlugin\Login;
 use Truonglv\Api\Data\Reaction;
 use XF\Api\Mvc\Reply\ApiResult;
-use XF\Mvc\Reply\AbstractReply;
 use Truonglv\Api\Util\Encryption;
 use XF\Service\User\Registration;
 use XF\Entity\UserConnectedAccount;
