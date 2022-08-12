@@ -58,6 +58,22 @@ class User extends XFCP_User
         if (isset($options['tapi_permissions'], $options['tapi_permissions']['username'])) {
             $result->can_change_username = $this->canChangeUsername();
         }
+
+        if (isset($options['tapi_user_state_message'])) {
+            if ($this->user_state === 'email_confirm'
+                || $this->user_state === 'email_confirm_edit'
+            ) {
+                $result->tapi_user_state_message = \XF::phrase('your_account_is_currently_awaiting_confirmation_confirmation_sent_to_x', [
+                    'email' => $this->email,
+                ]);
+            } elseif ($this->user_state === 'moderated') {
+                $result->tapi_user_state_message = \XF::phrase('your_account_is_currently_awaiting_approval_by_administrator');
+            } elseif ($this->user_state === 'email_bounce') {
+                $result->tapi_user_state_message = \XF::phrase('attempts_to_email_x_have_failed_please_update', [
+                    'email' => $this->email,
+                ]);
+            }
+        }
     }
 
     /**

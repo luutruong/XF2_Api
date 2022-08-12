@@ -482,6 +482,7 @@ class App extends AbstractController
                 'tapi_permissions' => [
                     'username' => true,
                 ],
+                'tapi_user_state_message' => true,
             ]),
             'accessToken' => $token === null
                 ? Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
