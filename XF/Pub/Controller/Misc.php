@@ -35,11 +35,17 @@ class Misc extends XFCP_Misc
         }
 
         $data = \json_decode($data, true);
-        if (!\is_array($data)) {
+        if (!\is_array($data)
+            || !isset($data[App::KEY_LINK_PROXY_TARGET_URL])
+        ) {
             return $this->redirect($this->buildLink('index'));
         }
 
         $targetUrl = $data[App::KEY_LINK_PROXY_TARGET_URL];
+        if (!isset($data[App::KEY_LINK_PROXY_DATE])) {
+            return $this->redirectPermanently($targetUrl);
+        }
+
         $isActive = ($data[App::KEY_LINK_PROXY_DATE] + 1300) > \XF::$time;
 
         if ($isActive) {
