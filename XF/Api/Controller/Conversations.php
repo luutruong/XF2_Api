@@ -20,7 +20,9 @@ class Conversations extends XFCP_Conversations
 
     public function actionPost()
     {
-        $this->request()->set('tapi_last_message', 'bool');
+        $this->request()->set('with_last_message', 1);
+        $this->request()->set('tapi_recipients', 1);
+
         if ($this->request()->exists('recipients')) {
             $names = $this->filter('recipients', 'str');
             $names = \explode(',', $names);
@@ -47,7 +49,13 @@ class Conversations extends XFCP_Conversations
             }
         }
 
-        return parent::actionPost();
+        $response = parent::actionPost();
+        /** @var \Truonglv\Api\Api\ControllerPlugin\Conversation $conversationPlugin */
+        $conversationPlugin = $this->plugin('Truonglv\Api:Api:Conversation');
+        $response = $conversationPlugin->addRecipientsIntoResult($response);
+        $response = $conversationPlugin->includeLastMessage($response);
+
+        return $response;
     }
 
     /**

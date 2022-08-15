@@ -23,18 +23,25 @@ class Conversation extends AbstractPlugin
         }
 
         $result = $apiResult->getResult();
-        if (!isset($result['conversations'])) {
-            return $response;
-        }
+        if (isset($result['conversations'])) {
+            /** @var EntityResults[] $entityResults */
+            $entityResults =& $result['conversations'];
+            foreach ($entityResults as $entityResult) {
+                $entityResult->includeRelation('LastMessage');
+            }
 
-        /** @var EntityResults[] $entityResults */
-        $entityResults =& $result['conversations'];
-        foreach ($entityResults as $entityResult) {
+            $apiResult->setResult($result);
+            $response->setApiResult($apiResult);
+        } elseif (isset($result['conversation'])) {
+            /** @var EntityResult $entityResult */
+            $entityResult = $result['conversation'];
+            
             $entityResult->includeRelation('LastMessage');
-        }
 
-        $apiResult->setResult($result);
-        $response->setApiResult($apiResult);
+            $result['conversation'] = $entityResult;
+            $apiResult->setResult($result);
+            $response->setApiResult($apiResult);
+        }
 
         return $response;
     }
