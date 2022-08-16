@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use XF\Api\Result\ArrayResult;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Ignore;
 use XF\Api\Mvc\Reply\ApiResult;
