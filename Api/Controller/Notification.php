@@ -56,6 +56,10 @@ class Notification extends AbstractController
                 return [
                     'with_thread' => true,
                 ];
+            case 'profile_post_comment':
+                return [
+                    'with_post' => true,
+                ];
             case 'conversation_message':
                 return [
                     'with_conversation' => true,
