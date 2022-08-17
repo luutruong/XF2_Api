@@ -8,7 +8,6 @@ use XF\Mvc\Dispatcher;
 use XF\Repository\Tfa;
 use XF\Mvc\Reply\Error;
 use XF\Repository\Node;
-use XF\Repository\User;
 use XF\Repository\AddOn;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Reply\Message;
@@ -724,24 +723,28 @@ class App extends AbstractController
                 if ($limitDays > 0) {
                     $finder->where('last_post_date', '>=', \XF::$time - $limitDays);
                 }
+
                 break;
             case 'reply_count':
                 $finder->order('reply_count', $filters['direction']);
                 if ($limitDays > 0) {
                     $finder->where('post_date', '>=', \XF::$time - $limitDays);
                 }
+
                 break;
             case 'post_date':
                 $finder->order('post_date', $filters['direction']);
                 if ($limitDays > 0) {
                     $finder->where('post_date', '>=', \XF::$time - $limitDays);
                 }
+
                 break;
             case 'view_count':
                 $finder->order('view_count', $filters['direction']);
                 if ($limitDays > 0) {
                     $finder->where('post_date', '>=', \XF::$time - $limitDays);
                 }
+
                 break;
             default:
                 throw new \LogicException('Unsupported news feeds order: ' . $filters['order']);
