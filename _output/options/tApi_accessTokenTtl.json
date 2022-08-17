@@ -1,12 +1,12 @@
 {
     "edit_format": "spinbox",
-    "edit_format_params": "min=0\nunits={{ phrase('units_minutes') }}",
+    "edit_format_params": "min=0\nunits={{ phrase('units_seconds') }}",
     "data_type": "unsigned_integer",
     "sub_options": [],
     "validation_class": "",
     "validation_method": "",
     "advanced": false,
-    "default_value": "43200",
+    "default_value": "3600",
     "relations": {
         "tl_Api": 25
     }

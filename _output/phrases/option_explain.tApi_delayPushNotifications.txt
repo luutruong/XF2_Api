@@ -1,1 +1,1 @@
-If enabled, the notifications are schedule to send every minutes.
+If enabled, the notifications are schedule to send every minutes. It recommend to setup job run base server trigger instead of activity trigger.

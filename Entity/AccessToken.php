@@ -22,17 +22,17 @@ class AccessToken extends Entity
      */
     public function renewExpires()
     {
-        $ttl = $this->app()->options()->tApi_accessTokenTtl;
+        $ttl = (int) $this->app()->options()->tApi_accessTokenTtl;
         if ($ttl <= 0) {
             $this->expire_date = 0;
         } else {
-            $this->expire_date = \XF::$time + $ttl * 60;
+            $this->expire_date = \XF::$time + $ttl;
         }
     }
 
     public function isExpired(): bool
     {
-        return $this->expire_date <= \XF::$time;
+        return $this->expire_date > 0 && $this->expire_date <= \XF::$time;
     }
 
     public static function getStructure(Structure $structure)

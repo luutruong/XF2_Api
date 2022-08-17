@@ -7,7 +7,7 @@ use Truonglv\Api\Entity\AccessToken;
 
 class Token
 {
-    public static function generateAccessToken(int $userId, int $minutes = 60, int $limit = 10): string
+    public static function generateAccessToken(int $userId, int $seconds = 3600, int $limit = 10): string
     {
         $retried = 0;
         $app = \XF::app();
@@ -26,7 +26,7 @@ class Token
 
                 $entity->token = $token;
                 $entity->user_id = $userId;
-                $entity->expire_date = $minutes > 0 ? intval((\XF::$time + $minutes * 60)) : 0;
+                $entity->expire_date = $seconds > 0 ? (\XF::$time + $seconds) : 0;
 
                 $entity->save();
 

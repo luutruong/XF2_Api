@@ -1,1 +1,1 @@
-Default to 30 days. Set to 0 to unlimited.
+Set to 0 to unlimited.

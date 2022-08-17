@@ -1,6 +1,6 @@
 {
     "tApi_accessTokenTtl.json": {
-        "hash": "30ee955812a0a53a51d9ed19c689b5a5"
+        "hash": "d5eccdb103b3670b249cbc3b316845e0"
     },
     "tApi_allowSelfDelete.json": {
         "hash": "4f815b6935b6f4447046cbe1431dd5fe"
@@ -15,7 +15,7 @@
         "hash": "4a507c8c2671e5c80c2a32475bf37dbb"
     },
     "tApi_delayPushNotifications.json": {
-        "hash": "1fee8c75d46a4b56fc5ed456b018d6ba"
+        "hash": "8e9492a7fc060139defb94bf17efc357"
     },
     "tApi_discussionPreviewLength.json": {
         "hash": "08b2dd30e36518bbbd2b2dbb8b078d87"
@@ -37,8 +37,5 @@
     },
     "tApi_recordsPerPage.json": {
         "hash": "b59369118c0ca115954d7cd723f899ea"
-    },
-    "tApi_trendingCutoff.json": {
-        "hash": "db06f0a210f388f3bf38835395db331e"
     }
 }

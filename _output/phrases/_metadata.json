@@ -107,17 +107,11 @@
         "version_string": "1.2.6 Alpha",
         "hash": "0d65c51f1e5f7281260c6494c57549fc"
     },
-    "option.tApi_trendingCutoff.txt": {
-        "global_cache": false,
-        "version_id": 1010202,
-        "version_string": "1.1.2",
-        "hash": "3301bb1792ce9c2384c374f2e23ae720"
-    },
     "option_explain.tApi_accessTokenTtl.txt": {
         "global_cache": false,
-        "version_id": 1000800,
-        "version_string": "1.0.8",
-        "hash": "a7af45e7ba0d04b77fb56068e1054bab"
+        "version_id": 3000700,
+        "version_string": "3.0.7",
+        "hash": "c9bcfa0287f10679f1d7135d6f7e308d"
     },
     "option_explain.tApi_allowSelfDelete.txt": {
         "global_cache": false,
@@ -145,9 +139,9 @@
     },
     "option_explain.tApi_delayPushNotifications.txt": {
         "global_cache": false,
-        "version_id": 1000800,
-        "version_string": "1.0.8",
-        "hash": "f2d1f54fb38532bec5412fcba2413f61"
+        "version_id": 3000700,
+        "version_string": "3.0.7",
+        "hash": "52f931dc84821fea5f003d98c14183c1"
     },
     "option_explain.tApi_discussionPreviewLength.txt": {
         "global_cache": false,
@@ -191,12 +185,6 @@
         "version_string": "1.2.6 Alpha",
         "hash": "d41d8cd98f00b204e9800998ecf8427e"
     },
-    "option_explain.tApi_trendingCutoff.txt": {
-        "global_cache": false,
-        "version_id": 1010202,
-        "version_string": "1.1.2",
-        "hash": "96b2f955774aee5f11e61646b7d5ae43"
-    },
     "option_group.tl_Api.txt": {
         "global_cache": false,
         "version_id": 1000000,
@@ -205,9 +193,9 @@
     },
     "option_group_description.tl_Api.txt": {
         "global_cache": false,
-        "version_id": 1000000,
-        "version_string": "1.0.0",
-        "hash": "eeb409a48d7dd472bcd45f820bf83be8"
+        "version_id": 3000700,
+        "version_string": "3.0.7",
+        "hash": "65da58e7769ac63d6052a34f298f82d7"
     },
     "permission.general_tapi_disableAdsInApp.txt": {
         "global_cache": false,
