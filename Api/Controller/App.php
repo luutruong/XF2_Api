@@ -31,11 +31,6 @@ use Truonglv\Api\XF\ConnectedAccount\Storage\StorageState;
 
 class App extends AbstractController
 {
-    /**
-     * @var null|array
-     */
-    protected $viewableNodeIds = null;
-
     public function actionGet()
     {
         $data = $this->getAppInfo();
@@ -48,11 +43,8 @@ class App extends AbstractController
         $page = $this->filterPage();
         $perPage = $this->options()->tApi_recordsPerPage;
 
-        $filters = $this->getNewsFeedsFilters();
-        $queryHash = md5(uniqid('', true));
-
         $searchId = $this->filter('search_id', 'uint');
-        $searchQuery = 'tApi_actionGetNewsFeeds';
+        $searchQuery = 'tApi_actionGetNewsFeeds_' . __METHOD__;
         $visitor = \XF::visitor();
         /** @var \XF\Entity\Search|null $search */
         $search = null;
@@ -61,7 +53,7 @@ class App extends AbstractController
             $existingSearch = $this->em()->find('XF:Search', $searchId);
             if ($existingSearch !== null
                 && $existingSearch->user_id === $visitor->user_id
-                && $existingSearch->search_query === $searchQuery
+                 && $existingSearch->search_query === $searchQuery
                 && ($existingSearch->search_date + 3600) >= time()
             ) {
                 $search = $existingSearch;
@@ -69,41 +61,13 @@ class App extends AbstractController
         }
 
         if ($search === null) {
-            /** @var Thread $finder */
-            $finder = $this->finder('XF:Thread');
-
-            $this->applyNewsFeedsFilter($finder, $filters);
-            $finder->limit($this->options()->maximumSearchResults);
-
-            $results = $finder->fetchColumns('thread_id');
-            $searchResults = [];
-            foreach ($results as $result) {
-                $searchResults['thread-' . $result['thread_id']] = [
-                    'thread',
-                    $result['thread_id']
-                ];
-            }
-
-            if (\count($searchResults) === 0) {
+            $search = $this->runNewsFeedSearch($searchQuery);
+            if ($search === null) {
                 return $this->apiResult([
-                    'threads' => []
+                    'threads' => [],
+                    'search_id' => 0
                 ]);
             }
-
-            /** @var \XF\Entity\Search $search */
-            $search = $this->em()->create('XF:Search');
-            $search->search_type = 'thread';
-            $search->search_query = $searchQuery;
-            $search->query_hash = $queryHash;
-            $search->search_results = $searchResults;
-            $search->result_count = \count($searchResults);
-            $search->search_date = \XF::$time;
-            $search->user_id = $visitor->user_id;
-            $search->search_order = 'date';
-            $search->search_grouping = true;
-            $search->search_constraints = [];
-
-            $search->save();
         }
 
         $threadIds = [];
@@ -155,7 +119,7 @@ class App extends AbstractController
             $data['pagination'] = $this->getPaginationData($threads, $page, $perPage, $search->result_count);
         }
 
-        $maxPages = ceil($search->result_count / $perPage);
+        $maxPages = \ceil($search->result_count / $perPage);
         if ($page < $maxPages) {
             $data['next_url'] = $this->buildLink('canonical:tapi-apps/news-feeds', null, [
                 'search_id' => $search->search_id,
@@ -714,7 +678,25 @@ class App extends AbstractController
 
     protected function getNewsFeedsFilters(): array
     {
-        return [];
+        $input = $this->filter([
+            'order' => 'str',
+            'direction' => 'str',
+        ]);
+        if (!\in_array($input['direction'], ['asc', 'desc'], true)) {
+            $input['direction'] = 'desc';
+        }
+
+        $allowedOrders = [
+            'post_date',
+            'last_post_date',
+            'reply_count',
+            'view_count',
+        ];
+        if (!\in_array($input['order'], $allowedOrders, true)) {
+            $input['order'] = 'last_post_date';
+        }
+
+        return $input;
     }
 
     /**
@@ -734,33 +716,91 @@ class App extends AbstractController
             $finder->whereImpossible();
         }
 
-        $finder->order('last_post_date', 'DESC');
-        $finder->indexHint('FORCE', 'last_post_date');
+        $limitDays = $this->options()->tApi_newsFeedsDays * 86400;
+
+        switch ($filters['order']) {
+            case 'last_post_date':
+                $finder->order('last_post_date', $filters['direction']);
+                if ($limitDays > 0) {
+                    $finder->where('last_post_date', '>=', \XF::$time - $limitDays);
+                }
+                break;
+            case 'reply_count':
+                $finder->order('reply_count', $filters['direction']);
+                if ($limitDays > 0) {
+                    $finder->where('post_date', '>=', \XF::$time - $limitDays);
+                }
+                break;
+            case 'post_date':
+                $finder->order('post_date', $filters['direction']);
+                if ($limitDays > 0) {
+                    $finder->where('post_date', '>=', \XF::$time - $limitDays);
+                }
+                break;
+            case 'view_count':
+                $finder->order('view_count', $filters['direction']);
+                if ($limitDays > 0) {
+                    $finder->where('post_date', '>=', \XF::$time - $limitDays);
+                }
+                break;
+            default:
+                throw new \LogicException('Unsupported news feeds order: ' . $filters['order']);
+        }
+    }
+
+    protected function runNewsFeedSearch(string $searchQuery): ?\XF\Entity\Search
+    {
+        $visitor = \XF::visitor();
+        $filters = $this->getNewsFeedsFilters();
+
+        /** @var Thread $finder */
+        $finder = $this->finder('XF:Thread');
+
+        $this->applyNewsFeedsFilter($finder, $filters);
+        $finder->limit($this->options()->maximumSearchResults);
+
+        $results = $finder->fetchColumns('thread_id');
+        $searchResults = [];
+        foreach ($results as $result) {
+            $searchResults['thread-' . $result['thread_id']] = [
+                'thread',
+                $result['thread_id']
+            ];
+        }
+
+        if (\count($searchResults) === 0) {
+            return null;
+        }
+
+        /** @var \XF\Entity\Search $search */
+        $search = $this->em()->create('XF:Search');
+        $search->search_type = 'thread';
+        $search->search_query = $searchQuery;
+        $search->query_hash = \md5(__METHOD__ . $searchQuery . \json_encode($filters));
+        $search->search_results = $searchResults;
+        $search->result_count = \count($searchResults);
+        $search->search_date = \XF::$time;
+        $search->user_id = $visitor->user_id;
+        $search->search_order = 'date';
+        $search->search_grouping = true;
+        $search->search_constraints = [];
+
+        $search->save();
+
+        return $search;
     }
 
     protected function getViewableNodeIds(): array
     {
-        if ($this->viewableNodeIds !== null) {
-            return $this->viewableNodeIds;
-        }
-
         /** @var Node $nodeRepo */
         $nodeRepo = $this->repository('XF:Node');
-        /** @var User $userRepo */
-        $userRepo = $this->repository('XF:User');
-        $guest = $userRepo->getGuestUser();
-
-        $nodes = \XF::asVisitor($guest, function () use ($nodeRepo) {
-            return $nodeRepo->getNodeList();
-        });
+        $nodes = $nodeRepo->getNodeList();
 
         $nodeIds = [];
         /** @var \XF\Entity\Node $node */
         foreach ($nodes as $node) {
             $nodeIds[] = $node->node_id;
         }
-
-        $this->viewableNodeIds = $nodeIds;
 
         return $nodeIds;
     }
