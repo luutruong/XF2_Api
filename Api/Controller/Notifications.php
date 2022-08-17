@@ -49,6 +49,10 @@ class Notifications extends AbstractController
             $alertsFinder->where('content_type', $contentTypes);
         }
 
+        if ($this->filter('unread', 'bool') === true) {
+            $alertsFinder->where('read_date', 0);
+        }
+
         $total = $alertsFinder->total();
         /** @var mixed $alerts */
         $alerts = $alertsFinder->limitByPage($page, $perPage)->fetch();
