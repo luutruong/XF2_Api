@@ -680,9 +680,15 @@ class App extends AbstractController
         $input = $this->filter([
             'order' => 'str',
             'direction' => 'str',
+            'is_unread' => 'bool',
         ]);
-        if (!\in_array($input['direction'], ['asc', 'desc'], true)) {
-            $input['direction'] = 'desc';
+
+        $filters = [
+            'order' => 'last_post_date',
+            'direction' => 'desc',
+        ];
+        if (\in_array($input['direction'], ['asc', 'desc'], true)) {
+            $filters['direction'] = $input['direction'];
         }
 
         $allowedOrders = [
@@ -691,11 +697,17 @@ class App extends AbstractController
             'reply_count',
             'view_count',
         ];
-        if (!\in_array($input['order'], $allowedOrders, true)) {
-            $input['order'] = 'last_post_date';
+        if (\in_array($input['order'], $allowedOrders, true)) {
+            $filters['order'] = $input['order'];
         }
 
-        return $input;
+        if ($input['is_unread'] === true) {
+            $filters['order'] = 'last_post_date';
+            $filters['direction'] = 'desc';
+            $filters['is_unread'] = true;
+        }
+
+        return $filters;
     }
 
     /**
@@ -748,6 +760,10 @@ class App extends AbstractController
                 break;
             default:
                 throw new \LogicException('Unsupported news feeds order: ' . $filters['order']);
+        }
+
+        if (isset($filters['is_unread'])) {
+            $finder->unreadOnly();
         }
     }
 
