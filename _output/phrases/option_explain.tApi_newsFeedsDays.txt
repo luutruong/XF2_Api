@@ -1,1 +1,0 @@
-Fetch threads in X days. Set to 0 to disable this feature.

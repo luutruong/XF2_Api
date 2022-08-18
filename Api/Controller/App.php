@@ -727,35 +727,29 @@ class App extends AbstractController
             $finder->whereImpossible();
         }
 
-        $limitDays = $this->options()->tApi_newsFeedsDays * 86400;
+        /** @var \XF\Repository\Thread $threadRepo */
+        $threadRepo = $this->repository('XF:Thread');
+        $readMarkingCutoff = $threadRepo->getReadMarkingCutOff();
 
         switch ($filters['order']) {
             case 'last_post_date':
                 $finder->order('last_post_date', $filters['direction']);
-                if ($limitDays > 0) {
-                    $finder->where('last_post_date', '>=', \XF::$time - $limitDays);
-                }
+                $finder->where('last_post_date', '>=', $readMarkingCutoff);
 
                 break;
             case 'reply_count':
                 $finder->order('reply_count', $filters['direction']);
-                if ($limitDays > 0) {
-                    $finder->where('post_date', '>=', \XF::$time - $limitDays);
-                }
+                $finder->where('post_date', '>=', $readMarkingCutoff);
 
                 break;
             case 'post_date':
                 $finder->order('post_date', $filters['direction']);
-                if ($limitDays > 0) {
-                    $finder->where('post_date', '>=', \XF::$time - $limitDays);
-                }
+                $finder->where('post_date', '>=', $readMarkingCutoff);
 
                 break;
             case 'view_count':
                 $finder->order('view_count', $filters['direction']);
-                if ($limitDays > 0) {
-                    $finder->where('post_date', '>=', \XF::$time - $limitDays);
-                }
+                $finder->where('post_date', '>=', $readMarkingCutoff);
 
                 break;
             default:
