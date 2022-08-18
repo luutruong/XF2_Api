@@ -2,9 +2,9 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use XF\Util\Arr;
 use Truonglv\Api\App;
 use XF\Api\Controller\AbstractController;
-use XF\Util\Arr;
 
 class Notifications extends AbstractController
 {
