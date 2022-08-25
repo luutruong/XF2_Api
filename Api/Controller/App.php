@@ -383,6 +383,23 @@ class App extends AbstractController
             'username' => 'str',
             'email' => 'str',
         ]);
+        $providerUsername = $this->filter('provider_username', 'str');
+
+        if ($providerUsername !== '') {
+            $suffix = 0;
+            while ($suffix < 20) {
+                $nameWithSuffix = $suffix === 0 ? $providerUsername : "{$providerUsername}{$suffix}";
+                $userByName = $this->finder('XF:User')
+                    ->where('username', $nameWithSuffix)
+                    ->fetchOne();
+                if ($userByName === null) {
+                    $input['username'] = $nameWithSuffix;
+                    break;
+                }
+
+                $suffix++;
+            }
+        }
 
         $filterer = $this->app->inputFilterer();
 
