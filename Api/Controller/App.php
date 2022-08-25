@@ -698,6 +698,7 @@ class App extends AbstractController
             'order' => 'str',
             'direction' => 'str',
             'unread' => 'bool',
+            'watched' => 'bool',
         ]);
 
         $filters = [
@@ -722,6 +723,11 @@ class App extends AbstractController
             $filters['order'] = 'last_post_date';
             $filters['direction'] = 'desc';
             $filters['unread'] = true;
+        }
+        if ($input['watched'] === true) {
+            $filters['order'] = 'last_post_date';
+            $filters['direction'] = 'desc';
+            $filters['watched'] = true;
         }
 
         return $filters;
@@ -775,6 +781,9 @@ class App extends AbstractController
 
         if (isset($filters['unread'])) {
             $finder->unreadOnly();
+        }
+        if (isset($filters['watched'])) {
+            $finder->watchedOnly();
         }
     }
 
