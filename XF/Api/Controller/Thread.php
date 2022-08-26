@@ -64,6 +64,16 @@ class Thread extends XFCP_Thread
         ]);
     }
 
+    public function actionPostViewed(ParameterBag $params)
+    {
+        $thread = $this->assertViewableThread($params['thread_id']);
+
+        $threadRepo = $this->getThreadRepo();
+        $threadRepo->logThreadView($thread);
+
+        return $this->apiSuccess();
+    }
+
     /**
      * @param \XF\Entity\Thread $thread
      * @param mixed $page
