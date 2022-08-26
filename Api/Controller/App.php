@@ -394,6 +394,7 @@ class App extends AbstractController
                     ->fetchOne();
                 if ($userByName === null) {
                     $input['username'] = $nameWithSuffix;
+
                     break;
                 }
 
