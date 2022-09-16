@@ -2,17 +2,28 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use XF;
+use DateTime;
+use function md5;
+use function ceil;
+use function count;
+use LogicException;
 use XF\Http\Request;
 use XF\Finder\Thread;
+use function in_array;
 use XF\Mvc\Dispatcher;
 use XF\Repository\Tfa;
 use XF\Mvc\Reply\Error;
 use XF\Repository\Node;
+use function strtoupper;
 use XF\Repository\AddOn;
+use function array_slice;
+use function json_decode;
+use function json_encode;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Reply\Message;
 use XF\Mvc\Reply\Exception;
-use Truonglv\Api\Util\Token;
+use InvalidArgumentException;
 use XF\Repository\Attachment;
 use XF\ControllerPlugin\Login;
 use Truonglv\Api\Data\Reaction;
@@ -22,6 +33,8 @@ use XF\Service\User\Registration;
 use XF\Entity\UserConnectedAccount;
 use XF\Repository\ConnectedAccount;
 use Truonglv\Api\Entity\AccessToken;
+use function array_replace_recursive;
+use Truonglv\Api\Entity\RefreshToken;
 use Truonglv\Api\Entity\Subscription;
 use OAuth\OAuth2\Token\StdOAuth2Token;
 use XF\Entity\ConnectedAccountProvider;
@@ -44,7 +57,7 @@ class App extends AbstractController
 
         $searchId = $this->filter('search_id', 'uint');
         $searchQuery = 'tApi_actionGetNewsFeeds_' . __METHOD__;
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         /** @var \XF\Entity\Search|null $search */
         $search = null;
         if ($searchId > 0) {
@@ -83,8 +96,8 @@ class App extends AbstractController
             $threadIds[] = $result[1];
         }
 
-        $threadIds = \array_slice($threadIds, ($page - 1) * $perPage, $perPage, true);
-        if (\count($threadIds) === 0) {
+        $threadIds = array_slice($threadIds, ($page - 1) * $perPage, $perPage, true);
+        if (count($threadIds) === 0) {
             return $this->apiResult([
                 'threads' => [],
             ]);
@@ -118,7 +131,7 @@ class App extends AbstractController
             $data['pagination'] = $this->getPaginationData($threads, $page, $perPage, $search->result_count);
         }
 
-        $maxPages = \ceil($search->result_count / $perPage);
+        $maxPages = ceil($search->result_count / $perPage);
         if ($page < $maxPages) {
             $data['next_url'] = $this->buildLink('canonical:tapi-apps/news-feeds', null, [
                 'search_id' => $search->search_id,
@@ -165,7 +178,7 @@ class App extends AbstractController
             'type'
         ]);
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         if ($visitor->user_id <= 0) {
             return $this->noPermission();
         }
@@ -180,7 +193,7 @@ class App extends AbstractController
         ]);
 
         /** @var \Truonglv\Api\Service\Subscription $service */
-        $service = $this->service('Truonglv\Api:Subscription', \XF::visitor(), $input['device_token']);
+        $service = $this->service('Truonglv\Api:Subscription', XF::visitor(), $input['device_token']);
 
         $extra = [];
         if ($input['type'] === 'unsubscribe') {
@@ -217,7 +230,7 @@ class App extends AbstractController
     public function actionPostRegister()
     {
         if (!$this->options()->registrationSetup['enabled']) {
-            return $this->error(\XF::phrase('new_registrations_currently_not_being_accepted'), 400);
+            return $this->error(XF::phrase('new_registrations_currently_not_being_accepted'), 400);
         }
 
         $this->assertRequiredApiInput([
@@ -226,7 +239,7 @@ class App extends AbstractController
             'password'
         ]);
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         if ($visitor->user_id > 0) {
             return $this->noPermission();
         }
@@ -236,7 +249,7 @@ class App extends AbstractController
 
         try {
             $decrypted = Encryption::decrypt($password, $this->options()->tApi_encryptKey);
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
         }
 
         $input = $this->filter([
@@ -250,10 +263,10 @@ class App extends AbstractController
         $registration->setPassword($decrypted, '', false);
 
         if ($this->request()->exists('birthday')) {
-            /** @var \DateTime|null $birthday */
+            /** @var DateTime|null $birthday */
             $birthday = $this->filter('birthday', 'datetime,obj');
             if ($birthday === null) {
-                return $this->error(\XF::phrase('please_enter_valid_date_of_birth'));
+                return $this->error(XF::phrase('please_enter_valid_date_of_birth'));
             }
 
             $registration->setDob(
@@ -277,7 +290,7 @@ class App extends AbstractController
     {
         $this->assertRequiredApiInput(['username', 'password']);
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         if ($visitor->user_id > 0) {
             return $this->noPermission();
         }
@@ -287,7 +300,7 @@ class App extends AbstractController
 
         try {
             $password = Encryption::decrypt($encrypted, $this->options()->tApi_encryptKey);
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
         }
 
         $username = $this->filter('username', 'str');
@@ -299,7 +312,7 @@ class App extends AbstractController
     public function actionPostBatch()
     {
         $input = $this->request()->getInputRaw();
-        $jobs = \json_decode($input, true);
+        $jobs = json_decode($input, true);
 
         if (!\is_array($jobs)) {
             return $this->apiError('Invalid batch json format', 'invalid_batch_json_format');
@@ -313,7 +326,7 @@ class App extends AbstractController
                 continue;
             }
 
-            $job = \array_replace_recursive($this->getDefaultJobOptions(), $job);
+            $job = array_replace_recursive($this->getDefaultJobOptions(), $job);
             $jobResults[$job['uri']] = $this->runJob($job);
         }
 
@@ -330,17 +343,17 @@ class App extends AbstractController
         /** @var ConnectedAccountProvider|null $provider */
         $provider = $this->em()->find('XF:ConnectedAccountProvider', $this->filter('provider', 'str'));
         if ($provider === null) {
-            return $this->error(\XF::phrase('connected_account_provider_specified_cannot_be_found'), 404);
+            return $this->error(XF::phrase('connected_account_provider_specified_cannot_be_found'), 404);
         }
 
         $handler = $provider->getHandler();
         if (!$provider->isUsable()) {
             throw $this->exception(
-                $this->error(\XF::phrase('this_connected_account_provider_is_not_currently_available'))
+                $this->error(XF::phrase('this_connected_account_provider_is_not_currently_available'))
             );
         }
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
 
         if ($visitor->user_id > 0 && $provider->isAssociated($visitor)) {
             return $this->apiSuccess($this->getAuthResultData($visitor));
@@ -360,7 +373,7 @@ class App extends AbstractController
         $providerData = $handler->getProviderData($storageState);
 
         if (!$storageState->getProviderToken()) {
-            return $this->error(\XF::phrase('error_occurred_while_connecting_with_x', ['provider' => $provider->title]));
+            return $this->error(XF::phrase('error_occurred_while_connecting_with_x', ['provider' => $provider->title]));
         }
 
         /** @var ConnectedAccount $connectedAccountRepo */
@@ -376,7 +389,7 @@ class App extends AbstractController
         }
 
         if (!$this->options()->registrationSetup['enabled']) {
-            return $this->error(\XF::phrase('new_registrations_currently_not_being_accepted'), 400);
+            return $this->error(XF::phrase('new_registrations_currently_not_being_accepted'), 400);
         }
 
         $input = $this->filter([
@@ -407,8 +420,8 @@ class App extends AbstractController
         if ($providerData->email) {
             /** @var \XF\Entity\User|null $emailUser */
             $emailUser = $this->finder('XF:User')->where('email', $providerData->email)->fetchOne();
-            if ($emailUser !== null && $emailUser->user_id !== \XF::visitor()->user_id) {
-                return $this->error(\XF::phrase('this_accounts_email_is_already_associated_with_another_member'));
+            if ($emailUser !== null && $emailUser->user_id !== XF::visitor()->user_id) {
+                return $this->error(XF::phrase('this_accounts_email_is_already_associated_with_another_member'));
             }
 
             $input['email'] = $filterer->cleanString($providerData->email);
@@ -456,8 +469,11 @@ class App extends AbstractController
         return $this->apiSuccess($this->getAuthResultData($user));
     }
 
-    protected function getAuthResultData(\XF\Entity\User $user, ?string $token = null): array
+    protected function getAuthResultData(\XF\Entity\User $user): array
     {
+        /** @var \Truonglv\Api\Repository\Token $tokenRepo */
+        $tokenRepo = XF::repository('Truonglv\Api:Token');
+
         return [
             'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE, [
                 'tapi_permissions' => [
@@ -465,9 +481,8 @@ class App extends AbstractController
                 ],
                 'tapi_user_state_message' => true,
             ]),
-            'accessToken' => $token === null
-                ? Token::generateAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl)
-                : $token,
+            'accessToken' => $tokenRepo->createAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl),
+            'refreshToken' => $tokenRepo->createRefreshToken($user->user_id, 30 * 86400),
         ];
     }
 
@@ -482,7 +497,7 @@ class App extends AbstractController
         }
 
         $server = \array_replace($_SERVER, [
-            'REQUEST_METHOD' => \strtoupper($job['method'])
+            'REQUEST_METHOD' => strtoupper($job['method'])
         ]);
 
         $request = new Request($this->app()->inputFilterer(), $job['params'], [], [], $server);
@@ -546,7 +561,7 @@ class App extends AbstractController
         /** @var \XF\Service\User\Login $loginService */
         $loginService = $this->service('XF:User\Login', $username, $ip);
         if ($loginService->isLoginLimited($limitType)) {
-            throw $this->errorException(\XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'), 400);
+            throw $this->errorException(XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'), 400);
         }
 
         /** @var \XF\Entity\User|null $user */
@@ -556,7 +571,7 @@ class App extends AbstractController
         }
 
         if (!$this->runTfaValidation($user)) {
-            throw $this->errorException(\XF::phrase('two_step_verification_value_could_not_be_confirmed'));
+            throw $this->errorException(XF::phrase('two_step_verification_value_could_not_be_confirmed'));
         }
 
         return $user;
@@ -585,7 +600,7 @@ class App extends AbstractController
         $this->assertRequiredApiInput(['tfa_provider']);
 
         if (!isset($providers[$provider])) {
-            throw $this->exception($this->message(\XF::phrase('two_step_verification_required'), 202));
+            throw $this->exception($this->message(XF::phrase('two_step_verification_required'), 202));
         }
 
         /** @var \XF\Service\User\Tfa $tfaService */
@@ -602,11 +617,11 @@ class App extends AbstractController
         }
 
         if ($tfaService->hasTooManyTfaAttempts()) {
-            throw $this->errorException(\XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'));
+            throw $this->errorException(XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'));
         }
 
         if (!$tfaService->verify($this->request(), $provider)) {
-            throw $this->errorException(\XF::phrase('two_step_verification_value_could_not_be_confirmed'));
+            throw $this->errorException(XF::phrase('two_step_verification_value_could_not_be_confirmed'));
         }
 
         return true;
@@ -617,8 +632,8 @@ class App extends AbstractController
     {
         $this->assertRequiredApiInput(['token']);
 
-        /** @var AccessToken|null $token */
-        $token = $this->finder('Truonglv\Api:AccessToken')
+        /** @var RefreshToken|null $token */
+        $token = $this->finder('Truonglv\Api:RefreshToken')
             ->with('User', true)
             ->whereId($this->filter('token', 'str'))
             ->fetchOne();
@@ -626,13 +641,17 @@ class App extends AbstractController
             return $this->notFound();
         }
 
-        $token->renewExpires();
-        $token->save();
+        if ($token->isExpired()) {
+            return $this->noPermission();
+        }
+
+        // revoke.
+        $token->delete();
 
         /** @var \XF\Entity\User $user */
         $user = $token->User;
 
-        return $this->apiSuccess($this->getAuthResultData($user, $token->token));
+        return $this->apiSuccess($this->getAuthResultData($user));
     }
 
     /**
@@ -706,7 +725,7 @@ class App extends AbstractController
             'order' => 'last_post_date',
             'direction' => 'desc',
         ];
-        if (\in_array($input['direction'], ['asc', 'desc'], true)) {
+        if (in_array($input['direction'], ['asc', 'desc'], true)) {
             $filters['direction'] = $input['direction'];
         }
 
@@ -716,7 +735,7 @@ class App extends AbstractController
             'reply_count',
             'view_count',
         ];
-        if (\in_array($input['order'], $allowedOrders, true)) {
+        if (in_array($input['order'], $allowedOrders, true)) {
             $filters['order'] = $input['order'];
         }
 
@@ -745,7 +764,7 @@ class App extends AbstractController
         $finder->where('discussion_type', '<>', 'redirect');
 
         $forumIds = $this->getViewableNodeIds();
-        if (\count($forumIds) > 0) {
+        if (count($forumIds) > 0) {
             $finder->where('node_id', $forumIds);
         } else {
             $finder->whereImpossible();
@@ -777,7 +796,7 @@ class App extends AbstractController
 
                 break;
             default:
-                throw new \LogicException('Unsupported news feeds order: ' . $filters['order']);
+                throw new LogicException('Unsupported news feeds order: ' . $filters['order']);
         }
 
         if (isset($filters['unread'])) {
@@ -790,7 +809,7 @@ class App extends AbstractController
 
     protected function runNewsFeedSearch(string $searchQuery): ?\XF\Entity\Search
     {
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         $filters = $this->getNewsFeedsFilters();
 
         /** @var Thread $finder */
@@ -808,7 +827,7 @@ class App extends AbstractController
             ];
         }
 
-        if (\count($searchResults) === 0) {
+        if (count($searchResults) === 0) {
             return null;
         }
 
@@ -816,10 +835,10 @@ class App extends AbstractController
         $search = $this->em()->create('XF:Search');
         $search->search_type = 'thread';
         $search->search_query = $searchQuery;
-        $search->query_hash = \md5(__METHOD__ . $searchQuery . \json_encode($filters));
+        $search->query_hash = md5(__METHOD__ . $searchQuery . json_encode($filters));
         $search->search_results = $searchResults;
-        $search->result_count = \count($searchResults);
-        $search->search_date = \XF::$time;
+        $search->result_count = count($searchResults);
+        $search->search_date = XF::$time;
         $search->user_id = $visitor->user_id;
         $search->search_order = 'date';
         $search->search_grouping = true;

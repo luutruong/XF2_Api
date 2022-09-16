@@ -2,8 +2,10 @@
 
 namespace Truonglv\Api;
 
+use XF;
 use XF\Container;
 use XF\Entity\ApiKey;
+use function strtoupper;
 use XF\Http\ResponseFile;
 use XF\Http\ResponseStream;
 use Truonglv\Api\Entity\Log;
@@ -41,7 +43,7 @@ class Listener
             return;
         }
 
-        $app = \XF::app();
+        $app = XF::app();
         $ourKey = $app->options()->tApi_apiKey;
 
         /** @var ApiKey|null $apiKeyEntity */
@@ -66,7 +68,7 @@ class Listener
                 ->where('token', $accessToken)
                 ->whereOr([
                     ['expire_date', '=', 0],
-                    ['expire_date', '>', \XF::$time]
+                    ['expire_date', '>', XF::$time]
                 ])
                 ->fetchOne();
 
@@ -109,12 +111,12 @@ class Listener
 
         /** @var Log $log */
         $log = $app->em()->create('Truonglv\Api:Log');
-        $log->user_id = \XF::visitor()->user_id;
+        $log->user_id = XF::visitor()->user_id;
 
         $log->app_version = $request->getServer(App::HEADER_KEY_APP_VERSION);
 
         $log->end_point = $request->getRequestUri();
-        $log->method = \strtoupper($request->getRequestMethod());
+        $log->method = strtoupper($request->getRequestMethod());
 
         $post = $_POST;
         if (isset($post['password'])) {

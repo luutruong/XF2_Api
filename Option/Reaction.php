@@ -2,7 +2,11 @@
 
 namespace Truonglv\Api\Option;
 
+use XF;
+use function trim;
+use function count;
 use XF\PrintableException;
+use function array_replace;
 use XF\Option\AbstractOption;
 use XF\Mvc\Entity\AbstractCollection;
 
@@ -49,24 +53,24 @@ class Reaction extends AbstractOption
             /** @var \XF\Entity\Reaction $reactionEntity */
             $reactionEntity = $reactions[self::DEFAULT_REACTION_ID];
 
-            throw new PrintableException(\XF::phrase('tapi_reaction_x_are_required', [
+            throw new PrintableException(XF::phrase('tapi_reaction_x_are_required', [
                 'title' => $reactionEntity->title
             ]));
         }
 
         foreach ($values as $index => $value) {
-            $value = \array_replace([
+            $value = array_replace([
                 'reactionId' => 0,
                 'imageUrl' => ''
             ], $value);
             if (isset($reactions[$value['reactionId']])
-                && \trim($value['imageUrl']) !== ''
+                && trim($value['imageUrl']) !== ''
             ) {
                 $output[] = $value;
             }
         }
 
-        if (\count($output) > self::MAXIMUM_REACTIONS) {
+        if (count($output) > self::MAXIMUM_REACTIONS) {
             throw new PrintableException('Too many reactions provided!');
         }
 
@@ -77,7 +81,7 @@ class Reaction extends AbstractOption
 
     protected static function getReactions(): AbstractCollection
     {
-        return \XF::finder('XF:Reaction')
+        return XF::finder('XF:Reaction')
             ->where('active', true)
             ->order('display_order')
             ->fetch();

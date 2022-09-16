@@ -2,13 +2,14 @@
 
 namespace Truonglv\Api\Repository;
 
+use XF;
 use XF\Mvc\Entity\Repository;
 
 class SearchQuery extends Repository
 {
     public function getTrendingQueries(): array
     {
-        $cutOff = \XF::$time - 30 * 86400;
+        $cutOff = XF::$time - 30 * 86400;
         $db = $this->app()->db();
 
         $results = $db->fetchAll($db->limit('

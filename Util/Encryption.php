@@ -3,6 +3,7 @@
 namespace Truonglv\Api\Util;
 
 use XF\Util\Random;
+use InvalidArgumentException;
 
 class Encryption
 {
@@ -18,17 +19,17 @@ class Encryption
     public static function encrypt($payload, string $key)
     {
         if (strlen($key) === 0) {
-            throw new \InvalidArgumentException('Key must not empty!');
+            throw new InvalidArgumentException('Key must not empty!');
         }
 
         $ivLength = openssl_cipher_iv_length(self::ALGO_AES_256_CBC);
         $iv = Random::getRandomString($ivLength);
         if ($iv === false) {
-            throw new \InvalidArgumentException('Cannot make random IV');
+            throw new InvalidArgumentException('Cannot make random IV');
         }
         $salt = Random::getRandomString(256);
         if ($salt === false) {
-            throw new \InvalidArgumentException('Cannot make salt');
+            throw new InvalidArgumentException('Cannot make salt');
         }
 
         $value = openssl_encrypt(
@@ -39,7 +40,7 @@ class Encryption
             $iv
         );
         if ($value === false) {
-            throw new \InvalidArgumentException('Cannot encrypt data');
+            throw new InvalidArgumentException('Cannot encrypt data');
         }
 
         $encoded = json_encode([
@@ -48,7 +49,7 @@ class Encryption
             'value' => base64_encode($value),
         ]);
         if ($encoded === false) {
-            throw new \InvalidArgumentException('Cannot encode data');
+            throw new InvalidArgumentException('Cannot encode data');
         }
 
         return \base64_encode($encoded);
@@ -58,31 +59,31 @@ class Encryption
      * @param string $encrypted
      * @param string $key
      * @return mixed
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function decrypt(string $encrypted, string $key)
     {
         if (strlen($key) === 0) {
-            throw new \InvalidArgumentException('Key must not empty!');
+            throw new InvalidArgumentException('Key must not empty!');
         }
 
         $decoded = base64_decode($encrypted, true);
         if ($decoded === false) {
-            throw new \InvalidArgumentException('Bad encrypted string');
+            throw new InvalidArgumentException('Bad encrypted string');
         }
 
         $payload = json_decode($decoded, true);
         if (!self::isValidPayload($payload)) {
-            throw new \InvalidArgumentException('Bad payload');
+            throw new InvalidArgumentException('Bad payload');
         }
 
         $value = base64_decode($payload['value'], true);
         if ($value === false) {
-            throw new \InvalidArgumentException('Bad encrypted value');
+            throw new InvalidArgumentException('Bad encrypted value');
         }
         $salt = base64_decode($payload['salt'], true);
         if ($salt === false) {
-            throw new \InvalidArgumentException('Bad salt value');
+            throw new InvalidArgumentException('Bad salt value');
         }
 
         $decrypted = openssl_decrypt(
@@ -93,7 +94,7 @@ class Encryption
             $payload['iv']
         );
         if ($decrypted === false) {
-            throw new \InvalidArgumentException('Cannot decrypt data');
+            throw new InvalidArgumentException('Cannot decrypt data');
         }
 
         return $decrypted;
@@ -104,7 +105,7 @@ class Encryption
         $keyHashed = hash_pbkdf2('sha512', $key, $salt, self::ITERATIONS, 64);
         $keyHex = hex2bin($keyHashed);
         if ($keyHex === false) {
-            throw new \InvalidArgumentException('Cannot hex key');
+            throw new InvalidArgumentException('Cannot hex key');
         }
 
         return $keyHex;

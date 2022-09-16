@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use XF;
 use XF\Mvc\ParameterBag;
 use XF\Entity\ThreadPrefix;
 use XF\Repository\ForumWatch;
@@ -41,14 +42,14 @@ class Forum extends XFCP_Forum
     public function actionPostWatch(ParameterBag $params)
     {
         $forum = $this->assertViewableForum($params->node_id);
-        if (\XF::isApiCheckingPermissions() && !$forum->canWatch()) {
+        if (XF::isApiCheckingPermissions() && !$forum->canWatch()) {
             return $this->noPermission();
         }
 
         /** @var ForumWatch $forumWatch */
         $forumWatch = $this->repository('XF:ForumWatch');
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         /** @var \XF\Entity\ForumWatch|null $forumWatchEntity */
         $forumWatchEntity = $forum->Watch[$visitor->user_id];
         $newState = ($forumWatchEntity !== null) ? 'delete' : 'thread';

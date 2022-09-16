@@ -2,8 +2,14 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use XF;
 use XF\Util\Arr;
+use function count;
+use function strpos;
 use Truonglv\Api\App;
+use function in_array;
+use function array_map;
+use function array_keys;
 use XF\Api\Controller\AbstractController;
 
 class Notifications extends AbstractController
@@ -12,7 +18,7 @@ class Notifications extends AbstractController
     {
         $this->assertRegisteredUser();
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
 
         $page = $this->filterPage();
         $perPage = $this->options()->tApi_recordsPerPage;
@@ -22,17 +28,17 @@ class Notifications extends AbstractController
         $contentTypes = $supportedContentTypes;
 
         if ($contentType !== '') {
-            if (\strpos($contentType, ',') === false) {
-                if (\in_array($contentType, $supportedContentTypes, true)) {
+            if (strpos($contentType, ',') === false) {
+                if (in_array($contentType, $supportedContentTypes, true)) {
                     $contentTypes = [$contentType];
                 } else {
                     $contentTypes = [];
                 }
             } else {
                 $contentTypes = Arr::stringToArray($contentType, '/,/');
-                $contentTypes = \array_map('trim', $contentTypes);
-                foreach (\array_keys($contentTypes) as $key) {
-                    if (!\in_array($contentTypes[$key], $supportedContentTypes, true)) {
+                $contentTypes = array_map('trim', $contentTypes);
+                foreach (array_keys($contentTypes) as $key) {
+                    if (!in_array($contentTypes[$key], $supportedContentTypes, true)) {
                         unset($contentTypes[$key]);
                     }
                 }
@@ -43,7 +49,7 @@ class Notifications extends AbstractController
         $alertRepo = $this->repository('XF:UserAlert');
 
         $alertsFinder = $alertRepo->findAlertsForUser($visitor->user_id);
-        if (\count($contentTypes) === 0) {
+        if (count($contentTypes) === 0) {
             $alertsFinder->whereImpossible();
         } else {
             $alertsFinder->where('content_type', $contentTypes);
@@ -58,7 +64,7 @@ class Notifications extends AbstractController
         $alerts = $alertsFinder->limitByPage($page, $perPage)->fetch();
 
         $alertRepo->addContentToAlerts($alerts);
-        if (\XF::isApiCheckingPermissions()) {
+        if (XF::isApiCheckingPermissions()) {
             $alerts = $alerts->filterViewable();
         }
 
@@ -76,7 +82,7 @@ class Notifications extends AbstractController
 
         /** @var \XF\Repository\UserAlert $alertRepo */
         $alertRepo = $this->repository('XF:UserAlert');
-        $alertRepo->markUserAlertsViewed(\XF::visitor());
+        $alertRepo->markUserAlertsViewed(XF::visitor());
 
         return $this->apiSuccess();
     }
@@ -87,7 +93,7 @@ class Notifications extends AbstractController
 
         /** @var \XF\Repository\UserAlert $alertRepo */
         $alertRepo = $this->repository('XF:UserAlert');
-        $alertRepo->markUserAlertsRead(\XF::visitor());
+        $alertRepo->markUserAlertsRead(XF::visitor());
 
         return $this->apiSuccess();
     }

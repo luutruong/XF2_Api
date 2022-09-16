@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use XF;
 use Truonglv\Api\App;
 use XF\Mvc\Entity\Structure;
 
@@ -14,7 +15,7 @@ class Post extends XFCP_Post
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         if ($visitor->user_id > 0) {
             $result->can_report = $this->canReport();
             $result->can_ignore = $this->User !== null && $visitor->canIgnoreUser($this->User);

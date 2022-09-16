@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\XF\Repository;
 
+use XF;
+
 class Tag extends XFCP_Tag
 {
     public function getTApiTrendingTags(array $contentTypes, int $dateCutOff, int $limit, int $minUses = 1): array
@@ -15,7 +17,7 @@ class Tag extends XFCP_Tag
             HAVING `total` >= ?
             ORDER BY `total` DESC
         ', $limit), [
-            \XF::$time - $dateCutOff * 86400,
+            XF::$time - $dateCutOff * 86400,
             $minUses
         ]);
 

@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Pub\Controller;
 
+use XF;
 use Truonglv\Api\App;
 use XF\Repository\User;
 use XF\Mvc\ParameterBag;
@@ -12,7 +13,7 @@ class Attachment extends XFCP_Attachment
     public function actionIndex(ParameterBag $params)
     {
         $tokenText = (string) $this->request()->getServer(App::HEADER_KEY_ACCESS_TOKEN);
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         if (strlen($tokenText) > 0 && $visitor->user_id === 0) {
             /** @var AccessToken|null $accessToken */
             $accessToken = $this->em()->find('Truonglv\Api:AccessToken', $tokenText);
@@ -21,7 +22,7 @@ class Attachment extends XFCP_Attachment
                 $userRepo = $this->repository('XF:User');
                 $visitor = $userRepo->getVisitor($accessToken->user_id);
                 if ($visitor->user_id > 0) {
-                    return \XF::asVisitor($visitor, function () use ($params) {
+                    return XF::asVisitor($visitor, function () use ($params) {
                         return parent::actionIndex($params);
                     });
                 }

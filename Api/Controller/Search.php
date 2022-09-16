@@ -2,10 +2,17 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use XF;
+use function max;
+use function md5;
+use function count;
 use XF\Entity\Post;
+use function strlen;
 use XF\Repository\Tag;
 use XF\Mvc\ParameterBag;
+use function utf8_strlen;
 use XF\Mvc\Entity\Entity;
+use function utf8_strtolower;
 use Truonglv\Api\Entity\SearchQuery;
 use XF\Api\Controller\AbstractController;
 
@@ -19,9 +26,9 @@ class Search extends AbstractController
     {
         $this->assertRequiredApiInput(['keywords']);
 
-        $visitor = \XF::visitor();
-        if (\XF::isApiCheckingPermissions() && !$visitor->canSearch($error)) {
-            return $this->message(\XF::phrase('no_results_found'));
+        $visitor = XF::visitor();
+        if (XF::isApiCheckingPermissions() && !$visitor->canSearch($error)) {
+            return $this->message(XF::phrase('no_results_found'));
         }
 
         $searchType = $this->filter('search_type', 'str');
@@ -57,18 +64,18 @@ class Search extends AbstractController
             /** @var Tag $tagRepo */
             $tagRepo = $this->repository('XF:Tag');
             if (!$tagRepo->isValidTag($tagName)) {
-                return $this->message(\XF::phrase('no_results_found'));
+                return $this->message(XF::phrase('no_results_found'));
             }
 
             $tags = $tagRepo->getTags([$tagName]);
             $foundTag = reset($tags);
             if (!$foundTag instanceof \XF\Entity\Tag) {
-                return $this->message(\XF::phrase('no_results_found'));
+                return $this->message(XF::phrase('no_results_found'));
             }
 
             $tag = $foundTag;
-        } elseif (\strlen($keywords) <= $this->options()->searchMinWordLength) {
-            return $this->message(\XF::phrase('search_could_not_be_completed_because_search_keywords_were_too'));
+        } elseif (strlen($keywords) <= $this->options()->searchMinWordLength) {
+            return $this->message(XF::phrase('search_could_not_be_completed_because_search_keywords_were_too'));
         }
 
         $urlConstraints = [];
@@ -80,7 +87,7 @@ class Search extends AbstractController
         $query->withGroupedResults();
         /** @var SearchQuery $searchQueryLogger */
         $searchQueryLogger = $this->em()->create('Truonglv\Api:SearchQuery');
-        $searchQueryLogger->user_id = \XF::visitor()->user_id;
+        $searchQueryLogger->user_id = XF::visitor()->user_id;
 
         if ($tag !== null) {
             $query->withTags($tag->tag_id);
@@ -100,7 +107,7 @@ class Search extends AbstractController
         $search = $searchRepo->runSearch($query, $constraints, true);
 
         if (!$search) {
-            return $this->message(\XF::phrase('no_results_found'));
+            return $this->message(XF::phrase('no_results_found'));
         }
 
         return $this->rerouteController(__CLASS__, 'get', [
@@ -120,7 +127,7 @@ class Search extends AbstractController
 
         $resultSet->sliceResultsToPage($page, $perPage, $search->search_type !== self::SEARCH_TYPE_USER);
         if (!$resultSet->countResults()) {
-            return $this->message(\XF::phrase('no_results_found'));
+            return $this->message(XF::phrase('no_results_found'));
         }
 
         $results = [];
@@ -172,15 +179,15 @@ class Search extends AbstractController
     {
         $name = $this->filter('name', 'str');
 
-        if (\utf8_strlen($name) <= 2) {
-            return $this->message(\XF::phrase('no_results_found'));
+        if (utf8_strlen($name) <= 2) {
+            return $this->message(XF::phrase('no_results_found'));
         }
 
-        $queryHash = \md5(
+        $queryHash = md5(
             $this->app()->config('globalSalt')
             . __METHOD__
             . self::SEARCH_TYPE_USER
-            . \utf8_strtolower($name)
+            . utf8_strtolower($name)
         );
 
         /** @var \XF\Entity\Search|null $existingSearch */
@@ -188,7 +195,7 @@ class Search extends AbstractController
             ->where('user_id', 0)
             ->where('query_hash', $queryHash)
             ->where('search_type', self::SEARCH_TYPE_USER)
-            ->where('search_date', '>=', \XF::$time - 3600)
+            ->where('search_date', '>=', XF::$time - 3600)
             ->order('search_date', 'desc')
             ->fetchOne();
         if ($existingSearch !== null) {
@@ -201,7 +208,7 @@ class Search extends AbstractController
         $finder->where('username', 'LIKE', $finder->escapeLike($name, '?%'));
         $finder->order('username');
 
-        $results = $finder->limit(\max(\XF::options()->maximumSearchResults, 20))
+        $results = $finder->limit(max(XF::options()->maximumSearchResults, 20))
             ->fetchColumns('user_id');
         $searchResults = [];
 
@@ -209,15 +216,15 @@ class Search extends AbstractController
             $searchResults[] = ['user', $result['user_id']];
         }
 
-        if (\count($searchResults) === 0) {
-            return $this->message(\XF::phrase('no_results_found'));
+        if (count($searchResults) === 0) {
+            return $this->message(XF::phrase('no_results_found'));
         }
 
         /** @var \XF\Entity\Search $search */
         $search = $this->em()->create('XF:Search');
 
         $search->user_id = 0;
-        $search->result_count = \count($searchResults);
+        $search->result_count = count($searchResults);
         $search->search_results = $searchResults;
         $search->search_type = self::SEARCH_TYPE_USER;
         $search->search_constraints = [];
@@ -252,7 +259,7 @@ class Search extends AbstractController
     {
         /** @var \XF\Entity\Search $search */
         $search = $this->assertRecordExists('XF:Search', $id);
-        if (($search->user_id > 0 && $search->user_id !== \XF::visitor()->user_id)
+        if (($search->user_id > 0 && $search->user_id !== XF::visitor()->user_id)
             || (
                 $search->search_type !== ''
                 && !in_array($search->search_type, $this->getAllowedSearchTypes(), true)

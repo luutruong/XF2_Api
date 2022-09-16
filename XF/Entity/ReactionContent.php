@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use LogicException;
 use XF\Mvc\Entity\Structure;
 
 class ReactionContent extends XFCP_ReactionContent
@@ -19,7 +20,7 @@ class ReactionContent extends XFCP_ReactionContent
     ) {
         try {
             parent::setupApiResultData($result, $verbosity, $options);
-        } catch (\LogicException $e) {
+        } catch (LogicException $e) {
         }
 
         if ($verbosity >= self::VERBOSITY_VERBOSE) {

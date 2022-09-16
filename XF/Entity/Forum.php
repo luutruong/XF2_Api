@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use XF;
+
 class Forum extends XFCP_Forum
 {
     /**
@@ -16,7 +18,7 @@ class Forum extends XFCP_Forum
         $result->can_watch = $this->canWatch();
         $result->is_watched = false;
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         if ($visitor->user_id > 0) {
             $result->is_watched = isset($this->Watch[$visitor->user_id]);
         }

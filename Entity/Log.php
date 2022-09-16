@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Entity;
 
+use XF;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
@@ -45,7 +46,7 @@ class Log extends Entity
             'payload' => ['type' => self::JSON_ARRAY, 'default' => []],
             'response_code' => ['type' => self::UINT, 'default' => 0],
             'response' => ['type' => self::STR, 'default' => ''],
-            'log_date' => ['type' => self::UINT, 'default' => \XF::$time]
+            'log_date' => ['type' => self::UINT, 'default' => XF::$time]
         ];
 
         $structure->relations = [

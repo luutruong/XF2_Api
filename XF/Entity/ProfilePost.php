@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use XF;
 use Truonglv\Api\App;
 
 class ProfilePost extends XFCP_ProfilePost
@@ -25,7 +26,7 @@ class ProfilePost extends XFCP_ProfilePost
             $this->app()->options()->tApi_discussionPreviewLength
         );
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         if ($visitor->user_id > 0) {
             $result->can_comment = $this->canComment();
             $result->can_report = $this->canReport();

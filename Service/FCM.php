@@ -2,8 +2,16 @@
 
 namespace Truonglv\Api\Service;
 
+use XF;
+use Exception;
 use XF\Entity\User;
+use function strlen;
+use function strval;
+use function file_exists;
+use function is_readable;
 use Kreait\Firebase\Factory;
+use InvalidArgumentException;
+use function file_get_contents;
 use Truonglv\Api\Entity\Subscription;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
@@ -32,17 +40,17 @@ class FCM extends AbstractPushNotification
         if ($fbConfigFile === null) {
             $fbConfigFile = $this->app->options()->tApi_firebaseConfigPath;
         }
-        if (\strlen($fbConfigFile) === 0) {
+        if (strlen($fbConfigFile) === 0) {
             return;
         }
 
-        if (!\file_exists($fbConfigFile) || !\is_readable($fbConfigFile)) {
-            throw new \InvalidArgumentException('Firebase config file not exists or not readable.');
+        if (!file_exists($fbConfigFile) || !is_readable($fbConfigFile)) {
+            throw new InvalidArgumentException('Firebase config file not exists or not readable.');
         }
 
-        $contents = \file_get_contents($fbConfigFile);
+        $contents = file_get_contents($fbConfigFile);
         if ($contents === false) {
-            throw new \InvalidArgumentException('Cannot read Firebase config.');
+            throw new InvalidArgumentException('Cannot read Firebase config.');
         }
         $factory = new Factory();
         $factory = $factory->withServiceAccount($contents);
@@ -57,7 +65,7 @@ class FCM extends AbstractPushNotification
 
                 $value = json_encode($value);
             }
-            $dataTransformed[\strval($key)] = \strval($value);
+            $dataTransformed[strval($key)] = strval($value);
         }
 
         /** @var Subscription $subscription */
@@ -97,8 +105,8 @@ class FCM extends AbstractPushNotification
         try {
             // @phpstan-ignore-next-line
             $messaging->sendAll($messages);
-        } catch (\Exception $e) {
-            \XF::logException($e, false, '[tl] Api: ');
+        } catch (Exception $e) {
+            XF::logException($e, false, '[tl] Api: ');
         }
     }
 

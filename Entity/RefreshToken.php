@@ -15,14 +15,14 @@ use XF\Mvc\Entity\Structure;
  * RELATIONS
  * @property \XF\Entity\User $User
  */
-class AccessToken extends Entity
+class RefreshToken extends Entity
 {
     use TokenTrait;
 
     public static function getStructure(Structure $structure)
     {
-        $structure->table = 'xf_tapi_access_token';
-        $structure->shortName = 'Truonglv\Api:AccessToken';
+        $structure->table = 'xf_tapi_refresh_token';
+        $structure->shortName = 'Truonglv\Api:RefreshToken';
 
         static::setupStructure($structure);
 

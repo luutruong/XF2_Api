@@ -2,8 +2,16 @@
 
 namespace Truonglv\Api;
 
+use XF;
+use function md5;
+use function strval;
+use function is_array;
+use function array_keys;
+use function json_encode;
 use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
+use function call_user_func;
+use InvalidArgumentException;
 use Truonglv\Api\Data\Reaction;
 use XF\Api\Result\EntityResult;
 use Truonglv\Api\Util\Encryption;
@@ -45,7 +53,7 @@ class App
 
     public static function getRequest(): \XF\Http\Request
     {
-        return self::$request !== null ? self::$request : \XF::app()->request();
+        return self::$request !== null ? self::$request : XF::app()->request();
     }
 
     /**
@@ -58,22 +66,22 @@ class App
 
         $payload = [
             self::KEY_LINK_PROXY_ACCESS_TOKEN => $accessToken,
-            self::KEY_LINK_PROXY_DATE => \XF::$time,
+            self::KEY_LINK_PROXY_DATE => XF::$time,
             self::KEY_LINK_PROXY_TARGET_URL => $targetUrl,
         ];
 
-        $encoded = \strval(\json_encode($payload));
+        $encoded = strval(json_encode($payload));
 
         try {
-            $encrypted = Encryption::encrypt($encoded, \XF::app()->options()->tApi_encryptKey);
-        } catch (\InvalidArgumentException $e) {
+            $encrypted = Encryption::encrypt($encoded, XF::app()->options()->tApi_encryptKey);
+        } catch (InvalidArgumentException $e) {
             return $targetUrl;
         }
 
-        return \XF::app()->router('public')
+        return XF::app()->router('public')
             ->buildLink('canonical:misc/tapi-goto', null, [
                 self::KEY_LINK_PROXY_INPUT_DATA => $encrypted,
-                self::KEY_LINK_PROXY_INPUT_SIGNATURE => \md5($encoded)
+                self::KEY_LINK_PROXY_INPUT_SIGNATURE => md5($encoded)
             ]);
     }
 
@@ -83,7 +91,7 @@ class App
     public static function getSupportAlertContentTypes(): array
     {
         /** @var AlertQueue $alertQueueRepo */
-        $alertQueueRepo = \XF::repository('Truonglv\Api:AlertQueue');
+        $alertQueueRepo = XF::repository('Truonglv\Api:AlertQueue');
 
         return $alertQueueRepo->getSupportedAlertContentTypes();
     }
@@ -94,7 +102,7 @@ class App
      */
     public static function buildAttachmentLink(Attachment $attachment): string
     {
-        return \XF::app()->router('public')->buildLink('canonical:attachments', $attachment);
+        return XF::app()->router('public')->buildLink('canonical:attachments', $attachment);
     }
 
     /**
@@ -107,16 +115,16 @@ class App
     {
         /** @var callable $callable */
         $callable = [$entity, 'getVisitorReactionId'];
-        $visitorReactedId = \call_user_func($callable);
+        $visitorReactedId = call_user_func($callable);
 
         $reacted = [];
         $entityReactions = $entity->get($reactionKey . '_');
-        if (\is_array($entityReactions)) {
+        if (is_array($entityReactions)) {
             /** @var Reaction $reactionData */
-            $reactionData = \XF::app()->data('Truonglv\Api:Reaction');
+            $reactionData = XF::app()->data('Truonglv\Api:Reaction');
             $reactions = $reactionData->getReactions();
 
-            foreach (\array_keys($entityReactions) as $reactionId) {
+            foreach (array_keys($entityReactions) as $reactionId) {
                 $count = $entityReactions[$reactionId];
                 if ($visitorReactedId > 0 && $visitorReactedId == $reactionId) {
                     $count -= 1;
@@ -136,7 +144,7 @@ class App
     public static function alertQueueRepo(): AlertQueue
     {
         /** @var AlertQueue $repo */
-        $repo = \XF::repository('Truonglv\Api:AlertQueue');
+        $repo = XF::repository('Truonglv\Api:AlertQueue');
 
         return $repo;
     }

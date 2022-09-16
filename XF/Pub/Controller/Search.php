@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Pub\Controller;
 
+use XF;
 use Truonglv\Api\Entity\SearchQuery;
 
 class Search extends XFCP_Search
@@ -16,7 +17,7 @@ class Search extends XFCP_Search
     {
         /** @var SearchQuery $searchQueryLogger */
         $searchQueryLogger = $this->em()->create('Truonglv\Api:SearchQuery');
-        $searchQueryLogger->user_id = \XF::visitor()->user_id;
+        $searchQueryLogger->user_id = XF::visitor()->user_id;
         $keywords = $query->getKeywords();
         if (strlen($keywords) > 0) {
             $searchQueryLogger->query_text = $query->getKeywords();

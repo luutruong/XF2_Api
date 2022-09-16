@@ -2,7 +2,10 @@
 
 namespace Truonglv\Api\Repository;
 
+use XF;
 use XF\Timer;
+use Throwable;
+use LogicException;
 use Truonglv\Api\App;
 use XF\Entity\UserAlert;
 use XF\Mvc\Entity\Repository;
@@ -53,7 +56,7 @@ class AlertQueue extends Repository
     {
         $timer = $maxRunTime > 0 ? new Timer($maxRunTime) : null;
         $records = $this->finder('Truonglv\Api:AlertQueue')
-            ->where('queue_date', '<=', \XF::$time)
+            ->where('queue_date', '<=', XF::$time)
             ->order('queue_date')
             ->limit($timer === null ? null : 20)
             ->fetch();
@@ -75,7 +78,7 @@ class AlertQueue extends Repository
 
             try {
                 $this->runQueueEntry($record->content_type, $record->content_id, $record->payload);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
             }
 
             if ($timer !== null && $timer->limitExceeded()) {
@@ -101,7 +104,7 @@ class AlertQueue extends Repository
                 break;
             case 'conversation_message':
                 if (!isset($data['action'])) {
-                    throw new \LogicException('Must be specified `action`');
+                    throw new LogicException('Must be specified `action`');
                 }
                 /** @var ConversationMessage|null $convoMessage */
                 $convoMessage = $this->em->find('XF:ConversationMessage', $contentId);
@@ -113,7 +116,7 @@ class AlertQueue extends Repository
 
                 break;
             default:
-                throw new \LogicException('Must be implemented!');
+                throw new LogicException('Must be implemented!');
         }
     }
 
@@ -158,7 +161,7 @@ class AlertQueue extends Repository
     public function insertQueue(string $contentType, int $contentId, array $payload = [], ?int $queueDate = null): void
     {
         if ($queueDate <= 0) {
-            $queueDate = \XF::$time;
+            $queueDate = XF::$time;
         }
         $delayed = $this->app()->options()->tApi_delayPushNotifications == 1;
         if ($delayed) {

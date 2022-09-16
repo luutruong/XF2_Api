@@ -2,6 +2,9 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use XF;
+use function count;
+
 class User extends XFCP_User
 {
     /**
@@ -36,7 +39,7 @@ class User extends XFCP_User
 
         $result->can_start_converse = $this->canStartConversation();
         $result->can_be_reported = $this->canBeReported();
-        if ($this->user_id === \XF::visitor()->user_id) {
+        if ($this->user_id === XF::visitor()->user_id) {
             $result->can_upload_avatar = $this->canUploadAvatar();
         } else {
             $result->can_upload_avatar = false;
@@ -63,13 +66,13 @@ class User extends XFCP_User
             if ($this->user_state === 'email_confirm'
                 || $this->user_state === 'email_confirm_edit'
             ) {
-                $result->tapi_user_state_message = \XF::phrase('your_account_is_currently_awaiting_confirmation_confirmation_sent_to_x', [
+                $result->tapi_user_state_message = XF::phrase('your_account_is_currently_awaiting_confirmation_confirmation_sent_to_x', [
                     'email' => $this->email,
                 ]);
             } elseif ($this->user_state === 'moderated') {
-                $result->tapi_user_state_message = \XF::phrase('your_account_is_currently_awaiting_approval_by_administrator');
+                $result->tapi_user_state_message = XF::phrase('your_account_is_currently_awaiting_approval_by_administrator');
             } elseif ($this->user_state === 'email_bounce') {
-                $result->tapi_user_state_message = \XF::phrase('attempts_to_email_x_have_failed_please_update', [
+                $result->tapi_user_state_message = XF::phrase('attempts_to_email_x_have_failed_please_update', [
                     'email' => $this->email,
                 ]);
             }
@@ -99,55 +102,55 @@ class User extends XFCP_User
      */
     protected function getTApiAboutTabData()
     {
-        $language = $this->app()->language(\XF::visitor()->language_id);
+        $language = $this->app()->language(XF::visitor()->language_id);
 
         $data = [
             [
-                'label' => \XF::phrase('joined'),
+                'label' => XF::phrase('joined'),
                 'value' => $language->date($this->register_date, 'absolute'),
             ],
             [
-                'label' => \XF::phrase('messages'),
+                'label' => XF::phrase('messages'),
                 'value' => $language->numberFormat($this->message_count)
             ],
             [
-                'label' => \XF::phrase('reaction_score'),
+                'label' => XF::phrase('reaction_score'),
                 'value' => $language->numberFormat($this->reaction_score)
             ],
         ];
 
         if ($this->app()->options()->enableTrophies) {
             $data[] = [
-                'label' => \XF::phrase('trophy_points'),
+                'label' => XF::phrase('trophy_points'),
                 'value' => $language->numberFormat($this->trophy_points)
             ];
         }
 
         if ($this->custom_title !== '') {
             $data[] = [
-                'label' => \XF::phrase('custom_title'),
+                'label' => XF::phrase('custom_title'),
                 'value' => $this->custom_title,
             ];
         }
 
         $birthday = $this->Profile !== null ? $this->Profile->getBirthday() : [];
-        if (\count($birthday) > 0) {
+        if (count($birthday) > 0) {
             $data[] = [
-                'label' => \XF::phrase('date_of_birth'),
+                'label' => XF::phrase('date_of_birth'),
                 'value' => $language->date($birthday['timeStamp'], $birthday['format']),
             ];
         }
 
         if ($this->Profile !== null && $this->Profile->website !== '') {
             $data[] = [
-                'label' => \XF::phrase('website'),
+                'label' => XF::phrase('website'),
                 'value' => $this->Profile->website,
             ];
         }
 
         if ($this->Profile !== null && $this->Profile->location !== '') {
             $data[] = [
-                'label' => \XF::phrase('location'),
+                'label' => XF::phrase('location'),
                 'value' => $this->Profile->location,
             ];
         }

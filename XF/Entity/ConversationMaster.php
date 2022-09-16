@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use XF;
+
 class ConversationMaster extends XFCP_ConversationMaster
 {
     protected function setupApiResultData(
@@ -11,7 +13,7 @@ class ConversationMaster extends XFCP_ConversationMaster
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         if ($visitor->user_id > 0) {
             $result->is_unread = isset($this->Users[$visitor->user_id]) && $this->Users[$visitor->user_id]->isUnread();
         } else {

@@ -2,6 +2,9 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use XF;
+use function count;
+use function array_keys;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Ignore;
 use XF\Api\Mvc\Reply\ApiResult;
@@ -11,11 +14,11 @@ class Me extends XFCP_Me
 {
     public function actionGetIgnoring()
     {
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         $ignored = $visitor->Profile !== null ? $visitor->Profile->ignored : [];
-        if (\count($ignored) > 0) {
+        if (count($ignored) > 0) {
             $users = $this->finder('XF:User')
-                ->where('user_id', \array_keys($ignored))
+                ->where('user_id', array_keys($ignored))
                 ->order('username')
                 ->fetch();
         } else {
@@ -34,8 +37,8 @@ class Me extends XFCP_Me
         $userId = $this->filter('user_id', 'uint');
         $user = $this->tApiAssertViewableUser($userId);
 
-        $visitor = \XF::visitor();
-        if (\XF::isApiCheckingPermissions() && !$visitor->canIgnoreUser($user)) {
+        $visitor = XF::visitor();
+        if (XF::isApiCheckingPermissions() && !$visitor->canIgnoreUser($user)) {
             return $this->noPermission();
         }
 
@@ -55,8 +58,8 @@ class Me extends XFCP_Me
         $userId = $this->filter('user_id', 'uint');
         $user = $this->tApiAssertViewableUser($userId);
 
-        $visitor = \XF::visitor();
-        if (\XF::isApiCheckingPermissions() && !$visitor->canIgnoreUser($user)) {
+        $visitor = XF::visitor();
+        if (XF::isApiCheckingPermissions() && !$visitor->canIgnoreUser($user)) {
             return $this->noPermission();
         }
 
@@ -74,7 +77,7 @@ class Me extends XFCP_Me
         $page = $this->filterPage();
         $perPage = $this->options()->tApi_recordsPerPage;
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
 
         /** @var \XF\Repository\Thread $threadRepo */
         $threadRepo = $this->repository('XF:Thread');
@@ -92,7 +95,7 @@ class Me extends XFCP_Me
         $threads = $total > 0
             ? $threadFinder->limitByPage($page, $perPage)->fetch()
             : $this->em()->getEmptyCollection();
-        if (\XF::isApiCheckingPermissions()) {
+        if (XF::isApiCheckingPermissions()) {
             // only filtered to the forums we could view -- could still be other conditions
             $threads = $threads->filterViewable();
         }
@@ -110,7 +113,7 @@ class Me extends XFCP_Me
         $response = parent::actionPostAvatar();
         if ($response instanceof ApiResult) {
             $result = $response->getApiResult()->render();
-            $result['user'] = \XF::visitor()->toApiResult();
+            $result['user'] = XF::visitor()->toApiResult();
 
             return $this->apiResult($result);
         }
@@ -121,8 +124,8 @@ class Me extends XFCP_Me
     public function actionDelete()
     {
         /** @var \Truonglv\Api\XF\Entity\User $visitor */
-        $visitor = \XF::visitor();
-        if (\XF::isApiCheckingPermissions() && !$visitor->canTapiDelete($error)) {
+        $visitor = XF::visitor();
+        if (XF::isApiCheckingPermissions() && !$visitor->canTapiDelete($error)) {
             return $this->noPermission($error);
         }
 
@@ -150,18 +153,18 @@ class Me extends XFCP_Me
     {
         $this->assertRequiredApiInput(['username']);
 
-        $visitor = \XF::visitor();
-        if (\XF::isApiCheckingPermissions() && !$visitor->canChangeUsername($error)) {
+        $visitor = XF::visitor();
+        if (XF::isApiCheckingPermissions() && !$visitor->canChangeUsername($error)) {
             return $this->noPermission($error);
         }
 
         /** @var \XF\Service\User\UsernameChange $service */
-        $service = $this->service('XF:User\UsernameChange', \XF::visitor());
+        $service = $this->service('XF:User\UsernameChange', XF::visitor());
 
         $service->setNewUsername($this->filter('username', 'str'));
         $reason = $this->filter('change_reason', 'str');
         if ($this->options()->usernameChangeRequireReason > 0 && strlen($reason) === 0) {
-            throw $this->exception($this->error(\XF::phrase('please_provide_reason_for_this_username_change')));
+            throw $this->exception($this->error(XF::phrase('please_provide_reason_for_this_username_change')));
         }
         $service->setChangeReason($reason);
 
@@ -174,13 +177,13 @@ class Me extends XFCP_Me
 
         if ($usernameChange->change_state == 'approved') {
             return $this->apiSuccess([
-                'message' => \XF::phrase('your_username_has_been_changed_successfully'),
+                'message' => XF::phrase('your_username_has_been_changed_successfully'),
                 'changeState' => $usernameChange->change_state,
             ]);
         }
 
         return $this->apiSuccess([
-            'message' => \XF::phrase('your_username_change_must_be_approved_by_moderator'),
+            'message' => XF::phrase('your_username_change_must_be_approved_by_moderator'),
             'changeState' => $usernameChange->change_state,
         ]);
     }
@@ -199,7 +202,7 @@ class Me extends XFCP_Me
         /** @var \XF\Entity\User $user */
         $user = $this->assertRecordExists('XF:User', $id, $with);
 
-        if (\XF::isApiCheckingPermissions()) {
+        if (XF::isApiCheckingPermissions()) {
             $canView = $basicProfileOnly ? $user->canViewBasicProfile($error) : $user->canViewFullProfile($error);
             if (!$canView) {
                 throw $this->exception($this->noPermission($error));

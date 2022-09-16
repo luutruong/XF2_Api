@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use LogicException;
+
 class ThreadPrefixGroup extends XFCP_ThreadPrefixGroup
 {
     protected function setupApiResultData(
@@ -11,7 +13,7 @@ class ThreadPrefixGroup extends XFCP_ThreadPrefixGroup
     ) {
         try {
             parent::setupApiResultData($result, $verbosity, $options);
-        } catch (\LogicException $e) {
+        } catch (LogicException $e) {
         }
 
         $result->prefix_group_id = $this->prefix_group_id;

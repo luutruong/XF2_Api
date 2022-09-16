@@ -2,7 +2,13 @@
 
 namespace Truonglv\Api\XF\Pub\Controller;
 
+use XF;
+use function md5;
 use Truonglv\Api\App;
+use function is_array;
+use function hash_equals;
+use function json_decode;
+use InvalidArgumentException;
 use XF\ControllerPlugin\Login;
 use Truonglv\Api\Util\Encryption;
 use Truonglv\Api\Entity\AccessToken;
@@ -22,20 +28,20 @@ class Misc extends XFCP_Misc
 
         try {
             $data = Encryption::decrypt($payload, $this->app()->options()->tApi_encryptKey);
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
         }
 
         if ($data === null) {
             return $this->redirect($this->buildLink('index'));
         }
 
-        $computeSign = \md5($payload);
-        if (!\hash_equals($sign, $computeSign)) {
+        $computeSign = md5($payload);
+        if (!hash_equals($sign, $computeSign)) {
             return $this->redirect($this->buildLink('index'));
         }
 
-        $data = \json_decode($data, true);
-        if (!\is_array($data)
+        $data = json_decode($data, true);
+        if (!is_array($data)
             || !isset($data[App::KEY_LINK_PROXY_TARGET_URL])
         ) {
             return $this->redirect($this->buildLink('index'));
@@ -46,7 +52,7 @@ class Misc extends XFCP_Misc
             return $this->redirectPermanently($targetUrl);
         }
 
-        $isActive = ($data[App::KEY_LINK_PROXY_DATE] + 1300) > \XF::$time;
+        $isActive = ($data[App::KEY_LINK_PROXY_DATE] + 1300) > XF::$time;
 
         if ($isActive) {
             $accessToken = $data[App::KEY_LINK_PROXY_ACCESS_TOKEN];

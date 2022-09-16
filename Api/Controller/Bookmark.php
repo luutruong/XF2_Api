@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use XF;
 use XF\Mvc\Entity\Entity;
 use XF\Api\Controller\AbstractController;
 
@@ -14,7 +15,7 @@ class Bookmark extends AbstractController
 
         $contentType = $this->filter('content_type', 'str');
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         $finder = $this->finder('XF:BookmarkItem');
 
         $finder->where('user_id', $visitor->user_id);
@@ -35,7 +36,7 @@ class Bookmark extends AbstractController
         $contentFinder->whereIds($contentIds);
 
         $entities = $contentFinder->fetch();
-        if (\XF::isApiCheckingPermissions()) {
+        if (XF::isApiCheckingPermissions()) {
             $entities = $entities->filterViewable();
         }
 

@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use XF;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Follow;
@@ -15,8 +16,8 @@ class User extends XFCP_User
     public function actionPostFollowing(ParameterBag $params)
     {
         $user = $this->assertViewableUser($params->user_id);
-        $visitor = \XF::visitor();
-        if (\XF::isApiCheckingPermissions() && !$visitor->canFollowUser($user)) {
+        $visitor = XF::visitor();
+        if (XF::isApiCheckingPermissions() && !$visitor->canFollowUser($user)) {
             return $this->noPermission();
         }
 
@@ -60,8 +61,8 @@ class User extends XFCP_User
     public function actionDeleteFollowing(ParameterBag $params)
     {
         $user = $this->assertViewableUser($params->user_id);
-        $visitor = \XF::visitor();
-        if (\XF::isApiCheckingPermissions() && !$visitor->canFollowUser($user)) {
+        $visitor = XF::visitor();
+        if (XF::isApiCheckingPermissions() && !$visitor->canFollowUser($user)) {
             return $this->noPermission();
         }
 
@@ -77,7 +78,7 @@ class User extends XFCP_User
     public function actionPostReport(ParameterBag $params)
     {
         $user = $this->assertViewableUser($params->user_id);
-        if (\XF::isApiCheckingPermissions() && !$user->canBeReported()) {
+        if (XF::isApiCheckingPermissions() && !$user->canBeReported()) {
             return $this->noPermission();
         }
 
@@ -122,7 +123,7 @@ class User extends XFCP_User
     {
         $finder->with('api');
 
-        if (\XF::isApiCheckingPermissions()) {
+        if (XF::isApiCheckingPermissions()) {
             /** @var \XF\Repository\Forum $forumRepo */
             $forumRepo = $this->repository('XF:Forum');
             $forums = $forumRepo->getViewableForums();

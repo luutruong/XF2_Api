@@ -2,9 +2,13 @@
 
 namespace Truonglv\Api\Api\ControllerPlugin;
 
+use function strtr;
+use LogicException;
 use XF\Entity\Post;
 use Truonglv\Api\App;
+use function str_replace;
 use XF\Mvc\Entity\Entity;
+use function preg_match_all;
 use XF\Entity\ConversationMessage;
 use XF\Api\ControllerPlugin\AbstractPlugin;
 
@@ -13,7 +17,7 @@ class Quote extends AbstractPlugin
     public function getMessagePlaceholders(string $message, string $contentType): array
     {
         $template = App::QUOTE_PLACEHOLDER_TEMPLATE;
-        $template = \strtr($template, [
+        $template = strtr($template, [
             '{content_type}' => $contentType,
             '{content_id}' => '(\d+)',
             ',' => '\,',
@@ -21,7 +25,7 @@ class Quote extends AbstractPlugin
             ']' => '\]',
         ]);
 
-        \preg_match_all('#' . $template . '#i', $message, $matches);
+        preg_match_all('#' . $template . '#i', $message, $matches);
         if (count($matches[0]) === 0) {
             return [];
         }
@@ -45,7 +49,7 @@ class Quote extends AbstractPlugin
             /** @var Entity|null $entityRef */
             $entityRef = isset($contents[$entityId]) ? $contents[$entityId] : null;
 
-            $message = \str_replace(
+            $message = str_replace(
                 $match,
                 $entityRef === null
                     ? ''
@@ -80,6 +84,6 @@ class Quote extends AbstractPlugin
                 return '';
         }
 
-        throw new \LogicException('Must be implemented!');
+        throw new LogicException('Must be implemented!');
     }
 }

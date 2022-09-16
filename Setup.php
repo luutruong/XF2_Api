@@ -38,6 +38,11 @@ class Setup extends AbstractSetup
         $this->doCreateTables($this->getTables2());
     }
 
+    public function upgrade3010100Step1()
+    {
+        $this->doCreateTables($this->getTables3());
+    }
+
     /**
      * @return array
      */
@@ -116,6 +121,20 @@ class Setup extends AbstractSetup
 
                 $table->addKey('created_date');
             },
+        ];
+    }
+
+    protected function getTables3(): array
+    {
+        return [
+            'xf_tapi_refresh_token' => function (Create $table) {
+                $table->addColumn('token', 'varbinary', 32)->primaryKey();
+                $table->addColumn('user_id', 'int');
+                $table->addColumn('created_date', 'int')->setDefault(0);
+                $table->addColumn('expire_date', 'int')->setDefault(0);
+
+                $table->addKey('expire_date');
+            }
         ];
     }
 

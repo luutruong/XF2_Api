@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use XF;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
 use XF\Api\Mvc\Reply\ApiResult;
@@ -86,7 +87,7 @@ class Conversation extends XFCP_Conversation
         $unread = (bool) $this->filter('is_unread', 'bool');
         $messageId = $this->filter('message_id', 'uint');
 
-        $userConv = $conversation->Users[\XF::visitor()->user_id];
+        $userConv = $conversation->Users[XF::visitor()->user_id];
         /** @var ConversationMessage $convMessageRepo */
         $convMessageRepo = $this->repository('XF:ConversationMessage');
 

@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Entity;
 
+use XF;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
@@ -64,7 +65,7 @@ class Subscription extends Entity
                 'api' => true
             ],
             'provider_key' => ['type' => self::STR, 'maxLength' => 200, 'default' => '', 'api' => true],
-            'subscribed_date' => ['type' => self::UINT, 'default' => \XF::$time, 'api' => true]
+            'subscribed_date' => ['type' => self::UINT, 'default' => XF::$time, 'api' => true]
         ];
 
         $structure->relations = [
@@ -87,7 +88,7 @@ class Subscription extends Entity
                 ->jobManager()
                 ->enqueueLater(
                     'tapi_unsubscribe' . $this->subscription_id,
-                    \XF::$time,
+                    XF::$time,
                     'Truonglv\Api:Unsubscribe',
                     [
                         'provider' => $this->provider,

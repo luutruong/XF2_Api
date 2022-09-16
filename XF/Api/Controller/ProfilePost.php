@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use XF;
 use XF\Mvc\ParameterBag;
 use Truonglv\Api\Api\ControllerPlugin\Report;
 use Truonglv\Api\Api\ControllerPlugin\Reaction;
@@ -11,7 +12,7 @@ class ProfilePost extends XFCP_ProfilePost
     public function actionPostReport(ParameterBag $params)
     {
         $profilePost = $this->assertViewableProfilePost($params->profile_post_id);
-        if (\XF::isApiCheckingPermissions() && !$profilePost->canReport()) {
+        if (XF::isApiCheckingPermissions() && !$profilePost->canReport()) {
             return $this->noPermission();
         }
 

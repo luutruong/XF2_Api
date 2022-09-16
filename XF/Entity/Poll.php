@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use LogicException;
 use XF\Mvc\Entity\Structure;
 
 class Poll extends XFCP_Poll
@@ -19,7 +20,7 @@ class Poll extends XFCP_Poll
     ) {
         try {
             parent::setupApiResultData($result, $verbosity, $options);
-        } catch (\LogicException $e) {
+        } catch (LogicException $e) {
         }
 
         $result->is_closed = $this->isClosed();

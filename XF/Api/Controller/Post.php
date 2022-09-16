@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use XF;
 use XF\Mvc\ParameterBag;
 use Truonglv\Api\Api\ControllerPlugin\Report;
 use Truonglv\Api\Api\ControllerPlugin\Reaction;
@@ -11,7 +12,7 @@ class Post extends XFCP_Post
     public function actionPostReport(ParameterBag $params)
     {
         $post = $this->assertViewablePost($params->post_id);
-        if (\XF::isApiCheckingPermissions() && !$post->canReport($error)) {
+        if (XF::isApiCheckingPermissions() && !$post->canReport($error)) {
             return $this->noPermission($error);
         }
 

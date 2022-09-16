@@ -2,10 +2,13 @@
 
 namespace Truonglv\Api\Service;
 
+use XF;
 use XF\Entity\User;
 use Truonglv\Api\App;
+use function strtoupper;
 use XF\Entity\UserAlert;
 use Truonglv\Api\Entity\Log;
+use function array_key_exists;
 use XF\Service\AbstractService;
 use XF\Entity\ConversationMaster;
 use XF\Entity\ConversationMessage;
@@ -130,9 +133,9 @@ abstract class AbstractPushNotification extends AbstractService
      */
     protected function getTotalUnviewedNotifications(User $user): int
     {
-        if (!\array_key_exists($user->user_id, $this->userAlertsCache)) {
+        if (!array_key_exists($user->user_id, $this->userAlertsCache)) {
             /** @var \XF\Repository\UserAlert $alertRepo */
-            $alertRepo = \XF::app()->repository('XF:UserAlert');
+            $alertRepo = XF::app()->repository('XF:UserAlert');
 
             $total = $alertRepo->findAlertsForUser($user->user_id)
                 ->where('view_date', 0)
@@ -239,7 +242,7 @@ abstract class AbstractPushNotification extends AbstractService
         $log = $this->app->em()->create('Truonglv\Api:Log');
         $log->payload = $payload;
         $log->end_point = $endPoint;
-        $log->method = \strtoupper($method);
+        $log->method = strtoupper($method);
         $log->response_code = $responseCode;
         $log->response = $response;
 

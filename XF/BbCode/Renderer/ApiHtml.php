@@ -2,8 +2,14 @@
 
 namespace Truonglv\Api\XF\BbCode\Renderer;
 
+use XF;
+use function trim;
+use function intval;
+use function substr;
 use Truonglv\Api\App;
+use function in_array;
 use XF\Entity\Attachment;
+use function htmlspecialchars;
 
 class ApiHtml extends XFCP_ApiHtml
 {
@@ -31,7 +37,7 @@ class ApiHtml extends XFCP_ApiHtml
      */
     public function renderTagAttach(array $children, $option, array $tag, array $options)
     {
-        $id = \intval($this->renderSubTreePlain($children));
+        $id = intval($this->renderSubTreePlain($children));
         if ($id > 0) {
             $attachments = $options['attachments'];
 
@@ -91,23 +97,23 @@ class ApiHtml extends XFCP_ApiHtml
         $linkInfo = $this->formatter->getLinkClassTarget($url);
 
         $html = parent::getRenderedLink($text, $url, $options);
-        $html = \trim($html);
+        $html = trim($html);
 
         if ($linkInfo['type'] === 'internal') {
-            $app = \XF::app();
+            $app = XF::app();
             $path = (string) parse_url($url, PHP_URL_PATH);
             $path = ltrim($path, '/');
 
-            $request = new \XF\Http\Request(\XF::app()->inputFilterer(), [], [], [], []);
+            $request = new \XF\Http\Request(XF::app()->inputFilterer(), [], [], [], []);
             $match = $app->router('public')->routeToController($path, $request);
             $matchController = $match->getController();
 
-            if (\in_array($matchController, $this->getTApiSupportedControllers(), true)) {
+            if (in_array($matchController, $this->getTApiSupportedControllers(), true)) {
                 $params = (string) \json_encode($match->getParams());
-                $html = \substr($html, 0, 3)
-                    . ' data-tapi-route="' . \htmlspecialchars($matchController) . '"'
-                    . ' data-tapi-route-params="' . \htmlspecialchars($params) . '" '
-                    . \substr($html, 3);
+                $html = substr($html, 0, 3)
+                    . ' data-tapi-route="' . htmlspecialchars($matchController) . '"'
+                    . ' data-tapi-route-params="' . htmlspecialchars($params) . '" '
+                    . substr($html, 3);
             }
         }
 
@@ -139,9 +145,9 @@ class ApiHtml extends XFCP_ApiHtml
         $rendered = parent::getRenderedUser($content, $userId);
         $params = strval(json_encode(['user_id' => $userId]));
 
-        return \substr($rendered, 0, 3)
+        return substr($rendered, 0, 3)
             . ' data-tapi-route="XF:Member" class="link--internal"'
-            . ' data-tapi-route-params="' . \htmlspecialchars($params) . '" '
-            . \substr($rendered, 3);
+            . ' data-tapi-route-params="' . htmlspecialchars($params) . '" '
+            . substr($rendered, 3);
     }
 }

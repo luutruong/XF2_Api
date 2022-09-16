@@ -2,6 +2,11 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use XF;
+use function count;
+use function explode;
+use function implode;
+use function array_map;
 use XF\Repository\User;
 
 class Conversations extends XFCP_Conversations
@@ -25,17 +30,17 @@ class Conversations extends XFCP_Conversations
 
         if ($this->request()->exists('recipients')) {
             $names = $this->filter('recipients', 'str');
-            $names = \explode(',', $names);
-            $names = \array_map('trim', $names);
+            $names = explode(',', $names);
+            $names = array_map('trim', $names);
             $names = array_diff($names, ['']);
 
             /** @var User $userRepo */
             $userRepo = $this->repository('XF:User');
-            if (\count($names) > 0) {
+            if (count($names) > 0) {
                 $users = $userRepo->getUsersByNames($names, $notFound);
-                if (\count($notFound) > 0) {
-                    return $this->apiError(\XF::phrase('following_members_not_found_x', [
-                        'members' => \implode(', ', $notFound)
+                if (count($notFound) > 0) {
+                    return $this->apiError(XF::phrase('following_members_not_found_x', [
+                        'members' => implode(', ', $notFound)
                     ]), 'recipient_not_found');
                 }
 
@@ -87,7 +92,7 @@ class Conversations extends XFCP_Conversations
         $finder = parent::setupConversationFinder();
 
         if ($this->request()->exists('with_last_message')) {
-            $finder->with('Master.Users|' . \XF::visitor()->user_id);
+            $finder->with('Master.Users|' . XF::visitor()->user_id);
             $finder->with('Master.LastMessage');
         }
 

@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use XF;
+use function in_array;
 use XF\Entity\UserAlert;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
@@ -14,7 +16,7 @@ class Notification extends AbstractController
         $this->assertRegisteredUser();
         $alert = $this->assertViewableAlert($params['alert_id']);
 
-        if (!\in_array($alert->content_type, \Truonglv\Api\App::getSupportAlertContentTypes(), true)) {
+        if (!in_array($alert->content_type, \Truonglv\Api\App::getSupportAlertContentTypes(), true)) {
             return $this->notFound();
         }
 
@@ -78,7 +80,7 @@ class Notification extends AbstractController
     {
         /** @var UserAlert $alert */
         $alert = $this->assertRecordExists('XF:UserAlert', $alertId);
-        if ($alert->alerted_user_id !== \XF::visitor()->user_id) {
+        if ($alert->alerted_user_id !== XF::visitor()->user_id) {
             throw $this->exception($this->noPermission());
         }
 

@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Service;
 
+use XF;
 use XF\Entity\User;
 use XF\Service\AbstractService;
 
@@ -69,7 +70,7 @@ class Subscription extends AbstractService
             $subscription->device_token = $this->pushToken;
         }
 
-        $subscription->subscribed_date = \XF::$time;
+        $subscription->subscribed_date = XF::$time;
         $subscription->bulkSet($extra);
 
         try {

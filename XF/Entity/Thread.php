@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use XF;
+
 class Thread extends XFCP_Thread
 {
     protected function setupApiResultData(
@@ -11,7 +13,7 @@ class Thread extends XFCP_Thread
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         if ($visitor->user_id > 0) {
             $result->can_report = $this->FirstPost !== null && $this->FirstPost->canReport();
 
@@ -55,7 +57,7 @@ class Thread extends XFCP_Thread
                 $coverImage = $this->getCoverImage();
                 if ($coverImage !== null && substr($coverImage, 0, 1) === '/') {
                     // https://xenforo.com/community/threads/200983/
-                    $coverImage = \XF::canonicalizeUrl($coverImage);
+                    $coverImage = XF::canonicalizeUrl($coverImage);
                 }
 
                 $result->tapi_thread_image_url = $coverImage;

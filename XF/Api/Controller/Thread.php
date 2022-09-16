@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use XF;
+use function floor;
 use XF\Entity\Poll;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
@@ -11,11 +13,11 @@ class Thread extends XFCP_Thread
     public function actionPostWatch(ParameterBag $params)
     {
         $thread = $this->assertViewableThread($params->thread_id);
-        if (\XF::isApiCheckingPermissions() && !$thread->canWatch()) {
+        if (XF::isApiCheckingPermissions() && !$thread->canWatch()) {
             return $this->noPermission();
         }
 
-        $visitor = \XF::visitor();
+        $visitor = XF::visitor();
         $newState = $thread->isWatched() ? 'delete' : 'watch_no_email';
 
         /** @var \XF\Repository\ThreadWatch $watchRepo */
@@ -32,7 +34,7 @@ class Thread extends XFCP_Thread
         $this->assertRequiredApiInput('responses');
 
         $thread = $this->assertViewableThread($params->thread_id);
-        if (\XF::isApiCheckingPermissions() && !$thread->canWatch()) {
+        if (XF::isApiCheckingPermissions() && !$thread->canWatch()) {
             return $this->noPermission();
         }
 
@@ -42,7 +44,7 @@ class Thread extends XFCP_Thread
             return $this->noPermission();
         }
 
-        if (\XF::isApiCheckingPermissions() && !$poll->canVote()) {
+        if (XF::isApiCheckingPermissions() && !$poll->canVote()) {
             return $this->noPermission();
         }
 
@@ -96,12 +98,12 @@ class Thread extends XFCP_Thread
             if ($post !== null
                 && $post->thread_id === $thread->thread_id
             ) {
-                if (\XF::isApiCheckingPermissions() && $post->canView()) {
-                    $page = \floor($post->position / $perPage) + 1;
+                if (XF::isApiCheckingPermissions() && $post->canView()) {
+                    $page = floor($post->position / $perPage) + 1;
                 }
             }
         } elseif ($isUnread) {
-            $visitor = \XF::visitor();
+            $visitor = XF::visitor();
             $postRepo = $this->getPostRepo();
 
             if ($visitor->user_id > 0) {
@@ -115,13 +117,13 @@ class Thread extends XFCP_Thread
                 }
 
                 if ($firstUnread !== null) {
-                    $page = \floor($firstUnread->position / $perPage) + 1;
+                    $page = floor($firstUnread->position / $perPage) + 1;
                 }
             } else {
                 /** @var \XF\Entity\Post|null $firstUnread */
                 $firstUnread = $thread->LastPost;
                 if ($firstUnread !== null) {
-                    $page = \floor($firstUnread->position / $perPage) + 1;
+                    $page = floor($firstUnread->position / $perPage) + 1;
                 }
             }
         }

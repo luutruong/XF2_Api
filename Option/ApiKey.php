@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Option;
 
+use XF;
 use XF\PrintableException;
 use XF\Option\AbstractOption;
 
@@ -39,7 +40,7 @@ class ApiKey extends AbstractOption
     {
         return self::getTemplate('admin:tapi_option_template_apiKey', $option, $htmlParams, [
             'requiredScopes' => self::$requiredScopes,
-            'availableApiKeys' => \XF::app()->finder('XF:ApiKey')->where('active', 1)->fetch()
+            'availableApiKeys' => XF::app()->finder('XF:ApiKey')->where('active', 1)->fetch()
         ]);
     }
 
@@ -52,14 +53,14 @@ class ApiKey extends AbstractOption
     {
         if (isset($value['apiKeyId'])) {
             /** @var \XF\Entity\ApiKey|null $apiKey */
-            $apiKey = \XF::app()->em()->find('XF:ApiKey', $value['apiKeyId']);
+            $apiKey = XF::app()->em()->find('XF:ApiKey', $value['apiKeyId']);
             if ($apiKey === null) {
-                throw new PrintableException(\XF::phrase('tapi_requested_api_key_not_found'));
+                throw new PrintableException(XF::phrase('tapi_requested_api_key_not_found'));
             }
 
             foreach (self::$requiredScopes as $scope) {
                 if (!$apiKey->hasScope($scope)) {
-                    throw new PrintableException(\XF::phrase('tapi_required_score_x', [
+                    throw new PrintableException(XF::phrase('tapi_required_score_x', [
                         'scope' => $scope
                     ]));
                 }

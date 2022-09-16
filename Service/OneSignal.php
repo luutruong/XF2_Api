@@ -2,6 +2,10 @@
 
 namespace Truonglv\Api\Service;
 
+use function trim;
+use function count;
+use function urldecode;
+use function array_replace_recursive;
 use Truonglv\Api\Entity\Subscription;
 
 class OneSignal extends AbstractPushNotification
@@ -32,12 +36,12 @@ class OneSignal extends AbstractPushNotification
         $playerIds = [];
         /** @var Subscription $subscription */
         foreach ($subscriptions as $subscription) {
-            if (\trim($subscription->provider_key) !== '') {
+            if (trim($subscription->provider_key) !== '') {
                 $playerIds[] = $subscription->provider_key;
             }
         }
 
-        if (\count($playerIds) === 0) {
+        if (count($playerIds) === 0) {
             return;
         }
 
@@ -70,7 +74,7 @@ class OneSignal extends AbstractPushNotification
     {
         $response = null;
 
-        $endPoint = self::API_END_POINT . '/players/' . \urldecode($externalId);
+        $endPoint = self::API_END_POINT . '/players/' . urldecode($externalId);
         $payload = [
             'app_id' => $this->getAppId(),
             'notification_types' => -2,
@@ -104,7 +108,7 @@ class OneSignal extends AbstractPushNotification
      */
     protected function client(array $options = [])
     {
-        $options = \array_replace_recursive($options, [
+        $options = array_replace_recursive($options, [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => "Basic: {$this->getApiKey()}"

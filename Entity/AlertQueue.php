@@ -2,8 +2,10 @@
 
 namespace Truonglv\Api\Entity;
 
+use XF;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
+use function array_key_exists;
 
 /**
  * COLUMNS
@@ -31,7 +33,7 @@ class AlertQueue extends Entity
      */
     public function getContent()
     {
-        if (\array_key_exists('Content', $this->_getterCache)) {
+        if (array_key_exists('Content', $this->_getterCache)) {
             return $this->_getterCache['Content'];
         }
 
@@ -49,7 +51,7 @@ class AlertQueue extends Entity
                 'allowedValues' => ['alert', 'conversation_message']],
             'content_id' => ['type' => self::UINT, 'required' => true],
             'payload' => ['type' => self::JSON_ARRAY, 'default' => []],
-            'queue_date' => ['type' => self::UINT, 'default' => \XF::$time]
+            'queue_date' => ['type' => self::UINT, 'default' => XF::$time]
         ];
 
         $structure->getters = [

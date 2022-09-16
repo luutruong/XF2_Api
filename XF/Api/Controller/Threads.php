@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use function preg_split;
+
 class Threads extends XFCP_Threads
 {
     /**
@@ -12,7 +14,7 @@ class Threads extends XFCP_Threads
     {
         if ($this->request()->exists('tag_names')) {
             $tagNames = $this->filter('tag_names', 'str');
-            $tagNames = \preg_split('/\,/', $tagNames, -1, PREG_SPLIT_NO_EMPTY);
+            $tagNames = preg_split('/\,/', $tagNames, -1, PREG_SPLIT_NO_EMPTY);
 
             $this->request()->set('tags', $tagNames);
         }

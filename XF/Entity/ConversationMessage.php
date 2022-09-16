@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Entity;
 
+use XF;
 use Truonglv\Api\App;
 use XF\Mvc\Entity\Structure;
 
@@ -26,7 +27,7 @@ class ConversationMessage extends XFCP_ConversationMessage
         );
 
         App::attachReactions($result, $this);
-        $result->tapi_is_visitor_message = (\XF::visitor()->user_id === $this->user_id);
+        $result->tapi_is_visitor_message = (XF::visitor()->user_id === $this->user_id);
     }
 
     public static function getStructure(Structure $structure)

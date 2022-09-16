@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Service\Conversation;
 
 use Truonglv\Api\App;
+use function in_array;
 
 class Notifier extends XFCP_Notifier
 {
@@ -19,7 +20,7 @@ class Notifier extends XFCP_Notifier
         \XF\Entity\ConversationMessage $message = null,
         \XF\Entity\User $sender = null
     ) {
-        if ($message !== null && \in_array($actionType, ['create', 'reply'], true)) {
+        if ($message !== null && in_array($actionType, ['create', 'reply'], true)) {
             App::alertQueueRepo()->insertQueue('conversation_message', $message->message_id, [
                 'action' => $actionType,
             ]);
