@@ -3,6 +3,8 @@
 namespace Truonglv\Api\XF\Entity;
 
 use XF;
+use function stripos;
+use function parse_url;
 
 class Thread extends XFCP_Thread
 {
@@ -58,6 +60,14 @@ class Thread extends XFCP_Thread
                 if ($coverImage !== null && substr($coverImage, 0, 1) === '/') {
                     // https://xenforo.com/community/threads/200983/
                     $coverImage = XF::canonicalizeUrl($coverImage);
+                }
+
+                if ($coverImage !== null) {
+                    $path = parse_url($coverImage, PHP_URL_PATH);
+                    if (stripos($path, '/data/attachments/') === 0) {
+                        // don't use thumbnail image.
+                        $coverImage = null;
+                    }
                 }
 
                 $result->tapi_thread_image_url = $coverImage;

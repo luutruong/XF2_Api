@@ -18,11 +18,13 @@ use XF\Repository\Node;
 use function strtoupper;
 use XF\Repository\AddOn;
 use function array_slice;
+use function is_callable;
 use function json_decode;
 use function json_encode;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Reply\Message;
 use XF\Mvc\Reply\Exception;
+use function call_user_func;
 use InvalidArgumentException;
 use XF\Repository\Attachment;
 use XF\ControllerPlugin\Login;
@@ -676,6 +678,8 @@ class App extends AbstractController
         $privacyPolicyUrl = $this->app()->options()->privacyPolicyUrl;
         $tosUrl = $this->app()->options()->tosUrl;
 
+        $visitor = XF::visitor();
+
         $info = [
             'reactions' => $reactions,
             'apiVersion' => $addOns['Truonglv/Api']['version_id'],
@@ -691,7 +695,14 @@ class App extends AbstractController
                 'apple' => $this->options()->tApi_caAppleProviderId,
             ],
             'appName' => $this->options()->tApi_appName,
+            'xfrmEnabled' => false,
         ];
+
+        if (isset($addOns['XFRM'])) {
+            /** @var mixed $callable */
+            $callable = [$visitor, 'canViewResources'];
+            $info['xfrmEnabled'] = is_callable($callable) && call_user_func($callable) === true;
+        }
 
         if ($privacyPolicyUrl['type'] === 'custom') {
             $info['privacyPolicyUrl'] = $privacyPolicyUrl['custom'];

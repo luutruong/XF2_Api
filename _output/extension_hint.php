@@ -3,6 +3,11 @@
 // ################## THIS IS A GENERATED FILE ##################
 // DO NOT EDIT DIRECTLY. EDIT THE CLASS EXTENSIONS IN THE CONTROL PANEL.
 
+namespace Truonglv\Api\XFRM\Api\Controller
+{
+	class XFCP_ResourceItem extends \XFRM\Api\Controller\ResourceItem {}
+}
+
 namespace Truonglv\Api\XF\Api\Controller
 {
 	class XFCP_Conversation extends \XF\Api\Controller\Conversation {}
