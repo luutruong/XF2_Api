@@ -62,15 +62,9 @@ class Listener
         $ourRequest->setApiUser(0);
 
         $accessToken = $request->getServer(App::HEADER_KEY_ACCESS_TOKEN);
-        if ($accessToken !== false) {
+        if ($accessToken !== false && strlen($accessToken) === 32) {
             /** @var AccessToken|null $token */
-            $token = $app->finder('Truonglv\Api:AccessToken')
-                ->where('token', $accessToken)
-                ->whereOr([
-                    ['expire_date', '=', 0],
-                    ['expire_date', '>', XF::$time]
-                ])
-                ->fetchOne();
+            $token = $app->em()->find('Truonglv\Api:AccessToken', $accessToken);
 
             if ($token !== null && !$token->isExpired()) {
                 $ourRequest->setApiUser($token->user_id);
