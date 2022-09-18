@@ -10,6 +10,7 @@ namespace Truonglv\Api\XFRM\Api\Controller
 
 namespace Truonglv\Api\XFRM\Entity
 {
+	class XFCP_Category extends \XFRM\Entity\Category {}
 	class XFCP_ResourceItem extends \XFRM\Entity\ResourceItem {}
 }
 

@@ -1,0 +1,6 @@
+{
+    "from_class": "XFRM\\Entity\\Category",
+    "to_class": "Truonglv\\Api\\XFRM\\Entity\\Category",
+    "execute_order": 10,
+    "active": true
+}
