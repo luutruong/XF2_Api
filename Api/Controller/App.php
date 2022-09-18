@@ -471,12 +471,12 @@ class App extends AbstractController
         return $this->apiSuccess($this->getAuthResultData($user));
     }
 
-    protected function getAuthResultData(\XF\Entity\User $user): array
+    protected function getAuthResultData(\XF\Entity\User $user, bool $withRefreshToken = true): array
     {
         /** @var \Truonglv\Api\Repository\Token $tokenRepo */
         $tokenRepo = XF::repository('Truonglv\Api:Token');
 
-        return [
+        $data = [
             'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE, [
                 'tapi_permissions' => [
                     'username' => true,
@@ -484,8 +484,13 @@ class App extends AbstractController
                 'tapi_user_state_message' => true,
             ]),
             'accessToken' => $tokenRepo->createAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl),
-            'refreshToken' => $tokenRepo->createRefreshToken($user->user_id, 30 * 86400),
         ];
+
+        if ($withRefreshToken) {
+            $data['refreshToken'] = $tokenRepo->createRefreshToken($user->user_id, 30 * 86400);
+        }
+
+        return $data;
     }
 
     /**
@@ -647,13 +652,13 @@ class App extends AbstractController
             return $this->noPermission();
         }
 
-        // revoke.
-        $token->delete();
+        $token->expire_date = \time() + 30 * 86400;
+        $token->save();
 
         /** @var \XF\Entity\User $user */
         $user = $token->User;
 
-        return $this->apiSuccess($this->getAuthResultData($user));
+        return $this->apiSuccess($this->getAuthResultData($user, false));
     }
 
     /**

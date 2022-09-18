@@ -12,5 +12,6 @@ class ResourceItem extends XFCP_ResourceItem
         parent::setupApiResultData($result, $verbosity, $options);
 
         $result->can_watch = $this->canWatch();
+        $result->discussion_thread_id = $this->discussion_thread_id;
     }
 }
