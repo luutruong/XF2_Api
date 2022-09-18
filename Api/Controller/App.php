@@ -486,6 +486,10 @@ class App extends AbstractController
             'accessToken' => $tokenRepo->createAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl),
         ];
 
+        /** @var AccessToken $token */
+        $token = $this->em()->find('Truonglv\Api:AccessToken', $data['accessToken']);
+        $data['expiresAt'] = $token->expire_date;
+
         if ($withRefreshToken) {
             $data['refreshToken'] = $tokenRepo->createRefreshToken($user->user_id, 30 * 86400);
         }
