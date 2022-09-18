@@ -18,25 +18,12 @@ class ResourceItem extends XFCP_ResourceItem
         /** @var ResourceWatch $watchRepo */
         $watchRepo = $this->repository('XFRM:ResourceWatch');
         $visitor = XF::visitor();
+        $newState = $resource->Watch[$visitor->user_id] === null ? 'watch' : 'delete';
 
-        if ($resource->Watch[$visitor->user_id] === null) {
-            $watchRepo->setWatchState($resource, $visitor, 'watch');
-        }
+        $watchRepo->setWatchState($resource, $visitor, $newState);
 
-        return $this->apiSuccess();
-    }
-
-    public function actionDeleteWatch(ParameterBag $params)
-    {
-        $resource = $this->assertViewableResource($params['resource_id']);
-        if (XF::isApiCheckingPermissions() && !$resource->canWatch()) {
-            return $this->noPermission();
-        }
-
-        /** @var ResourceWatch $watchRepo */
-        $watchRepo = $this->repository('XFRM:ResourceWatch');
-        $watchRepo->setWatchState($resource, XF::visitor(), 'delete');
-
-        return $this->apiSuccess();
+        return $this->apiSuccess([
+            'is_watched' => $newState === 'watch',
+        ]);
     }
 }
