@@ -12,13 +12,11 @@ class Category extends XFCP_Category
         parent::setupApiResultData($result, $verbosity, $options);
 
         $breadcrumbs = [];
-        if ($this->breadcrumb_data) {
-            foreach ($this->breadcrumb_data AS $breadcrumb) {
-                $breadcrumbs[] = [
-                    'category_id' => $breadcrumb['category_id'],
-                    'title' => $breadcrumb['title'],
-                ];
-            }
+        foreach ($this->breadcrumb_data as $breadcrumb) {
+            $breadcrumbs[] = [
+                'category_id' => $breadcrumb['category_id'],
+                'title' => $breadcrumb['title'],
+            ];
         }
 
         $result->breadcrumbs = $breadcrumbs;
