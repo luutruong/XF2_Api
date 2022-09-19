@@ -14,7 +14,7 @@ class ProfilePost extends XFCP_ProfilePost
     ) {
         parent::setupApiResultData($result, $verbosity, $options);
 
-        App::attachReactions($result, $this);
+        App::setupApiResultReactions($result, $this);
         $stringFormatter = $this->app()->stringFormatter();
         $plainText = $stringFormatter->stripBbCode($this->message, [
             'stripQuote' => true

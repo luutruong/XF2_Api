@@ -26,7 +26,7 @@ class ConversationMessage extends XFCP_ConversationMessage
             $this->app()->options()->tApi_discussionPreviewLength
         );
 
-        App::attachReactions($result, $this);
+        App::setupApiResultReactions($result, $this);
         $result->tapi_is_visitor_message = (XF::visitor()->user_id === $this->user_id);
     }
 

@@ -26,7 +26,7 @@ class Post extends XFCP_Post
             $result->is_ignored = false;
         }
 
-        App::attachReactions($result, $this);
+        App::setupApiResultReactions($result, $this);
         $stringFormatter = $this->app()->stringFormatter();
         $plainText = $stringFormatter->stripBbCode($this->message, [
             'stripQuote' => true

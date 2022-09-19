@@ -31,7 +31,7 @@ class ProfilePostComment extends XFCP_ProfilePostComment
             $result->is_ignored = false;
         }
 
-        App::attachReactions($result, $this);
+        App::setupApiResultReactions($result, $this);
 
         $stringFormatter = $this->app()->stringFormatter();
         $plainText = $stringFormatter->stripBbCode($this->message, [

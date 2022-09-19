@@ -66,6 +66,10 @@ class Notification extends AbstractController
                 return [
                     'with_conversation' => true,
                 ];
+            case 'resource_update':
+                return [
+                    'with_resource' => true,
+                ];
         }
 
         return [];

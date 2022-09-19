@@ -6,6 +6,7 @@
 namespace Truonglv\Api\XFRM\Api\Controller
 {
 	class XFCP_ResourceItem extends \XFRM\Api\Controller\ResourceItem {}
+	class XFCP_ResourceUpdate extends \XFRM\Api\Controller\ResourceUpdate {}
 }
 
 namespace Truonglv\Api\XFRM\Entity

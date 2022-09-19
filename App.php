@@ -127,7 +127,7 @@ class App
      * @param string $reactionKey
      * @return void
      */
-    public static function attachReactions(EntityResult $result, Entity $entity, string $reactionKey = 'reactions'): void
+    public static function setupApiResultReactions(EntityResult $result, Entity $entity, string $reactionKey = 'reactions'): void
     {
         /** @var callable $callable */
         $callable = [$entity, 'getVisitorReactionId'];

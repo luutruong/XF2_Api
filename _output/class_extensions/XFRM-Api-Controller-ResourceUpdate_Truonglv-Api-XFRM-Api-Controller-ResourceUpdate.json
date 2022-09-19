@@ -1,0 +1,6 @@
+{
+    "from_class": "XFRM\\Api\\Controller\\ResourceUpdate",
+    "to_class": "Truonglv\\Api\\XFRM\\Api\\Controller\\ResourceUpdate",
+    "execute_order": 10,
+    "active": true
+}
