@@ -29,6 +29,7 @@ class AlertQueue extends Repository
         ];
         if (App::canViewResources()) {
             $contentTypes[] = 'resource';
+            $contentTypes[] = 'resource_update';
         }
 
         return $contentTypes;
