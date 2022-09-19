@@ -14,9 +14,7 @@ class Auto
     public static function runHourly()
     {
         $logLength = XF::options()->tApi_logLength;
-        if ($logLength > 0) {
-            XF::db()->delete('xf_tapi_log', 'log_date <= ?', XF::$time - $logLength * 86400);
-        }
+        XF::db()->delete('xf_tapi_log', 'log_date <= ?', XF::$time - $logLength * 86400);
 
         /** @var Token $tokenRepo */
         $tokenRepo = XF::repository('Truonglv\Api:Token');

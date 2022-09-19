@@ -84,7 +84,7 @@ class Listener
             return;
         }
 
-        App::$enableLogging = true;
+        App::$enableLogging = $controller->app()->options()->tApi_logLength > 0;
     }
 
     /**

@@ -169,9 +169,9 @@
     },
     "option_explain.tApi_logLength.txt": {
         "global_cache": false,
-        "version_id": 1000500,
-        "version_string": "1.0.5",
-        "hash": "bee49858a855e132dc110b53fe61639d"
+        "version_id": 3010100,
+        "version_string": "3.1.1",
+        "hash": "1cfbbe478b3c417106e3fca7cb190219"
     },
     "option_explain.tApi_reactions.txt": {
         "global_cache": false,

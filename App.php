@@ -3,11 +3,11 @@
 namespace Truonglv\Api;
 
 use XF;
-use XF\Repository\AddOn;
 use function md5;
 use function strval;
 use function is_array;
 use function array_keys;
+use XF\Repository\AddOn;
 use function json_encode;
 use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
@@ -60,12 +60,13 @@ class App
     public static function canViewResources(): bool
     {
         /** @var AddOn $addOnRepo */
-        $addOnRepo = \XF::repository('XF:AddOn');
+        $addOnRepo = XF::repository('XF:AddOn');
         $addOns = $addOnRepo->getEnabledAddOns();
 
         if (isset($addOns['XFRM'])) {
             /** @var mixed $callable */
-            $callable = [\XF::visitor(), 'canViewResources'];
+            $callable = [XF::visitor(), 'canViewResources'];
+
             return is_callable($callable) && call_user_func($callable) === true;
         }
 

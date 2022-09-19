@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\XFRM\Api\Controller;
 
-use Truonglv\Api\Api\ControllerPlugin\Reaction;
 use XF\Mvc\ParameterBag;
+use Truonglv\Api\Api\ControllerPlugin\Reaction;
 
 class ResourceUpdate extends XFCP_ResourceUpdate
 {
@@ -13,6 +13,7 @@ class ResourceUpdate extends XFCP_ResourceUpdate
 
         /** @var \XF\Api\ControllerPlugin\Reaction $reactPlugin */
         $reactPlugin = $this->plugin('XF:Api:Reaction');
+
         return $reactPlugin->actionReact($update);
     }
 
