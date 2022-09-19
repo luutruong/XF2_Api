@@ -29,8 +29,12 @@ class Token extends Repository
         }
     }
 
-    public function createAccessToken(int $userId, int $seconds = 3600, int $limit = 5): string
+    public function createAccessToken(int $userId, ?int $seconds = null, int $limit = 5): string
     {
+        if ($seconds === null) {
+            $seconds = (int) $this->app()->options()->tApi_accessTokenTtl;
+        }
+
         return $this->createToken(
             'Truonglv\Api:AccessToken',
             $userId,
