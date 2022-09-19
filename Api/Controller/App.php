@@ -676,7 +676,7 @@ class App extends AbstractController
 
         /** @var AddOn $addOnRepo */
         $addOnRepo = $this->repository('XF:AddOn');
-        $addOns = $addOnRepo->getEnabledAddOns();
+        $addOns = $addOnRepo->getInstalledAddOnData();
 
         /** @var Attachment $attachmentRepo */
         $attachmentRepo = $this->repository('XF:Attachment');
