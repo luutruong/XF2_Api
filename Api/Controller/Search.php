@@ -21,6 +21,7 @@ class Search extends AbstractController
     const SEARCH_TYPE_THREAD = 'thread';
     const SEARCH_TYPE_POST = 'post';
     const SEARCH_TYPE_USER = 'user';
+    const SEARCH_TYPE_RESOURCE = 'resource';
 
     public function actionPost()
     {
@@ -276,6 +277,11 @@ class Search extends AbstractController
      */
     protected function getAllowedSearchTypes()
     {
-        return [self::SEARCH_TYPE_THREAD, self::SEARCH_TYPE_POST, self::SEARCH_TYPE_USER];
+        $searchTypes = [self::SEARCH_TYPE_THREAD, self::SEARCH_TYPE_POST, self::SEARCH_TYPE_USER];
+        if (\Truonglv\Api\App::canViewResources()) {
+            $searchTypes[] = self::SEARCH_TYPE_RESOURCE;
+        }
+
+        return $searchTypes;
     }
 }

@@ -676,7 +676,7 @@ class App extends AbstractController
 
         /** @var AddOn $addOnRepo */
         $addOnRepo = $this->repository('XF:AddOn');
-        $addOns = $addOnRepo->getInstalledAddOnData();
+        $addOns = $addOnRepo->getEnabledAddOns();
 
         /** @var Attachment $attachmentRepo */
         $attachmentRepo = $this->repository('XF:Attachment');
@@ -686,8 +686,6 @@ class App extends AbstractController
 
         $privacyPolicyUrl = $this->app()->options()->privacyPolicyUrl;
         $tosUrl = $this->app()->options()->tosUrl;
-
-        $visitor = XF::visitor();
 
         $info = [
             'reactions' => $reactions,
@@ -704,14 +702,8 @@ class App extends AbstractController
                 'apple' => $this->options()->tApi_caAppleProviderId,
             ],
             'appName' => $this->options()->tApi_appName,
-            'xfrmEnabled' => false,
+            'xfrmEnabled' => \Truonglv\Api\App::canViewResources(),
         ];
-
-        if (isset($addOns['XFRM'])) {
-            /** @var mixed $callable */
-            $callable = [$visitor, 'canViewResources'];
-            $info['xfrmEnabled'] = is_callable($callable) && call_user_func($callable) === true;
-        }
 
         if ($privacyPolicyUrl['type'] === 'custom') {
             $info['privacyPolicyUrl'] = $privacyPolicyUrl['custom'];

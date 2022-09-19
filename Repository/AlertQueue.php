@@ -17,7 +17,7 @@ class AlertQueue extends Repository
 {
     public function getSupportedAlertContentTypes(): array
     {
-        return [
+        $contentTypes = [
             'conversation',
             'conversation_message',
             'post',
@@ -27,6 +27,11 @@ class AlertQueue extends Repository
             'trophy',
             'user',
         ];
+        if (App::canViewResources()) {
+            $contentTypes[] = 'resource';
+        }
+
+        return $contentTypes;
     }
 
     public function getFirstRunTime(): int
