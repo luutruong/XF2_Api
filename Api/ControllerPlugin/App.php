@@ -2,10 +2,10 @@
 
 namespace Truonglv\Api\Api\ControllerPlugin;
 
-use Truonglv\Api\Data\Reaction;
-use XF\Api\ControllerPlugin\AbstractPlugin;
 use XF\Repository\AddOn;
 use XF\Repository\Attachment;
+use Truonglv\Api\Data\Reaction;
+use XF\Api\ControllerPlugin\AbstractPlugin;
 
 class App extends AbstractPlugin
 {
@@ -26,10 +26,11 @@ class App extends AbstractPlugin
         $attachmentRepo = $this->repository('XF:Attachment');
         $constraints = $attachmentRepo->getDefaultAttachmentConstraints();
 
-        $registrationSetup = $this->app()->options()->registrationSetup;
+        $options = $this->app->options();
+        $registrationSetup = $options->registrationSetup;
 
-        $privacyPolicyUrl = $this->app()->options()->privacyPolicyUrl;
-        $tosUrl = $this->app()->options()->tosUrl;
+        $privacyPolicyUrl = $options->privacyPolicyUrl;
+        $tosUrl = $options->tosUrl;
 
         $info = [
             'reactions' => $reactions,
@@ -52,7 +53,7 @@ class App extends AbstractPlugin
         if ($privacyPolicyUrl['type'] === 'custom') {
             $info['privacyPolicyUrl'] = $privacyPolicyUrl['custom'];
         } elseif ($privacyPolicyUrl['type'] === 'default') {
-            $info['privacyPolicyUrl'] = $this->app()->router('public')->buildLink('canonical:help/privacy-policy');
+            $info['privacyPolicyUrl'] = $this->app->router('public')->buildLink('canonical:help/privacy-policy');
         } else {
             $info['privacyPolicyUrl'] = '';
         }
@@ -60,7 +61,7 @@ class App extends AbstractPlugin
         if ($tosUrl['type'] === 'custom') {
             $info['tosUrl'] =  $tosUrl['custom'];
         } elseif ($tosUrl['type'] === 'default') {
-            $info['tosUrl'] = $this->app()->router('public')->buildLink('canonical:help/terms');
+            $info['tosUrl'] = $this->app->router('public')->buildLink('canonical:help/terms');
         } else {
             $info['tosUrl'] = '';
         }
