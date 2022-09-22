@@ -14,7 +14,7 @@ class Category extends XFCP_Category
         $breadcrumbs = [];
         foreach ($this->breadcrumb_data as $breadcrumb) {
             $breadcrumbs[] = [
-                'category_id' => $breadcrumb['category_id'],
+                'resource_category_id' => $breadcrumb['resource_category_id'],
                 'title' => $breadcrumb['title'],
             ];
         }
