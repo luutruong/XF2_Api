@@ -467,6 +467,23 @@ class App extends AbstractController
         return $this->apiSuccess($this->getAuthResultData($user));
     }
 
+    public function actionGetForumName()
+    {
+        $this->assertRequiredApiInput(['name']);
+
+        /** @var XF\Entity\Node|null $node */
+        $node = $this->finder('XF:Node')
+            ->where('node_name', $this->filter('name', 'str'))
+            ->fetchOne();
+        if ($node === null) {
+            return $this->notFound();
+        }
+
+        return $this->rerouteController('XF:Api:Forum', 'get', [
+            'node_id' => $node->node_id,
+        ]);
+    }
+
     protected function getAuthResultData(\XF\Entity\User $user, bool $withRefreshToken = true): array
     {
         /** @var \Truonglv\Api\Repository\Token $tokenRepo */
