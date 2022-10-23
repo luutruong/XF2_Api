@@ -44,6 +44,14 @@ class ApiHtml extends XFCP_ApiHtml
             if (isset($attachments[$id])) {
                 /** @var Attachment $attachmentRef */
                 $attachmentRef = $attachments[$id];
+                if ($attachmentRef->is_video) {
+                    return $this->templater->renderTemplate('public:tapi_bb_code_tag_attach_video', [
+                        'attachment' => $attachmentRef,
+                    ]);
+                } elseif ($attachmentRef->is_audio) {
+                    // does not support it yet
+                    return parent::renderTagAttach($children, $option, $tag, $options);
+                }
 
                 $params = [
                     'attachment' => $attachmentRef,

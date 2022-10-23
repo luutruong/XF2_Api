@@ -34,6 +34,11 @@
         "version_string": "2.0.9",
         "hash": "9df0957b46781828896dc315b6fae087"
     },
+    "public/tapi_bb_code_tag_attach_video.html": {
+        "version_id": 3010200,
+        "version_string": "3.1.2",
+        "hash": "96c95c047798563ed19f1ed48bdae9f4"
+    },
     "public/tapi_bb_code_tag_spoiler.html": {
         "version_id": 2000700,
         "version_string": "2.0.7",
