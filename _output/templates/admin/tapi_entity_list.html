@@ -14,7 +14,7 @@
 </xf:if>
 
 <xf:if is="$entities is not empty">
-    <div class="block">
+    <xf:form action="{{ link($links.quickToggle ?: $links.index) }}" ajax="true" class="block">
 		<xf:if contentcheck="true">
 			<div class="block-outer">
 				<xf:contentcheck>
@@ -52,8 +52,8 @@
         <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
                     link="{$links.index}" params="{$filters.pageNavParams}"
                     wrapperclass="block-outer block-outer--after"/>
-    </div>
-    <xf:else/>
+    </xf:form>
+<xf:else/>
     <div class="blockMessage">{{ phrase('no_items_have_been_created_yet') }}</div>
 </xf:if>
 
@@ -67,9 +67,11 @@
 				<xf:macro template="{$templateEntityListItemPopup}"
 						  name="entity_list_item_popup"
 						  arg-controller="{$controller}"
-						  arg-entity="{$entity}"/>
+						  arg-entity="{$entity}"
+						  arg-links="{$links}"/>
 			</xf:if>
 		</xf:set>
+		<xf:set var="$activeColumn">{$controller.getEntityActiveColumn()}</xf:set>
 		<xf:datarow delete="{{ $links.delete ? link($links.delete, $entity) : '' }}"
 					explain="{$controller.getEntityExplain($entity)}"
 					hint="{$controller.getEntityHint($entity)}"
@@ -77,6 +79,11 @@
 					label="{$controller.getEntityLabel($entity)}"
 					rowclass="{$controller.getEntityRowClass($entity)}"
 					overlay="{{ !!$viewLink }}">
+			<xf:if is="$activeColumn is not empty">
+				<xf:toggle name="active[{$entity.getEntityId()}]" selected="{$entity.get(trim($activeColumn))}"
+						   class="dataList-cell--separated" submit="true"
+						   tooltip="{{ phrase('enable_disable_x', {'title': $controller.getEntityLabel($entity)}) }}" />
+			</xf:if>
 			<xf:if is="trim($popup)">
 				<xf:popup label="&#8226;&#8226;&#8226;">
 					{$popup|raw}

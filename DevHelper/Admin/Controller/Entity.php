@@ -2,13 +2,19 @@
 
 namespace Truonglv\Api\DevHelper\Admin\Controller;
 
+use XF;
+use Exception;
+use LogicException;
+use ReflectionClass;
 use XF\Mvc\FormAction;
+use ReflectionException;
 use XF\Mvc\ParameterBag;
+use InvalidArgumentException;
 use XF\Mvc\Entity\Entity as MvcEntity;
 use XF\Admin\Controller\AbstractController;
 
 /**
- * @version 2021121601
+ * @version 2022092901
  * @see \DevHelper\Autogen\Admin\Controller\Entity
  */
 abstract class Entity extends AbstractController
@@ -32,7 +38,7 @@ abstract class Entity extends AbstractController
             'filters' => $filters,
             'page' => $page,
             'perPage' => $perPage,
-            'total' => $total
+            'total' => $total,
         ];
 
         return $this->getViewReply('list', $viewParams);
@@ -40,7 +46,7 @@ abstract class Entity extends AbstractController
 
     /**
      * @return \XF\Mvc\Reply\AbstractReply
-     * @throws \Exception
+     * @throws Exception
      */
     public function actionAdd()
     {
@@ -99,7 +105,7 @@ abstract class Entity extends AbstractController
 
     /**
      * @return \XF\Mvc\Reply\AbstractReply
-     * @throws \Exception
+     * @throws Exception
      * @throws \XF\Mvc\Reply\Exception
      * @throws \XF\PrintableException
      */
@@ -120,6 +126,22 @@ abstract class Entity extends AbstractController
     }
 
     /**
+     * @return \XF\Mvc\Reply\AbstractReply
+     */
+    public function actionToggle()
+    {
+        $activeColumn = $this->getEntityActiveColumn();
+        if ($activeColumn === null) {
+            return $this->noPermission();
+        }
+
+        /** @var \XF\ControllerPlugin\Toggle $plugin */
+        $plugin = $this->plugin('XF:Toggle');
+
+        return $plugin->actionToggle($this->getShortName(), $activeColumn);
+    }
+
+    /**
      * @param MvcEntity $entity
      * @param string $columnName
      * @return string|object|null
@@ -132,7 +154,7 @@ abstract class Entity extends AbstractController
         if (!is_callable($callback)) {
             $shortName = $entity->structure()->shortName;
 
-            throw new \InvalidArgumentException("Entity {$shortName} does not implement {$callback[1]}");
+            throw new InvalidArgumentException("Entity {$shortName} does not implement {$callback[1]}");
         }
 
         return call_user_func($callback, $columnName);
@@ -155,7 +177,7 @@ abstract class Entity extends AbstractController
     {
         $structure = $entity->structure();
         if (isset($structure->columns['display_order'])) {
-            return sprintf('%s: %d', \XF::phrase('display_order'), $entity->get('display_order'));
+            return sprintf('%s: %d', XF::phrase('display_order'), $entity->get('display_order'));
         }
 
         return '';
@@ -173,7 +195,7 @@ abstract class Entity extends AbstractController
         if (!is_callable($callback)) {
             $shortName = $entity->structure()->shortName;
 
-            throw new \InvalidArgumentException("Entity {$shortName} does not implement {$callback[1]}");
+            throw new InvalidArgumentException("Entity {$shortName} does not implement {$callback[1]}");
         }
 
         return call_user_func($callback);
@@ -209,7 +231,7 @@ abstract class Entity extends AbstractController
     /**
      * @param MvcEntity $entity
      * @return \XF\Mvc\Reply\View
-     * @throws \Exception
+     * @throws Exception
      */
     protected function entityAddEdit($entity)
     {
@@ -327,7 +349,7 @@ abstract class Entity extends AbstractController
      * @param string $columnName
      * @param array $column
      * @return array|null
-     * @throws \Exception
+     * @throws Exception
      */
     protected function entityGetMetadataForColumn($entity, $columnName, array $column)
     {
@@ -365,8 +387,8 @@ abstract class Entity extends AbstractController
                 $columnTag = 'radio';
                 $columnTagOptions = [
                     'choices' => [
-                        ['value' => 1, 'label' => \XF::phrase('yes')],
-                        ['value' => 0, 'label' => \XF::phrase('no')],
+                        ['value' => 1, 'label' => XF::phrase('yes')],
+                        ['value' => 0, 'label' => XF::phrase('no')],
                     ]
                 ];
                 $columnFilter = 'bool';
@@ -391,7 +413,7 @@ abstract class Entity extends AbstractController
 
                         if (isset($column['getLabelCallback'])) {
                             if (!is_callable($column['getLabelCallback'])) {
-                                throw new \InvalidArgumentException('`getLabelCallback` is not callable.');
+                                throw new InvalidArgumentException('`getLabelCallback` is not callable.');
                             }
 
                             $label = call_user_func($column['getLabelCallback'], $allowedValue);
@@ -399,7 +421,7 @@ abstract class Entity extends AbstractController
                             $labelPhraseName = $columnLabel->getName() . '_' .
                                 preg_replace('/[^a-z]+/i', '_', $allowedValue);
                             // @phpstan-ignore-next-line
-                            $label = \XF::phraseDeferred($labelPhraseName);
+                            $label = XF::phraseDeferred($labelPhraseName);
                         }
 
                         $choices[] = [
@@ -426,16 +448,16 @@ abstract class Entity extends AbstractController
         }
 
         if ($columnTag === null || $columnFilter === null) {
-            if (\XF::$debugMode) {
+            if (XF::$debugMode) {
                 if ($columnTag === null) {
-                    throw new \Exception(
+                    throw new Exception(
                         "Cannot render column {$columnName}, " .
                         "consider putting \`macroTemplate\` in getStructure for custom rendering."
                     );
                 }
 
                 if ($columnFilter === null) {
-                    throw new \Exception(
+                    throw new Exception(
                         "Cannot detect filter data type for column {$columnName}, " .
                         "consider putting \`inputFilter\` in getStructure to continue."
                     );
@@ -456,7 +478,7 @@ abstract class Entity extends AbstractController
     /**
      * @param \XF\Mvc\Entity\Entity $entity
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function entityGetMetadataForColumns($entity)
     {
@@ -560,7 +582,7 @@ abstract class Entity extends AbstractController
     /**
      * @param \XF\Mvc\Entity\Entity $entity
      * @return FormAction
-     * @throws \Exception
+     * @throws Exception
      */
     protected function entitySaveProcess($entity)
     {
@@ -630,7 +652,7 @@ abstract class Entity extends AbstractController
                     /** @var \XF\Entity\User|null $user */
                     $user = $userRepo->getUserByNameOrEmail($input['username_values'][$columnName]);
                     if ($user === null) {
-                        $form->logError(\XF::phrase('requested_user_not_found'));
+                        $form->logError(XF::phrase('requested_user_not_found'));
                     } else {
                         $userId = $user->user_id;
                     }
@@ -673,7 +695,8 @@ abstract class Entity extends AbstractController
         $routePrefix = $this->getRoutePrefix();
         $links = [
             'index' => $routePrefix,
-            'save' => sprintf('%s/save', $routePrefix)
+            'save' => sprintf('%s/save', $routePrefix),
+            'prefix' => $routePrefix,
         ];
 
         if ($this->supportsAdding()) {
@@ -696,6 +719,10 @@ abstract class Entity extends AbstractController
             $links['quickFilter'] = $routePrefix;
         }
 
+        if ($this->getEntityActiveColumn() !== null) {
+            $links['quickToggle'] = \sprintf('%s/toggle', $routePrefix);
+        }
+
         return $links;
     }
 
@@ -714,7 +741,7 @@ abstract class Entity extends AbstractController
                      'entity',
                  ] as $partial) {
             // @phpstan-ignore-next-line
-            $phrases[$partial] = \XF::phrase(sprintf('%s_%s', $prefix, $partial));
+            $phrases[$partial] = XF::phrase(sprintf('%s_%s', $prefix, $partial));
         }
 
         return $phrases;
@@ -778,6 +805,22 @@ abstract class Entity extends AbstractController
         $unknownFinder = $this->finder($this->getShortName());
 
         return is_callable([$unknownFinder, 'entityDoXfFilter']);
+    }
+
+    public function getEntityActiveColumn(): ?string
+    {
+        $entity = $this->em()->create($this->getShortName());
+        if (is_array($entity->structure()->primaryKey)) {
+            return null;
+        }
+
+        foreach ($entity->structure()->columns as $column => $config) {
+            if (($column === 'active' || $column === 'is_active') && $config['type'] === MvcEntity::BOOL) {
+                return $column;
+            }
+        }
+
+        return null;
     }
 
     /**

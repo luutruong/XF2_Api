@@ -1,81 +1,70 @@
 <?php
-/**
- * @license
- * Copyright 2018 TruongLuu. All Rights Reserved.
- */
 
 namespace Truonglv\Api\DevHelper;
 
+use XF;
+use function md5;
+use function strval;
+use function substr;
+use function array_map;
+use function array_keys;
+use function preg_match;
+use function is_callable;
+use function call_user_func;
+
 /**
- * @version 2019011701
+ * @version 2022092802
  * @see \DevHelper\Autogen\SetupTrait
  */
 trait SetupTrait
 {
-    /**
-     * @param array $tables
-     *
-     * @return void
-     */
-    protected function doCreateTables(array $tables)
+    protected function doCreateTables(array $tables): void
     {
-        $sm = \XF::db()->getSchemaManager();
+        $sm = XF::db()->getSchemaManager();
 
         foreach ($tables as $tableName => $apply) {
             $sm->createTable($tableName, $apply);
         }
     }
 
-    /**
-     * @param array $alters
-     *
-     * @return void
-     */
-    protected function doAlterTables(array $alters)
+    protected function doAlterTables(array $alters): void
     {
-        $sm = \XF::db()->getSchemaManager();
-        foreach ($alters as $tableName => $columns) {
+        $sm = XF::db()->getSchemaManager();
+        foreach ($alters as $tableName => $patches) {
             if (!$sm->tableExists($tableName)) {
                 continue;
             }
 
-            foreach ($columns as $applies) {
-                if (!is_array($applies)) {
-                    $applies = [$applies];
-                }
-
-                foreach ($applies as $apply) {
-                    $sm->alterTable($tableName, $apply);
-                }
+            foreach ($patches as $patch) {
+                $sm->alterTable($tableName, $patch);
             }
         }
     }
 
-    /**
-     * @param array $tables
-     *
-     * @return void
-     */
-    protected function doDropTables(array $tables)
+    protected function doDropTables(array $tables): void
     {
-        $sm = \XF::db()->getSchemaManager();
+        $sm = XF::db()->getSchemaManager();
         foreach (array_keys($tables) as $tableName) {
             $sm->dropTable($tableName);
         }
     }
 
-    /**
-     * @param array $alters
-     *
-     * @return void
-     */
-    protected function doDropColumns(array $alters)
+    protected function doDropColumns(array $alters): void
     {
-        $sm = \XF::db()->getSchemaManager();
-        foreach ($alters as $tableName => $columns) {
+        $sm = XF::db()->getSchemaManager();
+        foreach ($alters as $tableName => $patches) {
             if (!$sm->tableExists($tableName)) {
                 continue;
             }
+
+            $columns = array_keys($patches);
+            $columns = array_map(function ($column) {
+                if (preg_match('#^[a-f0-9]{32}#', $column) === 1) {
+                    $column = substr($column, 32);
+                }
+
+                return $column;
+            }, $columns);
 
             $sm->alterTable($tableName, function (\XF\Db\Schema\Alter $table) use ($columns) {
                 $table->dropColumns(array_keys($columns));
@@ -83,10 +72,7 @@ trait SetupTrait
         }
     }
 
-    /**
-     * @return array
-     */
-    protected function getTables()
+    protected function getTables(): array
     {
         $tables = [];
 
@@ -105,45 +91,28 @@ trait SetupTrait
         return $tables;
     }
 
-    /**
-     * Data template:
-     *
-     * [
-     *      xf_example_table => [
-     *          example_column => [
-     *              function () {...},
-     *              function () {...},
-     *              ...
-     *          ]
-     *      ],
-     *      ...
-     * ]
-     *
-     * @return array
-     */
-    protected function getAlters()
+    protected function getAlters(): array
     {
         $alters = [];
 
         $index = 1;
+        $patchIndex = 0;
+
         while (true) {
             $callable = [$this, 'getAlters' . $index];
             if (!is_callable($callable)) {
                 break;
             }
 
-            $versionAlters = call_user_func($callable);
-            foreach ($versionAlters as $tableName => $columns) {
+            $patches = call_user_func($callable);
+            foreach ($patches as $tableName => $columnPatches) {
                 if (!isset($alters[$tableName])) {
                     $alters[$tableName] = [];
                 }
 
-                foreach ($columns as $columnName => $apply) {
-                    if (!isset($alters[$tableName][$columnName])) {
-                        $alters[$tableName][$columnName] = [];
-                    }
-
-                    $alters[$tableName][$columnName][] = $apply;
+                foreach ($columnPatches as $column => $patch) {
+                    ++$patchIndex;
+                    $alters[$tableName][md5(strval($patchIndex)) . $column] = $patch;
                 }
             }
 
