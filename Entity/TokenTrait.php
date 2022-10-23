@@ -13,6 +13,14 @@ trait TokenTrait
         return $this->expire_date > 0 && $this->expire_date <= time();
     }
 
+    /**
+     * @return string
+     */
+    public function getEntityLabel()
+    {
+        return $this->token;
+    }
+
     public static function setupStructure(Structure $structure): void
     {
         $structure->primaryKey = 'token';

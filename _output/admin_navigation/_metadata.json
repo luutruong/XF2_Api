@@ -1,4 +1,10 @@
 {
+    "tApi_accessTokens.json": {
+        "hash": "7542faf8837891d3c00e1bb96d0ee26a"
+    },
+    "tApi_refreshTokens.json": {
+        "hash": "787151be12f2bc41a536bac7c484cf85"
+    },
     "tapi.json": {
         "hash": "4dc1b0491be751c8616f05642c1da630"
     },

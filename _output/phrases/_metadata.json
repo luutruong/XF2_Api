@@ -1,4 +1,16 @@
 {
+    "admin_navigation.tApi_accessTokens.txt": {
+        "global_cache": false,
+        "version_id": 3010200,
+        "version_string": "3.1.2",
+        "hash": "3b5b5feef66adc0768f35b724a334827"
+    },
+    "admin_navigation.tApi_refreshTokens.txt": {
+        "global_cache": false,
+        "version_id": 3010200,
+        "version_string": "3.1.2",
+        "hash": "ea3644f15371d252c9ec80532b24c3bb"
+    },
     "admin_navigation.tapi.txt": {
         "global_cache": false,
         "version_id": 1000400,
@@ -203,6 +215,18 @@
         "version_string": "2.2.0",
         "hash": "84533759a60c5d2b9b5c87890137bdc5"
     },
+    "tapi_access_token_entities.txt": {
+        "global_cache": false,
+        "version_id": 3010200,
+        "version_string": "3.1.2",
+        "hash": "3b5b5feef66adc0768f35b724a334827"
+    },
+    "tapi_access_token_entity.txt": {
+        "global_cache": false,
+        "version_id": 3010200,
+        "version_string": "3.1.2",
+        "hash": "5bc7ab301074148dc708229c5ad54fc6"
+    },
     "tapi_associate_with_xenforo_api_key.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -286,6 +310,18 @@
         "version_id": 1010100,
         "version_string": "1.1.1",
         "hash": "6857f72460eecf1336a15418acc7b29d"
+    },
+    "tapi_refresh_token_entities.txt": {
+        "global_cache": false,
+        "version_id": 3010200,
+        "version_string": "3.1.2",
+        "hash": "ea3644f15371d252c9ec80532b24c3bb"
+    },
+    "tapi_refresh_token_entity.txt": {
+        "global_cache": false,
+        "version_id": 3010200,
+        "version_string": "3.1.2",
+        "hash": "ce58297e37e3bb7a2956a33716c23475"
     },
     "tapi_requested_api_key_not_found.txt": {
         "global_cache": false,

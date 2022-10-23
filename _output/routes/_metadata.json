@@ -1,9 +1,15 @@
 {
+    "admin_tapi-access-tokens_.json": {
+        "hash": "fc22f5ba4f3666d1b8d6248b8656bd94"
+    },
     "admin_tapi-logs_.json": {
-        "hash": "f096bf084ca3d3b2506c1670bf791dd1"
+        "hash": "4201b84740c994e6c8981f3ce2410ec0"
+    },
+    "admin_tapi-refresh-tokens_.json": {
+        "hash": "f45b32ecc9ba90261bb129492cecf67b"
     },
     "admin_tapi-subscriptions_.json": {
-        "hash": "f20f56e88eeb97089a75963e0527eb39"
+        "hash": "d2e53d581c2a872e58ba7bf63bdff411"
     },
     "api_tapi-app-notifications_-.json": {
         "hash": "94f8a3cd406d582bcb3a38e3983062ba"

@@ -1,0 +1,10 @@
+{
+    "parent_navigation_id": "tapi",
+    "display_order": 30,
+    "link": "tapi-refresh-tokens",
+    "icon": "",
+    "admin_permission_id": "viewLogs",
+    "debug_only": false,
+    "development_only": false,
+    "hide_no_children": false
+}

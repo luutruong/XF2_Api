@@ -6,6 +6,6 @@
     "build_class": "",
     "build_method": "",
     "controller": "Truonglv\\Api:Log",
-    "context": "logs",
+    "context": "tapi_logs",
     "action_prefix": ""
 }
