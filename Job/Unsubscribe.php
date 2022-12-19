@@ -9,8 +9,7 @@ use Truonglv\Api\Service\AbstractPushNotification;
 class Unsubscribe extends AbstractJob
 {
     /**
-     * @param int $maxRunTime
-     *
+     * @param mixed $maxRunTime
      * @return JobResult
      */
     public function run($maxRunTime)
