@@ -1,0 +1,13 @@
+{
+    "edit_format": "select",
+    "edit_format_params": "system=System\nen=English\nes=Spanish\npl=Polish\nru=Russian\nsw=Swahili\nvi=Vietnamese",
+    "data_type": "string",
+    "sub_options": [],
+    "validation_class": "",
+    "validation_method": "",
+    "advanced": false,
+    "default_value": "system",
+    "relations": {
+        "tl_Api": 345
+    }
+}

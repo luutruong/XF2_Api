@@ -71,6 +71,12 @@
         "version_string": "3.0.1",
         "hash": "da8df46cdeb116f803fe5bda76adb9ac"
     },
+    "option.tApi_defaultLanguage.txt": {
+        "global_cache": false,
+        "version_id": 3010300,
+        "version_string": "3.1.3",
+        "hash": "c96a77fb323a41898c3b6941a58dc741"
+    },
     "option.tApi_delayPushNotifications.txt": {
         "global_cache": false,
         "version_id": 1000800,
@@ -148,6 +154,12 @@
         "version_id": 3000100,
         "version_string": "3.0.1",
         "hash": "e4b2f1accfb9e0d0cd835d71f780f309"
+    },
+    "option_explain.tApi_defaultLanguage.txt": {
+        "global_cache": false,
+        "version_id": 3010300,
+        "version_string": "3.1.3",
+        "hash": "dbb984f3fd4460190770edafb7eaa657"
     },
     "option_explain.tApi_delayPushNotifications.txt": {
         "global_cache": false,

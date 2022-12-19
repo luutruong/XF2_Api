@@ -14,6 +14,9 @@
     "tApi_caAppleProviderId.json": {
         "hash": "4a507c8c2671e5c80c2a32475bf37dbb"
     },
+    "tApi_defaultLanguage.json": {
+        "hash": "e2719b654e9fb654358996a46d16b24d"
+    },
     "tApi_delayPushNotifications.json": {
         "hash": "8e9492a7fc060139defb94bf17efc357"
     },

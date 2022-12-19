@@ -48,6 +48,7 @@ class App extends AbstractPlugin
             ],
             'appName' => $this->options()->tApi_appName,
             'xfrmEnabled' => \Truonglv\Api\App::canViewResources(),
+            'defaultLanguage' => $this->options()->tApi_defaultLanguage,
         ];
 
         if ($privacyPolicyUrl['type'] === 'custom') {
