@@ -67,6 +67,7 @@ class IAPProduct extends AbstractController
             'user_upgrade_id' => 'uint',
             'active' => 'bool',
             'display_order' => 'uint',
+            'payment_profile_id' => 'uint',
         ]));
 
         $form->run();
