@@ -25,6 +25,14 @@
                 </xf:foreach>
             </xf:selectrow>
 
+            <xf:selectrow name="payment_profile_id" value="{$product.payment_profile_id}"
+                          label="{{ phrase('payment_profile') }}">
+                <xf:option value="0"></xf:option>
+                <xf:foreach loop="$paymentProfiles" value="$paymentProfile">
+                    <xf:option value="{$paymentProfile.payment_profile_id}">{$paymentProfile.title}</xf:option>
+                </xf:foreach>
+            </xf:selectrow>
+
             <hr class="formRowSep" />
 
             <xf:numberboxrow name="display_order" value="{$product.display_order}"

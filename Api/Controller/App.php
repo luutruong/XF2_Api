@@ -524,7 +524,7 @@ class App extends AbstractController
             ->fetchOne();
         if ($product === null) {
             // unverified
-            return $this->error(XF::phrase('soapmf_iap_package_not_found'), 400);
+            return $this->error(XF::phrase('tapi_iap_product_not_found'), 400);
         }
 
         if ($platform === 'ios') {
@@ -539,19 +539,30 @@ class App extends AbstractController
             ];
         }
 
+        $extra = null;
+
         try {
             if ($platform === 'ios') {
                 $handler = new IOS();
-                $transactionId = $handler->verify($jsonPayload);
-                if ($transactionId === null) {
-                    throw new \LogicException('Failed to verify receipt');
-                }
+                $extra = $handler->verify($jsonPayload);
             }
         } catch (\Throwable $e) {
             XF::logException($e, false);
 
             return $this->error(XF::phrase('something_went_wrong_please_try_again'));
         }
+
+        /** @var XF\Entity\PaymentProviderLog|null $log */
+        $log = $this->finder('XF:PaymentProviderLog')
+            ->where('provider_id', $handler->getPaymentProviderLogProviderId())
+            ->where('transaction_id', $extra['transaction_id'])
+            ->order('log_date', 'desc')
+            ->fetchOne();
+        if ($log !== null) {
+            return $this->error(XF::phrase('tapi_transaction_already_processed'));
+        }
+
+        $handler->log('payment', 'Received in-app purchase', $jsonPayload, $extra);
 
         if ($product->UserUpgrade !== null) {
             /** @var XF\Service\User\Upgrade $upgrade */
@@ -560,7 +571,7 @@ class App extends AbstractController
         }
 
         return $this->apiSuccess([
-            'message' => XF::phrase('soapmf_your_account_has_been_upgraded')
+            'message' => XF::phrase('tapi_your_account_has_been_upgraded')
         ]);
     }
 

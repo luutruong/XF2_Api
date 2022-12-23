@@ -257,6 +257,18 @@
         "version_string": "1.0.8",
         "hash": "e397df8177d2ab791984f267a0f23e67"
     },
+    "tapi_iap_ios_app_bundle_id.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "1a6a30aea9d1bf06657812c9a86284ab"
+    },
+    "tapi_iap_ios_app_shared_pass.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "e64f1aa9955dea9a51cde15016de5eec"
+    },
     "tapi_iap_product_add.txt": {
         "global_cache": false,
         "version_id": 3010400,

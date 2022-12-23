@@ -12,11 +12,13 @@ use XF\Mvc\Entity\Structure;
  * @property string $platform
  * @property string $store_product_id
  * @property int $user_upgrade_id
+ * @property int $payment_profile_id
  * @property bool $active
  * @property int $display_order
  *
  * RELATIONS
  * @property \XF\Mvc\Entity\AbstractCollection|\XF\Entity\UserUpgrade[] $UserUpgrade
+ * @property \XF\Entity\PaymentProfile $PaymentProfile
  */
 class IAPProduct extends Entity
 {
@@ -32,6 +34,7 @@ class IAPProduct extends Entity
             'platform' => ['type' => self::STR, 'allowedValues' => ['ios', 'android'], 'required' => true, 'api' => true],
             'store_product_id' => ['type' => self::STR, 'required' => true, 'maxLength' => 255, 'api' => true],
             'user_upgrade_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
+            'payment_profile_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
             'active' => ['type' => self::BOOL, 'default' => true, 'api' => true],
             'display_order' => ['type' => self::UINT, 'default' => 1, 'api' => true],
         ];
@@ -43,6 +46,12 @@ class IAPProduct extends Entity
                 'conditions' => 'user_upgrade_id',
                 'primary' => true,
             ],
+            'PaymentProfile' => [
+                'type' => self::TO_ONE,
+                'entity' => 'XF:PaymentProfile',
+                'conditions' => 'payment_profile_id',
+                'primary' => true,
+            ]
         ];
 
         return $structure;

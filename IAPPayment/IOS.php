@@ -4,10 +4,12 @@ namespace Truonglv\Api\IAPPayment;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Truonglv\Api\Entity\IAPProduct;
+use XF\Entity\PaymentProviderLog;
 
 class IOS extends AbstractProvider
 {
-    public function verify(array $payload): ?string
+    public function verify(array $payload): array
     {
         $sharedPass = $this->config['iosSharedPass'] ?? '';
         if (\strlen($sharedPass) === 0) {
@@ -15,20 +17,13 @@ class IOS extends AbstractProvider
         }
 
         $client = \XF::app()->http()->client();
-
-        try {
-            $resp = $client->post($this->getVerifyUrl(), [
-                'json' => [
-                    'receipt-data' => $payload['transactionReceipt'],
-                    'password' => $sharedPass,
-                    'exclude-old-transactions' => true,
-                ]
-            ]);
-        } catch (\Throwable $e) {
-            \XF::logException($e, false);
-
-            return null;
-        }
+        $resp = $client->post($this->getVerifyUrl(), [
+            'json' => [
+                'receipt-data' => $payload['transactionReceipt'],
+                'password' => $sharedPass,
+                'exclude-old-transactions' => true,
+            ]
+        ]);
 
         $respJson = \GuzzleHttp\json_decode($resp->getBody()->getContents(), true);
         $this->log('info', 'IOS verify receipt response', $respJson);
@@ -36,11 +31,14 @@ class IOS extends AbstractProvider
         if (isset($respJson['status']) && $respJson['status'] === 0) {
             $latestReceipt = $respJson['latest_receipt_info'][0];
             if (isset($latestReceipt['transaction_id']) && $latestReceipt['in_app_ownership_type'] === 'PURCHASED') {
-                return $latestReceipt['original_transaction_id'];
+                return [
+                    'subscriber_id' => $latestReceipt['original_transaction_id'],
+                    'transaction_id' => $latestReceipt['transaction_id'],
+                ];
             }
         }
 
-        return null;
+        throw new \InvalidArgumentException('Cannot verify receipt');
     }
 
     public function handleIPN(array $payload): bool
@@ -87,7 +85,7 @@ class IOS extends AbstractProvider
 
             $data = \GuzzleHttp\json_decode(\base64_decode($body64));
             $transaction = JWT::decode($data->data->signedTransactionInfo, new Key($pkeyArr['key'], $header->alg));
-            // $signedRenewableInfo = JWT::decode($data->data->signedRenewalInfo, new Key($pkeyArr['key'], $header->alg));
+            $signedRenewableInfo = JWT::decode($data->data->signedRenewalInfo, new Key($pkeyArr['key'], $header->alg));
         } catch (\Throwable $e) {
             \XF::logException($e, false);
             return false;
@@ -95,16 +93,52 @@ class IOS extends AbstractProvider
 
         $notificationType = $data->notificationType;
         $originalTransactionId = $transaction->originalTransactionId;
+        $transactionId = $transaction->transactionId;
+
+        /** @var PaymentProviderLog|null $lastTransLog */
+        $lastTransLog = $this->app->finder('XF:PaymentProviderLog')
+            ->where('provider_id', $this->getPaymentProviderLogProviderId())
+            ->where('transaction_id', $transactionId)
+            ->order('log_date', 'desc')
+            ->fetchOne();
+        if ($lastTransLog !== null) {
+            $this->setError('Transaction already processed.');
+
+            return false;
+        }
+
+        /** @var IAPProduct|null $product */
+        $product = $this->app->finder('Truonglv\Api:IAPProduct')
+            ->where('platform', 'ios')
+            ->where('store_product_id', $transaction->productId)
+            ->fetchOne();
+        if ($product === null) {
+            $this->setError('Unknown in-app product record');
+
+            return false;
+        }
 
         if ($notificationType === 'SUBSCRIBED') {
             // should upgrade user
+            $this->log('payment', 'Received auto-renew subscription', [
+                'transaction' => $transaction,
+                'signedRenewableInfo' => $signedRenewableInfo
+            ], [
+                'transaction_id' => $transactionId,
+                'subscriber_id' => $originalTransactionId,
+            ]);
+
+            if ($product->UserUpgrade !== null) {
+                /** @var \XF\Service\User\Upgrade $upgrade */
+                $upgrade = $this->app->service('XF:User\Upgrade', $product->UserUpgrade, \XF::visitor());
+                $upgrade->upgrade();
+            }
         } elseif ($notificationType === 'EXPIRED' || 'REFUND') {
             // should cancel user upgrade.
         }
 
         return true;
     }
-
 
     protected function getCertificate(string $contents): string
     {

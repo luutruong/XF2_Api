@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Admin\Controller;
 
+use Truonglv\Api\App;
 use XF\Admin\Controller\AbstractController;
 use XF\ControllerPlugin\Delete;
 use XF\ControllerPlugin\Toggle;
@@ -124,6 +125,9 @@ class IAPProduct extends AbstractController
     protected function getProductForm(\Truonglv\Api\Entity\IAPProduct $product): AbstractReply
     {
         $userUpgrades = $this->finder('XF:UserUpgrade')->fetch();
+        $paymentProfiles = $this->finder('XF:PaymentProfile')
+            ->where('provider_id', [App::PAYMENT_PROVIDER_ANDROID, App::PAYMENT_PROVIDER_IOS])
+            ->fetch();
 
         return $this->view(
             $this->getEntityClassName() . '\\Form',
@@ -132,6 +136,7 @@ class IAPProduct extends AbstractController
                 'product' => $product,
                 'linkPrefix' => $this->getLinkPrefix(),
                 'userUpgrades' => $userUpgrades,
+                'paymentProfiles' => $paymentProfiles,
             ]
         );
     }

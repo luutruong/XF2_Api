@@ -18,8 +18,12 @@ abstract class AbstractProvider
      * @var string
      */
     protected $error = '';
+    /**
+     * @var \XF\App
+     */
+    protected $app;
 
-    abstract public function verify(array $payload): ?string;
+    abstract public function verify(array $payload): array;
     abstract public function handleIPN(array $payload): bool;
 
     abstract public function getProviderId(): string;
@@ -27,6 +31,7 @@ abstract class AbstractProvider
     public function __construct()
     {
         $app = \XF::app();
+        $this->app = $app;
 
         $this->setConfig((array) $app->config('tApi_iapConfig'));
     }
@@ -66,19 +71,25 @@ abstract class AbstractProvider
         return $this;
     }
 
+    public function getPaymentProviderLogProviderId(): string
+    {
+        return 'tapi_iap_' . $this->getProviderId();
+    }
+
     protected function getPackage(): ?IAPPackage
     {
 //        $package = \XF::em()->find();
     }
 
-    public function log(string $logType, string $message, array $details): void
+    public function log(string $logType, string $message, array $details, array $extra = []): void
     {
         /** @var \XF\Entity\PaymentProviderLog $logger */
         $logger = \XF::em()->create('XF:PaymentProviderLog');
-        $logger->provider_id = 'tapi_iap_' . $this->getProviderId();
+        $logger->provider_id = $this->getPaymentProviderLogProviderId();
         $logger->log_type = $logType;
         $logger->log_message = $message;
         $logger->log_details = $details;
+        $logger->bulkSet($extra);
         $logger->save();
     }
 }

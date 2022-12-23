@@ -145,6 +145,14 @@ class Setup extends AbstractSetup
 
     protected function getTables4(): array
     {
+        foreach ([App::PAYMENT_PROVIDER_ANDROID => 'Android', App::PAYMENT_PROVIDER_IOS => 'IOS'] as $providerId => $providerClass) {
+            $this->db()->insert('xf_payment_provider', [
+                'provider_id' => $providerId,
+                'provider_class' => 'Truonglv\Api:' . $providerClass,
+                'addon_id' => 'Truonglv/Api'
+            ], true);
+        }
+
         return [
             'xf_tapi_iap_product' => function (Create $table) {
                 $table->addColumn('product_id', 'int')->autoIncrement();
@@ -152,6 +160,7 @@ class Setup extends AbstractSetup
                 $table->addColumn('platform', 'enum', ['ios', 'android']);
                 $table->addColumn('store_product_id', 'varchar', 255);
                 $table->addColumn('user_upgrade_id', 'int');
+                $table->addColumn('payment_profile_id', 'int');
                 $table->addColumn('active', 'tinyint')->setDefault(0);
                 $table->addColumn('display_order', 'int')->setDefault(1);
 

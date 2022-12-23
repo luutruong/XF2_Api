@@ -1,7 +1,6 @@
 {
   "additional_files": [
-    "styles/default/Truonglv/Api",
-    "iap_callback.php"
+    "styles/default/Truonglv/Api"
   ],
   "exec": [
     "composer install --working-dir=_build/upload/src/addons/{addon_id}/ --no-dev --optimize-autoloader"
