@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use Truonglv\Api\Payment\IAPInterface;
 use XF;
 use DateTime;
 use Throwable;
@@ -532,16 +533,13 @@ class App extends AbstractController
             ];
         } else {
             $jsonPayload = [
-                'packageName' => $this->filter('package_name', 'str'),
-                'token' => $this->filter('token', 'str'),
-                'productId' => $storeProductId,
+                '{packageName}' => \rawurlencode($this->filter('package_name', 'str')),
+                '{token}' => \rawurlencode($this->filter('token', 'str')),
+                '{subscriptionId}' => \rawurlencode($storeProductId),
             ];
         }
 
-        $transactionId = null;
-        $subscriberId = null;
-        $client = $this->app()->http()->client();
-
+        /** @var IAPInterface $handler */
         $handler = $product->PaymentProfile->Provider->handler;
         $visitor = XF::visitor();
 
@@ -554,7 +552,7 @@ class App extends AbstractController
         $purchaseRequest->purchasable_type_id = 'user_upgrade';
         $purchaseRequest->cost_amount = $product->UserUpgrade->cost_amount;
         $purchaseRequest->cost_currency = $product->UserUpgrade->cost_currency;
-        $purchaseRequest->provider_metadata = $subscriberId;
+        $purchaseRequest->provider_metadata = null;
         $purchaseRequest->extra_data = [
             'user_upgrade_id' => $product->user_upgrade_id,
             'product_id' => $product->product_id,
@@ -562,41 +560,9 @@ class App extends AbstractController
         $purchaseRequest->save();
 
         try {
-            if ($platform === 'ios') {
-                $resp = $client->post($handler->getApiEndpoint() . '/verifyReceipt', [
-                    'json' => [
-                        'receipt-data' => $jsonPayload['transactionReceipt'],
-                        'password' => $product->PaymentProfile->options['app_shared_pass'],
-                        'exclude-old-transactions' => true,
-                    ]
-                ]);
-
-                $respJson = \GuzzleHttp\json_decode($resp->getBody()->getContents(), true);
-                $this->logPaymentProvider(
-                    'info',
-                    'Verify receipt response',
-                    [
-                        'receipt' => $jsonPayload,
-                        'response' => $respJson,
-                    ],
-                    [
-                        'purchase_request_key' => $purchaseRequest->request_key,
-                        'provider_id' => $product->PaymentProfile->provider_id,
-                    ]
-                );
-                if (isset($respJson['status']) && $respJson['status'] === 0) {
-                    $latestReceipt = $respJson['latest_receipt_info'][0];
-                    if ($respJson['recipe']['bundle_id'] !== $product->PaymentProfile->options['app_bundle_id']) {
-                        throw new InvalidArgumentException('App bundle ID did not match');
-                    }
-
-                    if (isset($latestReceipt['transaction_id']) && $latestReceipt['in_app_ownership_type'] === 'PURCHASED') {
-                        $transactionId = $latestReceipt['transaction_id'];
-                        $subscriberId = $latestReceipt['original_transaction_id'];
-                    }
-                }
-            } else {
-            }
+            $data = $handler->verifyIAPTransaction($purchaseRequest, $jsonPayload);
+            $subscriberId = $data['subscriber_id'];
+            $transactionId = $data['transaction_id'];
         } catch (Throwable $e) {
             XF::logException($e, false);
 
@@ -617,6 +583,7 @@ class App extends AbstractController
             return $this->error(XF::phrase('tapi_transaction_already_processed'));
         }
 
+        $purchaseRequest->fastUpdate('provider_metadata', $subscriberId);
         $this->logPaymentProvider(
             'payment',
             'Received in-app purchase',

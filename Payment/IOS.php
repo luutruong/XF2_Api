@@ -25,7 +25,7 @@ use function openssl_x509_verify;
 use function openssl_pkey_get_public;
 use function openssl_pkey_get_details;
 
-class IOS extends AbstractProvider
+class IOS extends AbstractProvider implements IAPInterface
 {
     /**
      * @return string
@@ -227,6 +227,50 @@ class IOS extends AbstractProvider
         $state->logDetails['signedRenewable'] = $state->signedRenewable;
         $state->logDetails['notificationType'] = $state->notificationType;
         $state->logDetails['inputRaw'] = $state->inputRaw;
+    }
+
+    public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
+    {
+        $client = \XF::app()->http()->client();
+        $resp = $client->post($this->getApiEndpoint() . '/verifyReceipt', [
+            'json' => [
+                'receipt-data' => $payload['transactionReceipt'],
+                'password' => $purchaseRequest->PaymentProfile->options['app_shared_pass'],
+                'exclude-old-transactions' => true,
+            ]
+        ]);
+
+        $respJson = \GuzzleHttp\json_decode($resp->getBody()->getContents(), true);
+        /** @var XF\Entity\PaymentProviderLog $paymentLog */
+        $paymentLog = \XF::em()->create('XF:PaymentProviderLog');
+        $paymentLog->log_type = 'info';
+        $paymentLog->log_message = 'Verify receipt response';
+        $paymentLog->log_details = [
+            'payload' => $payload,
+            'response' => $respJson,
+        ];
+        $paymentLog->purchase_request_key = $purchaseRequest->request_key;
+        $paymentLog->provider_id = $this->getProviderId();
+        $paymentLog->save();
+
+        if (isset($respJson['status']) && $respJson['status'] === 0) {
+            $latestReceipt = $respJson['latest_receipt_info'][0];
+            if ($respJson['receipt']['bundle_id'] !== $purchaseRequest->PaymentProfile->options['app_bundle_id']) {
+                throw new \InvalidArgumentException('App bundle ID did not match');
+            }
+
+            if (isset($latestReceipt['transaction_id']) && $latestReceipt['in_app_ownership_type'] === 'PURCHASED') {
+                $transactionId = $latestReceipt['transaction_id'];
+                $subscriberId = $latestReceipt['original_transaction_id'];
+
+                return [
+                    'transaction_id' => $transactionId,
+                    'subscriber_id' => $subscriberId,
+                ];
+            }
+        }
+
+        throw new \InvalidArgumentException('Cannot verify receipt');
     }
 
     protected function getCertificate(string $contents): string

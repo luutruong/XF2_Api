@@ -10,7 +10,7 @@ use XF\Payment\CallbackState;
 use XF\Entity\PurchaseRequest;
 use XF\Payment\AbstractProvider;
 
-class Android extends AbstractProvider
+class Android extends AbstractProvider implements IAPInterface
 {
     /**
      * @return string
@@ -66,5 +66,46 @@ class Android extends AbstractProvider
     public function prepareLogData(CallbackState $state)
     {
         // TODO: Implement prepareLogData() method.
+    }
+
+    public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
+    {
+        $client = \XF::app()->http()->client();
+
+        $verifyUrl = 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications/'
+            . '{packageName}/purchases/subscriptions/{subscriptionId}/tokens/{token}';
+        $verifyUrl = \strtr($verifyUrl, $payload);
+        $resp = $client->get($verifyUrl);
+
+        $respJson = \GuzzleHttp\json_decode($resp->getBody()->getContents());
+
+        /** @var \XF\Entity\PaymentProviderLog $paymentLog */
+        $paymentLog = \XF::em()->create('XF:PaymentProviderLog');
+        $paymentLog->log_type = 'info';
+        $paymentLog->log_message = 'Verify receipt response';
+        $paymentLog->log_details = [
+            'payload' => $payload,
+            'response' => $respJson,
+        ];
+        $paymentLog->purchase_request_key = $purchaseRequest->request_key;
+        $paymentLog->provider_id = $this->getProviderId();
+        $paymentLog->save();
+
+        // https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptions#SubscriptionPurchase
+        if ($respJson->resource->paymentState === 1) {
+            $transactionId = $respJson->resource->orderId;
+            if (\preg_match('#(.*)\.{2}(\d+)$#', $transactionId, $matches) === 1) {
+                $subscriberId = $matches[1];
+            } else {
+                $subscriberId = $transactionId;
+            }
+
+            return [
+                'transaction_id' => $transactionId,
+                'subscriber_id' => $subscriberId,
+            ];
+        }
+
+        throw new \LogicException('Cannot verify transaction');
     }
 }
