@@ -519,7 +519,7 @@ class App extends AbstractController
         /** @var IAPProduct|null $product */
         $product = $this->finder('Truonglv\Api:IAPProduct')
             ->where('platform', $platform)
-            ->where('store_package_id', $storeProductId)
+            ->where('store_product_id', $storeProductId)
             ->fetchOne();
         if ($product === null) {
             // unverified
