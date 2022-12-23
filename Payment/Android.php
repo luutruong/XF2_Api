@@ -2,15 +2,14 @@
 
 namespace Truonglv\Api\Payment;
 
-use XF\Entity\PurchaseRequest;
 use XF\Mvc\Controller;
-use XF\Payment\AbstractProvider;
-use XF\Payment\CallbackState;
 use XF\Purchasable\Purchase;
+use XF\Payment\CallbackState;
+use XF\Entity\PurchaseRequest;
+use XF\Payment\AbstractProvider;
 
 class Android extends AbstractProvider
 {
-
     public function getTitle()
     {
         // TODO: Implement getTitle() method.

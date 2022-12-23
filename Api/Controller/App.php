@@ -2,11 +2,9 @@
 
 namespace Truonglv\Api\Api\Controller;
 
-use SoapMF\Entity\IAPPackage;
-use Truonglv\Api\Entity\IAPProduct;
-use Truonglv\Api\IAPPayment\IOS;
 use XF;
 use DateTime;
+use Throwable;
 use function md5;
 use function ceil;
 use function count;
@@ -31,6 +29,7 @@ use XF\ControllerPlugin\Login;
 use XF\Api\Mvc\Reply\ApiResult;
 use Truonglv\Api\Util\Encryption;
 use XF\Service\User\Registration;
+use Truonglv\Api\Entity\IAPProduct;
 use XF\Entity\UserConnectedAccount;
 use XF\Repository\ConnectedAccount;
 use Truonglv\Api\Entity\AccessToken;
@@ -539,40 +538,118 @@ class App extends AbstractController
             ];
         }
 
-        $extra = null;
+        $transactionId = null;
+        $subscriberId = null;
+        $client = $this->app()->http()->client();
+
+        $handler = $product->PaymentProfile->Provider->handler;
+        $visitor = XF::visitor();
+
+        /** @var XF\Entity\PurchaseRequest $purchaseRequest */
+        $purchaseRequest = $this->em()->create('XF:PurchaseRequest');
+        $purchaseRequest->payment_profile_id = $product->payment_profile_id;
+        $purchaseRequest->request_key = XF\Util\Random::getRandomString(32);
+        $purchaseRequest->user_id = $visitor->user_id;
+        $purchaseRequest->provider_id = $product->PaymentProfile->provider_id;
+        $purchaseRequest->purchasable_type_id = 'user_upgrade';
+        $purchaseRequest->cost_amount = $product->UserUpgrade->cost_amount;
+        $purchaseRequest->cost_currency = $product->UserUpgrade->cost_currency;
+        $purchaseRequest->provider_metadata = $subscriberId;
+        $purchaseRequest->extra_data = [
+            'user_upgrade_id' => $product->user_upgrade_id,
+            'product_id' => $product->product_id,
+        ];
+        $purchaseRequest->save();
 
         try {
             if ($platform === 'ios') {
-                $handler = new IOS();
-                $extra = $handler->verify($jsonPayload);
+                $resp = $client->post($handler->getApiEndpoint() . '/verifyReceipt', [
+                    'json' => [
+                        'receipt-data' => $jsonPayload['transactionReceipt'],
+                        'password' => $product->PaymentProfile->options['app_shared_pass'],
+                        'exclude-old-transactions' => true,
+                    ]
+                ]);
+
+                $respJson = \GuzzleHttp\json_decode($resp->getBody()->getContents(), true);
+                $this->logPaymentProvider(
+                    'info',
+                    'Verify receipt response',
+                    [
+                        'receipt' => $jsonPayload,
+                        'response' => $respJson,
+                    ],
+                    [
+                        'purchase_request_key' => $purchaseRequest->request_key,
+                        'provider_id' => $product->PaymentProfile->provider_id,
+                    ]
+                );
+                if (isset($respJson['status']) && $respJson['status'] === 0) {
+                    $latestReceipt = $respJson['latest_receipt_info'][0];
+                    if ($respJson['recipe']['bundle_id'] !== $product->PaymentProfile->options['app_bundle_id']) {
+                        throw new InvalidArgumentException('App bundle ID did not match');
+                    }
+
+                    if (isset($latestReceipt['transaction_id']) && $latestReceipt['in_app_ownership_type'] === 'PURCHASED') {
+                        $transactionId = $latestReceipt['transaction_id'];
+                        $subscriberId = $latestReceipt['original_transaction_id'];
+                    }
+                }
+            } else {
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             XF::logException($e, false);
 
             return $this->error(XF::phrase('something_went_wrong_please_try_again'));
         }
 
+        if ($transactionId === null || $subscriberId === null) {
+            return $this->error(XF::phrase('something_went_wrong_please_try_again'));
+        }
+
         /** @var XF\Entity\PaymentProviderLog|null $log */
         $log = $this->finder('XF:PaymentProviderLog')
-            ->where('provider_id', $handler->getPaymentProviderLogProviderId())
-            ->where('transaction_id', $extra['transaction_id'])
+            ->where('provider_id', $handler->getProviderId())
+            ->where('transaction_id', $transactionId)
             ->order('log_date', 'desc')
             ->fetchOne();
         if ($log !== null) {
             return $this->error(XF::phrase('tapi_transaction_already_processed'));
         }
 
-        $handler->log('payment', 'Received in-app purchase', $jsonPayload, $extra);
+        $this->logPaymentProvider(
+            'payment',
+            'Received in-app purchase',
+            [],
+            [
+                'purchase_request_key' => $purchaseRequest->request_key,
+                'provider_id' => $product->PaymentProfile->provider_id,
+                'transaction_id' => $transactionId,
+                'subscriber_id' => $subscriberId,
+            ]
+        );
 
         if ($product->UserUpgrade !== null) {
             /** @var XF\Service\User\Upgrade $upgrade */
-            $upgrade = $this->service('XF:User\Upgrade', $product->UserUpgrade, \XF::visitor());
+            $upgrade = $this->service('XF:User\Upgrade', $product->UserUpgrade, $visitor);
+            $upgrade->setPurchaseRequestKey($purchaseRequest->request_key);
             $upgrade->upgrade();
         }
 
         return $this->apiSuccess([
             'message' => XF::phrase('tapi_your_account_has_been_upgraded')
         ]);
+    }
+
+    protected function logPaymentProvider(string $logType, string $message, array $details = [], array $extra = []): void
+    {
+        /** @var XF\Entity\PaymentProviderLog $paymentLog */
+        $paymentLog = $this->em()->create('XF:PaymentProviderLog');
+        $paymentLog->log_type = $logType;
+        $paymentLog->log_message = $message;
+        $paymentLog->log_details = $details;
+        $paymentLog->bulkSet($extra);
+        $paymentLog->save();
     }
 
     protected function getAuthResultData(\XF\Entity\User $user, bool $withRefreshToken = true): array

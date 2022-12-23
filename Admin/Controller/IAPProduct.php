@@ -3,11 +3,11 @@
 namespace Truonglv\Api\Admin\Controller;
 
 use Truonglv\Api\App;
-use XF\Admin\Controller\AbstractController;
+use XF\Mvc\ParameterBag;
 use XF\ControllerPlugin\Delete;
 use XF\ControllerPlugin\Toggle;
-use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
+use XF\Admin\Controller\AbstractController;
 
 class IAPProduct extends AbstractController
 {

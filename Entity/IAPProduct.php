@@ -17,7 +17,7 @@ use XF\Mvc\Entity\Structure;
  * @property int $display_order
  *
  * RELATIONS
- * @property \XF\Mvc\Entity\AbstractCollection|\XF\Entity\UserUpgrade[] $UserUpgrade
+ * @property \XF\Entity\UserUpgrade $UserUpgrade
  * @property \XF\Entity\PaymentProfile $PaymentProfile
  */
 class IAPProduct extends Entity
@@ -41,7 +41,7 @@ class IAPProduct extends Entity
 
         $structure->relations = [
             'UserUpgrade' => [
-                'type' => self::UINT,
+                'type' => self::TO_ONE,
                 'entity' => 'XF:UserUpgrade',
                 'conditions' => 'user_upgrade_id',
                 'primary' => true,

@@ -269,6 +269,12 @@
         "version_string": "3.1.4",
         "hash": "e64f1aa9955dea9a51cde15016de5eec"
     },
+    "tapi_iap_ios_app_shared_pass_explain.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "02369eac6dc7a45dd60863ecb03791d1"
+    },
     "tapi_iap_product_add.txt": {
         "global_cache": false,
         "version_id": 3010400,
