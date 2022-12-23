@@ -263,18 +263,6 @@
         "version_string": "3.1.4",
         "hash": "11a738dd0c48f1401a059bca54bc119c"
     },
-    "tapi_iap_product_add_user_groups.txt": {
-        "global_cache": false,
-        "version_id": 3010400,
-        "version_string": "3.1.4",
-        "hash": "1e5396f2f7a61764bf2e27fb9df30987"
-    },
-    "tapi_iap_product_add_user_groups_explain.txt": {
-        "global_cache": false,
-        "version_id": 3010400,
-        "version_string": "3.1.4",
-        "hash": "f0cc4be9151deac45e8698fcc6090d59"
-    },
     "tapi_iap_product_edit.txt": {
         "global_cache": false,
         "version_id": 3010400,
@@ -304,6 +292,18 @@
         "version_id": 3010400,
         "version_string": "3.1.4",
         "hash": "e54cd2df68aae6cf513679003b46fe15"
+    },
+    "tapi_iap_product_user_upgrade.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "ad7e66bc765bc099f2a6de0c2faec30d"
+    },
+    "tapi_iap_product_user_upgrade_explain.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "b97666870165b55e11ebcbb8c8e62bf5"
     },
     "tapi_iap_products.txt": {
         "global_cache": false,

@@ -12,12 +12,12 @@
     "admin/tapi_iap_product_edit.html": {
         "version_id": 3010400,
         "version_string": "3.1.4",
-        "hash": "66fd1b95f48ccbc2225a174cbb0c08ea"
+        "hash": "852b59494facd4d682ad4f93f6094fee"
     },
     "admin/tapi_iap_product_list.html": {
         "version_id": 3010400,
         "version_string": "3.1.4",
-        "hash": "96f1353b063c7ac349a0c10c493fe096"
+        "hash": "1d59f94ddff1072fa9f988e48c3f8c9d"
     },
     "admin/tapi_log_view.html": {
         "version_id": 1000600,

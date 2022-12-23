@@ -151,7 +151,7 @@ class Setup extends AbstractSetup
                 $table->addColumn('title', 'varchar', 100);
                 $table->addColumn('platform', 'enum', ['ios', 'android']);
                 $table->addColumn('store_product_id', 'varchar', 255);
-                $table->addColumn('user_group_ids', 'varchar', 255);
+                $table->addColumn('user_upgrade_id', 'int');
                 $table->addColumn('active', 'tinyint')->setDefault(0);
                 $table->addColumn('display_order', 'int')->setDefault(1);
 

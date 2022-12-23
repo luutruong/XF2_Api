@@ -502,7 +502,7 @@ class App extends AbstractController
     public function actionPostIAPVerify()
     {
         $this->assertRegisteredUser();
-        $this->assertRequiredApiInput(['platform', 'product_id']);
+        $this->assertRequiredApiInput(['platform', 'store_product_id']);
 
         $platform = $this->filter('platform', 'str');
         if ($platform === 'ios') {
@@ -511,7 +511,7 @@ class App extends AbstractController
             $this->assertRequiredApiInput(['package_name', 'token']);
         }
 
-        $productId = $this->filter('product_id', 'str');
+        $storeProductId = $this->filter('store_product_id', 'str');
 
         if (!in_array($platform, ['ios', 'android'], true)) {
             return $this->noPermission();
@@ -520,7 +520,7 @@ class App extends AbstractController
         /** @var IAPProduct|null $product */
         $product = $this->finder('Truonglv\Api:IAPProduct')
             ->where('platform', $platform)
-            ->where('store_package_id', $productId)
+            ->where('store_package_id', $storeProductId)
             ->fetchOne();
         if ($product === null) {
             // unverified
@@ -535,7 +535,7 @@ class App extends AbstractController
             $jsonPayload = [
                 'packageName' => $this->filter('package_name', 'str'),
                 'token' => $this->filter('token', 'str'),
-                'productId' => $productId,
+                'productId' => $storeProductId,
             ];
         }
 
@@ -553,14 +553,10 @@ class App extends AbstractController
             return $this->error(XF::phrase('something_went_wrong_please_try_again'));
         }
 
-        if (count($product->user_group_ids) > 0) {
-            /** @var XF\Service\User\UserGroupChange $userGroupChange */
-            $userGroupChange = $this->service('XF:User\UserGroupChange');
-            $userGroupChange->addUserGroupChange(
-                \XF::visitor()->user_id,
-                'tapi_iap_product_' . $product->product_id,
-                $product->user_group_ids
-            );
+        if ($product->UserUpgrade !== null) {
+            /** @var XF\Service\User\Upgrade $upgrade */
+            $upgrade = $this->service('XF:User\Upgrade', $product->UserUpgrade, \XF::visitor());
+            $upgrade->upgrade();
         }
 
         return $this->apiSuccess([

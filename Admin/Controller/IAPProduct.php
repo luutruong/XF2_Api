@@ -63,7 +63,7 @@ class IAPProduct extends AbstractController
             'title' => 'str',
             'platform' => 'str',
             'store_product_id' => 'str',
-            'user_group_ids' => 'array-uint',
+            'user_upgrade_id' => 'uint',
             'active' => 'bool',
             'display_order' => 'uint',
         ]));
@@ -121,10 +121,9 @@ class IAPProduct extends AbstractController
         return $product;
     }
 
-
     protected function getProductForm(\Truonglv\Api\Entity\IAPProduct $product): AbstractReply
     {
-        $userGroups = $this->finder('XF:UserGroup')->fetch();
+        $userUpgrades = $this->finder('XF:UserUpgrade')->fetch();
 
         return $this->view(
             $this->getEntityClassName() . '\\Form',
@@ -132,7 +131,7 @@ class IAPProduct extends AbstractController
             [
                 'product' => $product,
                 'linkPrefix' => $this->getLinkPrefix(),
-                'userGroups' => $userGroups,
+                'userUpgrades' => $userUpgrades,
             ]
         );
     }

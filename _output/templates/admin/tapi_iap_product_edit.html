@@ -16,14 +16,15 @@
                            maxlength="{{ max_length($product, 'store_product_id') }}"
                            value="{$product.store_product_id}" />
             <hr class="formRowSep" />
-            <xf:checkboxrow name="user_group_ids" label="{{ phrase('tapi_iap_product_add_user_groups') }}"
-                          explain="{{ phrase('tapi_iap_product_add_user_groups_explain') }}"
-                            listclass="listColumns"
-                          value="{$product.user_group_ids}">
-                <xf:foreach loop="$userGroups" value="$userGroup">
-                    <xf:option value="{$userGroup.user_group_id}">{$userGroup.title}</xf:option>
+            <xf:selectrow name="user_upgrade_id" label="{{ phrase('tapi_iap_product_user_upgrade') }}"
+                          explain="{{ phrase('tapi_iap_product_user_upgrade_explain') }}"
+                          value="{$product.user_upgrade_id}">
+                <xf:option value="0"></xf:option>
+                <xf:foreach loop="$userUpgrades" value="$userUpgrade">
+                    <xf:option value="{$userUpgrade.user_upgrade_id}">{$userUpgrade.title}</xf:option>
                 </xf:foreach>
-            </xf:checkboxrow>
+            </xf:selectrow>
+
             <hr class="formRowSep" />
 
             <xf:numberboxrow name="display_order" value="{$product.display_order}"

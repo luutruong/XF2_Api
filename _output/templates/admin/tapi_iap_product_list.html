@@ -13,7 +13,7 @@
                         <xf:datarow>
                             <xf:main href="{{ link($linkPrefix . '/edit', $product) }}"
                                      label="{$product.title}"
-                                     snippet="{$product.platform} - {$product.store_product_id}"
+                                     hint="{$product.platform} - {$product.store_product_id}"
                             />
                             <xf:toggle name="active[{$product.product_id}]" selected="{$product.active}"
                                        class="dataList-cell--separated" submit="true"

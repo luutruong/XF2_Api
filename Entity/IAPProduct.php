@@ -11,9 +11,12 @@ use XF\Mvc\Entity\Structure;
  * @property string $title
  * @property string $platform
  * @property string $store_product_id
- * @property array $user_group_ids
+ * @property int $user_upgrade_id
  * @property bool $active
  * @property int $display_order
+ *
+ * RELATIONS
+ * @property \XF\Mvc\Entity\AbstractCollection|\XF\Entity\UserUpgrade[] $UserUpgrade
  */
 class IAPProduct extends Entity
 {
@@ -28,9 +31,18 @@ class IAPProduct extends Entity
             'title' => ['type' => self::STR, 'required' => true, 'maxLength' => 100, 'api' => true],
             'platform' => ['type' => self::STR, 'allowedValues' => ['ios', 'android'], 'required' => true, 'api' => true],
             'store_product_id' => ['type' => self::STR, 'required' => true, 'maxLength' => 255, 'api' => true],
-            'user_group_ids' => ['type' => self::LIST_COMMA, 'default' => [], 'api' => true],
+            'user_upgrade_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
             'active' => ['type' => self::BOOL, 'default' => true, 'api' => true],
             'display_order' => ['type' => self::UINT, 'default' => 1, 'api' => true],
+        ];
+
+        $structure->relations = [
+            'UserUpgrade' => [
+                'type' => self::UINT,
+                'entity' => 'XF:UserUpgrade',
+                'conditions' => 'user_upgrade_id',
+                'primary' => true,
+            ],
         ];
 
         return $structure;
