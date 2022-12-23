@@ -293,6 +293,12 @@
         "version_string": "3.1.4",
         "hash": "c59d759b03303b73276b787b63c2b178"
     },
+    "tapi_iap_product_not_found.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "d94af497f91672210cd13aab2b257420"
+    },
     "tapi_iap_product_platform.txt": {
         "global_cache": false,
         "version_id": 3010400,
@@ -478,5 +484,17 @@
         "version_id": 1000500,
         "version_string": "1.0.5",
         "hash": "882978def5011d7088c7ae1e80f6b949"
+    },
+    "tapi_transaction_already_processed.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "5a89b50e9204e01c07fd4ffbf233bacb"
+    },
+    "tapi_your_account_has_been_upgraded.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "9a897858fb0a7d4e5801bf80a6304d5b"
     }
 }
