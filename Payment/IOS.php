@@ -61,11 +61,24 @@ class IOS extends AbstractProvider
         return true;
     }
 
+    /**
+     * @param Controller $controller
+     * @param PurchaseRequest $purchaseRequest
+     * @param Purchase $purchase
+     * @return mixed
+     */
     public function initiatePayment(Controller $controller, PurchaseRequest $purchaseRequest, Purchase $purchase)
     {
         throw new LogicException('Not supported');
     }
 
+    /**
+     * @param Controller $controller
+     * @param PurchaseRequest $purchaseRequest
+     * @param PaymentProfile $paymentProfile
+     * @param Purchase $purchase
+     * @return null
+     */
     public function processPayment(Controller $controller, PurchaseRequest $purchaseRequest, PaymentProfile $paymentProfile, Purchase $purchase)
     {
         throw new LogicException('Not supported');
@@ -127,7 +140,7 @@ class IOS extends AbstractProvider
             $pkeyObj = openssl_pkey_get_public($certObj);
             $pkeyArr = openssl_pkey_get_details($pkeyObj);
 
-            $data = \GuzzleHttp\json_decode(base64_decode($body64));
+            $data = \GuzzleHttp\json_decode(base64_decode($body64, true));
             $transaction = JWT::decode($data->data->signedTransactionInfo, new Key($pkeyArr['key'], $header->alg));
             $signedRenewableInfo = JWT::decode($data->data->signedRenewalInfo, new Key($pkeyArr['key'], $header->alg));
         } catch (Throwable $e) {
