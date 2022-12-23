@@ -43,6 +43,11 @@ class Setup extends AbstractSetup
         $this->doCreateTables($this->getTables3());
     }
 
+    public function upgrade3010500Step1()
+    {
+        $this->doCreateTables($this->getTables4());
+    }
+
     /**
      * @return array
      */
@@ -135,6 +140,23 @@ class Setup extends AbstractSetup
 
                 $table->addKey('expire_date');
             }
+        ];
+    }
+
+    protected function getTables4(): array
+    {
+        return [
+            'xf_tapi_iap_product' => function (Create $table) {
+                $table->addColumn('product_id', 'int')->autoIncrement();
+                $table->addColumn('title', 'varchar', 100);
+                $table->addColumn('platform', 'enum', ['ios', 'android']);
+                $table->addColumn('store_product_id', 'varchar', 255);
+                $table->addColumn('user_group_ids', 'varchar', 255);
+                $table->addColumn('active', 'tinyint')->setDefault(0);
+                $table->addColumn('display_order', 'int')->setDefault(1);
+
+                $table->addUniqueKey(['platform', 'store_product_id']);
+            },
         ];
     }
 

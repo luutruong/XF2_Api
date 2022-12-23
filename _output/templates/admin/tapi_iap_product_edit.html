@@ -1,0 +1,38 @@
+<xf:title>{{ $product.exists() ? phrase('tapi_iap_product_edit') : phrase('tapi_iap_product_add') }}</xf:title>
+
+<xf:form action="{{ link($linkPrefix . '/save', $product) }}" ajax="true" class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <xf:textboxrow name="title" value="{$product.title}"
+                           label="{{ phrase('tapi_iap_product_title') }}"
+                           maxlength="{{ max_length($product, 'title') }}" />
+            <xf:radiorow name="platform" value="{$product.platform}"
+                         label="{{ phrase('tapi_iap_product_platform') }}">
+                <xf:option value="android">android</xf:option>
+                <xf:option value="ios">iOs</xf:option>
+            </xf:radiorow>
+
+            <xf:textboxrow name="store_product_id" label="{{ phrase('tapi_iap_product_store_product_id') }}"
+                           maxlength="{{ max_length($product, 'store_product_id') }}"
+                           value="{$product.store_product_id}" />
+            <hr class="formRowSep" />
+            <xf:checkboxrow name="user_group_ids" label="{{ phrase('tapi_iap_product_add_user_groups') }}"
+                          explain="{{ phrase('tapi_iap_product_add_user_groups_explain') }}"
+                            listclass="listColumns"
+                          value="{$product.user_group_ids}">
+                <xf:foreach loop="$userGroups" value="$userGroup">
+                    <xf:option value="{$userGroup.user_group_id}">{$userGroup.title}</xf:option>
+                </xf:foreach>
+            </xf:checkboxrow>
+            <hr class="formRowSep" />
+
+            <xf:numberboxrow name="display_order" value="{$product.display_order}"
+                             label="{{ phrase('display_order') }}" />
+            <xf:checkboxrow label="">
+                <xf:option name="active" selected="{$product.active}">{{ phrase('tapi_iap_product_is_active') }}</xf:option>
+            </xf:checkboxrow>
+        </div>
+
+        <xf:submitrow icon="save" />
+    </div>
+</xf:form>

@@ -1,0 +1,11 @@
+{
+    "route_type": "admin",
+    "route_prefix": "tapi-iap-products",
+    "sub_name": "",
+    "format": ":int<product_id>/",
+    "build_class": "",
+    "build_method": "",
+    "controller": "Truonglv\\Api:IAPProduct",
+    "context": "setup",
+    "action_prefix": ""
+}

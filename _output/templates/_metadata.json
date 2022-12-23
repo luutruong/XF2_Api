@@ -9,6 +9,16 @@
         "version_string": "3.1.2",
         "hash": "a77993ba458224ed1fd8ec8abb0fb783"
     },
+    "admin/tapi_iap_product_edit.html": {
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "66fd1b95f48ccbc2225a174cbb0c08ea"
+    },
+    "admin/tapi_iap_product_list.html": {
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "96f1353b063c7ac349a0c10c493fe096"
+    },
     "admin/tapi_log_view.html": {
         "version_id": 1000600,
         "version_string": "1.0.6",

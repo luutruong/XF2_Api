@@ -2,6 +2,9 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use SoapMF\Entity\IAPPackage;
+use Truonglv\Api\Entity\IAPProduct;
+use Truonglv\Api\IAPPayment\IOS;
 use XF;
 use DateTime;
 use function md5;
@@ -481,6 +484,87 @@ class App extends AbstractController
 
         return $this->rerouteController('XF:Api:Forum', 'get', [
             'node_id' => $node->node_id,
+        ]);
+    }
+
+    public function actionGetIAPProducts()
+    {
+        $products = $this->finder('Truonglv\Api:IAPProduct')
+            ->where('active', true)
+            ->order('display_order')
+            ->fetch();
+
+        return $this->apiResult([
+            'products' => $products->toApiResults(),
+        ]);
+    }
+
+    public function actionPostIAPVerify()
+    {
+        $this->assertRegisteredUser();
+        $this->assertRequiredApiInput(['platform', 'product_id']);
+
+        $platform = $this->filter('platform', 'str');
+        if ($platform === 'ios') {
+            $this->assertRequiredApiInput(['receipt']);
+        } else {
+            $this->assertRequiredApiInput(['package_name', 'token']);
+        }
+
+        $productId = $this->filter('product_id', 'str');
+
+        if (!in_array($platform, ['ios', 'android'], true)) {
+            return $this->noPermission();
+        }
+
+        /** @var IAPProduct|null $product */
+        $product = $this->finder('Truonglv\Api:IAPProduct')
+            ->where('platform', $platform)
+            ->where('store_package_id', $productId)
+            ->fetchOne();
+        if ($product === null) {
+            // unverified
+            return $this->error(XF::phrase('soapmf_iap_package_not_found'), 400);
+        }
+
+        if ($platform === 'ios') {
+            $jsonPayload = [
+                'transactionReceipt' => $this->filter('receipt', 'str'),
+            ];
+        } else {
+            $jsonPayload = [
+                'packageName' => $this->filter('package_name', 'str'),
+                'token' => $this->filter('token', 'str'),
+                'productId' => $productId,
+            ];
+        }
+
+        try {
+            if ($platform === 'ios') {
+                $handler = new IOS();
+                $transactionId = $handler->verify($jsonPayload);
+                if ($transactionId === null) {
+                    throw new \LogicException('Failed to verify receipt');
+                }
+            }
+        } catch (\Throwable $e) {
+            XF::logException($e, false);
+
+            return $this->error(XF::phrase('something_went_wrong_please_try_again'));
+        }
+
+        if (count($product->user_group_ids) > 0) {
+            /** @var XF\Service\User\UserGroupChange $userGroupChange */
+            $userGroupChange = $this->service('XF:User\UserGroupChange');
+            $userGroupChange->addUserGroupChange(
+                \XF::visitor()->user_id,
+                'tapi_iap_product_' . $product->product_id,
+                $product->user_group_ids
+            );
+        }
+
+        return $this->apiSuccess([
+            'message' => XF::phrase('soapmf_your_account_has_been_upgraded')
         ]);
     }
 
