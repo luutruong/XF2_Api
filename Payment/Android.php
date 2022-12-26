@@ -2,8 +2,11 @@
 
 namespace Truonglv\Api\Payment;
 
+use XF;
+use function strtr;
 use LogicException;
 use XF\Mvc\Controller;
+use function preg_match;
 use XF\Purchasable\Purchase;
 use XF\Entity\PaymentProfile;
 use XF\Payment\CallbackState;
@@ -70,17 +73,17 @@ class Android extends AbstractProvider implements IAPInterface
 
     public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
     {
-        $client = \XF::app()->http()->client();
+        $client = XF::app()->http()->client();
 
         $verifyUrl = 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications/'
             . '{packageName}/purchases/subscriptions/{subscriptionId}/tokens/{token}';
-        $verifyUrl = \strtr($verifyUrl, $payload);
+        $verifyUrl = strtr($verifyUrl, $payload);
         $resp = $client->get($verifyUrl);
 
         $respJson = \GuzzleHttp\json_decode($resp->getBody()->getContents());
 
         /** @var \XF\Entity\PaymentProviderLog $paymentLog */
-        $paymentLog = \XF::em()->create('XF:PaymentProviderLog');
+        $paymentLog = XF::em()->create('XF:PaymentProviderLog');
         $paymentLog->log_type = 'info';
         $paymentLog->log_message = 'Verify receipt response';
         $paymentLog->log_details = [
@@ -94,7 +97,7 @@ class Android extends AbstractProvider implements IAPInterface
         // https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptions#SubscriptionPurchase
         if ($respJson->resource->paymentState === 1) {
             $transactionId = $respJson->resource->orderId;
-            if (\preg_match('#(.*)\.{2}(\d+)$#', $transactionId, $matches) === 1) {
+            if (preg_match('#(.*)\.{2}(\d+)$#', $transactionId, $matches) === 1) {
                 $subscriberId = $matches[1];
             } else {
                 $subscriberId = $transactionId;
@@ -106,6 +109,6 @@ class Android extends AbstractProvider implements IAPInterface
             ];
         }
 
-        throw new \LogicException('Cannot verify transaction');
+        throw new LogicException('Cannot verify transaction');
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\Api\Controller;
 
-use Truonglv\Api\Payment\IAPInterface;
 use XF;
 use DateTime;
 use Throwable;
@@ -23,6 +22,7 @@ use function json_decode;
 use function json_encode;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Reply\Message;
+use function rawurlencode;
 use XF\Mvc\Reply\Exception;
 use InvalidArgumentException;
 use XF\Repository\Attachment;
@@ -38,6 +38,7 @@ use function array_replace_recursive;
 use Truonglv\Api\Entity\RefreshToken;
 use Truonglv\Api\Entity\Subscription;
 use OAuth\OAuth2\Token\StdOAuth2Token;
+use Truonglv\Api\Payment\IAPInterface;
 use XF\Entity\ConnectedAccountProvider;
 use XF\Api\Controller\AbstractController;
 use Truonglv\Api\XF\ConnectedAccount\Storage\StorageState;
@@ -533,13 +534,13 @@ class App extends AbstractController
             ];
         } else {
             $jsonPayload = [
-                '{packageName}' => \rawurlencode($this->filter('package_name', 'str')),
-                '{token}' => \rawurlencode($this->filter('token', 'str')),
-                '{subscriptionId}' => \rawurlencode($storeProductId),
+                '{packageName}' => rawurlencode($this->filter('package_name', 'str')),
+                '{token}' => rawurlencode($this->filter('token', 'str')),
+                '{subscriptionId}' => rawurlencode($storeProductId),
             ];
         }
 
-        /** @var IAPInterface $handler */
+        /** @var IAPInterface|XF\Payment\AbstractProvider $handler */
         $handler = $product->PaymentProfile->Provider->handler;
         $visitor = XF::visitor();
 
@@ -593,6 +594,7 @@ class App extends AbstractController
                 'provider_id' => $product->PaymentProfile->provider_id,
                 'transaction_id' => $transactionId,
                 'subscriber_id' => $subscriberId,
+                'purchase' => $this->filter('purchase', 'str'),
             ]
         );
 

@@ -15,6 +15,7 @@ use XF\Mvc\Controller;
 use function array_replace;
 use function base64_decode;
 use XF\Purchasable\Purchase;
+use InvalidArgumentException;
 use XF\Entity\PaymentProfile;
 use XF\Payment\CallbackState;
 use XF\Entity\PurchaseRequest;
@@ -231,7 +232,7 @@ class IOS extends AbstractProvider implements IAPInterface
 
     public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
     {
-        $client = \XF::app()->http()->client();
+        $client = XF::app()->http()->client();
         $resp = $client->post($this->getApiEndpoint() . '/verifyReceipt', [
             'json' => [
                 'receipt-data' => $payload['transactionReceipt'],
@@ -242,7 +243,7 @@ class IOS extends AbstractProvider implements IAPInterface
 
         $respJson = \GuzzleHttp\json_decode($resp->getBody()->getContents(), true);
         /** @var XF\Entity\PaymentProviderLog $paymentLog */
-        $paymentLog = \XF::em()->create('XF:PaymentProviderLog');
+        $paymentLog = XF::em()->create('XF:PaymentProviderLog');
         $paymentLog->log_type = 'info';
         $paymentLog->log_message = 'Verify receipt response';
         $paymentLog->log_details = [
@@ -256,7 +257,7 @@ class IOS extends AbstractProvider implements IAPInterface
         if (isset($respJson['status']) && $respJson['status'] === 0) {
             $latestReceipt = $respJson['latest_receipt_info'][0];
             if ($respJson['receipt']['bundle_id'] !== $purchaseRequest->PaymentProfile->options['app_bundle_id']) {
-                throw new \InvalidArgumentException('App bundle ID did not match');
+                throw new InvalidArgumentException('App bundle ID did not match');
             }
 
             if (isset($latestReceipt['transaction_id']) && $latestReceipt['in_app_ownership_type'] === 'PURCHASED') {
@@ -270,7 +271,7 @@ class IOS extends AbstractProvider implements IAPInterface
             }
         }
 
-        throw new \InvalidArgumentException('Cannot verify receipt');
+        throw new InvalidArgumentException('Cannot verify receipt');
     }
 
     protected function getCertificate(string $contents): string
