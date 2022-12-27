@@ -19,5 +19,8 @@
         "symfony/polyfill-mbstring": "*",
         "paragonie/random_compat": "*",
         "paragonie/constant_time_encoding": "*"
+    },
+    "scripts": {
+        "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
     }
 }
