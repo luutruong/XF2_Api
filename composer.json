@@ -3,7 +3,8 @@
         "php": ">=7.2",
         "kreait/firebase-php": "5.19.0",
         "ext-openssl": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "google/apiclient": "^2.12.1"
     },
     "config": {
         "autoloader-suffix": "TruonglvApi"
@@ -15,6 +16,8 @@
         "guzzlehttp/psr7": "*",
         "psr/log": "*",
         "psr/http-message": "*",
-        "symfony/polyfill-mbstring": "*"
+        "symfony/polyfill-mbstring": "*",
+        "paragonie/random_compat": "*",
+        "paragonie/constant_time_encoding": "*"
     }
 }
