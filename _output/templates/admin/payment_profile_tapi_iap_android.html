@@ -1,0 +1,7 @@
+<xf:formrow label="">{{ phrase('tapi_iap_the_callback_url_x', {'url': $profile.Provider.handler.getCallbackUrl()}) }}</xf:formrow>
+
+<xf:textboxrow name="options[app_bundle_id]" value="{$profile.options.app_bundle_id}"
+               label="{{ phrase('tapi_iap_ios_app_bundle_id') }}" />
+<xf:textarearow name="options[service_account_json]" value="{$profile.options.service_account_json}"
+                explain="{{ phrase('tapi_iap_android_service_account_json_explain') }}"
+                label="{{ phrase('tapi_iap_android_service_account_json') }}" />

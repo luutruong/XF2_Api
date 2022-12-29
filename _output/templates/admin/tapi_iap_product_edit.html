@@ -1,0 +1,56 @@
+<xf:title>{{ $product.exists() ? phrase('tapi_iap_product_edit') : phrase('tapi_iap_product_add') }}</xf:title>
+
+<xf:form action="{{ link($linkPrefix . '/save', $product) }}" ajax="true" class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <xf:textboxrow name="title" value="{$product.title}"
+                           label="{{ phrase('tapi_iap_product_title') }}"
+                           maxlength="{{ max_length($product, 'title') }}" />
+            <xf:textarearow name="description" value="{$product.description}"
+                            maxlength="{{ max_length($product, 'description') }}"
+                            label="{{ phrase('description') }}" />
+
+            <hr class="formRowSep" />
+
+            <xf:radiorow name="platform" value="{$product.platform}"
+                         label="{{ phrase('tapi_iap_product_platform') }}">
+                <xf:option value="android">Android</xf:option>
+                <xf:option value="ios">iOs</xf:option>
+            </xf:radiorow>
+
+            <xf:textboxrow name="store_product_id" label="{{ phrase('tapi_iap_product_store_product_id') }}"
+                           maxlength="{{ max_length($product, 'store_product_id') }}"
+                           value="{$product.store_product_id}" />
+            <hr class="formRowSep" />
+            <xf:selectrow name="user_upgrade_id" label="{{ phrase('tapi_iap_product_user_upgrade') }}"
+                          explain="{{ phrase('tapi_iap_product_user_upgrade_explain') }}"
+                          value="{$product.user_upgrade_id}">
+                <xf:option value="0"></xf:option>
+                <xf:foreach loop="$userUpgrades" value="$userUpgrade">
+                    <xf:option value="{$userUpgrade.user_upgrade_id}">{$userUpgrade.title}</xf:option>
+                </xf:foreach>
+            </xf:selectrow>
+
+            <xf:selectrow name="payment_profile_id" value="{$product.payment_profile_id}"
+                          label="{{ phrase('payment_profile') }}">
+                <xf:option value="0"></xf:option>
+                <xf:foreach loop="$paymentProfiles" value="$paymentProfile">
+                    <xf:option value="{$paymentProfile.payment_profile_id}">{$paymentProfile.title}</xf:option>
+                </xf:foreach>
+            </xf:selectrow>
+
+            <hr class="formRowSep" />
+
+            <xf:numberboxrow name="display_order" value="{$product.display_order}"
+                             label="{{ phrase('display_order') }}" />
+            <xf:checkboxrow label="">
+                <xf:option name="best_choice_offer" selected="{$product.best_choice_offer}">
+                    {{ phrase('tapi_iap_product_is_best_choice_offer') }}
+                </xf:option>
+                <xf:option name="active" selected="{$product.active}">{{ phrase('tapi_iap_product_is_active') }}</xf:option>
+            </xf:checkboxrow>
+        </div>
+
+        <xf:submitrow icon="save" />
+    </div>
+</xf:form>

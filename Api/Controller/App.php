@@ -4,6 +4,7 @@ namespace Truonglv\Api\Api\Controller;
 
 use XF;
 use DateTime;
+use Throwable;
 use function md5;
 use function ceil;
 use function count;
@@ -21,6 +22,7 @@ use function json_decode;
 use function json_encode;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Reply\Message;
+use function rawurlencode;
 use XF\Mvc\Reply\Exception;
 use InvalidArgumentException;
 use XF\Repository\Attachment;
@@ -28,6 +30,7 @@ use XF\ControllerPlugin\Login;
 use XF\Api\Mvc\Reply\ApiResult;
 use Truonglv\Api\Util\Encryption;
 use XF\Service\User\Registration;
+use Truonglv\Api\Entity\IAPProduct;
 use XF\Entity\UserConnectedAccount;
 use XF\Repository\ConnectedAccount;
 use Truonglv\Api\Entity\AccessToken;
@@ -35,6 +38,7 @@ use function array_replace_recursive;
 use Truonglv\Api\Entity\RefreshToken;
 use Truonglv\Api\Entity\Subscription;
 use OAuth\OAuth2\Token\StdOAuth2Token;
+use Truonglv\Api\Payment\IAPInterface;
 use XF\Entity\ConnectedAccountProvider;
 use XF\Api\Controller\AbstractController;
 use Truonglv\Api\XF\ConnectedAccount\Storage\StorageState;
@@ -482,6 +486,139 @@ class App extends AbstractController
         return $this->rerouteController('XF:Api:Forum', 'get', [
             'node_id' => $node->node_id,
         ]);
+    }
+
+    public function actionGetIAPProducts()
+    {
+        $products = $this->finder('Truonglv\Api:IAPProduct')
+            ->where('active', true)
+            ->order('display_order')
+            ->fetch();
+
+        return $this->apiResult([
+            'products' => $products->toApiResults(),
+        ]);
+    }
+
+    public function actionPostIAPVerify()
+    {
+        $this->assertRegisteredUser();
+        $this->assertRequiredApiInput(['platform', 'store_product_id']);
+
+        $platform = $this->filter('platform', 'str');
+        if ($platform === 'ios') {
+            $this->assertRequiredApiInput(['receipt']);
+        } else {
+            $this->assertRequiredApiInput(['package_name', 'token']);
+        }
+
+        $storeProductId = $this->filter('store_product_id', 'str');
+
+        if (!in_array($platform, ['ios', 'android'], true)) {
+            return $this->noPermission();
+        }
+
+        /** @var IAPProduct|null $product */
+        $product = $this->finder('Truonglv\Api:IAPProduct')
+            ->where('platform', $platform)
+            ->where('store_product_id', $storeProductId)
+            ->fetchOne();
+        if ($product === null) {
+            // unverified
+            return $this->error(XF::phrase('tapi_iap_product_not_found'), 400);
+        }
+
+        if ($platform === 'ios') {
+            $jsonPayload = [
+                'transactionReceipt' => $this->filter('receipt', 'str'),
+            ];
+        } else {
+            $jsonPayload = [
+                'package_name' => $this->filter('package_name', 'str'),
+                'token' => $this->filter('token', 'str'),
+                'subscription_id' => $storeProductId,
+            ];
+        }
+
+        /** @var IAPInterface|XF\Payment\AbstractProvider $handler */
+        $handler = $product->PaymentProfile->Provider->handler;
+        $visitor = XF::visitor();
+
+        /** @var XF\Entity\PurchaseRequest $purchaseRequest */
+        $purchaseRequest = $this->em()->create('XF:PurchaseRequest');
+        $purchaseRequest->payment_profile_id = $product->payment_profile_id;
+        $purchaseRequest->request_key = XF\Util\Random::getRandomString(32);
+        $purchaseRequest->user_id = $visitor->user_id;
+        $purchaseRequest->provider_id = $product->PaymentProfile->provider_id;
+        $purchaseRequest->purchasable_type_id = 'user_upgrade';
+        $purchaseRequest->cost_amount = $product->UserUpgrade->cost_amount;
+        $purchaseRequest->cost_currency = $product->UserUpgrade->cost_currency;
+        $purchaseRequest->provider_metadata = null;
+        $purchaseRequest->extra_data = [
+            'user_upgrade_id' => $product->user_upgrade_id,
+            'product_id' => $product->product_id,
+        ];
+        $purchaseRequest->save();
+
+        try {
+            $data = $handler->verifyIAPTransaction($purchaseRequest, $jsonPayload);
+            $subscriberId = $data['subscriber_id'];
+            $transactionId = $data['transaction_id'];
+        } catch (Throwable $e) {
+            XF::logException($e, false);
+
+            return $this->error(XF::phrase('something_went_wrong_please_try_again'));
+        }
+
+        if ($transactionId === null || $subscriberId === null) {
+            return $this->error(XF::phrase('something_went_wrong_please_try_again'));
+        }
+
+        /** @var XF\Entity\PaymentProviderLog|null $log */
+        $log = $this->finder('XF:PaymentProviderLog')
+            ->where('provider_id', $handler->getProviderId())
+            ->where('transaction_id', $transactionId)
+            ->order('log_date', 'desc')
+            ->fetchOne();
+        if ($log !== null) {
+            return $this->error(XF::phrase('tapi_transaction_already_processed'));
+        }
+
+        $purchaseRequest->fastUpdate('provider_metadata', $subscriberId);
+        $this->logPaymentProvider(
+            'payment',
+            'Received in-app purchase',
+            [],
+            [
+                'purchase_request_key' => $purchaseRequest->request_key,
+                'provider_id' => $product->PaymentProfile->provider_id,
+                'transaction_id' => $transactionId,
+                'subscriber_id' => $subscriberId,
+                'purchase' => $this->filter('purchase', 'str'),
+            ]
+        );
+
+        if ($product->UserUpgrade !== null) {
+            /** @var XF\Service\User\Upgrade $upgrade */
+            $upgrade = $this->service('XF:User\Upgrade', $product->UserUpgrade, $visitor);
+            $upgrade->setPurchaseRequestKey($purchaseRequest->request_key);
+            $upgrade->upgrade();
+        }
+
+        return $this->apiSuccess([
+            'message' => XF::phrase('tapi_your_account_has_been_upgraded')
+        ]);
+    }
+
+    protected function logPaymentProvider(string $logType, string $message, array $details = [], array $extra = []): void
+    {
+        /** @var XF\Entity\PaymentProviderLog $paymentLog */
+        $paymentLog = $this->em()->create('XF:PaymentProviderLog');
+        $paymentLog->log_type = $logType;
+        $paymentLog->log_message = $message;
+        $paymentLog->log_details = $details;
+        $paymentLog->bulkSet($extra);
+        $paymentLog->save();
     }
 
     protected function getAuthResultData(\XF\Entity\User $user, bool $withRefreshToken = true): array

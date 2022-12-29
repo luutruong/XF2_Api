@@ -32,6 +32,9 @@ class App
 
     const QUOTE_PLACEHOLDER_TEMPLATE = '[QUOTE={content_type},{content_id}]';
 
+    const PAYMENT_PROVIDER_ANDROID = 'tapi_iap_android';
+    const PAYMENT_PROVIDER_IOS = 'tapi_iap_ios';
+
     /**
      * @var bool
      */

@@ -17,11 +17,23 @@
         "version_string": "1.0.4",
         "hash": "b667ac354b52dd6cd468d80bfebb6c09"
     },
+    "admin_navigation.tapi_iapProducts.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "4e1fa878a801817b6a30ddf00cf03c73"
+    },
     "admin_navigation.tapi_logs.txt": {
         "global_cache": false,
         "version_id": 1000400,
         "version_string": "1.0.4",
         "hash": "dc625ce9f516ad5c5c710176baf23a7d"
+    },
+    "admin_navigation.tapi_setup.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "b667ac354b52dd6cd468d80bfebb6c09"
     },
     "admin_navigation.tapi_subscriptions.txt": {
         "global_cache": false,
@@ -70,12 +82,6 @@
         "version_id": 3000100,
         "version_string": "3.0.1",
         "hash": "da8df46cdeb116f803fe5bda76adb9ac"
-    },
-    "option.tApi_defaultLanguage.txt": {
-        "global_cache": false,
-        "version_id": 3010300,
-        "version_string": "3.1.3",
-        "hash": "c96a77fb323a41898c3b6941a58dc741"
     },
     "option.tApi_delayPushNotifications.txt": {
         "global_cache": false,
@@ -154,12 +160,6 @@
         "version_id": 3000100,
         "version_string": "3.0.1",
         "hash": "e4b2f1accfb9e0d0cd835d71f780f309"
-    },
-    "option_explain.tApi_defaultLanguage.txt": {
-        "global_cache": false,
-        "version_id": 3010300,
-        "version_string": "3.1.3",
-        "hash": "dbb984f3fd4460190770edafb7eaa657"
     },
     "option_explain.tApi_delayPushNotifications.txt": {
         "global_cache": false,
@@ -244,6 +244,120 @@
         "version_id": 1000800,
         "version_string": "1.0.8",
         "hash": "e397df8177d2ab791984f267a0f23e67"
+    },
+    "tapi_iap_android_service_account_json.txt": {
+        "global_cache": false,
+        "version_id": 3010500,
+        "version_string": "3.1.5",
+        "hash": "8dec3c2d47f20d3ad0c130f099f04959"
+    },
+    "tapi_iap_android_service_account_json_explain.txt": {
+        "global_cache": false,
+        "version_id": 3010500,
+        "version_string": "3.1.5",
+        "hash": "74ae8966d39ebe3dfe39e637b987b32c"
+    },
+    "tapi_iap_ios_app_bundle_id.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "1a6a30aea9d1bf06657812c9a86284ab"
+    },
+    "tapi_iap_ios_app_shared_pass.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "e64f1aa9955dea9a51cde15016de5eec"
+    },
+    "tapi_iap_ios_app_shared_pass_explain.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "02369eac6dc7a45dd60863ecb03791d1"
+    },
+    "tapi_iap_ios_please_enter_valid_app_bundle_id.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "47bdf9a64dad5580ad5702536d478cba"
+    },
+    "tapi_iap_ios_please_enter_valid_app_shared_pass.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "633018861157d4ebb6d323f1dbd21246"
+    },
+    "tapi_iap_product_add.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "11a738dd0c48f1401a059bca54bc119c"
+    },
+    "tapi_iap_product_edit.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "38dcfe97230f5eee7bf911f3b56f955a"
+    },
+    "tapi_iap_product_is_active.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "c59d759b03303b73276b787b63c2b178"
+    },
+    "tapi_iap_product_is_best_choice_offer.txt": {
+        "global_cache": false,
+        "version_id": 3010500,
+        "version_string": "3.1.5",
+        "hash": "728bf162341fd2abe654777d73d2c3cc"
+    },
+    "tapi_iap_product_not_found.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "d94af497f91672210cd13aab2b257420"
+    },
+    "tapi_iap_product_platform.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "419f3742e6de8e0ec4b22cce005e7630"
+    },
+    "tapi_iap_product_store_product_id.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "2d51f6842590435e88ddf8d673d753d7"
+    },
+    "tapi_iap_product_title.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "e54cd2df68aae6cf513679003b46fe15"
+    },
+    "tapi_iap_product_user_upgrade.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "ad7e66bc765bc099f2a6de0c2faec30d"
+    },
+    "tapi_iap_product_user_upgrade_explain.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "b97666870165b55e11ebcbb8c8e62bf5"
+    },
+    "tapi_iap_products.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "068f80c7519d0528fb08e82137a72131"
+    },
+    "tapi_iap_the_callback_url_x.txt": {
+        "global_cache": false,
+        "version_id": 3010500,
+        "version_string": "3.1.5",
+        "hash": "47227fa43b3a2d2fa749b0690f8331c2"
     },
     "tapi_key.txt": {
         "global_cache": false,
@@ -394,5 +508,17 @@
         "version_id": 1000500,
         "version_string": "1.0.5",
         "hash": "882978def5011d7088c7ae1e80f6b949"
+    },
+    "tapi_transaction_already_processed.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "5a89b50e9204e01c07fd4ffbf233bacb"
+    },
+    "tapi_your_account_has_been_upgraded.txt": {
+        "global_cache": false,
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "9a897858fb0a7d4e5801bf80a6304d5b"
     }
 }

@@ -1,4 +1,14 @@
 {
+    "admin/payment_profile_tapi_iap_android.html": {
+        "version_id": 3010500,
+        "version_string": "3.1.5",
+        "hash": "e96e44ee9fd9c63301f6888a13476f52"
+    },
+    "admin/payment_profile_tapi_iap_ios.html": {
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "86caa8122e507d9c8133cfc60a1263aa"
+    },
     "admin/tapi_entity_delete.html": {
         "version_id": 1000500,
         "version_string": "1.0.5",
@@ -8,6 +18,16 @@
         "version_id": 3010200,
         "version_string": "3.1.2",
         "hash": "a77993ba458224ed1fd8ec8abb0fb783"
+    },
+    "admin/tapi_iap_product_edit.html": {
+        "version_id": 3010500,
+        "version_string": "3.1.5",
+        "hash": "60656a89757276f65a0dc0e1e7800858"
+    },
+    "admin/tapi_iap_product_list.html": {
+        "version_id": 3010400,
+        "version_string": "3.1.4",
+        "hash": "1d59f94ddff1072fa9f988e48c3f8c9d"
     },
     "admin/tapi_log_view.html": {
         "version_id": 1000600,

@@ -2,8 +2,8 @@
     "legacy_addon_id": "",
     "title": "[tl] Api",
     "description": "An enhancement API for XenForo",
-    "version_id": 3010400,
-    "version_string": "3.1.4",
+    "version_id": 3010500,
+    "version_string": "3.1.5",
     "dev": "Truonglv",
     "dev_url": "https://nobita.me",
     "faq_url": "",
@@ -13,8 +13,8 @@
     },
     "require": {
         "php": [
-            "7.2.0",
-            "Required PHP 7.2.0 or higher."
+            "7.4.0",
+            "Required PHP 7.4.0 or higher."
         ],
         "XF": [
             2020000,

@@ -8,8 +8,14 @@
     "tapi.json": {
         "hash": "4dc1b0491be751c8616f05642c1da630"
     },
+    "tapi_iapProducts.json": {
+        "hash": "ea5d83e3297bbcee4c4a1b69cf251f07"
+    },
     "tapi_logs.json": {
         "hash": "0a63ff3e2dc62545903dba31155e02af"
+    },
+    "tapi_setup.json": {
+        "hash": "c017045824ff1e552e29afafc7de0c06"
     },
     "tapi_subscriptions.json": {
         "hash": "ef8069561598ba2bb1a9263e3c280469"

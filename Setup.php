@@ -43,6 +43,16 @@ class Setup extends AbstractSetup
         $this->doCreateTables($this->getTables3());
     }
 
+    public function upgrade3010500Step1()
+    {
+        $this->doCreateTables($this->getTables4());
+    }
+
+    public function upgrade3010600Step1(): void
+    {
+        $this->doAlterTables($this->getAlters2());
+    }
+
     /**
      * @return array
      */
@@ -138,6 +148,32 @@ class Setup extends AbstractSetup
         ];
     }
 
+    protected function getTables4(): array
+    {
+        foreach ([App::PAYMENT_PROVIDER_ANDROID => 'Android', App::PAYMENT_PROVIDER_IOS => 'IOS'] as $providerId => $providerClass) {
+            $this->db()->insert('xf_payment_provider', [
+                'provider_id' => $providerId,
+                'provider_class' => 'Truonglv\Api:' . $providerClass,
+                'addon_id' => 'Truonglv/Api'
+            ], true);
+        }
+
+        return [
+            'xf_tapi_iap_product' => function (Create $table) {
+                $table->addColumn('product_id', 'int')->autoIncrement();
+                $table->addColumn('title', 'varchar', 100);
+                $table->addColumn('platform', 'enum', ['ios', 'android']);
+                $table->addColumn('store_product_id', 'varchar', 255);
+                $table->addColumn('user_upgrade_id', 'int');
+                $table->addColumn('payment_profile_id', 'int');
+                $table->addColumn('active', 'tinyint')->setDefault(0);
+                $table->addColumn('display_order', 'int')->setDefault(1);
+
+                $table->addUniqueKey(['platform', 'store_product_id']);
+            },
+        ];
+    }
+
     /**
      * @return array
      */
@@ -158,5 +194,19 @@ class Setup extends AbstractSetup
         ];
 
         return $alters;
+    }
+
+    protected function getAlters2(): array
+    {
+        return [
+            'xf_tapi_iap_product' => [
+                'description' => function (Alter $table) {
+                    $table->addColumn('description', 'varchar', 255)->setDefault('');
+                },
+                'best_choice_offer' => function (Alter $table) {
+                    $table->addColumn('best_choice_offer', 'tinyint')->setDefault(0);
+                },
+            ]
+        ];
     }
 }
