@@ -48,6 +48,11 @@ class Setup extends AbstractSetup
         $this->doCreateTables($this->getTables4());
     }
 
+    public function upgrade3010600Step1(): void
+    {
+        $this->doAlterTables($this->getAlters2());
+    }
+
     /**
      * @return array
      */
@@ -189,5 +194,19 @@ class Setup extends AbstractSetup
         ];
 
         return $alters;
+    }
+
+    protected function getAlters2(): array
+    {
+        return [
+            'xf_tapi_iap_product' => [
+                'description' => function (Alter $table) {
+                    $table->addColumn('description', 'varchar', 255)->setDefault('');
+                },
+                'best_choice_offer' => function (Alter $table) {
+                    $table->addColumn('best_choice_offer', 'tinyint')->setDefault(0);
+                },
+            ]
+        ];
     }
 }

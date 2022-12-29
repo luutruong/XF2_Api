@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\Payment;
 
+use Google\Client;
+use Google\Service\AndroidPublisher;
 use XF;
 use function strtr;
 use LogicException;
@@ -32,6 +34,35 @@ class Android extends AbstractProvider implements IAPInterface
     public function initiatePayment(Controller $controller, PurchaseRequest $purchaseRequest, Purchase $purchase)
     {
         throw new LogicException('Not supported');
+    }
+
+    /**
+     * @param array $options
+     * @param mixed $errors
+     * @return bool
+     */
+    public function verifyConfig(array &$options, &$errors = [])
+    {
+        $options = \array_replace([
+            'app_bundle_id' => '',
+            'service_account_json' => ''
+        ], $options);
+
+        if (strlen($options['app_bundle_id']) === 0) {
+            $errors[] = XF::phrase('tapi_iap_ios_please_enter_valid_app_bundle_id');
+
+            return false;
+        }
+
+        try {
+            \GuzzleHttp\json_decode($options['service_account_json']);
+        } catch (\Throwable $e) {
+            $errors[] = $e->getMessage();
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -68,19 +99,24 @@ class Android extends AbstractProvider implements IAPInterface
      */
     public function prepareLogData(CallbackState $state)
     {
-        // TODO: Implement prepareLogData() method.
+        $state->logDetails = $_POST;
     }
 
     public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
     {
-        $client = XF::app()->http()->client();
+        $client = new Client();
+        $paymentProfile = $purchaseRequest->PaymentProfile;
+        $serviceAccount = \GuzzleHttp\json_decode($paymentProfile->options['service_account_json'], true);
 
-        $verifyUrl = 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications/'
-            . '{packageName}/purchases/subscriptions/{subscriptionId}/tokens/{token}';
-        $verifyUrl = strtr($verifyUrl, $payload);
-        $resp = $client->get($verifyUrl);
+        $client->setAuthConfig($serviceAccount);
+        $client->addScope('https://www.googleapis.com/auth/androidpublisher');
 
-        $respJson = \GuzzleHttp\json_decode($resp->getBody()->getContents());
+        $service = new AndroidPublisher($client);
+        $purchase = $service->purchases_subscriptions->get(
+            $payload['package_name'],
+            $payload['subscription_id'],
+            $payload['token']
+        );
 
         /** @var \XF\Entity\PaymentProviderLog $paymentLog */
         $paymentLog = XF::em()->create('XF:PaymentProviderLog');
@@ -88,15 +124,15 @@ class Android extends AbstractProvider implements IAPInterface
         $paymentLog->log_message = 'Verify receipt response';
         $paymentLog->log_details = [
             'payload' => $payload,
-            'response' => $respJson,
+            'response' => $purchase->toSimpleObject(),
         ];
         $paymentLog->purchase_request_key = $purchaseRequest->request_key;
         $paymentLog->provider_id = $this->getProviderId();
         $paymentLog->save();
 
         // https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptions#SubscriptionPurchase
-        if ($respJson->resource->paymentState === 1) {
-            $transactionId = $respJson->resource->orderId;
+        if ($purchase->getPaymentState() === 1) {
+            $transactionId = $purchase->getOrderId();
             if (preg_match('#(.*)\.{2}(\d+)$#', $transactionId, $matches) === 1) {
                 $subscriberId = $matches[1];
             } else {

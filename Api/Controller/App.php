@@ -534,9 +534,9 @@ class App extends AbstractController
             ];
         } else {
             $jsonPayload = [
-                '{packageName}' => rawurlencode($this->filter('package_name', 'str')),
-                '{token}' => rawurlencode($this->filter('token', 'str')),
-                '{subscriptionId}' => rawurlencode($storeProductId),
+                'package_name' => $this->filter('package_name', 'str'),
+                'token' => $this->filter('token', 'str'),
+                'subscription_id' => $storeProductId,
             ];
         }
 

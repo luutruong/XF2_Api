@@ -9,12 +9,14 @@ use XF\Mvc\Entity\Structure;
  * COLUMNS
  * @property int|null $product_id
  * @property string $title
+ * @property string $description
  * @property string $platform
  * @property string $store_product_id
  * @property int $user_upgrade_id
  * @property int $payment_profile_id
  * @property bool $active
  * @property int $display_order
+ * @property bool $best_choice_offer
  *
  * RELATIONS
  * @property \XF\Entity\UserUpgrade $UserUpgrade
@@ -31,12 +33,14 @@ class IAPProduct extends Entity
         $structure->columns = [
             'product_id' => ['type' => self::UINT, 'nullable' => true, 'autoIncrement' => true, 'api' => true],
             'title' => ['type' => self::STR, 'required' => true, 'maxLength' => 100, 'api' => true],
+            'description' => ['type' => self::STR, 'default' => '', 'maxLength' => 255, 'api' => true],
             'platform' => ['type' => self::STR, 'allowedValues' => ['ios', 'android'], 'required' => true, 'api' => true],
             'store_product_id' => ['type' => self::STR, 'required' => true, 'maxLength' => 255, 'api' => true],
             'user_upgrade_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
             'payment_profile_id' => ['type' => self::UINT, 'required' => true, 'api' => true],
             'active' => ['type' => self::BOOL, 'default' => true, 'api' => true],
             'display_order' => ['type' => self::UINT, 'default' => 1, 'api' => true],
+            'best_choice_offer' => ['type' => self::BOOL, 'default' => false, 'api' => true],
         ];
 
         $structure->relations = [

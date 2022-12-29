@@ -6,9 +6,15 @@
             <xf:textboxrow name="title" value="{$product.title}"
                            label="{{ phrase('tapi_iap_product_title') }}"
                            maxlength="{{ max_length($product, 'title') }}" />
+            <xf:textarearow name="description" value="{$product.description}"
+                            maxlength="{{ max_length($product, 'description') }}"
+                            label="{{ phrase('description') }}" />
+
+            <hr class="formRowSep" />
+
             <xf:radiorow name="platform" value="{$product.platform}"
                          label="{{ phrase('tapi_iap_product_platform') }}">
-                <xf:option value="android">android</xf:option>
+                <xf:option value="android">Android</xf:option>
                 <xf:option value="ios">iOs</xf:option>
             </xf:radiorow>
 
@@ -38,6 +44,9 @@
             <xf:numberboxrow name="display_order" value="{$product.display_order}"
                              label="{{ phrase('display_order') }}" />
             <xf:checkboxrow label="">
+                <xf:option name="best_choice_offer" selected="{$product.best_choice_offer}">
+                    {{ phrase('tapi_iap_product_is_best_choice_offer') }}
+                </xf:option>
                 <xf:option name="active" selected="{$product.active}">{{ phrase('tapi_iap_product_is_active') }}</xf:option>
             </xf:checkboxrow>
         </div>

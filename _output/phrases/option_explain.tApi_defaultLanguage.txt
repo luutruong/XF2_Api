@@ -1,1 +1,0 @@
-This option only effect to users who chosen System language as default.

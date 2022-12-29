@@ -2,7 +2,7 @@
     "admin/payment_profile_tapi_iap_android.html": {
         "version_id": 3010500,
         "version_string": "3.1.5",
-        "hash": "01bd6e479a520c0a10d8c3f224f8594a"
+        "hash": "e96e44ee9fd9c63301f6888a13476f52"
     },
     "admin/payment_profile_tapi_iap_ios.html": {
         "version_id": 3010400,
@@ -20,9 +20,9 @@
         "hash": "a77993ba458224ed1fd8ec8abb0fb783"
     },
     "admin/tapi_iap_product_edit.html": {
-        "version_id": 3010400,
-        "version_string": "3.1.4",
-        "hash": "853bc6f49104c5e78df3791ee4416902"
+        "version_id": 3010500,
+        "version_string": "3.1.5",
+        "hash": "60656a89757276f65a0dc0e1e7800858"
     },
     "admin/tapi_iap_product_list.html": {
         "version_id": 3010400,

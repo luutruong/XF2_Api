@@ -68,6 +68,8 @@ class IAPProduct extends AbstractController
             'active' => 'bool',
             'display_order' => 'uint',
             'payment_profile_id' => 'uint',
+            'description' => 'str',
+            'best_choice_offer' => 'bool',
         ]));
 
         $form->run();
