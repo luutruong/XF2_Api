@@ -2,20 +2,23 @@
 
 namespace Truonglv\Api\Payment;
 
-use Truonglv\Api\Entity\IAPProduct;
 use XF;
 use Throwable;
 use function time;
+use function trim;
 use Google\Client;
 use LogicException;
 use XF\Mvc\Controller;
 use function preg_match;
+use function json_decode;
 use function array_replace;
+use function base64_decode;
 use XF\Purchasable\Purchase;
 use XF\Entity\PaymentProfile;
 use XF\Payment\CallbackState;
 use XF\Entity\PurchaseRequest;
 use XF\Payment\AbstractProvider;
+use Truonglv\Api\Entity\IAPProduct;
 use Google\Service\AndroidPublisher;
 
 class Android extends AbstractProvider implements IAPInterface
@@ -82,11 +85,11 @@ class Android extends AbstractProvider implements IAPInterface
 
     public function setupCallback(\XF\Http\Request $request)
     {
-        $inputRaw = \trim($request->getInputRaw());
+        $inputRaw = trim($request->getInputRaw());
         $state = new CallbackState();
         $state->inputRaw = $inputRaw;
 
-        $json = (array) \json_decode($inputRaw, true);
+        $json = (array) json_decode($inputRaw, true);
         if (!isset($json['message'])) {
             $state->logType = 'error';
             $state->logMessage = 'Invalid payload. No `message`';
@@ -94,7 +97,7 @@ class Android extends AbstractProvider implements IAPInterface
             return $state;
         }
 
-        $data = (array) \json_decode(\base64_decode($json['message']['data'], true), true);
+        $data = (array) json_decode(base64_decode($json['message']['data'], true), true);
 
         $filtered = $request->getInputFilterer()->filterArray($data, [
             'version' => 'str',
@@ -111,7 +114,7 @@ class Android extends AbstractProvider implements IAPInterface
         $state->inputFiltered = $filtered;
 
         /** @var IAPProduct|null $product */
-        $product = \XF::finder('Truonglv\Api:IAPProduct')
+        $product = XF::finder('Truonglv\Api:IAPProduct')
             ->where('platform', 'android')
             ->where('store_product_id', $filtered['subscriptionNotification']['subscriptionId'])
             ->fetchOne();
@@ -123,6 +126,7 @@ class Android extends AbstractProvider implements IAPInterface
         }
 
         $service = $this->getAndroidPublisher($product->PaymentProfile);
+
         try {
             $purchase = $service->purchases_subscriptions->get(
                 $filtered['packageName'],
@@ -299,6 +303,7 @@ class Android extends AbstractProvider implements IAPInterface
         }
 
         $_POST['android_purchase'] = $purchase->toSimpleObject();
+
         throw new LogicException('Cannot verify transaction');
     }
 
