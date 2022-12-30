@@ -82,6 +82,7 @@ class Android extends AbstractProvider implements IAPInterface
     public function setupCallback(\XF\Http\Request $request)
     {
         $state = new CallbackState();
+        $state->inputRaw = $request->getInputRaw();
 
         return $state;
     }
