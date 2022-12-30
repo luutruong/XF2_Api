@@ -136,10 +136,11 @@ class Android extends AbstractProvider implements IAPInterface
             return $state;
         }
 
+        $state->androidPurchase = $purchase;
         $transInfo = $this->getIAPTransactionInfo($purchase);
         if ($transInfo === null) {
             $state->logType = 'error';
-            $state->logMessage = 'Failed to extract transaction info';
+            $state->logMessage = 'No orderId';
 
             return $state;
         }
@@ -182,7 +183,6 @@ class Android extends AbstractProvider implements IAPInterface
             );
         }
 
-        $state->androidPurchase = $purchase;
         $state->ip = $request->getIp();
         $state->_POST = $_POST;
 
@@ -201,7 +201,7 @@ class Android extends AbstractProvider implements IAPInterface
 
             if ($purchase->getCancelReason() >= 0) {
                 $state->paymentResult = CallbackState::PAYMENT_REVERSED;
-            } else {
+            } elseif ($purchase->getPaymentState() === 1) {
                 $state->paymentResult = CallbackState::PAYMENT_RECEIVED;
             }
         }
@@ -240,11 +240,11 @@ class Android extends AbstractProvider implements IAPInterface
 
     protected function getIAPTransactionInfo(AndroidPublisher\SubscriptionPurchase $purchase): ?array
     {
-        if ($purchase->getPaymentState() !== 1) {
+        $transactionId = $purchase->getOrderId();
+        if (\strlen($transactionId) === 0) {
             return null;
         }
 
-        $transactionId = $purchase->getOrderId();
         if (preg_match('#(.*)\.{2}(\d+)$#', $transactionId, $matches) === 1) {
             $subscriberId = $matches[1];
         } else {
@@ -286,7 +286,7 @@ class Android extends AbstractProvider implements IAPInterface
 
         // https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptions#SubscriptionPurchase
         $transInfo = $this->getIAPTransactionInfo($purchase);
-        if ($transInfo !== null) {
+        if ($transInfo !== null && $purchase->getPaymentState() === 1) {
             // ack
             if ($purchase->getAcknowledgementState() === 0) {
                 $this->ackPurchase($service, $payload['package_name'], $payload['subscription_id'], $payload['token'], [
