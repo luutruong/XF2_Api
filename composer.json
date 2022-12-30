@@ -22,5 +22,10 @@
     },
     "scripts": {
         "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
+    },
+    "extra": {
+        "google/apiclient-services": [
+            "AndroidPublisher"
+        ]
     }
 }
