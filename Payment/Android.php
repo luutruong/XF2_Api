@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Payment;
 
+use Google\Service\Exception;
 use XF;
 use Throwable;
 use function time;
@@ -386,11 +387,26 @@ class Android extends AbstractProvider implements IAPInterface
         $ackBody = new AndroidPublisher\SubscriptionPurchasesAcknowledgeRequest();
         $ackBody->setDeveloperPayload(\GuzzleHttp\json_encode($devPayload));
 
-        $publisher->purchases_subscriptions->acknowledge(
-            $packageName,
-            $subId,
-            $token,
-            $ackBody
-        );
+        try {
+            $publisher->purchases_subscriptions->acknowledge(
+                $packageName,
+                $subId,
+                $token,
+                $ackBody
+            );
+        } catch (Throwable $e) {
+            if ($e instanceof Exception) {
+                $message = \GuzzleHttp\json_decode($e->getMessage(), true);
+                if (isset($message['error'], $message['error']['errors'])) {
+                    $reason = $message['error']['errors'][0]['reason'];
+                    if ($reason === 'alreadyAcknowledged') {
+                        // skip
+                        return;
+                    }
+                }
+            }
+
+            throw $e;
+        }
     }
 }
