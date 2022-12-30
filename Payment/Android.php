@@ -170,15 +170,17 @@ class Android extends AbstractProvider implements IAPInterface
             }
         }
 
-        $this->ackPurchase(
-            $service,
-            $filtered['packageName'],
-            $filtered['subscriptionNotification']['subscriptionId'],
-            $filtered['subscriptionNotification']['purchaseToken'],
-            [
-                'request_key' => $state->requestKey,
-            ]
-        );
+        if ($purchase->getAcknowledgementState() === 0) {
+            $this->ackPurchase(
+                $service,
+                $filtered['packageName'],
+                $filtered['subscriptionNotification']['subscriptionId'],
+                $filtered['subscriptionNotification']['purchaseToken'],
+                [
+                    'request_key' => $state->requestKey,
+                ]
+            );
+        }
 
         $state->androidPurchase = $purchase;
         $state->ip = $request->getIp();
