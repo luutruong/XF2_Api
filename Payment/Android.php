@@ -292,6 +292,8 @@ class Android extends AbstractProvider implements IAPInterface
                     'request_key' => $purchaseRequest->request_key,
                 ]);
             }
+
+            return $transInfo;
         }
 
         $_POST['android_purchase'] = $purchase->toSimpleObject();
