@@ -107,6 +107,9 @@ class Android extends AbstractProvider implements IAPInterface
             ->where('store_product_id', $filtered['subscriptionNotification']['subscriptionId'])
             ->fetchOne();
         if ($product === null) {
+            $state->logType = 'error';
+            $state->logMessage = 'No iap product';
+
             return $state;
         }
 
@@ -118,47 +121,55 @@ class Android extends AbstractProvider implements IAPInterface
                 $filtered['subscriptionNotification']['purchaseToken']
             );
         } catch (Throwable $e) {
+            $state->logType = 'error';
+            $state->logMessage = 'Get purchase subscription error: ' . $e->getMessage();
+
             return $state;
         }
 
         $transInfo = $this->getIAPTransactionInfo($purchase);
-        if ($transInfo !== null) {
-            $state->subscriberId = $transInfo['subscriber_id'];
-            $state->transactionId = $transInfo['transaction_id'];
+        if ($transInfo === null) {
+            $state->logType = 'error';
+            $state->logMessage = 'Failed to extract transaction info';
 
-            /** @var PurchaseRequest|null $purchaseRequest */
-            $purchaseRequest = XF::em()->findOne(
-                'XF:PurchaseRequest',
-                ['provider_metadata' => $transInfo['subscriber_id']]
-            );
+            return $state;
+        }
 
-            if ($purchaseRequest !== null) {
-                $state->purchaseRequest = $purchaseRequest; // sets requestKey too
-            } else {
-                $logFinder = XF::finder('XF:PaymentProviderLog')
-                    ->where('subscriber_id', $transInfo['subscriber_id'])
-                    ->where('provider_id', $this->providerId)
-                    ->order('log_date', 'desc');
+        $state->subscriberId = $transInfo['subscriber_id'];
+        $state->transactionId = $transInfo['transaction_id'];
 
-                foreach ($logFinder->fetch() as $log) {
-                    if ($log->purchase_request_key) {
-                        $state->requestKey = $log->purchase_request_key;
+        /** @var PurchaseRequest|null $purchaseRequest */
+        $purchaseRequest = XF::em()->findOne(
+            'XF:PurchaseRequest',
+            ['provider_metadata' => $transInfo['subscriber_id']]
+        );
 
-                        break;
-                    }
+        if ($purchaseRequest !== null) {
+            $state->purchaseRequest = $purchaseRequest; // sets requestKey too
+        } else {
+            $logFinder = XF::finder('XF:PaymentProviderLog')
+                ->where('subscriber_id', $transInfo['subscriber_id'])
+                ->where('provider_id', $this->providerId)
+                ->order('log_date', 'desc');
+
+            foreach ($logFinder->fetch() as $log) {
+                if ($log->purchase_request_key) {
+                    $state->requestKey = $log->purchase_request_key;
+
+                    break;
                 }
             }
-
-            $this->ackPurchase(
-                $service,
-                $filtered['packageName'],
-                $filtered['subscriptionNotification']['subscriptionId'],
-                $filtered['subscriptionNotification']['purchaseToken'],
-                [
-                    'request_key' => $state->requestKey,
-                ]
-            );
         }
+
+        $this->ackPurchase(
+            $service,
+            $filtered['packageName'],
+            $filtered['subscriptionNotification']['subscriptionId'],
+            $filtered['subscriptionNotification']['purchaseToken'],
+            [
+                'request_key' => $state->requestKey,
+            ]
+        );
 
         $state->androidPurchase = $purchase;
         $state->ip = $request->getIp();
@@ -191,14 +202,18 @@ class Android extends AbstractProvider implements IAPInterface
      */
     public function prepareLogData(CallbackState $state)
     {
-        $state->logDetails['inputRaw'] = $state->inputRaw;
-        $state->logDetails['inputFiltered'] = $state->inputFiltered;
+        $logDetails = [];
+
+        $logDetails['inputRaw'] = $state->inputRaw;
+        $logDetails['inputFiltered'] = $state->inputFiltered;
 
         if (isset($state->androidPurchase)) {
             /** @var AndroidPublisher\SubscriptionPurchase $purchase */
             $purchase = $state->androidPurchase;
-            $state->logDetails['purchase'] = $purchase->toSimpleObject();
+            $logDetails['purchase'] = $purchase->toSimpleObject();
         }
+
+        $state->logDetails = $logDetails;
     }
 
     public function getAndroidPublisher(PaymentProfile $paymentProfile): AndroidPublisher
