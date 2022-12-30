@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Payment;
 
+use Truonglv\Api\Entity\IAPProduct;
 use XF;
 use Throwable;
 use function time;
@@ -81,8 +82,87 @@ class Android extends AbstractProvider implements IAPInterface
 
     public function setupCallback(\XF\Http\Request $request)
     {
+        $inputRaw = $request->getInputRaw();
         $state = new CallbackState();
-        $state->inputRaw = $request->getInputRaw();
+        $state->inputRaw = $inputRaw;
+
+        $json = (array) \json_decode($inputRaw, true);
+        $filtered = $request->getInputFilterer()->filterArray($json, [
+            'version' => 'str',
+            'packageName' => 'str',
+            'eventTimeMillis' => 'uint',
+            'subscriptionNotification' => [
+                'version' => 'str',
+                'notificationType' => 'int',
+                'purchaseToken' => 'str',
+                'subscriptionId' => 'str'
+            ],
+        ]);
+
+        $state->inputFiltered = $filtered;
+
+        /** @var IAPProduct|null $product */
+        $product = \XF::finder('Truonglv\Api:IAPProduct')
+            ->where('platform', 'android')
+            ->where('store_product_id', $filtered['subscriptionNotification']['subscriptionId'])
+            ->fetchOne();
+        if ($product === null) {
+            return $state;
+        }
+
+        $service = $this->getAndroidPublisher($product->PaymentProfile);
+        try {
+            $purchase = $service->purchases_subscriptions->get(
+                $filtered['packageName'],
+                $filtered['subscriptionNotification']['subscriptionId'],
+                $filtered['subscriptionNotification']['purchaseToken']
+            );
+        } catch (Throwable $e) {
+            return $state;
+        }
+
+        $transInfo = $this->getIAPTransactionInfo($purchase);
+        if ($transInfo !== null) {
+            $state->subscriberId = $transInfo['subscriber_id'];
+            $state->transactionId = $transInfo['transaction_id'];
+
+            /** @var PurchaseRequest|null $purchaseRequest */
+            $purchaseRequest = XF::em()->findOne(
+                'XF:PurchaseRequest',
+                ['provider_metadata' => $transInfo['subscriber_id']]
+            );
+
+            if ($purchaseRequest !== null) {
+                $state->purchaseRequest = $purchaseRequest; // sets requestKey too
+            } else {
+                $logFinder = XF::finder('XF:PaymentProviderLog')
+                    ->where('subscriber_id', $transInfo['subscriber_id'])
+                    ->where('provider_id', $this->providerId)
+                    ->order('log_date', 'desc');
+
+                foreach ($logFinder->fetch() as $log) {
+                    if ($log->purchase_request_key) {
+                        $state->requestKey = $log->purchase_request_key;
+
+                        break;
+                    }
+                }
+            }
+
+            $this->ackPurchase(
+                $service,
+                $filtered['packageName'],
+                $filtered['subscriptionNotification']['subscriptionId'],
+                $filtered['subscriptionNotification']['purchaseToken'],
+                [
+                    'request_key' => $state->requestKey,
+                ]
+            );
+        }
+
+        $state->androidPurchase = $purchase;
+        $state->ip = $request->getIp();
+        $state->_POST = $_POST;
 
         return $state;
     }
@@ -93,7 +173,16 @@ class Android extends AbstractProvider implements IAPInterface
      */
     public function getPaymentResult(CallbackState $state)
     {
-        // TODO: Implement getPaymentResult() method.
+        if (isset($state->androidPurchase)) {
+            /** @var AndroidPublisher\SubscriptionPurchase $purchase */
+            $purchase = $state->androidPurchase;
+
+            if ($purchase->getCancelReason() >= 0) {
+                $state->paymentResult = CallbackState::PAYMENT_REVERSED;
+            } else {
+                $state->paymentResult = CallbackState::PAYMENT_RECEIVED;
+            }
+        }
     }
 
     /**
@@ -102,19 +191,50 @@ class Android extends AbstractProvider implements IAPInterface
      */
     public function prepareLogData(CallbackState $state)
     {
-        $state->logDetails = $_POST;
+        $state->logDetails['inputRaw'] = $state->inputRaw;
+        $state->logDetails['inputFiltered'] = $state->inputFiltered;
+
+        if (isset($state->androidPurchase)) {
+            /** @var AndroidPublisher\SubscriptionPurchase $purchase */
+            $purchase = $state->androidPurchase;
+            $state->logDetails['purchase'] = $purchase->toSimpleObject();
+        }
     }
 
-    public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
+    public function getAndroidPublisher(PaymentProfile $paymentProfile): AndroidPublisher
     {
         $client = new Client();
-        $paymentProfile = $purchaseRequest->PaymentProfile;
         $serviceAccount = \GuzzleHttp\json_decode($paymentProfile->options['service_account_json'], true);
 
         $client->setAuthConfig($serviceAccount);
         $client->addScope('https://www.googleapis.com/auth/androidpublisher');
 
-        $service = new AndroidPublisher($client);
+        return new AndroidPublisher($client);
+    }
+
+    protected function getIAPTransactionInfo(AndroidPublisher\SubscriptionPurchase $purchase): ?array
+    {
+        if ($purchase->getPaymentState() !== 1) {
+            return null;
+        }
+
+        $transactionId = $purchase->getOrderId();
+        if (preg_match('#(.*)\.{2}(\d+)$#', $transactionId, $matches) === 1) {
+            $subscriberId = $matches[1];
+        } else {
+            $subscriberId = $transactionId;
+        }
+
+        return [
+            'transaction_id' => $transactionId,
+            'subscriber_id' => $subscriberId,
+        ];
+    }
+
+    public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
+    {
+        $paymentProfile = $purchaseRequest->PaymentProfile;
+        $service = $this->getAndroidPublisher($paymentProfile);
         $purchase = $service->purchases_subscriptions->get(
             $payload['package_name'],
             $payload['subscription_id'],
@@ -139,37 +259,30 @@ class Android extends AbstractProvider implements IAPInterface
         }
 
         // https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptions#SubscriptionPurchase
-        if ($purchase->getPaymentState() === 1) {
-            $transactionId = $purchase->getOrderId();
-            if (preg_match('#(.*)\.{2}(\d+)$#', $transactionId, $matches) === 1) {
-                $subscriberId = $matches[1];
-            } else {
-                $subscriberId = $transactionId;
-            }
-
-            // acknowledged
+        $transInfo = $this->getIAPTransactionInfo($purchase);
+        if ($transInfo !== null) {
+            // ack
             if ($purchase->getAcknowledgementState() === 0) {
-                $ackBody = new AndroidPublisher\SubscriptionPurchasesAcknowledgeRequest();
-                $ackBody->setDeveloperPayload(\GuzzleHttp\json_encode([
+                $this->ackPurchase($service, $payload['package_name'], $payload['subscription_id'], $payload['token'], [
                     'user_id' => $purchaseRequest->user_id,
                     'request_key' => $purchaseRequest->request_key,
-                ]));
-
-                // perform acknowledge this payment
-                $service->purchases_subscriptions->acknowledge(
-                    $payload['package_name'],
-                    $payload['subscription_id'],
-                    $payload['token'],
-                    $ackBody
-                );
+                ]);
             }
-
-            return [
-                'transaction_id' => $transactionId,
-                'subscriber_id' => $subscriberId,
-            ];
         }
 
         throw new LogicException('Cannot verify transaction');
+    }
+
+    protected function ackPurchase(AndroidPublisher $publisher, string $packageName, string $subId, string $token, array $devPayload = []): void
+    {
+        $ackBody = new AndroidPublisher\SubscriptionPurchasesAcknowledgeRequest();
+        $ackBody->setDeveloperPayload(\GuzzleHttp\json_encode($devPayload));
+
+        $publisher->purchases_subscriptions->acknowledge(
+            $packageName,
+            $subId,
+            $token,
+            $ackBody
+        );
     }
 }
