@@ -294,6 +294,7 @@ class Android extends AbstractProvider implements IAPInterface
             }
         }
 
+        $_POST['android_purchase'] = $purchase->toSimpleObject();
         throw new LogicException('Cannot verify transaction');
     }
 
