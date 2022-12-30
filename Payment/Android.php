@@ -202,6 +202,48 @@ class Android extends AbstractProvider implements IAPInterface
 
     /**
      * @param CallbackState $state
+     * @return bool
+     */
+    public function validateTransaction(CallbackState $state)
+    {
+        /** @var XF\Repository\Payment $paymentRepo */
+        $paymentRepo = XF::repository('XF:Payment');
+        if (isset($state->androidPurchase)) {
+            /** @var AndroidPublisher\SubscriptionPurchase $purchase */
+            $purchase = $state->androidPurchase;
+            $total = null;
+
+            if ($this->isPurchaseCancelled($purchase)) {
+                $total = $paymentRepo->findLogsByTransactionIdForProvider(
+                    $state->transactionId,
+                    $this->providerId,
+                    ['cancel']
+                )->total();
+            } elseif ($this->isPurchaseReceived($purchase)) {
+                $total = $paymentRepo->findLogsByTransactionIdForProvider(
+                    $state->transactionId,
+                    $this->providerId,
+                    ['payment']
+                )->total();
+            }
+
+            if ($total !== null) {
+                if ($total > 0) {
+                    $state->logType = 'info';
+                    $state->logMessage = 'Transaction already processed. Skipping.';
+
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        return parent::validateTransaction($state);
+    }
+
+    /**
+     * @param CallbackState $state
      * @return void
      */
     public function getPaymentResult(CallbackState $state)
@@ -210,12 +252,28 @@ class Android extends AbstractProvider implements IAPInterface
             /** @var AndroidPublisher\SubscriptionPurchase $purchase */
             $purchase = $state->androidPurchase;
 
-            if ($purchase->getCancelReason() >= 0) {
+            if ($this->isPurchaseCancelled($purchase)) {
+                $state->logType = 'cancel';
                 $state->paymentResult = CallbackState::PAYMENT_REVERSED;
-            } elseif ($purchase->getPaymentState() === 1) {
+            } elseif ($this->isPurchaseReceived($purchase)) {
                 $state->paymentResult = CallbackState::PAYMENT_RECEIVED;
             }
         }
+    }
+
+    protected function isPurchaseCancelled(AndroidPublisher\SubscriptionPurchase $purchase): bool
+    {
+        /** @var mixed $cancelReason */
+        $cancelReason = $purchase->getCancelReason();
+
+        return $cancelReason !== null && $cancelReason >= 0;
+    }
+
+    protected function isPurchaseReceived(AndroidPublisher\SubscriptionPurchase $purchase): bool
+    {
+        $state = $purchase->getPaymentState();
+
+        return $state === 1;
     }
 
     /**
@@ -301,7 +359,7 @@ class Android extends AbstractProvider implements IAPInterface
 
         // https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptions#SubscriptionPurchase
         $transInfo = $this->getIAPTransactionInfo($purchase);
-        if ($transInfo !== null && $purchase->getPaymentState() === 1) {
+        if ($transInfo !== null && $this->isPurchaseReceived($purchase)) {
             $paymentLog->fastUpdate([
                 'transaction_id' => $transInfo['transaction_id'],
                 'subscriber_id' => $transInfo['subscriber_id'],

@@ -591,18 +591,18 @@ class App extends AbstractController
         }
 
         $purchaseRequest->fastUpdate('provider_metadata', $subscriberId);
-        $this->logPaymentProvider(
+        /** @var XF\Repository\Payment $paymentRepo */
+        $paymentRepo = $this->repository('XF:Payment');
+        $paymentRepo->logCallback(
+            $purchaseRequest->request_key,
+            $product->PaymentProfile->provider_id,
+            $transactionId,
             'payment',
             "[{$platform}] Received in-app purchase",
             [
                 'purchase_raw' => $this->filter('purchase', 'str'),
             ],
-            [
-                'purchase_request_key' => $purchaseRequest->request_key,
-                'provider_id' => $product->PaymentProfile->provider_id,
-                'transaction_id' => $transactionId,
-                'subscriber_id' => $subscriberId,
-            ]
+            $subscriberId
         );
 
         if ($product->UserUpgrade !== null) {
@@ -615,17 +615,6 @@ class App extends AbstractController
         return $this->apiSuccess([
             'message' => XF::phrase('tapi_your_account_has_been_upgraded')
         ]);
-    }
-
-    protected function logPaymentProvider(string $logType, string $message, array $details = [], array $extra = []): void
-    {
-        /** @var XF\Entity\PaymentProviderLog $paymentLog */
-        $paymentLog = $this->em()->create('XF:PaymentProviderLog');
-        $paymentLog->log_type = $logType;
-        $paymentLog->log_message = $message;
-        $paymentLog->log_details = $details;
-        $paymentLog->bulkSet($extra);
-        $paymentLog->save();
     }
 
     protected function getAuthResultData(\XF\Entity\User $user, bool $withRefreshToken = true): array
