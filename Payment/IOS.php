@@ -250,7 +250,7 @@ class IOS extends AbstractProvider implements IAPInterface
         /** @var XF\Entity\PaymentProviderLog $paymentLog */
         $paymentLog = XF::em()->create('XF:PaymentProviderLog');
         $paymentLog->log_type = 'info';
-        $paymentLog->log_message = 'Verify receipt response';
+        $paymentLog->log_message = '[IOS] Verify receipt response';
         $paymentLog->log_details = [
             'payload' => $payload,
             'response' => $respJson,
@@ -273,6 +273,11 @@ class IOS extends AbstractProvider implements IAPInterface
             if (isset($latestReceipt['transaction_id']) && $latestReceipt['in_app_ownership_type'] === 'PURCHASED') {
                 $transactionId = $latestReceipt['transaction_id'];
                 $subscriberId = $latestReceipt['original_transaction_id'];
+
+                $paymentLog->fastUpdate([
+                    'transaction_id' => $transactionId,
+                    'subscriber_id' => $subscriberId,
+                ]);
 
                 return [
                     'transaction_id' => $transactionId,

@@ -593,9 +593,9 @@ class App extends AbstractController
         $purchaseRequest->fastUpdate('provider_metadata', $subscriberId);
         $this->logPaymentProvider(
             'payment',
-            'Received in-app purchase',
+            "[{$platform}] Received in-app purchase",
             [
-                'purchase' => $this->filter('purchase', 'str'),
+                'purchase_raw' => $this->filter('purchase', 'str'),
             ],
             [
                 'purchase_request_key' => $purchaseRequest->request_key,

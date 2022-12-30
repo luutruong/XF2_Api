@@ -125,6 +125,13 @@ class Android extends AbstractProvider implements IAPInterface
             return $state;
         }
 
+        if ($filtered['packageName'] !== $product->PaymentProfile->options['app_bundle_id']) {
+            $state->logType = 'error';
+            $state->logMessage = 'Invalid app bundle ID';
+
+            return $state;
+        }
+
         $service = $this->getAndroidPublisher($product->PaymentProfile);
 
         try {
@@ -264,6 +271,10 @@ class Android extends AbstractProvider implements IAPInterface
     public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
     {
         $paymentProfile = $purchaseRequest->PaymentProfile;
+        if ($paymentProfile->options['app_bundle_id'] !== $payload['package_name']) {
+            throw new LogicException('Invalid bundle.');
+        }
+
         $service = $this->getAndroidPublisher($paymentProfile);
         $purchase = $service->purchases_subscriptions->get(
             $payload['package_name'],
@@ -274,7 +285,7 @@ class Android extends AbstractProvider implements IAPInterface
         /** @var \XF\Entity\PaymentProviderLog $paymentLog */
         $paymentLog = XF::em()->create('XF:PaymentProviderLog');
         $paymentLog->log_type = 'info';
-        $paymentLog->log_message = 'Verify receipt response';
+        $paymentLog->log_message = '[Android] Verify receipt response';
         $paymentLog->log_details = [
             'payload' => $payload,
             'response' => $purchase->toSimpleObject(),
@@ -291,6 +302,11 @@ class Android extends AbstractProvider implements IAPInterface
         // https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptions#SubscriptionPurchase
         $transInfo = $this->getIAPTransactionInfo($purchase);
         if ($transInfo !== null && $purchase->getPaymentState() === 1) {
+            $paymentLog->fastUpdate([
+                'transaction_id' => $transInfo['transaction_id'],
+                'subscriber_id' => $transInfo['subscriber_id'],
+            ]);
+
             // ack
             if ($purchase->getAcknowledgementState() === 0) {
                 $this->ackPurchase($service, $payload['package_name'], $payload['subscription_id'], $payload['token'], [
