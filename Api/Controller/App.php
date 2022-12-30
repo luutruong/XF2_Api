@@ -583,6 +583,7 @@ class App extends AbstractController
         $log = $this->finder('XF:PaymentProviderLog')
             ->where('provider_id', $handler->getProviderId())
             ->where('transaction_id', $transactionId)
+            ->where('log_type', 'payment')
             ->order('log_date', 'desc')
             ->fetchOne();
         if ($log !== null) {
