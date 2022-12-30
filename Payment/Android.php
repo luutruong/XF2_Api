@@ -82,12 +82,21 @@ class Android extends AbstractProvider implements IAPInterface
 
     public function setupCallback(\XF\Http\Request $request)
     {
-        $inputRaw = $request->getInputRaw();
+        $inputRaw = \trim($request->getInputRaw());
         $state = new CallbackState();
         $state->inputRaw = $inputRaw;
 
         $json = (array) \json_decode($inputRaw, true);
-        $filtered = $request->getInputFilterer()->filterArray($json, [
+        if (!isset($json['message'])) {
+            $state->logType = 'error';
+            $state->logMessage = 'Invalid payload. No `message`';
+
+            return $state;
+        }
+
+        $data = (array) \json_decode(\base64_decode($json['message']['data'], true), true);
+
+        $filtered = $request->getInputFilterer()->filterArray($data, [
             'version' => 'str',
             'packageName' => 'str',
             'eventTimeMillis' => 'uint',
