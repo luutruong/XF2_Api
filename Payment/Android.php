@@ -2,18 +2,20 @@
 
 namespace Truonglv\Api\Payment;
 
-use Google\Client;
-use Google\Service\AndroidPublisher;
 use XF;
-use function strtr;
+use Throwable;
+use function time;
+use Google\Client;
 use LogicException;
 use XF\Mvc\Controller;
 use function preg_match;
+use function array_replace;
 use XF\Purchasable\Purchase;
 use XF\Entity\PaymentProfile;
 use XF\Payment\CallbackState;
 use XF\Entity\PurchaseRequest;
 use XF\Payment\AbstractProvider;
+use Google\Service\AndroidPublisher;
 
 class Android extends AbstractProvider implements IAPInterface
 {
@@ -43,7 +45,7 @@ class Android extends AbstractProvider implements IAPInterface
      */
     public function verifyConfig(array &$options, &$errors = [])
     {
-        $options = \array_replace([
+        $options = array_replace([
             'app_bundle_id' => '',
             'service_account_json' => ''
         ], $options);
@@ -56,7 +58,7 @@ class Android extends AbstractProvider implements IAPInterface
 
         try {
             \GuzzleHttp\json_decode($options['service_account_json']);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $errors[] = $e->getMessage();
 
             return false;
@@ -130,6 +132,11 @@ class Android extends AbstractProvider implements IAPInterface
         $paymentLog->provider_id = $this->getProviderId();
         $paymentLog->save();
 
+        $expires = $purchase->getExpiryTimeMillis() / 1000;
+        if ($expires <= time()) {
+            throw new PurchaseExpiredException();
+        }
+
         // https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptions#SubscriptionPurchase
         if ($purchase->getPaymentState() === 1) {
             $transactionId = $purchase->getOrderId();
@@ -137,6 +144,23 @@ class Android extends AbstractProvider implements IAPInterface
                 $subscriberId = $matches[1];
             } else {
                 $subscriberId = $transactionId;
+            }
+
+            // acknowledged
+            if ($purchase->getAcknowledgementState() === 0) {
+                $ackBody = new AndroidPublisher\SubscriptionPurchasesAcknowledgeRequest();
+                $ackBody->setDeveloperPayload(\GuzzleHttp\json_encode([
+                    'user_id' => $purchaseRequest->user_id,
+                    'request_key' => $purchaseRequest->request_key,
+                ]));
+
+                // perform acknowledge this payment
+                $service->purchases_subscriptions->acknowledge(
+                    $payload['package_name'],
+                    $payload['subscription_id'],
+                    $payload['token'],
+                    $ackBody
+                );
             }
 
             return [

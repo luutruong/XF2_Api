@@ -353,6 +353,12 @@
         "version_string": "3.1.4",
         "hash": "068f80c7519d0528fb08e82137a72131"
     },
+    "tapi_iap_purchase_was_expired.txt": {
+        "global_cache": false,
+        "version_id": 3010600,
+        "version_string": "3.1.6",
+        "hash": "1736002617aa790ae3c80f5c7d8768e9"
+    },
     "tapi_iap_the_callback_url_x.txt": {
         "global_cache": false,
         "version_id": 3010500,

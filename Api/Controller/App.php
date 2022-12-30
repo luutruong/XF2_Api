@@ -22,7 +22,6 @@ use function json_decode;
 use function json_encode;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Reply\Message;
-use function rawurlencode;
 use XF\Mvc\Reply\Exception;
 use InvalidArgumentException;
 use XF\Repository\Attachment;
@@ -41,6 +40,7 @@ use OAuth\OAuth2\Token\StdOAuth2Token;
 use Truonglv\Api\Payment\IAPInterface;
 use XF\Entity\ConnectedAccountProvider;
 use XF\Api\Controller\AbstractController;
+use Truonglv\Api\Payment\PurchaseExpiredException;
 use Truonglv\Api\XF\ConnectedAccount\Storage\StorageState;
 
 class App extends AbstractController
@@ -564,6 +564,11 @@ class App extends AbstractController
             $data = $handler->verifyIAPTransaction($purchaseRequest, $jsonPayload);
             $subscriberId = $data['subscriber_id'];
             $transactionId = $data['transaction_id'];
+        } catch (PurchaseExpiredException $e) {
+            return $this->apiError(
+                XF::phrase('tapi_iap_purchase_was_expired'),
+                'purchase_expired'
+            );
         } catch (Throwable $e) {
             XF::logException($e, false);
 
@@ -588,13 +593,14 @@ class App extends AbstractController
         $this->logPaymentProvider(
             'payment',
             'Received in-app purchase',
-            [],
+            [
+                'purchase' => $this->filter('purchase', 'str'),
+            ],
             [
                 'purchase_request_key' => $purchaseRequest->request_key,
                 'provider_id' => $product->PaymentProfile->provider_id,
                 'transaction_id' => $transactionId,
                 'subscriber_id' => $subscriberId,
-                'purchase' => $this->filter('purchase', 'str'),
             ]
         );
 

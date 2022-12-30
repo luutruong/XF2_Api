@@ -4,6 +4,7 @@ namespace Truonglv\Api\Payment;
 
 use XF;
 use Throwable;
+use function time;
 use function count;
 use LogicException;
 use function strlen;
@@ -258,6 +259,11 @@ class IOS extends AbstractProvider implements IAPInterface
             $latestReceipt = $respJson['latest_receipt_info'][0];
             if ($respJson['receipt']['bundle_id'] !== $purchaseRequest->PaymentProfile->options['app_bundle_id']) {
                 throw new InvalidArgumentException('App bundle ID did not match');
+            }
+
+            $expires = $latestReceipt['expires_date_ms'] / 1000;
+            if ($expires <= time()) {
+                throw new PurchaseExpiredException();
             }
 
             if (isset($latestReceipt['transaction_id']) && $latestReceipt['in_app_ownership_type'] === 'PURCHASED') {
