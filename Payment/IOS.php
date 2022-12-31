@@ -30,6 +30,11 @@ use function openssl_pkey_get_details;
 class IOS extends AbstractProvider implements IAPInterface
 {
     /**
+     * @var bool
+     */
+    protected $forceSandbox = false;
+
+    /**
      * @return string
      */
     public function getTitle()
@@ -159,6 +164,14 @@ class IOS extends AbstractProvider implements IAPInterface
         $state->signedRenewable = $signedRenewableInfo;
         $state->notificationType = $data->notificationType;
 
+        $expires = $transaction->expiresDate / 1000;
+        if ($expires <= time()) {
+            $state->logType = 'info';
+            $state->logMessage = 'Transaction was expired!';
+
+            return $state;
+        }
+
         $state->subscriberId = $originalTransactionId;
         $state->transactionId = $transactionId;
 
@@ -213,11 +226,12 @@ class IOS extends AbstractProvider implements IAPInterface
      */
     public function getApiEndpoint()
     {
-        if ((bool) XF::config('enableLivePayments')) {
-            return 'https://buy.itunes.apple.com';
+        $enableLivePayments = (bool) XF::config('enableLivePayments');
+        if (!$enableLivePayments ||  $this->forceSandbox) {
+            return 'https://sandbox.itunes.apple.com';
         }
 
-        return 'https://sandbox.itunes.apple.com';
+        return 'https://buy.itunes.apple.com';
     }
 
     /**
@@ -236,7 +250,7 @@ class IOS extends AbstractProvider implements IAPInterface
         $state->logDetails = $logDetails;
     }
 
-    public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
+    protected function requestVerifyReceipt(PurchaseRequest $purchaseRequest, array $payload): array
     {
         $client = XF::app()->http()->client();
         $resp = $client->post($this->getApiEndpoint() . '/verifyReceipt', [
@@ -248,6 +262,20 @@ class IOS extends AbstractProvider implements IAPInterface
         ]);
 
         $respJson = \GuzzleHttp\json_decode($resp->getBody()->getContents(), true);
+        if (isset($respJson['status']) && $respJson['status'] === 21007) {
+            // @see https://developer.apple.com/documentation/appstorereceipts/verifyreceipt
+            $this->forceSandbox = true;
+
+            return $this->requestVerifyReceipt($purchaseRequest, $payload);
+        }
+
+        return $respJson;
+    }
+
+    public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
+    {
+        $respJson = $this->requestVerifyReceipt($purchaseRequest, $payload);
+
         /** @var XF\Entity\PaymentProviderLog $paymentLog */
         $paymentLog = XF::em()->create('XF:PaymentProviderLog');
         $paymentLog->log_type = 'info';

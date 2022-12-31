@@ -605,12 +605,12 @@ class App extends AbstractController
             $subscriberId
         );
 
-        if ($product->UserUpgrade !== null) {
-            /** @var XF\Service\User\Upgrade $upgrade */
-            $upgrade = $this->service('XF:User\Upgrade', $product->UserUpgrade, $visitor);
-            $upgrade->setPurchaseRequestKey($purchaseRequest->request_key);
-            $upgrade->upgrade();
-        }
+        $state = new XF\Payment\CallbackState();
+        $state->purchaseRequest = $purchaseRequest;
+        $state->paymentResult = XF\Payment\CallbackState::PAYMENT_RECEIVED;
+        $state->transactionId = $transactionId;
+        $state->subscriberId = $subscriberId;
+        $handler->completeTransaction($state);
 
         return $this->apiSuccess([
             'message' => XF::phrase('tapi_your_account_has_been_upgraded')
