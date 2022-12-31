@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\Payment;
 
-use Google\Service\Exception;
 use XF;
 use Throwable;
 use function time;
@@ -15,6 +14,7 @@ use function json_decode;
 use function array_replace;
 use function base64_decode;
 use XF\Purchasable\Purchase;
+use Google\Service\Exception;
 use XF\Entity\PaymentProfile;
 use XF\Payment\CallbackState;
 use XF\Entity\PurchaseRequest;
