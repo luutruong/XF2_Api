@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\Entity;
 
+use XF;
+use XF\Entity\User;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
@@ -24,6 +26,19 @@ use XF\Mvc\Entity\Structure;
  */
 class IAPProduct extends Entity
 {
+    public function isSubscribed(User $user = null): bool
+    {
+        if ($user === null) {
+            $user = XF::visitor();
+        }
+
+        if ($user->user_id <= 0) {
+            return false;
+        }
+
+        return $this->UserUpgrade->Active[$user->user_id] !== null;
+    }
+
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_tapi_iap_product';
@@ -63,6 +78,6 @@ class IAPProduct extends Entity
 
     protected function setupApiResultData(\XF\Api\Result\EntityResult $result, $verbosity = self::VERBOSITY_NORMAL, array $options = [])
     {
-        // good.
+        $result->is_subscribed = $this->isSubscribed();
     }
 }

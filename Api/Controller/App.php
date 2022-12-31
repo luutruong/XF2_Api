@@ -490,7 +490,10 @@ class App extends AbstractController
 
     public function actionGetIAPProducts()
     {
+        $this->assertRegisteredUser();
+
         $products = $this->finder('Truonglv\Api:IAPProduct')
+            ->with('UserUpgrade', true)
             ->where('active', true)
             ->order('display_order')
             ->fetch();
@@ -526,6 +529,10 @@ class App extends AbstractController
         if ($product === null) {
             // unverified
             return $this->error(XF::phrase('tapi_iap_product_not_found'), 400);
+        }
+
+        if ($product->isSubscribed()) {
+            return $this->error(XF::phrase('tapi_iap_product_already_subscribed'), 400);
         }
 
         if ($platform === 'ios') {

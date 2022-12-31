@@ -293,6 +293,12 @@
         "version_string": "3.1.4",
         "hash": "11a738dd0c48f1401a059bca54bc119c"
     },
+    "tapi_iap_product_already_subscribed.txt": {
+        "global_cache": false,
+        "version_id": 3010700,
+        "version_string": "3.1.7",
+        "hash": "d1c26d86e2d64e56145f37e59d0e51e0"
+    },
     "tapi_iap_product_edit.txt": {
         "global_cache": false,
         "version_id": 3010400,
