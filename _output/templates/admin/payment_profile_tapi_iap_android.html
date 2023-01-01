@@ -5,3 +5,8 @@
 <xf:textarearow name="options[service_account_json]" value="{$profile.options.service_account_json}"
                 explain="{{ phrase('tapi_iap_android_service_account_json_explain') }}"
                 label="{{ phrase('tapi_iap_android_service_account_json') }}" />
+
+<xf:numberboxrow name="options[expires_extra_seconds]"
+                 value="{{ $profile.options.expires_extra_seconds != null ? $profile.options.expires_extra_seconds : 120 }}"
+                 label="{{ phrase('tapi_iap_purchase_expires_extra_seconds') }}"
+                 explain="{{ phrase('tapi_iap_purchase_expires_extra_seconds_explain') }}" />

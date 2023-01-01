@@ -52,6 +52,7 @@ class IOS extends AbstractProvider implements IAPInterface
         $options = array_replace([
             'app_shared_pass' => '',
             'app_bundle_id' => '',
+            'expires_extra_seconds' => 120,
         ], $options);
         if (strlen($options['app_shared_pass']) === 0) {
             $errors[] = XF::phrase('tapi_iap_ios_please_enter_valid_app_shared_pass');
@@ -164,14 +165,6 @@ class IOS extends AbstractProvider implements IAPInterface
         $state->signedRenewable = $signedRenewableInfo;
         $state->notificationType = $data->notificationType;
 
-        $expires = $transaction->expiresDate / 1000;
-        if ($expires <= time()) {
-            $state->logType = 'info';
-            $state->logMessage = 'Transaction was expired!';
-
-            return $state;
-        }
-
         $state->subscriberId = $originalTransactionId;
         $state->transactionId = $transactionId;
 
@@ -205,6 +198,37 @@ class IOS extends AbstractProvider implements IAPInterface
         }
 
         return $state;
+    }
+
+    /**
+     * @param CallbackState $state
+     * @return bool
+     */
+    public function validateCallback(CallbackState $state)
+    {
+        if (!isset($state->signedTransaction)) {
+            $state->logType = 'error';
+            $state->logMessage = 'Unknown transaction.';
+
+            return false;
+        }
+
+        /** @var PurchaseRequest|null $purchaseRequest */
+        $purchaseRequest = $state->getPurchaseRequest();
+        $extraSeconds = 0;
+        if ($purchaseRequest !== null) {
+            $extraSeconds = $this->getPurchaseExpiresExtraSeconds($purchaseRequest->PaymentProfile);
+        }
+
+        $expiresDate = ceil($state->signedTransaction->expiresDate / 1000) + $extraSeconds;
+        if ($expiresDate <= time()) {
+            $state->logType = 'error';
+            $state->logMessage = 'Transaction was expired.';
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -294,7 +318,7 @@ class IOS extends AbstractProvider implements IAPInterface
                 throw new InvalidArgumentException('App bundle ID did not match');
             }
 
-            $expires = $latestReceipt['expires_date_ms'] / 1000;
+            $expires = \ceil($latestReceipt['expires_date_ms'] / 1000) + $this->getPurchaseExpiresExtraSeconds($purchaseRequest->PaymentProfile);
             if ($expires <= time()) {
                 throw new PurchaseExpiredException();
             }
@@ -316,6 +340,11 @@ class IOS extends AbstractProvider implements IAPInterface
         }
 
         throw new InvalidArgumentException('Cannot verify receipt');
+    }
+
+    protected function getPurchaseExpiresExtraSeconds(PaymentProfile $paymentProfile): int
+    {
+        return $paymentProfile->options['expires_extra_seconds'] ?? 120;
     }
 
     protected function getCertificate(string $contents): string

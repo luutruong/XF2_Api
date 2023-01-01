@@ -359,6 +359,18 @@
         "version_string": "3.1.4",
         "hash": "068f80c7519d0528fb08e82137a72131"
     },
+    "tapi_iap_purchase_expires_extra_seconds.txt": {
+        "global_cache": false,
+        "version_id": 3010800,
+        "version_string": "3.1.8",
+        "hash": "6cbab13fb95a296f5e2830de38ad1f53"
+    },
+    "tapi_iap_purchase_expires_extra_seconds_explain.txt": {
+        "global_cache": false,
+        "version_id": 3010800,
+        "version_string": "3.1.8",
+        "hash": "d9d69bd8ef4d8869fcd7cbd9c3902edc"
+    },
     "tapi_iap_purchase_was_expired.txt": {
         "global_cache": false,
         "version_id": 3010600,

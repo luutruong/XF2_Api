@@ -4,6 +4,7 @@ namespace Truonglv\Api\Payment;
 
 use XF;
 use Throwable;
+use function ceil;
 use function time;
 use function trim;
 use Google\Client;
@@ -52,7 +53,8 @@ class Android extends AbstractProvider implements IAPInterface
     {
         $options = array_replace([
             'app_bundle_id' => '',
-            'service_account_json' => ''
+            'service_account_json' => '',
+            'expires_extra_seconds' => 120,
         ], $options);
 
         if (strlen($options['app_bundle_id']) === 0) {
@@ -353,7 +355,7 @@ class Android extends AbstractProvider implements IAPInterface
         $paymentLog->provider_id = $this->getProviderId();
         $paymentLog->save();
 
-        $expires = $purchase->getExpiryTimeMillis() / 1000;
+        $expires = ceil($purchase->getExpiryTimeMillis() / 1000) + $this->getPurchaseExpiresExtraSeconds($purchaseRequest->PaymentProfile);
         if ($expires <= time()) {
             throw new PurchaseExpiredException();
         }
@@ -380,6 +382,11 @@ class Android extends AbstractProvider implements IAPInterface
         $_POST['android_purchase'] = $purchase->toSimpleObject();
 
         throw new LogicException('Cannot verify transaction');
+    }
+
+    protected function getPurchaseExpiresExtraSeconds(PaymentProfile $paymentProfile): int
+    {
+        return $paymentProfile->options['expires_extra_seconds'] ?? 120;
     }
 
     protected function ackPurchase(AndroidPublisher $publisher, string $packageName, string $subId, string $token, array $devPayload = []): void
