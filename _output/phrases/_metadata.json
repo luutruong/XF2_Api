@@ -533,12 +533,6 @@
         "version_string": "1.0.5",
         "hash": "882978def5011d7088c7ae1e80f6b949"
     },
-    "tapi_transaction_already_processed.txt": {
-        "global_cache": false,
-        "version_id": 3010400,
-        "version_string": "3.1.4",
-        "hash": "5a89b50e9204e01c07fd4ffbf233bacb"
-    },
     "tapi_your_account_has_been_upgraded.txt": {
         "global_cache": false,
         "version_id": 3010400,

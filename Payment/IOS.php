@@ -168,16 +168,30 @@ class IOS extends AbstractProvider implements IAPInterface
         $state->subscriberId = $originalTransactionId;
         $state->transactionId = $transactionId;
 
+        $productId = $transaction->productId;
+
         $state->ip = $request->getIp();
         $state->_POST = $_POST;
 
         // setup from subscription
         if ($originalTransactionId) {
+            $purchaseRequests = XF::finder('XF:PurchaseRequest')
+                ->where('provider_metadata', $originalTransactionId)
+                ->order('purchase_request_id', 'desc')
+                ->fetch();
             /** @var PurchaseRequest|null $purchaseRequest */
-            $purchaseRequest = XF::em()->findOne(
-                'XF:PurchaseRequest',
-                ['provider_metadata' => $originalTransactionId]
-            );
+            $purchaseRequest = null;
+
+            /** @var PurchaseRequest $_purchaseRequest */
+            foreach ($purchaseRequests as $_purchaseRequest) {
+                if (isset($_purchaseRequest->extra_data['store_product_id'])
+                    && $_purchaseRequest->extra_data['store_product_id'] === $productId
+                ) {
+                    $purchaseRequest = $_purchaseRequest;
+
+                    break;
+                }
+            }
 
             if ($purchaseRequest !== null) {
                 $state->purchaseRequest = $purchaseRequest; // sets requestKey too
@@ -187,8 +201,11 @@ class IOS extends AbstractProvider implements IAPInterface
                     ->where('provider_id', $this->providerId)
                     ->order('log_date', 'desc');
 
+                /** @var XF\Entity\PaymentProviderLog $log */
                 foreach ($logFinder->fetch() as $log) {
-                    if ($log->purchase_request_key) {
+                    $loggedProductId = $log->log_details['signedTransaction']['productId'] ?? '';
+                    // @phpstan-ignore-next-line
+                    if ($log->purchase_request_key && $loggedProductId === $productId) {
                         $state->requestKey = $log->purchase_request_key;
 
                         break;
@@ -307,6 +324,7 @@ class IOS extends AbstractProvider implements IAPInterface
         $paymentLog->log_details = [
             'payload' => $payload,
             'response' => $respJson,
+            '_POST' => $_POST,
         ];
         $paymentLog->purchase_request_key = $purchaseRequest->request_key;
         $paymentLog->provider_id = $this->getProviderId();

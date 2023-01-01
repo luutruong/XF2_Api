@@ -564,6 +564,7 @@ class App extends AbstractController
         $purchaseRequest->extra_data = [
             'user_upgrade_id' => $product->user_upgrade_id,
             'product_id' => $product->product_id,
+            'store_product_id' => $product->store_product_id,
         ];
         $purchaseRequest->save();
 
@@ -594,7 +595,7 @@ class App extends AbstractController
             ->order('log_date', 'desc')
             ->fetchOne();
         if ($log !== null) {
-            return $this->error(XF::phrase('tapi_transaction_already_processed'));
+            return $this->error(XF::phrase('tapi_your_account_has_been_upgraded'));
         }
 
         $purchaseRequest->fastUpdate('provider_metadata', $subscriberId);
