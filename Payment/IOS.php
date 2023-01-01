@@ -168,7 +168,7 @@ class IOS extends AbstractProvider implements IAPInterface
         $state->subscriberId = $originalTransactionId;
         $state->transactionId = $transactionId;
 
-        $productId = $transaction->productId;
+        $storeProductId = $transaction->productId;
 
         $state->ip = $request->getIp();
         $state->_POST = $_POST;
@@ -176,6 +176,7 @@ class IOS extends AbstractProvider implements IAPInterface
         // setup from subscription
         if ($originalTransactionId) {
             $purchaseRequests = XF::finder('XF:PurchaseRequest')
+                ->where('provider_id', $this->providerId)
                 ->where('provider_metadata', $originalTransactionId)
                 ->order('purchase_request_id', 'desc')
                 ->fetch();
@@ -184,9 +185,7 @@ class IOS extends AbstractProvider implements IAPInterface
 
             /** @var PurchaseRequest $_purchaseRequest */
             foreach ($purchaseRequests as $_purchaseRequest) {
-                if (isset($_purchaseRequest->extra_data['store_product_id'])
-                    && $_purchaseRequest->extra_data['store_product_id'] === $productId
-                ) {
+                if ($this->validateIAPPurchaseRequest($_purchaseRequest, $storeProductId)) {
                     $purchaseRequest = $_purchaseRequest;
 
                     break;
@@ -204,9 +203,11 @@ class IOS extends AbstractProvider implements IAPInterface
                 /** @var XF\Entity\PaymentProviderLog $log */
                 foreach ($logFinder->fetch() as $log) {
                     $loggedProductId = $log->log_details['signedTransaction']['productId'] ?? '';
-                    // @phpstan-ignore-next-line
-                    if ($log->purchase_request_key && $loggedProductId === $productId) {
-                        $state->requestKey = $log->purchase_request_key;
+                    if ($loggedProductId === $storeProductId
+                        && $log->PurchaseRequest !== null
+                        && $this->validateIAPPurchaseRequest($log->PurchaseRequest, $storeProductId)
+                    ) {
+                        $state->purchaseRequest = $log->PurchaseRequest;
 
                         break;
                     }
@@ -215,6 +216,17 @@ class IOS extends AbstractProvider implements IAPInterface
         }
 
         return $state;
+    }
+
+    protected function validateIAPPurchaseRequest(PurchaseRequest $purchaseRequest, string $storeProductId): bool
+    {
+        if (isset($purchaseRequest->extra_data['store_product_id'])
+            && $purchaseRequest->extra_data['store_product_id'] === $storeProductId
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
