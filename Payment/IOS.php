@@ -30,6 +30,11 @@ use function openssl_pkey_get_details;
 
 class IOS extends AbstractProvider implements IAPInterface
 {
+    const NOTIFICATION_TYPE_SUBSCRIBED = 'SUBSCRIBED';
+    const NOTIFICATION_TYPE_DID_RENEW = 'DID_RENEW';
+    const NOTIFICATION_TYPE_EXPIRED = 'EXPIRED';
+    const NOTIFICATION_TYPE_REFUND = 'REFUND';
+
     /**
      * @var bool
      */
@@ -274,13 +279,42 @@ class IOS extends AbstractProvider implements IAPInterface
 
     /**
      * @param CallbackState $state
+     * @return bool
+     */
+    public function validateTransaction(CallbackState $state)
+    {
+        if (isset($state->notificationType)
+            && \in_array($state->notificationType, [static::NOTIFICATION_TYPE_EXPIRED, static::NOTIFICATION_TYPE_REFUND], true)
+        ) {
+            /** @var XF\Repository\Payment $paymentRepo */
+            $paymentRepo = XF::repository('XF:Payment');
+            $total = $paymentRepo->findLogsByTransactionIdForProvider(
+                $state->transactionId,
+                $this->providerId,
+                ['cancel']
+            )->total();
+            if ($total > 0) {
+                $state->logType = 'info';
+                $state->logMessage = 'Transaction already processed. Skipping.';
+
+                return false;
+            }
+
+            return true;
+        }
+
+        return parent::validateTransaction($state);
+    }
+
+    /**
+     * @param CallbackState $state
      * @return void
      */
     public function getPaymentResult(CallbackState $state)
     {
-        if ($state->notificationType === 'SUBSCRIBED' || $state->notificationType === 'DID_RENEW') {
+        if ($state->notificationType === static::NOTIFICATION_TYPE_SUBSCRIBED || $state->notificationType === static::NOTIFICATION_TYPE_DID_RENEW) {
             $state->paymentResult = CallbackState::PAYMENT_RECEIVED;
-        } elseif ($state->notificationType === 'EXPIRED' || $state->notificationType === 'REFUND') {
+        } elseif ($state->notificationType === static::NOTIFICATION_TYPE_EXPIRED || $state->notificationType === static::NOTIFICATION_TYPE_REFUND) {
             $state->logType = 'cancel';
             $state->paymentResult = CallbackState::PAYMENT_REVERSED;
         }
