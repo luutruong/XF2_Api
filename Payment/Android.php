@@ -122,14 +122,14 @@ class Android extends AbstractProvider implements IAPInterface
             ->where('store_product_id', $filtered['subscriptionNotification']['subscriptionId'])
             ->fetchOne();
         if ($product === null) {
-            $state->logType = 'error';
+            $state->logType = 'info';
             $state->logMessage = 'No iap product';
 
             return $state;
         }
 
         if ($filtered['packageName'] !== $product->PaymentProfile->options['app_bundle_id']) {
-            $state->logType = 'error';
+            $state->logType = 'info';
             $state->logMessage = 'Invalid app bundle ID';
 
             return $state;
@@ -350,6 +350,8 @@ class Android extends AbstractProvider implements IAPInterface
         $paymentLog->log_details = [
             'payload' => $payload,
             'response' => $purchase->toSimpleObject(),
+            '_POST' => $_POST,
+            'store_product_id' => $purchaseRequest->extra_data['store_product_id'],
         ];
         $paymentLog->purchase_request_key = $purchaseRequest->request_key;
         $paymentLog->provider_id = $this->getProviderId();

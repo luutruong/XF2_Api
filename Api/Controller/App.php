@@ -563,7 +563,6 @@ class App extends AbstractController
         $purchaseRequest->provider_metadata = null;
         $purchaseRequest->extra_data = [
             'user_upgrade_id' => $product->user_upgrade_id,
-            'product_id' => $product->product_id,
             'store_product_id' => $product->store_product_id,
         ];
         $purchaseRequest->save();
@@ -608,7 +607,8 @@ class App extends AbstractController
             'payment',
             "[{$platform}] Received in-app purchase",
             [
-                'purchase_raw' => $this->filter('purchase', 'str'),
+                '_POST' => $_POST,
+                'store_product_id' => $product->store_product_id,
             ],
             $subscriberId
         );

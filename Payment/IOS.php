@@ -24,6 +24,7 @@ use function file_get_contents;
 use function openssl_x509_read;
 use XF\Payment\AbstractProvider;
 use function openssl_x509_verify;
+use Truonglv\Api\Entity\IAPProduct;
 use function openssl_pkey_get_public;
 use function openssl_pkey_get_details;
 
@@ -169,6 +170,17 @@ class IOS extends AbstractProvider implements IAPInterface
         $state->transactionId = $transactionId;
 
         $storeProductId = $transaction->productId;
+        /** @var IAPProduct|null $iapProduct */
+        $iapProduct = XF::em()->findOne('Truonglv\Api:IAPProduct', [
+            'platform' => 'ios',
+            'store_product_id' => $storeProductId
+        ]);
+        if ($iapProduct === null) {
+            $state->logType = 'info';
+            $state->logMessage = 'No IAP product';
+
+            return $state;
+        }
 
         $state->ip = $request->getIp();
         $state->_POST = $_POST;
@@ -337,6 +349,7 @@ class IOS extends AbstractProvider implements IAPInterface
             'payload' => $payload,
             'response' => $respJson,
             '_POST' => $_POST,
+            'store_product_id' => $purchaseRequest->extra_data['store_product_id'],
         ];
         $paymentLog->purchase_request_key = $purchaseRequest->request_key;
         $paymentLog->provider_id = $this->getProviderId();
