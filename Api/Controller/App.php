@@ -586,6 +586,8 @@ class App extends AbstractController
             return $this->error(XF::phrase('something_went_wrong_please_try_again'));
         }
 
+        $purchaseRequest->fastUpdate('provider_metadata', $subscriberId);
+
         /** @var XF\Entity\PaymentProviderLog|null $log */
         $log = $this->finder('XF:PaymentProviderLog')
             ->where('provider_id', $handler->getProviderId())
@@ -597,7 +599,6 @@ class App extends AbstractController
             return $this->error(XF::phrase('tapi_your_account_has_been_upgraded'));
         }
 
-        $purchaseRequest->fastUpdate('provider_metadata', $subscriberId);
         /** @var XF\Repository\Payment $paymentRepo */
         $paymentRepo = $this->repository('XF:Payment');
         $paymentRepo->logCallback(
