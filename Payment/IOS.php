@@ -12,6 +12,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use function explode;
 use function stripos;
+use function in_array;
 use XF\Mvc\Controller;
 use function array_replace;
 use function base64_decode;
@@ -284,7 +285,7 @@ class IOS extends AbstractProvider implements IAPInterface
     public function validateTransaction(CallbackState $state)
     {
         if (isset($state->notificationType)
-            && \in_array($state->notificationType, [static::NOTIFICATION_TYPE_EXPIRED, static::NOTIFICATION_TYPE_REFUND], true)
+            && in_array($state->notificationType, [static::NOTIFICATION_TYPE_EXPIRED, static::NOTIFICATION_TYPE_REFUND], true)
         ) {
             /** @var XF\Repository\Payment $paymentRepo */
             $paymentRepo = XF::repository('XF:Payment');
