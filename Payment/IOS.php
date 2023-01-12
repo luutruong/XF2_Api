@@ -313,10 +313,11 @@ class IOS extends AbstractProvider implements IAPInterface
      */
     public function getPaymentResult(CallbackState $state)
     {
-        if ($state->notificationType === static::NOTIFICATION_TYPE_SUBSCRIBED || $state->notificationType === static::NOTIFICATION_TYPE_DID_RENEW) {
+        if ($state->notificationType === static::NOTIFICATION_TYPE_SUBSCRIBED
+            || $state->notificationType === static::NOTIFICATION_TYPE_DID_RENEW
+        ) {
             $state->paymentResult = CallbackState::PAYMENT_RECEIVED;
-        } elseif ($state->notificationType === static::NOTIFICATION_TYPE_EXPIRED || $state->notificationType === static::NOTIFICATION_TYPE_REFUND) {
-            $state->logType = 'cancel';
+        } elseif ($state->notificationType === static::NOTIFICATION_TYPE_REFUND) {
             $state->paymentResult = CallbackState::PAYMENT_REVERSED;
         }
     }

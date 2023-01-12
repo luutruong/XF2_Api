@@ -257,7 +257,6 @@ class Android extends AbstractProvider implements IAPInterface
 
             if ($this->isPurchaseCancelled($purchase)) {
                 $state->logType = 'cancel';
-                $state->paymentResult = CallbackState::PAYMENT_REVERSED;
             } elseif ($this->isPurchaseReceived($purchase)) {
                 $state->paymentResult = CallbackState::PAYMENT_RECEIVED;
             }
