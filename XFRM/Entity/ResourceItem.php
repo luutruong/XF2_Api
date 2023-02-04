@@ -17,6 +17,7 @@ class ResourceItem extends XFCP_ResourceItem
         $result->can_watch = $this->canWatch();
         $result->discussion_thread_id = $this->discussion_thread_id;
         $result->can_release_update = $this->canReleaseUpdate();
+        $result->can_rate = $this->canRate();
 
         if ($verbosity > self::VERBOSITY_NORMAL) {
             $overviewFields = [];
