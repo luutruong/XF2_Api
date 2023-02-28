@@ -3,6 +3,9 @@
 namespace Truonglv\Api\Admin\Controller;
 
 use XF;
+use Exception;
+use function md5;
+use function time;
 use function implode;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Finder;
@@ -66,7 +69,7 @@ class AccessToken extends Entity
     /**
      * @param XF\Mvc\Entity\Entity $entity
      * @return XF\Mvc\FormAction
-     * @throws \Exception
+     * @throws Exception
      */
     protected function entitySaveProcess($entity)
     {
@@ -74,10 +77,10 @@ class AccessToken extends Entity
 
         $input = [];
         if (!$entity->exists()) {
-            $input['token'] = \md5(XF\Util\Random::getRandomString(32));
+            $input['token'] = md5(XF\Util\Random::getRandomString(32));
         }
 
-        $input['expire_date'] = \time() + $this->filter('expires_in', 'uint') * 60;
+        $input['expire_date'] = time() + $this->filter('expires_in', 'uint') * 60;
         $form->basicEntitySave($entity, $input);
 
         return $form;

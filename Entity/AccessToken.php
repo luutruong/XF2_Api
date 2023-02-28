@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Entity;
 
+use XF;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
@@ -23,9 +24,10 @@ class AccessToken extends Entity
     {
         switch ($columnName) {
             case 'expire_date':
-                return \XF::phrase('tapi_access_token_' . $columnName);
+                // @phpstan-ignore-next-line
+                return XF::phrase('tapi_access_token_' . $columnName);
             case 'user_id':
-                return \XF::phrase('user_name');
+                return XF::phrase('user_name');
         }
 
         return null;
