@@ -80,7 +80,7 @@ class AccessToken extends Entity
             $input['token'] = md5(XF\Util\Random::getRandomString(32));
         }
 
-        $input['expire_date'] = time() + $this->filter('expires_in', 'uint') * 60;
+        $input['expire_date'] = time() + $this->filter('expires_in', 'uint') * 3600;
         $form->basicEntitySave($entity, $input);
 
         return $form;
