@@ -19,12 +19,28 @@ class AccessToken extends Entity
 {
     use TokenTrait;
 
+    public function getEntityColumnLabel(string $columnName): ?string
+    {
+        switch ($columnName) {
+            case 'expire_date':
+                return \XF::phrase('tapi_access_token_' . $columnName);
+            case 'user_id':
+                return \XF::phrase('user_name');
+        }
+
+        return null;
+    }
+
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_tapi_access_token';
         $structure->shortName = 'Truonglv\Api:AccessToken';
 
         static::setupStructure($structure);
+        $structure->columns['expire_date'] += [
+            'inputFilter' => 'uint',
+            'macroTemplate' => 'admin:tapi_access_token_macros'
+        ];
 
         return $structure;
     }

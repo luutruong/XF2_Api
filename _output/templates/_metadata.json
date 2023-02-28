@@ -9,10 +9,20 @@
         "version_string": "3.1.8",
         "hash": "a6002e1f35a17612a5ae4c4a4b208b70"
     },
+    "admin/tapi_access_token_macros.html": {
+        "version_id": 3020200,
+        "version_string": "3.2.2",
+        "hash": "645987476e90f9bc20e20e94bc8fa2e9"
+    },
     "admin/tapi_entity_delete.html": {
         "version_id": 1000500,
         "version_string": "1.0.5",
         "hash": "6b4d4c43aec7949d705dd36d09a53a34"
+    },
+    "admin/tapi_entity_edit.html": {
+        "version_id": 3020200,
+        "version_string": "3.2.2",
+        "hash": "3465144e7903eeff0a36d62f7a4fb99a"
     },
     "admin/tapi_entity_list.html": {
         "version_id": 3010200,

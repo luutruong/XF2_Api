@@ -64,6 +64,26 @@ class AccessToken extends Entity
     }
 
     /**
+     * @param XF\Mvc\Entity\Entity $entity
+     * @return XF\Mvc\FormAction
+     * @throws \Exception
+     */
+    protected function entitySaveProcess($entity)
+    {
+        $form = parent::entitySaveProcess($entity);
+
+        $input = [];
+        if (!$entity->exists()) {
+            $input['token'] = \md5(XF\Util\Random::getRandomString(32));
+        }
+
+        $input['expire_date'] = \time() + $this->filter('expires_in', 'uint') * 60;
+        $form->basicEntitySave($entity, $input);
+
+        return $form;
+    }
+
+    /**
      * @return bool
      */
     protected function supportsEditing()
@@ -76,7 +96,7 @@ class AccessToken extends Entity
      */
     protected function supportsAdding()
     {
-        return false;
+        return true;
     }
 
     /**

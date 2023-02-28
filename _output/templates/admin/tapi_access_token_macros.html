@@ -1,0 +1,10 @@
+<xf:macro name="entity_edit_column" arg-column="!"
+          arg-columnName="!"
+          arg-controller="!"
+          arg-entity="!">
+    <xf:if is="$columnName == 'expire_date'">
+        <xf:numberboxrow name="expires_in" value="1"
+                         units="{{ phrase('units_hours') }}" min="0"
+                         label="{{ phrase('tapi_token_expires_in') }}" />
+    </xf:if>
+</xf:macro>

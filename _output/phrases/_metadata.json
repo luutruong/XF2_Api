@@ -227,6 +227,12 @@
         "version_string": "2.2.0",
         "hash": "84533759a60c5d2b9b5c87890137bdc5"
     },
+    "tapi_access_token_add.txt": {
+        "global_cache": false,
+        "version_id": 3020200,
+        "version_string": "3.2.2",
+        "hash": "78ca1c060956bd43a69992189f26225e"
+    },
     "tapi_access_token_entities.txt": {
         "global_cache": false,
         "version_id": 3010200,
@@ -532,6 +538,12 @@
         "version_id": 1000500,
         "version_string": "1.0.5",
         "hash": "882978def5011d7088c7ae1e80f6b949"
+    },
+    "tapi_token_expires_in.txt": {
+        "global_cache": false,
+        "version_id": 3020200,
+        "version_string": "3.2.2",
+        "hash": "3e74e49d34c1c252ea50368dbe0e9a53"
     },
     "tapi_your_account_has_been_upgraded.txt": {
         "global_cache": false,
