@@ -626,18 +626,23 @@ class App extends AbstractController
         ]);
     }
 
+    protected function getUserApiResultOptions(XF\Entity\User $user): array
+    {
+        return [
+            'tapi_permissions' => [
+                'username' => true,
+            ],
+            'tapi_user_state_message' => true,
+        ];
+    }
+
     protected function getAuthResultData(\XF\Entity\User $user, bool $withRefreshToken = true): array
     {
         /** @var \Truonglv\Api\Repository\Token $tokenRepo */
         $tokenRepo = XF::repository('Truonglv\Api:Token');
 
         $data = [
-            'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE, [
-                'tapi_permissions' => [
-                    'username' => true,
-                ],
-                'tapi_user_state_message' => true,
-            ]),
+            'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE, $this->getUserApiResultOptions($user)),
             'accessToken' => $tokenRepo->createAccessToken($user->user_id, $this->options()->tApi_accessTokenTtl),
         ];
 
