@@ -35,9 +35,9 @@
         "hash": "60656a89757276f65a0dc0e1e7800858"
     },
     "admin/tapi_iap_product_list.html": {
-        "version_id": 3010400,
-        "version_string": "3.1.4",
-        "hash": "1d59f94ddff1072fa9f988e48c3f8c9d"
+        "version_id": 3020200,
+        "version_string": "3.2.2",
+        "hash": "576db734520bf522060a6058be34516b"
     },
     "admin/tapi_log_view.html": {
         "version_id": 1000600,

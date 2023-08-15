@@ -7,26 +7,50 @@
 <xf:if is="$total > 0">
     <xf:form action="{{ link($linkPrefix . '/toggle') }}" ajax="true" class="block">
         <div class="block-container">
-            <div class="block-body">
-                <xf:datalist>
-                    <xf:foreach loop="$products" value="$product">
-                        <xf:datarow>
-                            <xf:main href="{{ link($linkPrefix . '/edit', $product) }}"
-                                     label="{$product.title}"
-                                     hint="{$product.platform} - {$product.store_product_id}"
-                            />
-                            <xf:toggle name="active[{$product.product_id}]" selected="{$product.active}"
-                                       class="dataList-cell--separated" submit="true"
-                                       tooltip="{{ phrase('enable_disable_x', {'title': $product.title}) }}" />
-                            <xf:delete href="{{ link($linkPrefix . '/delete', $product) }}" />
-                        </xf:datarow>
-                    </xf:foreach>
-                </xf:datalist>
+            <h2 class="block-tabHeader tabs hScroller" data-xf-init="tabs h-scroller" role="tablist">
+                <span class="hScroller-scroll">
+                    <a class="tabs-tab is-active" role="tab" tabindex="0"
+                       aria-controls="tapi-tab-android">Android</a>
+                    <a class="tabs-tab" role="tab" tabindex="0"
+                       aria-controls="tapi-tab-ios">iOS</a>
+                </span>
+            </h2>
 
-                <div class="block-footer">
-                    <span class="block-footer-counter">{{ display_totals($products, $total) }}</span>
-                </div>
-            </div>
+            <ul class="tabPanes block-body">
+                <li class="is-active" role="tabpanel" id="tapi-tab-android">
+                    <xf:datalist>
+                        <xf:foreach loop="$products" value="$product" if="{{ $product.platform == 'android' }}">
+                            <xf:datarow>
+                                <xf:main href="{{ link($linkPrefix . '/edit', $product) }}"
+                                         label="{$product.title}"
+                                         hint="{$product.platform} - {$product.store_product_id}"
+                                />
+                                <xf:toggle name="active[{$product.product_id}]" selected="{$product.active}"
+                                           class="dataList-cell--separated" submit="true"
+                                           tooltip="{{ phrase('enable_disable_x', {'title': $product.title}) }}" />
+                                <xf:delete href="{{ link($linkPrefix . '/delete', $product) }}" />
+                            </xf:datarow>
+                        </xf:foreach>
+                    </xf:datalist>
+                </li>
+
+                <li class="is-active" role="tabpanel" id="tapi-tab-ios">
+                    <xf:datalist>
+                        <xf:foreach loop="$products" value="$product" if="{{ $product.platform == 'ios' }}">
+                            <xf:datarow>
+                                <xf:main href="{{ link($linkPrefix . '/edit', $product) }}"
+                                         label="{$product.title}"
+                                         hint="{$product.platform} - {$product.store_product_id}"
+                                />
+                                <xf:toggle name="active[{$product.product_id}]" selected="{$product.active}"
+                                           class="dataList-cell--separated" submit="true"
+                                           tooltip="{{ phrase('enable_disable_x', {'title': $product.title}) }}" />
+                                <xf:delete href="{{ link($linkPrefix . '/delete', $product) }}" />
+                            </xf:datarow>
+                        </xf:foreach>
+                    </xf:datalist>
+                </li>
+            </ul>
         </div>
     </xf:form>
 <xf:else />
