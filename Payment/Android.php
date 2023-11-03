@@ -18,6 +18,7 @@ use XF\Purchasable\Purchase;
 use Google\Service\Exception;
 use XF\Entity\PaymentProfile;
 use XF\Payment\CallbackState;
+use function array_key_exists;
 use XF\Entity\PurchaseRequest;
 use XF\Payment\AbstractProvider;
 use Truonglv\Api\Entity\IAPProduct;
@@ -201,6 +202,40 @@ class Android extends AbstractProvider implements IAPInterface
         $state->_POST = $_POST;
 
         return $state;
+    }
+
+    /**
+     * @param CallbackState $state
+     * @return bool
+     */
+    public function validateCallback(CallbackState $state)
+    {
+        if ($this->isEventSkippable($state)) {
+            $state->httpCode = 200;
+
+            return false;
+        }
+
+        return parent::validateCallback($state);
+    }
+
+    protected function isEventSkippable(CallbackState $state): bool
+    {
+        $requestKey = $state->requestKey;
+
+        if (isset($state->androidPurchase) && $requestKey === null) {
+            /** @var AndroidPublisher\SubscriptionPurchase $purchase */
+            $purchase = $state->androidPurchase;
+            $payload = (array) json_decode($purchase->getDeveloperPayload(), true);
+            if (!array_key_exists('request_key', $payload) || $payload['request_key'] === null) {
+                $state->logType = 'info';
+                $state->logMessage = 'Skip handle request';
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
