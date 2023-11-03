@@ -228,8 +228,15 @@ class Android extends AbstractProvider implements IAPInterface
             $purchase = $state->androidPurchase;
             $payload = (array) json_decode($purchase->getDeveloperPayload(), true);
             if (!array_key_exists('request_key', $payload) || $payload['request_key'] === null) {
-                $state->logType = 'info';
-                $state->logMessage = 'Skip handle request';
+                $state->logMessage = 'Invalid purchase request';
+                $lastLog = \XF::finder('XF:PaymentProviderLog')
+                    ->where('subscriber_id', $state->subscriberId)
+                    ->where('provider_id', $this->providerId)
+                    ->where('log_type', 'info')
+                    ->where('log_message', $state->logMessage)
+                    ->order('log_date', 'desc')
+                    ->fetchOne();
+                $state->logType = $lastLog === null ? 'info' : '';
 
                 return true;
             }
