@@ -14,6 +14,7 @@ use function explode;
 use function stripos;
 use function in_array;
 use XF\Mvc\Controller;
+use function json_decode;
 use function array_replace;
 use function base64_decode;
 use XF\Purchasable\Purchase;
@@ -220,8 +221,7 @@ class IOS extends AbstractProvider implements IAPInterface
 
                 /** @var XF\Entity\PaymentProviderLog $log */
                 foreach ($logFinder->fetch() as $log) {
-                    $loggedProductId = $log->log_details['signedTransaction']['productId'] ?? '';
-                    if ($loggedProductId === $storeProductId
+                    if ($this->getLoggedProductId($log) === $storeProductId
                         && $log->PurchaseRequest !== null
                         && $this->validateIAPPurchaseRequest($log->PurchaseRequest, $storeProductId)
                     ) {
@@ -234,6 +234,17 @@ class IOS extends AbstractProvider implements IAPInterface
         }
 
         return $state;
+    }
+
+    protected function getLoggedProductId(XF\Entity\PaymentProviderLog $log): string
+    {
+        $loggedProductId = $log->log_details['signedTransaction']['productId'] ?? '';
+        if ($loggedProductId === '') {
+            $purchase = (array) json_decode($log->log_details['_POST']['purchase'] ?? '', true);
+            $loggedProductId = $purchase['productId'] ?? '';
+        }
+
+        return $loggedProductId;
     }
 
     protected function validateIAPPurchaseRequest(PurchaseRequest $purchaseRequest, string $storeProductId): bool
