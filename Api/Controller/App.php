@@ -17,6 +17,7 @@ use XF\Repository\Tfa;
 use XF\Mvc\Reply\Error;
 use XF\Repository\Node;
 use function strtoupper;
+use function array_merge;
 use function array_slice;
 use function json_decode;
 use function json_encode;
@@ -607,10 +608,10 @@ class App extends AbstractController
             $transactionId,
             'payment',
             "[{$platform}] Received in-app purchase",
-            [
+            array_merge([
                 '_POST' => $_POST,
                 'store_product_id' => $product->store_product_id,
-            ],
+            ], $data),
             $subscriberId
         );
 

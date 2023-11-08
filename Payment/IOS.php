@@ -414,6 +414,10 @@ class IOS extends AbstractProvider implements IAPInterface
                 return [
                     'transaction_id' => $transactionId,
                     'subscriber_id' => $subscriberId,
+                    'signedTransaction' => [
+                        'productId' => $latestReceipt['product_id'],
+                    ],
+                    'store_product_id' => $purchaseRequest->extra_data['store_product_id'],
                 ];
             }
         }
