@@ -623,7 +623,8 @@ class App extends AbstractController
         $handler->completeTransaction($state);
 
         return $this->apiSuccess([
-            'message' => XF::phrase('tapi_your_account_has_been_upgraded')
+            'message' => XF::phrase('tapi_your_account_has_been_upgraded'),
+            'request_key' => $purchaseRequest->request_key,
         ]);
     }
 
