@@ -424,7 +424,10 @@ class App extends AbstractController
             /** @var \XF\Entity\User|null $emailUser */
             $emailUser = $this->finder('XF:User')->where('email', $providerData->email)->fetchOne();
             if ($emailUser !== null && $emailUser->user_id !== XF::visitor()->user_id) {
-                return $this->error(XF::phrase('this_accounts_email_is_already_associated_with_another_member'));
+                return $this->error(XF::phrase('this_accounts_email_is_already_associated_with_another_member', [
+                    'provider' => $provider->title,
+                    'boardTitle' => $this->options()->boardTitle,
+                ]));
             }
 
             $input['email'] = $filterer->cleanString($providerData->email);
