@@ -469,7 +469,7 @@ class Android extends AbstractProvider implements IAPInterface
             );
         } catch (Throwable $e) {
             if ($e instanceof Exception) {
-                $message = (array) \json_decode($e->getMessage(), true);
+                $message = (array) json_decode($e->getMessage(), true);
                 if (isset($message['error'], $message['error']['errors'])) {
                     $reason = $message['error']['errors'][0]['reason'];
                     if ($reason === 'alreadyAcknowledged') {
