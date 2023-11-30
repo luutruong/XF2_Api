@@ -188,6 +188,46 @@ class Me extends XFCP_Me
         ]);
     }
 
+    public function actionPostCover()
+    {
+        $this->assertRequiredApiFile('file');
+
+        $visitor = XF::visitor();
+        if (!$visitor->canUploadProfileBanner()) {
+            return $this->noPermission();
+        }
+
+        /** @var \XF\Service\User\ProfileBanner $bannerService */
+        $bannerService = $this->service('XF:User\ProfileBanner', $visitor);
+
+        $upload = $this->request->getFile('file', false, false);
+        if (!$bannerService->setImageFromUpload($upload)) {
+            return $this->error($bannerService->getError());
+        }
+
+        if (!$bannerService->updateBanner()) {
+            return $this->error(XF::phrase('new_banner_could_not_be_processed'));
+        }
+
+        return $this->apiResult([
+            'user' => $visitor->toApiResult(),
+        ]);
+    }
+
+    public function actionDeleteCover()
+    {
+        $visitor = XF::visitor();
+        if (!$visitor->canUploadProfileBanner()) {
+            return $this->noPermission();
+        }
+
+        /** @var \XF\Service\User\ProfileBanner $bannerService */
+        $bannerService = $this->service('XF:User\ProfileBanner', $visitor);
+        $bannerService->deleteBanner();
+
+        return $this->apiSuccess();
+    }
+
     /**
      * @param int $id
      * @param mixed $with

@@ -41,8 +41,10 @@ class User extends XFCP_User
         $result->can_be_reported = $this->canBeReported();
         if ($this->user_id === XF::visitor()->user_id) {
             $result->can_upload_avatar = $this->canUploadAvatar();
+            $result->can_upload_cover = $this->canUploadProfileBanner();
         } else {
             $result->can_upload_avatar = false;
+            $result->can_upload_cover = false;
         }
 
         $result->can_view_current_activity = $this->canViewCurrentActivity();
