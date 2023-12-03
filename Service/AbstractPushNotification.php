@@ -2,10 +2,10 @@
 
 namespace Truonglv\Api\Service;
 
-use GuzzleHttp\Client;
 use XF;
 use XF\Entity\User;
 use Truonglv\Api\App;
+use GuzzleHttp\Client;
 use function strtoupper;
 use XF\Entity\UserAlert;
 use Truonglv\Api\Entity\Log;
@@ -185,7 +185,7 @@ abstract class AbstractPushNotification extends AbstractService
         );
     }
 
-    protected function logRequest(string $method, string $endPoint, array $payload, int $responseCode, $response, array $extra = []): void
+    protected function logRequest(string $method, string $endPoint, array $payload, int $responseCode, string $response, array $extra = []): void
     {
         $extra = \array_replace([
             'app_version' => '',

@@ -4,7 +4,7 @@
         "kreait/firebase-php": "6.9.6",
         "ext-openssl": "*",
         "ext-json": "*",
-        "google/apiclient": "^2.12.1"
+        "google/apiclient": "2.15.1"
     },
     "config": {
         "autoloader-suffix": "TruonglvApi"

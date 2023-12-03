@@ -3,6 +3,7 @@
 namespace Truonglv\Api\Service;
 
 use XF;
+use Throwable;
 use XF\Entity\User;
 use function strlen;
 use function strval;
@@ -93,7 +94,7 @@ class FirebaseCloudMessaging extends AbstractPushNotification
         try {
             // @phpstan-ignore-next-line
             $messaging->sendAll($messages);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             XF::logException($e, false, '[tl] Api: failed to send messages ');
         }
     }

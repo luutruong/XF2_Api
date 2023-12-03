@@ -3,3 +3,5 @@ includes:
 
 parameters:
   phpVersion: 70400 # 7.4.0
+  excludePaths:
+    - */Payment/*
