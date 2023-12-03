@@ -23,7 +23,7 @@ class Subscription extends AbstractService
      * @param User $user
      * @param string $pushToken
      */
-    public function __construct(\XF\App $app, User $user, $pushToken)
+    public function __construct(\XF\App $app, User $user, string $pushToken)
     {
         parent::__construct($app);
 
@@ -31,11 +31,7 @@ class Subscription extends AbstractService
         $this->pushToken = $pushToken;
     }
 
-    /**
-     * @throws \XF\PrintableException
-     * @return void
-     */
-    public function unsubscribe()
+    public function unsubscribe(): void
     {
         /** @var \Truonglv\Api\Entity\Subscription[] $subscriptions */
         $subscriptions = $this->finder('Truonglv\Api:Subscription')
@@ -47,12 +43,7 @@ class Subscription extends AbstractService
         }
     }
 
-    /**
-     * @param array $extra
-     * @throws \XF\PrintableException
-     * @return \Truonglv\Api\Entity\Subscription
-     */
-    public function subscribe(array $extra)
+    public function subscribe(array $extra): \Truonglv\Api\Entity\Subscription
     {
         /** @var \Truonglv\Api\Entity\Subscription|null $exists */
         $exists = $this->finder('Truonglv\Api:Subscription')

@@ -43,7 +43,7 @@ class App
     /**
      * @var string
      */
-    public static $defaultPushNotificationService = 'Truonglv\Api:FCM';
+    public static $defaultPushNotificationService = 'Truonglv\Api:FirebaseCloudMessaging';
 
     /**
      * @var \XF\Http\Request|null

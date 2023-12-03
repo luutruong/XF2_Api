@@ -3,7 +3,6 @@
 namespace Truonglv\Api\Service;
 
 use XF;
-use Exception;
 use XF\Entity\User;
 use function strlen;
 use function strval;
@@ -16,25 +15,14 @@ use Truonglv\Api\Entity\Subscription;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 
-class FCM extends AbstractPushNotification
+class FirebaseCloudMessaging extends AbstractPushNotification
 {
-    /**
-     * @return string
-     */
-    protected function getProviderId()
+    protected function getProviderId(): string
     {
         return 'fcm';
     }
 
-    /**
-     * @param mixed $subscriptions
-     * @param string $title
-     * @param string $body
-     * @param array $data
-     * @throws \XF\PrintableException
-     * @return void
-     */
-    protected function doSendNotification($subscriptions, $title, $body, array $data)
+    protected function doSendNotification(XF\Mvc\Entity\AbstractCollection $subscriptions, string $title, string $body, array $data): void
     {
         $fbConfigFile = $this->app->config('tApi_firebaseConfigPath');
         if ($fbConfigFile === null) {
@@ -105,17 +93,12 @@ class FCM extends AbstractPushNotification
         try {
             // @phpstan-ignore-next-line
             $messaging->sendAll($messages);
-        } catch (Exception $e) {
-            XF::logException($e, false, '[tl] Api: ');
+        } catch (\Throwable $e) {
+            XF::logException($e, false, '[tl] Api: failed to send messages ');
         }
     }
 
-    /**
-     * @param string $externalId
-     * @param string $pushToken
-     * @return void
-     */
-    public function unsubscribe($externalId, $pushToken)
+    public function unsubscribe(string $externalId, string $pushToken): void
     {
     }
 }

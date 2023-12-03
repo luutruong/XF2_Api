@@ -1,7 +1,7 @@
 {
     "require": {
-        "php": ">=7.2",
-        "kreait/firebase-php": "5.19.0",
+        "php": ">=7.4",
+        "kreait/firebase-php": "6.9.6",
         "ext-openssl": "*",
         "ext-json": "*",
         "google/apiclient": "^2.12.1"

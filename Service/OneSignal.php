@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\Service;
 
+use GuzzleHttp\Client;
+use XF\Mvc\Entity\AbstractCollection;
 use function trim;
 use function count;
 use function urldecode;
@@ -15,23 +17,12 @@ class OneSignal extends AbstractPushNotification
     const BADGE_TYPE_SET_TO = 'SetTo';
     const BADGE_TYPE_INCREASE = 'Increase';
 
-    /**
-     * @return string
-     */
-    protected function getProviderId()
+    protected function getProviderId(): string
     {
         return 'one_signal';
     }
 
-    /**
-     * @param mixed $subscriptions
-     * @param string $title
-     * @param string $body
-     * @param array $data
-     * @throws \XF\PrintableException
-     * @return void
-     */
-    protected function doSendNotification($subscriptions, $title, $body, array $data)
+    protected function doSendNotification(AbstractCollection $subscriptions, string $title, string $body, array $data): void
     {
         $playerIds = [];
         /** @var Subscription $subscription */
@@ -64,16 +55,8 @@ class OneSignal extends AbstractPushNotification
         ]);
     }
 
-    /**
-     * @param string $externalId
-     * @param string $pushToken
-     * @return void
-     * @throws \XF\PrintableException
-     */
-    public function unsubscribe($externalId, $pushToken)
+    public function unsubscribe(string $externalId, string $pushToken): void
     {
-        $response = null;
-
         $endPoint = self::API_END_POINT . '/players/' . urldecode($externalId);
         $payload = [
             'app_id' => $this->getAppId(),
@@ -86,27 +69,17 @@ class OneSignal extends AbstractPushNotification
         ]);
     }
 
-    /**
-     * @return string
-     */
-    protected function getApiKey()
+    protected function getApiKey(): string
     {
         return '';
     }
 
-    /**
-     * @return string
-     */
-    protected function getAppId()
+    protected function getAppId(): string
     {
         return '';
     }
 
-    /**
-     * @param array $options
-     * @return \GuzzleHttp\Client
-     */
-    protected function client(array $options = [])
+    protected function client(array $options = []): Client
     {
         $options = array_replace_recursive($options, [
             'headers' => [

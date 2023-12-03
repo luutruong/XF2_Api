@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Service;
 
+use GuzzleHttp\Client;
 use XF;
 use XF\Entity\User;
 use Truonglv\Api\App;
@@ -20,7 +21,7 @@ abstract class AbstractPushNotification extends AbstractService
     /**
      * @var array
      */
-    private $userAlertsCache = [];
+    private array $userAlertsCache = [];
 
     public function __construct(\XF\App $app)
     {
@@ -29,26 +30,11 @@ abstract class AbstractPushNotification extends AbstractService
         $this->setupDefaults();
     }
 
-    /**
-     * @param string $externalId
-     * @param string $pushToken
-     * @return void
-     */
-    abstract public function unsubscribe($externalId, $pushToken);
+    abstract public function unsubscribe(string $externalId, string $pushToken): void;
 
-    /**
-     * @return string
-     */
-    abstract protected function getProviderId();
+    abstract protected function getProviderId(): string;
 
-    /**
-     * @param mixed $subscriptions
-     * @param string $title
-     * @param string $body
-     * @param array $data
-     * @return void
-     */
-    abstract protected function doSendNotification($subscriptions, $title, $body, array $data);
+    abstract protected function doSendNotification(XF\Mvc\Entity\AbstractCollection $subscriptions, string $title, string $body, array $data): void;
 
     /**
      * @param UserAlert $alert
@@ -74,12 +60,7 @@ abstract class AbstractPushNotification extends AbstractService
         );
     }
 
-    /**
-     * @param ConversationMessage $message
-     * @param string $actionType
-     * @return void
-     */
-    public function sendConversationNotification(ConversationMessage $message, $actionType)
+    public function sendConversationNotification(ConversationMessage $message, string $actionType): void
     {
         if (!in_array($actionType, ['create', 'reply'], true)) {
             return;
@@ -127,10 +108,6 @@ abstract class AbstractPushNotification extends AbstractService
         }
     }
 
-    /**
-     * @param User $user
-     * @return int
-     */
     protected function getTotalUnviewedNotifications(User $user): int
     {
         if (!array_key_exists($user->user_id, $this->userAlertsCache)) {
@@ -161,7 +138,7 @@ abstract class AbstractPushNotification extends AbstractService
     /**
      * @return void
      */
-    protected function setupDefaults()
+    protected function setupDefaults(): void
     {
     }
 
@@ -177,13 +154,7 @@ abstract class AbstractPushNotification extends AbstractService
         return $pusher->tApiGetNotificationBody();
     }
 
-    /**
-     * @param User $receiver
-     * @param ConversationMessage $message
-     * @param string $actionType
-     * @return string
-     */
-    protected function getConversationPushContentBody(User $receiver, ConversationMessage $message, $actionType)
+    protected function getConversationPushContentBody(User $receiver, ConversationMessage $message, string $actionType): string
     {
         /** @var Pusher $pusher */
         $pusher = $this->service('XF:Conversation\Pusher', $receiver, $message, $actionType, $message->User);
@@ -191,14 +162,7 @@ abstract class AbstractPushNotification extends AbstractService
         return $pusher->tApiGetNotificationBody();
     }
 
-    /**
-     * @param string $method
-     * @param string $endPoint
-     * @param array $payload
-     * @return void
-     * @throws \XF\PrintableException
-     */
-    protected function sendNotificationRequest($method, $endPoint, array $payload)
+    protected function sendNotificationRequest(string $method, string $endPoint, array $payload): void
     {
         $response = null;
 
@@ -221,17 +185,7 @@ abstract class AbstractPushNotification extends AbstractService
         );
     }
 
-    /**
-     * @param string $method
-     * @param string $endPoint
-     * @param array $payload
-     * @param int $responseCode
-     * @param mixed $response
-     * @param array $extra
-     * @throws \XF\PrintableException
-     * @return void
-     */
-    protected function logRequest($method, $endPoint, array $payload, $responseCode, $response, array $extra = [])
+    protected function logRequest(string $method, string $endPoint, array $payload, int $responseCode, $response, array $extra = []): void
     {
         $extra = \array_replace([
             'app_version' => '',
@@ -251,11 +205,7 @@ abstract class AbstractPushNotification extends AbstractService
         $log->save();
     }
 
-    /**
-     * @param array $options
-     * @return \GuzzleHttp\Client
-     */
-    protected function client(array $options = [])
+    protected function client(array $options = []): Client
     {
         return $this->app->http()->createClient(array_replace([
             'connect_timeout' => 5,
