@@ -4,7 +4,7 @@
         "kreait/firebase-php": "6.9.6",
         "ext-openssl": "*",
         "ext-json": "*",
-        "google/apiclient": "2.15.1"
+        "google/apiclient": "2.12.6"
     },
     "config": {
         "autoloader-suffix": "TruonglvApi"
@@ -21,7 +21,7 @@
         "paragonie/constant_time_encoding": "*"
     },
     "scripts": {
-        "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
+        "post-autoload-dump": ["Google\\Task\\Composer::cleanup"]
     },
     "extra": {
         "google/apiclient-services": [

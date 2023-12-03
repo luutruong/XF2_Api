@@ -3,6 +3,6 @@
     "styles/default/Truonglv/Api"
   ],
   "exec": [
-    "composer install --working-dir=_build/upload/src/addons/{addon_id}/ --no-dev --optimize-autoloader"
+    "composer install --working-dir=_build/upload/src/addons/{addon_id}/ --no-dev --optimize-autoloader --prefer-dist"
   ]
 }
