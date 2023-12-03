@@ -1,0 +1,14 @@
+<xf:title>Test push notifications</xf:title>
+
+<xf:form action="{{ link('tools/tapi-test-push-notifications') }}" ajax="true" class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <xf:textboxrow name="device_token" label="Device token" />
+            <xf:textboxrow name="title" label="Title" />
+            <xf:textboxrow name="message" label="Message" />
+            <xf:textarearow name="data" label="Data (JSON)" rows="3" />
+        </div>
+
+        <xf:submitrow submit="Send now" />
+    </div>
+</xf:form>

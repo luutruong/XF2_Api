@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\Service;
 
+use Kreait\Firebase\Messaging\AndroidConfig;
+use Kreait\Firebase\Messaging\ApnsConfig;
 use XF;
 use Throwable;
 use XF\Entity\User;
@@ -61,28 +63,20 @@ class FirebaseCloudMessaging extends AbstractPushNotification
         foreach ($subscriptions as $subscription) {
             /** @var User $receiver */
             $receiver = $subscription->User;
-            // @phpstan-ignore-next-line
             $message = CloudMessage::withTarget('token', $subscription->device_token)
-                // @phpstan-ignore-next-line
                 ->withNotification(Notification::create($title, $body))
                 ->withData($dataTransformed);
             if ($subscription->device_type === 'ios') {
-                $message = $message->withApnsConfig([
-                    'payload' => [
-                        'aps' => [
-                            'badge' => $this->getTotalUnviewedNotifications($receiver),
-                            'sound' => 'default',
-                        ]
-                    ]
-                ]);
+                $apnsConfig = ApnsConfig::new();
+                $apnsConfig->withApsField('badge', $this->getTotalUnviewedNotifications($receiver))
+                    ->withDefaultSound();
+
+                $message = $message->withApnsConfig($apnsConfig);
             } elseif ($subscription->device_type === 'android') {
-                /** @var mixed $androidConfig */
-                $androidConfig = [
-                    'notification' => [
-                        'notification_count' => $this->getTotalUnviewedNotifications($receiver),
-                        'sound' => 'default',
-                    ],
-                ];
+                $androidConfig = AndroidConfig::fromArray([
+                    'notification_count' => $this->getTotalUnviewedNotifications($receiver),
+                ]);
+                $androidConfig->withDefaultSound()->withDefaultNotificationPriority();
                 $message = $message->withAndroidConfig($androidConfig);
             }
 
@@ -92,7 +86,6 @@ class FirebaseCloudMessaging extends AbstractPushNotification
         $messaging = $factory->createMessaging();
 
         try {
-            // @phpstan-ignore-next-line
             $messaging->sendAll($messages);
         } catch (Throwable $e) {
             XF::logException($e, false, '[tl] Api: failed to send messages ');

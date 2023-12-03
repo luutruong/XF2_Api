@@ -15,6 +15,11 @@ namespace Truonglv\Api\XFRM\Entity
 	class XFCP_ResourceItem extends \XFRM\Entity\ResourceItem {}
 }
 
+namespace Truonglv\Api\XF\Admin\Controller
+{
+	class XFCP_Tools extends \XF\Admin\Controller\Tools {}
+}
+
 namespace Truonglv\Api\XF\Api\Controller
 {
 	class XFCP_Conversation extends \XF\Api\Controller\Conversation {}

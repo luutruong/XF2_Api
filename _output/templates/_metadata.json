@@ -59,6 +59,11 @@
         "version_string": "1.0.6",
         "hash": "3f2638522968cbb76d66a5b4363b2b83"
     },
+    "admin/tapi_test_push_notifications.html": {
+        "version_id": 3020400,
+        "version_string": "3.2.4",
+        "hash": "7f6255701f59f3a7d2acf3dd70a1449e"
+    },
     "public/tapi_bb_code_tag_attach_img.html": {
         "version_id": 2000900,
         "version_string": "2.0.9",
