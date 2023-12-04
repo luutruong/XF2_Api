@@ -90,6 +90,11 @@ class FirebaseCloudMessaging extends AbstractPushNotification
             \count($sent->successes()),
             \count($sent->failures()),
         ));
+        foreach ($sent->failures()->getItems() as $fail) {
+            if ($fail->error() !== null) {
+                $this->app->error()->logError($fail->error()->getMessage());
+            }
+        }
     }
 
     public function unsubscribe(string $externalId, string $pushToken): void

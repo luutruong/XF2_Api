@@ -571,8 +571,6 @@ class App extends AbstractController
         ];
         $purchaseRequest->save();
 
-        $subscriberId = null;
-
         try {
             $data = $handler->verifyIAPTransaction($purchaseRequest, $jsonPayload);
             $subscriberId = $data['subscriber_id'];
@@ -583,10 +581,7 @@ class App extends AbstractController
                 'purchase_expired'
             );
         } catch (Throwable $e) {
-            XF::logException($e, false);
-            if ($subscriberId !== null) {
-                $purchaseRequest->fastUpdate('provider_metadata', $subscriberId);
-            }
+            $this->app()->logException($e, false);
 
             return $this->error(XF::phrase('something_went_wrong_please_try_again'));
         }
