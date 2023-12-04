@@ -54,6 +54,8 @@ class User extends XFCP_User
         $result->following = $this->Profile !== null ? $this->Profile->following : [];
         $result->can_be_delete = $this->canTapiDelete();
 
+        $result->avatar_date = $this->avatar_date;
+
         if ($verbosity >= self::VERBOSITY_VERBOSE) {
             $result->tapi_about_data = $this->getTApiAboutTabData();
         }
