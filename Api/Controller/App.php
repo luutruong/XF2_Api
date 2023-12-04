@@ -616,7 +616,7 @@ class App extends AbstractController
         if ($log !== null) {
             return $this->error(XF::phrase('tapi_your_account_has_been_upgraded'));
         }
-        
+
         $paymentRepo->logCallback(
             $purchaseRequest->request_key,
             $product->PaymentProfile->provider_id,

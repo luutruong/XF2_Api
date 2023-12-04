@@ -84,14 +84,12 @@ class FirebaseCloudMessaging extends AbstractPushNotification
         }
 
         $messaging = $factory->createMessaging();
-        $this->app->error()->logError(\sprintf('send push notifications: %d', \count($messages)));
+        $sent = $messaging->sendAll($messages);
 
-            $sent = $messaging->sendAll($messages);
-            $this->app->error()->logError(\sprintf('sent result. success=%d fails=%d',
-                \count($sent->successes()),
-                \count($sent->failures()),
-            ));
-
+        $this->app->error()->logError(\sprintf('sent result. success=%d fails=%d',
+            \count($sent->successes()),
+            \count($sent->failures()),
+        ));
     }
 
     public function unsubscribe(string $externalId, string $pushToken): void
