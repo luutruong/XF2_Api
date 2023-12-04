@@ -88,12 +88,6 @@ class FirebaseCloudMessaging extends AbstractPushNotification
         $messaging = $factory->createMessaging();
         // @phpstan-ignore-next-line
         $sent = $messaging->sendAll($messages);
-
-        $this->app->error()->logError(sprintf(
-            'sent result. success=%d fails=%d',
-            \count($sent->successes()),
-            \count($sent->failures()),
-        ));
         foreach ($sent->failures()->getItems() as $fail) {
             if ($fail->error() !== null) {
                 $this->app->error()->logError($fail->error()->getMessage());
