@@ -548,7 +548,10 @@ class App extends AbstractController
                 'package_name' => $this->filter('package_name', 'str'),
                 'token' => $this->filter('token', 'str'),
                 'subscription_id' => $storeProductId,
+                'purchase' => $this->filter('purchase', 'str'),
             ];
+
+            $jsonPayload['purchase'] = \GuzzleHttp\json_decode($jsonPayload['purchase'], true);
         }
 
         /** @var IAPInterface|XF\Payment\AbstractProvider $handler */
@@ -603,6 +606,8 @@ class App extends AbstractController
             return $this->error(XF::phrase('tapi_your_account_has_been_upgraded'));
         }
 
+        /** @var XF\Repository\Payment $paymentRepo */
+        $paymentRepo = $this->repository('XF:Payment');
         $paymentRepo->logCallback(
             $purchaseRequest->request_key,
             $product->PaymentProfile->provider_id,

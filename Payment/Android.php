@@ -387,6 +387,11 @@ class Android extends AbstractProvider implements IAPInterface
             return null;
         }
 
+        return $this->getTransactionInfoFromId($transactionId);
+    }
+
+    public function getTransactionInfoFromId(string $transactionId): array
+    {
         if (preg_match('#(.*)\.{2}(\d+)$#', $transactionId, $matches) === 1) {
             $subscriberId = $matches[1];
         } else {
@@ -401,6 +406,14 @@ class Android extends AbstractProvider implements IAPInterface
 
     public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
     {
+        $knownTransactionId = $payload['purchase']['transactionId'] ?? null;
+        if ($knownTransactionId !== null) {
+            $info = $this->getTransactionInfoFromId($knownTransactionId);
+            // quickly update request sub info to prevent get many errors of
+            // unknown purchase request key
+            $purchaseRequest->fastUpdate('provider_metadata', $info['subscriber_id']);
+        }
+
         $paymentProfile = $purchaseRequest->PaymentProfile;
         if ($paymentProfile->options['app_bundle_id'] !== $payload['package_name']) {
             throw new LogicException('Invalid bundle.');

@@ -15,8 +15,6 @@ class Tools extends XFCP_Tools
             ]);
 
             $input['data'] = \GuzzleHttp\json_decode($input['data'], true);
-
-
         }
 
         return $this->view(

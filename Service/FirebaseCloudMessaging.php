@@ -2,21 +2,21 @@
 
 namespace Truonglv\Api\Service;
 
-use Kreait\Firebase\Messaging\AndroidConfig;
-use Kreait\Firebase\Messaging\ApnsConfig;
 use XF;
-use Throwable;
 use XF\Entity\User;
 use function strlen;
 use function strval;
+use function sprintf;
 use function file_exists;
 use function is_readable;
 use Kreait\Firebase\Factory;
 use InvalidArgumentException;
 use function file_get_contents;
 use Truonglv\Api\Entity\Subscription;
+use Kreait\Firebase\Messaging\ApnsConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Messaging\AndroidConfig;
 
 class FirebaseCloudMessaging extends AbstractPushNotification
 {
@@ -84,9 +84,11 @@ class FirebaseCloudMessaging extends AbstractPushNotification
         }
 
         $messaging = $factory->createMessaging();
+        // @phpstan-ignore-next-line
         $sent = $messaging->sendAll($messages);
 
-        $this->app->error()->logError(\sprintf('sent result. success=%d fails=%d',
+        $this->app->error()->logError(sprintf(
+            'sent result. success=%d fails=%d',
             \count($sent->successes()),
             \count($sent->failures()),
         ));
