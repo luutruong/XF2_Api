@@ -87,9 +87,13 @@ class FirebaseCloudMessaging extends AbstractPushNotification
         $this->app->error()->logError(\sprintf('send push notifications: %d', \count($messages)));
 
         try {
-            $messaging->sendAll($messages);
+            $sent = $messaging->sendAll($messages);
+            $this->app->error()->logError(\sprintf('sent result. success=%d fails=%d',
+                \count($sent->successes()),
+                \count($sent->failures()),
+            ));
         } catch (Throwable $e) {
-            XF::logException($e, false, '[tl] Api: failed to send messages ');
+            $this->app->logException($e, false, '[tl] Api: failed to send messages ');
         }
     }
 
