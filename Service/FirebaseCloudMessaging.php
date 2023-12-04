@@ -84,6 +84,7 @@ class FirebaseCloudMessaging extends AbstractPushNotification
         }
 
         $messaging = $factory->createMessaging();
+        $this->app->error()->logError(\sprintf('send push notifications: %d', \count($messages)));
 
         try {
             $messaging->sendAll($messages);
