@@ -121,7 +121,7 @@ class Android extends AbstractProvider implements IAPInterface
         ]);
 
         $state->{static::KEY_INPUT_FILTERED} = $filtered;
-        $state->{static::KEY_STATE_DATA_RAW} = $data;
+        $state->{static::KEY_STATE_DATA_RAW} = $json;
 
         /** @var IAPProduct|null $product */
         $product = XF::finder('Truonglv\Api:IAPProduct')
@@ -236,6 +236,7 @@ class Android extends AbstractProvider implements IAPInterface
     {
         $requestKey = $state->requestKey;
         $purchase = $this->getSubscriptionPurchase($state);
+        $dataRaw = $state->{self::KEY_STATE_DATA_RAW} ?? [];
 
         if ($purchase !== null && $requestKey === null) {
             $payload = (array) json_decode($purchase->getDeveloperPayload(), true);
@@ -252,6 +253,11 @@ class Android extends AbstractProvider implements IAPInterface
 
                 return true;
             }
+        } elseif (isset($dataRaw['deliveryAttempt']) && $dataRaw['deliveryAttempt'] >= 5) {
+            $state->logType = 'info';
+            $state->logMessage = 'Too many delivery attempts';
+
+            return true;
         }
 
         return false;
