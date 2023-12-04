@@ -74,7 +74,9 @@ class FirebaseCloudMessaging extends AbstractPushNotification
                 $message = $message->withApnsConfig($apnsConfig);
             } elseif ($subscription->device_type === 'android') {
                 $androidConfig = AndroidConfig::fromArray([
-                    'notification_count' => $this->getTotalUnviewedNotifications($receiver),
+                    'notification' => [
+                        'notification_count' => $this->getTotalUnviewedNotifications($receiver),
+                    ],
                 ]);
                 $androidConfig->withDefaultSound()->withDefaultNotificationPriority();
                 $message = $message->withAndroidConfig($androidConfig);
