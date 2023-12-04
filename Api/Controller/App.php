@@ -571,6 +571,20 @@ class App extends AbstractController
         ];
         $purchaseRequest->save();
 
+        /** @var XF\Repository\Payment $paymentRepo */
+        $paymentRepo = $this->repository('XF:Payment');
+        $paymentRepo->logCallback(
+            $purchaseRequest->request_key,
+            $product->PaymentProfile->provider_id,
+            null,
+            'info',
+            "[{$platform}] verify iap payment",
+            [
+                '_POST' => $_POST,
+                'store_product_id' => $product->store_product_id,
+            ]
+        );
+
         try {
             $data = $handler->verifyIAPTransaction($purchaseRequest, $jsonPayload);
             $subscriberId = $data['subscriber_id'];
@@ -602,9 +616,7 @@ class App extends AbstractController
         if ($log !== null) {
             return $this->error(XF::phrase('tapi_your_account_has_been_upgraded'));
         }
-
-        /** @var XF\Repository\Payment $paymentRepo */
-        $paymentRepo = $this->repository('XF:Payment');
+        
         $paymentRepo->logCallback(
             $purchaseRequest->request_key,
             $product->PaymentProfile->provider_id,
