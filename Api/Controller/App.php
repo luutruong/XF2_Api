@@ -571,19 +571,7 @@ class App extends AbstractController
         ];
         $purchaseRequest->save();
 
-        /** @var XF\Repository\Payment $paymentRepo */
-        $paymentRepo = $this->repository('XF:Payment');
-        $paymentRepo->logCallback(
-            $purchaseRequest->request_key,
-            $product->PaymentProfile->provider_id,
-            null,
-            'info',
-            "[{$platform}] verify iap payment",
-            [
-                '_POST' => $_POST,
-                'store_product_id' => $product->store_product_id,
-            ]
-        );
+        $subscriberId = null;
 
         try {
             $data = $handler->verifyIAPTransaction($purchaseRequest, $jsonPayload);
@@ -596,6 +584,9 @@ class App extends AbstractController
             );
         } catch (Throwable $e) {
             XF::logException($e, false);
+            if ($subscriberId !== null) {
+                $purchaseRequest->fastUpdate('provider_metadata', $subscriberId);
+            }
 
             return $this->error(XF::phrase('something_went_wrong_please_try_again'));
         }
