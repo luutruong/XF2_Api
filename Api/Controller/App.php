@@ -299,11 +299,20 @@ class App extends AbstractController
         }
 
         $encrypted = $this->filter('password', 'str');
-        $password = '';
+        if ($this->request()->exists('algo')) {
+            $algo = $this->filter('algo', 'str');
+        } else {
+            $algo = Encryption::ALGO_AES_256_CBC;
+        }
 
-        try {
-            $password = Encryption::decrypt($encrypted, $this->options()->tApi_encryptKey);
-        } catch (InvalidArgumentException $e) {
+        $password = '';
+        if (Encryption::isSupportedAlgo($algo)) {
+            try {
+                $password = Encryption::decrypt($encrypted, $this->options()->tApi_encryptKey, $algo);
+            } catch (InvalidArgumentException $e) {
+            }
+        } else {
+            $password = $encrypted;
         }
 
         $username = $this->filter('username', 'str');

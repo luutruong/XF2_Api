@@ -8,6 +8,7 @@ use InvalidArgumentException;
 class Encryption
 {
     const ALGO_AES_256_CBC = 'AES-256-CBC';
+    const ALGO_AES_BASE64 = 'base64';
 
     const ITERATIONS = 999;
 
@@ -55,21 +56,28 @@ class Encryption
         return \base64_encode($encoded);
     }
 
-    /**
-     * @param string $encrypted
-     * @param string $key
-     * @return mixed
-     * @throws InvalidArgumentException
-     */
-    public static function decrypt(string $encrypted, string $key)
+    public static function isSupportedAlgo(string $algo): bool
+    {
+        return \in_array($algo, [static::ALGO_AES_256_CBC, static::ALGO_AES_BASE64], true);
+    }
+
+    public static function decrypt(string $encrypted, string $key, string $algo = self::ALGO_AES_256_CBC): string
     {
         if (strlen($key) === 0) {
             throw new InvalidArgumentException('Key must not empty!');
         }
 
+        if (!static::isSupportedAlgo($algo)) {
+            throw new \InvalidArgumentException('Invalid algo');
+        }
+
         $decoded = base64_decode($encrypted, true);
         if ($decoded === false) {
             throw new InvalidArgumentException('Bad encrypted string');
+        }
+
+        if ($algo === self::ALGO_AES_BASE64) {
+            return $decoded;
         }
 
         $payload = json_decode($decoded, true);
