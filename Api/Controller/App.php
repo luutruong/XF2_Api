@@ -39,6 +39,7 @@ use Truonglv\Api\Entity\AccessToken;
 use function array_replace_recursive;
 use Truonglv\Api\Entity\RefreshToken;
 use Truonglv\Api\Entity\Subscription;
+use OAuth\Common\Token\TokenInterface;
 use OAuth\OAuth2\Token\StdOAuth2Token;
 use Truonglv\Api\Payment\IAPInterface;
 use XF\Entity\ConnectedAccountProvider;
@@ -359,6 +360,10 @@ class App extends AbstractController
         }
 
         $type = $this->filter('type', 'str');
+        if (!in_array($type, ['', 'new', 'existing'], true)) {
+            return $this->noPermission();
+        }
+
         $input = $this->filter([
             'username' => 'str',
             'email' => 'str',
@@ -388,7 +393,7 @@ class App extends AbstractController
 
         $token = new StdOAuth2Token();
         $token->setAccessToken($tokenText);
-        $token->setEndOfLife(StdOAuth2Token::EOL_UNKNOWN);
+        $token->setEndOfLife(TokenInterface::EOL_UNKNOWN);
         $storageState->storeToken($token);
 
         $providerData = $handler->getProviderData($storageState);
@@ -400,7 +405,9 @@ class App extends AbstractController
         /** @var UserConnectedAccount|null $userConnected */
         $userConnected = $connectedAccountRepo->getUserConnectedAccountFromProviderData($providerData);
         if ($userConnected !== null && $userConnected->User !== null) {
-            if ($associateUser !== null && $associateUser->user_id !== $userConnected->user_id) {
+            if (($associateUser !== null && $associateUser->user_id !== $userConnected->user_id)
+                || $type === 'new'
+            ) {
                 return $this->error(XF::phrase('this_accounts_email_is_already_associated_with_another_member', [
                     'provider' => $provider->title,
                     'boardTitle' => $this->options()->boardTitle,
