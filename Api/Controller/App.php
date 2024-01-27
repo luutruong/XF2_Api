@@ -360,7 +360,7 @@ class App extends AbstractController
         }
 
         $type = $this->filter('type', 'str');
-        if (!in_array($type, ['', 'new', 'existing'], true)) {
+        if (!in_array($type, ['', 'new', 'existing', 'test'], true)) {
             return $this->noPermission();
         }
 
@@ -418,6 +418,10 @@ class App extends AbstractController
             $userConnected->save();
 
             return $this->apiSuccess($this->getAuthResultData($userConnected->User));
+        }
+
+        if ($type === 'test') {
+            return $this->error(XF::phrase('there_is_no_valid_connected_account_request_available_at_this_time'), 400);
         }
 
         if ($associateUser !== null) {
