@@ -23,11 +23,7 @@ class RefreshToken extends Entity
         $this->assertAdminPermission('logs');
     }
 
-    /**
-     * @param XF\Mvc\Entity\Entity $entity
-     * @return string
-     */
-    public function getEntityExplain($entity)
+    public function getEntityExplain(XF\Mvc\Entity\Entity $entity): string
     {
         /** @var \Truonglv\Api\Entity\AccessToken $entity */
 
@@ -44,11 +40,7 @@ class RefreshToken extends Entity
         return implode(', ', $explains);
     }
 
-    /**
-     * @param XF\Mvc\Entity\Entity $entity
-     * @return string
-     */
-    public function getEntityHint($entity)
+    public function getEntityHint(XF\Mvc\Entity\Entity $entity): string
     {
         /** @var \Truonglv\Api\Entity\AccessToken $entity */
 
@@ -66,55 +58,37 @@ class RefreshToken extends Entity
     /**
      * @return bool
      */
-    protected function supportsEditing()
+    protected function supportsEditing(): bool
     {
         return false;
     }
 
-    /**
-     * @return bool
-     */
-    protected function supportsAdding()
+    protected function supportsAdding(): bool
     {
         return false;
     }
 
-    /**
-     * @return string
-     */
-    protected function getShortName()
+    protected function getShortName(): string
     {
         return 'Truonglv\Api:RefreshToken';
     }
 
-    /**
-     * @return string
-     */
-    protected function getPrefixForClasses()
+    protected function getPrefixForClasses(): string
     {
         return 'Truonglv\Api:RefreshToken';
     }
 
-    /**
-     * @return string
-     */
-    protected function getPrefixForPhrases()
+    protected function getPrefixForPhrases(): string
     {
         return 'tapi_refresh_token';
     }
 
-    /**
-     * @return string
-     */
-    protected function getPrefixForTemplates()
+    protected function getPrefixForTemplates(): string
     {
         return 'tapi';
     }
 
-    /**
-     * @return string
-     */
-    protected function getRoutePrefix()
+    protected function getRoutePrefix(): string
     {
         return 'tapi-refresh-tokens';
     }

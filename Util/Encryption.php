@@ -3,6 +3,7 @@
 namespace Truonglv\Api\Util;
 
 use XF\Util\Random;
+use function in_array;
 use InvalidArgumentException;
 
 class Encryption
@@ -58,7 +59,7 @@ class Encryption
 
     public static function isSupportedAlgo(string $algo): bool
     {
-        return \in_array($algo, [static::ALGO_AES_256_CBC, static::ALGO_AES_BASE64], true);
+        return in_array($algo, [static::ALGO_AES_256_CBC, static::ALGO_AES_BASE64], true);
     }
 
     public static function decrypt(string $encrypted, string $key, string $algo = self::ALGO_AES_256_CBC): string
@@ -68,7 +69,7 @@ class Encryption
         }
 
         if (!static::isSupportedAlgo($algo)) {
-            throw new \InvalidArgumentException('Invalid algo');
+            throw new InvalidArgumentException('Invalid algo');
         }
 
         $decoded = base64_decode($encrypted, true);

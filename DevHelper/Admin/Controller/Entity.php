@@ -14,15 +14,12 @@ use XF\Mvc\Entity\Entity as MvcEntity;
 use XF\Admin\Controller\AbstractController;
 
 /**
- * @version 2022092901
+ * @version 2024011000
  * @see \DevHelper\Autogen\Admin\Controller\Entity
  */
 abstract class Entity extends AbstractController
 {
-    /**
-     * @return \XF\Mvc\Reply\AbstractReply
-     */
-    public function actionIndex()
+    public function actionIndex(): XF\Mvc\Reply\AbstractReply
     {
         $page = $this->filterPage();
         $perPage = $this->getPerPage();
@@ -44,11 +41,7 @@ abstract class Entity extends AbstractController
         return $this->getViewReply('list', $viewParams);
     }
 
-    /**
-     * @return \XF\Mvc\Reply\AbstractReply
-     * @throws Exception
-     */
-    public function actionAdd()
+    public function actionAdd(): XF\Mvc\Reply\AbstractReply
     {
         if (!$this->supportsAdding()) {
             return $this->noPermission();
@@ -57,13 +50,7 @@ abstract class Entity extends AbstractController
         return $this->entityAddEdit($this->createEntity());
     }
 
-    /**
-     * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\AbstractReply
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \XF\PrintableException
-     */
-    public function actionDelete(ParameterBag $params)
+    public function actionDelete(ParameterBag $params): XF\Mvc\Reply\AbstractReply
     {
         if (!$this->supportsDeleting()) {
             return $this->noPermission();
@@ -86,12 +73,7 @@ abstract class Entity extends AbstractController
         return $this->getViewReply('delete', $viewParams);
     }
 
-    /**
-     * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\AbstractReply
-     * @throws \XF\Mvc\Reply\Exception
-     */
-    public function actionEdit(ParameterBag $params)
+    public function actionEdit(ParameterBag $params): XF\Mvc\Reply\AbstractReply
     {
         if (!$this->supportsEditing()) {
             return $this->noPermission();
@@ -103,13 +85,7 @@ abstract class Entity extends AbstractController
         return $this->entityAddEdit($entity);
     }
 
-    /**
-     * @return \XF\Mvc\Reply\AbstractReply
-     * @throws Exception
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \XF\PrintableException
-     */
-    public function actionSave()
+    public function actionSave(): XF\Mvc\Reply\AbstractReply
     {
         $this->assertPostOnly();
 
@@ -125,10 +101,7 @@ abstract class Entity extends AbstractController
         return $this->redirect($this->buildLink($this->getRoutePrefix()));
     }
 
-    /**
-     * @return \XF\Mvc\Reply\AbstractReply
-     */
-    public function actionToggle()
+    public function actionToggle(): XF\Mvc\Reply\AbstractReply
     {
         $activeColumn = $this->getEntityActiveColumn();
         if ($activeColumn === null) {
@@ -146,7 +119,7 @@ abstract class Entity extends AbstractController
      * @param string $columnName
      * @return string|object|null
      */
-    public function getEntityColumnLabel($entity, $columnName)
+    public function getEntityColumnLabel(MvcEntity $entity, string $columnName)
     {
         /** @var mixed $unknownEntity */
         $unknownEntity = $entity;
@@ -160,20 +133,12 @@ abstract class Entity extends AbstractController
         return call_user_func($callback, $columnName);
     }
 
-    /**
-     * @param MvcEntity $entity
-     * @return string
-     */
-    public function getEntityExplain($entity)
+    public function getEntityExplain(MvcEntity $entity): string
     {
         return '';
     }
 
-    /**
-     * @param MvcEntity $entity
-     * @return string
-     */
-    public function getEntityHint($entity)
+    public function getEntityHint(MvcEntity $entity): string
     {
         $structure = $entity->structure();
         if (isset($structure->columns['display_order'])) {
@@ -187,7 +152,7 @@ abstract class Entity extends AbstractController
      * @param MvcEntity $entity
      * @return mixed
      */
-    public function getEntityLabel($entity)
+    public function getEntityLabel(MvcEntity $entity)
     {
         /** @var mixed $unknownEntity */
         $unknownEntity = $entity;
@@ -201,11 +166,7 @@ abstract class Entity extends AbstractController
         return call_user_func($callback);
     }
 
-    /**
-     * @param MvcEntity $entity
-     * @return string
-     */
-    public function getEntityRowClass($entity)
+    public function getEntityRowClass(MvcEntity $entity): string
     {
         return '';
     }
@@ -215,25 +176,17 @@ abstract class Entity extends AbstractController
      * @return MvcEntity
      * @throws \XF\Mvc\Reply\Exception
      */
-    protected function assertEntityExists($entityId)
+    protected function assertEntityExists($entityId): MvcEntity
     {
         return $this->assertRecordExists($this->getShortName(), $entityId);
     }
 
-    /**
-     * @return MvcEntity
-     */
-    protected function createEntity()
+    protected function createEntity(): MvcEntity
     {
         return $this->em()->create($this->getShortName());
     }
 
-    /**
-     * @param MvcEntity $entity
-     * @return \XF\Mvc\Reply\View
-     * @throws Exception
-     */
-    protected function entityAddEdit($entity)
+    protected function entityAddEdit(MvcEntity $entity): XF\Mvc\Reply\View
     {
         $viewParams = [
             'entity' => $entity,
@@ -287,14 +240,7 @@ abstract class Entity extends AbstractController
         return $this->getViewReply('edit', $viewParams);
     }
 
-    /**
-     * @param MvcEntity $entity
-     * @param array $column
-     * @param string $relationKey
-     * @param array $relation
-     * @return array
-     */
-    protected function entityAddEditRelationColumn($entity, array $column, $relationKey, array $relation)
+    protected function entityAddEditRelationColumn(MvcEntity $entity, array $column, string $relationKey, array $relation): array
     {
         $tag = null;
         $tagOptions = [];
@@ -344,14 +290,7 @@ abstract class Entity extends AbstractController
         return [$tag, $tagOptions];
     }
 
-    /**
-     * @param \XF\Mvc\Entity\Entity $entity
-     * @param string $columnName
-     * @param array $column
-     * @return array|null
-     * @throws Exception
-     */
-    protected function entityGetMetadataForColumn($entity, $columnName, array $column)
+    protected function entityGetMetadataForColumn(MvcEntity $entity, string $columnName, array $column): ?array
     {
         $columnTag = null;
         $columnTagOptions = [];
@@ -475,12 +414,7 @@ abstract class Entity extends AbstractController
         ];
     }
 
-    /**
-     * @param \XF\Mvc\Entity\Entity $entity
-     * @return array
-     * @throws Exception
-     */
-    protected function entityGetMetadataForColumns($entity)
+    protected function entityGetMetadataForColumns(MvcEntity $entity): array
     {
         $columns = [];
         $structure = $entity->structure();
@@ -539,10 +473,7 @@ abstract class Entity extends AbstractController
         return $columns;
     }
 
-    /**
-     * @return array
-     */
-    final protected function entityListData()
+    final protected function entityListData(): array
     {
         $shortName = $this->getShortName();
         $finder = $this->finder($shortName);
@@ -579,12 +510,7 @@ abstract class Entity extends AbstractController
         return [$finder, $filters];
     }
 
-    /**
-     * @param \XF\Mvc\Entity\Entity $entity
-     * @return FormAction
-     * @throws Exception
-     */
-    protected function entitySaveProcess($entity)
+    protected function entitySaveProcess(MvcEntity $entity): FormAction
     {
         $filters = [];
         $columns = $this->entityGetMetadataForColumns($entity);
@@ -665,11 +591,7 @@ abstract class Entity extends AbstractController
         return $form;
     }
 
-    /**
-     * @param ParameterBag $params
-     * @return int
-     */
-    protected function getEntityIdFromParams(ParameterBag $params)
+    protected function getEntityIdFromParams(ParameterBag $params): int
     {
         $structure = $this->em()->getEntityStructure($this->getShortName());
         if (is_string($structure->primaryKey)) {
@@ -679,18 +601,12 @@ abstract class Entity extends AbstractController
         return 0;
     }
 
-    /**
-     * @return int
-     */
-    protected function getPerPage()
+    protected function getPerPage(): int
     {
         return 20;
     }
 
-    /**
-     * @return array
-     */
-    protected function getViewLinks()
+    protected function getViewLinks(): array
     {
         $routePrefix = $this->getRoutePrefix();
         $links = [
@@ -723,13 +639,12 @@ abstract class Entity extends AbstractController
             $links['quickToggle'] = \sprintf('%s/toggle', $routePrefix);
         }
 
+        $links['image'] = $this->getEntityListingImage();
+
         return $links;
     }
 
-    /**
-     * @return array
-     */
-    protected function getViewPhrases()
+    protected function getViewPhrases(): array
     {
         $prefix = $this->getPrefixForPhrases();
 
@@ -747,12 +662,7 @@ abstract class Entity extends AbstractController
         return $phrases;
     }
 
-    /**
-     * @param string $action
-     * @param array $viewParams
-     * @return \XF\Mvc\Reply\View
-     */
-    protected function getViewReply($action, array $viewParams)
+    protected function getViewReply(string $action, array $viewParams): XF\Mvc\Reply\View
     {
         $viewClass = sprintf('%s\Entity%s', $this->getShortName(), ucwords($action));
         $templateTitle = sprintf('%s_entity_%s', $this->getPrefixForTemplates(), strtolower($action));
@@ -764,47 +674,37 @@ abstract class Entity extends AbstractController
         return $this->view($viewClass, $templateTitle, $viewParams);
     }
 
-    /**
-     * @return bool
-     */
-    protected function supportsAdding()
+    protected function supportsAdding(): bool
     {
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    protected function supportsDeleting()
+    protected function supportsDeleting(): bool
     {
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    protected function supportsEditing()
+    protected function supportsEditing(): bool
     {
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    protected function supportsViewing()
+    protected function supportsViewing(): bool
     {
         return false;
     }
 
-    /**
-     * @return bool
-     */
-    protected function supportsXfFilter()
+    protected function supportsXfFilter(): bool
     {
         /** @var mixed $unknownFinder */
         $unknownFinder = $this->finder($this->getShortName());
 
         return is_callable([$unknownFinder, 'entityDoXfFilter']);
+    }
+
+    protected function getEntityListingImage(): ?string
+    {
+        return null;
     }
 
     public function getEntityActiveColumn(): ?string
@@ -823,28 +723,9 @@ abstract class Entity extends AbstractController
         return null;
     }
 
-    /**
-     * @return string
-     */
-    abstract protected function getShortName();
-
-    /**
-     * @return string
-     */
-    abstract protected function getPrefixForClasses();
-
-    /**
-     * @return string
-     */
-    abstract protected function getPrefixForPhrases();
-
-    /**
-     * @return string
-     */
-    abstract protected function getPrefixForTemplates();
-
-    /**
-     * @return string
-     */
-    abstract protected function getRoutePrefix();
+    abstract protected function getShortName(): string;
+    abstract protected function getPrefixForClasses(): string;
+    abstract protected function getPrefixForPhrases(): string;
+    abstract protected function getPrefixForTemplates(): string;
+    abstract protected function getRoutePrefix(): string;
 }

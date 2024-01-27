@@ -6,7 +6,6 @@ use XF;
 use XF\Entity\User;
 use function strlen;
 use function strval;
-use function sprintf;
 use function file_exists;
 use function is_readable;
 use Kreait\Firebase\Factory;

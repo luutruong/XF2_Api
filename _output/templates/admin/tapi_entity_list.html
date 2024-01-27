@@ -71,6 +71,8 @@
 						  arg-links="{$links}"/>
 			</xf:if>
 		</xf:set>
+		<xf:set var="$imageUrl" value="{{ $links.image ? $entity.get($links.image) : null }}" />
+
 		<xf:set var="$activeColumn">{$controller.getEntityActiveColumn()}</xf:set>
 		<xf:datarow delete="{{ $links.delete ? link($links.delete, $entity) : '' }}"
 					explain="{$controller.getEntityExplain($entity)}"
@@ -79,6 +81,13 @@
 					label="{$controller.getEntityLabel($entity)}"
 					rowclass="{$controller.getEntityRowClass($entity)}"
 					overlay="{{ !!$viewLink }}">
+			<xf:if is="$links.image">
+				<xf:cell class="dataList-cell--min dataList-cell--image dataList-cell--imageSmall">
+					<xf:if is="$imageUrl is not empty">
+						<img src="{$imageUrl}" alt="{$controller.getEntityLabel($entity)}" />
+					</xf:if>
+				</xf:cell>
+			</xf:if>
 			<xf:if is="$activeColumn is not empty">
 				<xf:toggle name="active[{$entity.getEntityId()}]" selected="{$entity.get(trim($activeColumn))}"
 						   class="dataList-cell--separated" submit="true"

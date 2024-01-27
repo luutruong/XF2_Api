@@ -25,9 +25,9 @@
         "hash": "3465144e7903eeff0a36d62f7a4fb99a"
     },
     "admin/tapi_entity_list.html": {
-        "version_id": 3010200,
-        "version_string": "3.1.2",
-        "hash": "a77993ba458224ed1fd8ec8abb0fb783"
+        "version_id": 3020400,
+        "version_string": "3.2.4",
+        "hash": "e39fbf429ff2b8837526f0552a7f3ff3"
     },
     "admin/tapi_iap_product_edit.html": {
         "version_id": 3010500,

@@ -9,6 +9,7 @@ use function md5;
 use function ceil;
 use function count;
 use LogicException;
+use function strlen;
 use XF\Http\Request;
 use XF\Finder\Thread;
 use function in_array;
@@ -28,6 +29,7 @@ use InvalidArgumentException;
 use XF\Repository\Attachment;
 use XF\ControllerPlugin\Login;
 use XF\Api\Mvc\Reply\ApiResult;
+use Truonglv\Api\XF\Entity\User;
 use Truonglv\Api\Util\Encryption;
 use XF\Service\User\Registration;
 use Truonglv\Api\Entity\IAPProduct;
@@ -299,21 +301,7 @@ class App extends AbstractController
         }
 
         $encrypted = $this->filter('password', 'str');
-        if ($this->request()->exists('algo')) {
-            $algo = $this->filter('algo', 'str');
-        } else {
-            $algo = Encryption::ALGO_AES_256_CBC;
-        }
-
-        $password = '';
-        if (Encryption::isSupportedAlgo($algo)) {
-            try {
-                $password = Encryption::decrypt($encrypted, $this->options()->tApi_encryptKey, $algo);
-            } catch (InvalidArgumentException $e) {
-            }
-        } else {
-            $password = $encrypted;
-        }
+        $password = $this->decryptPassword($encrypted);
 
         $username = $this->filter('username', 'str');
         $user = $this->verifyUserCredentials($username, $password);
@@ -366,15 +354,36 @@ class App extends AbstractController
         }
 
         $visitor = XF::visitor();
-
-        if ($visitor->user_id > 0 && $provider->isAssociated($visitor)) {
-            return $this->apiSuccess($this->getAuthResultData($visitor));
+        if ($visitor->user_id > 0) {
+            return $this->noPermission();
         }
 
+        $type = $this->filter('type', 'str');
+        $input = $this->filter([
+            'username' => 'str',
+            'email' => 'str',
+            'password' => 'str',
+        ]);
+
+        if (strlen($input['password']) > 0) {
+            $input['password'] = $this->decryptPassword($input['password']);
+        }
+
+        /** @var ConnectedAccount $connectedAccountRepo */
+        $connectedAccountRepo = $this->repository('XF:ConnectedAccount');
         $tokenText = $this->filter('token', 'str');
 
-        /** @var StorageState $storageState */
-        $storageState = $handler->getStorageState($provider, $visitor);
+        /** @var User|null $associateUser */
+        $associateUser = null;
+        if ($type === 'existing') {
+            $associateUser = $this->verifyUserCredentials($input['username'], $input['password']);
+            /** @var StorageState $storageState */
+            $storageState = $handler->getStorageState($provider, $associateUser);
+        } else {
+            /** @var StorageState $storageState */
+            $storageState = $handler->getStorageState($provider, $visitor);
+        }
+
         $storageState->setTApiStorageType('local');
 
         $token = new StdOAuth2Token();
@@ -388,97 +397,29 @@ class App extends AbstractController
             return $this->error(XF::phrase('error_occurred_while_connecting_with_x', ['provider' => $provider->title]));
         }
 
-        /** @var ConnectedAccount $connectedAccountRepo */
-        $connectedAccountRepo = $this->repository('XF:ConnectedAccount');
-
         /** @var UserConnectedAccount|null $userConnected */
         $userConnected = $connectedAccountRepo->getUserConnectedAccountFromProviderData($providerData);
         if ($userConnected !== null && $userConnected->User !== null) {
-            $userConnected->extra_data = $providerData->getExtraData();
-            $userConnected->save();
-
-            return $this->apiSuccess($this->getAuthResultData($userConnected->User));
-        }
-
-        if (!$this->options()->registrationSetup['enabled']) {
-            return $this->error(XF::phrase('new_registrations_currently_not_being_accepted'), 400);
-        }
-
-        $input = $this->filter([
-            'username' => 'str',
-            'email' => 'str',
-        ]);
-        $providerUsername = $this->filter('provider_username', 'str');
-
-        if ($providerUsername !== '') {
-            $suffix = 0;
-            while ($suffix < 20) {
-                $nameWithSuffix = $suffix === 0 ? $providerUsername : "{$providerUsername}{$suffix}";
-                $userByName = $this->finder('XF:User')
-                    ->where('username', $nameWithSuffix)
-                    ->fetchOne();
-                if ($userByName === null) {
-                    $input['username'] = $nameWithSuffix;
-
-                    break;
-                }
-
-                $suffix++;
-            }
-        }
-
-        $filterer = $this->app->inputFilterer();
-
-        if ($providerData->email) {
-            /** @var \XF\Entity\User|null $emailUser */
-            $emailUser = $this->finder('XF:User')->where('email', $providerData->email)->fetchOne();
-            if ($emailUser !== null && $emailUser->user_id !== XF::visitor()->user_id) {
+            if ($associateUser !== null && $associateUser->user_id !== $userConnected->user_id) {
                 return $this->error(XF::phrase('this_accounts_email_is_already_associated_with_another_member', [
                     'provider' => $provider->title,
                     'boardTitle' => $this->options()->boardTitle,
                 ]));
             }
 
-            $input['email'] = $filterer->cleanString($providerData->email);
+            $userConnected->extra_data = $providerData->getExtraData();
+            $userConnected->save();
+
+            return $this->apiSuccess($this->getAuthResultData($userConnected->User));
         }
 
-        $options = $this->options();
+        if ($associateUser !== null) {
+            $connectedAccountRepo->associateConnectedAccountWithUser($associateUser, $providerData);
 
-        if ($providerData->dob) {
-            $dob = $providerData->dob;
-            $input['dob_day'] = $dob['dob_day'];
-            $input['dob_month'] = $dob['dob_month'];
-            $input['dob_year'] = $dob['dob_year'];
-        } else {
-            $options->offsetSet('registrationSetup', array_replace($options->registrationSetup, [
-                'requireDob' => false,
-            ]));
+            return $this->apiSuccess($this->getAuthResultData($associateUser));
         }
 
-        $options->offsetSet('registrationSetup', array_replace($options->registrationSetup, [
-            'requireLocation' => false,
-        ]));
-
-        /** @var \XF\Service\User\Registration $registration */
-        $registration = $this->service('XF:User\Registration');
-        $registration->setFromInput($input);
-        $registration->setNoPassword();
-
-        if ($providerData->email) {
-            $registration->skipEmailConfirmation();
-        }
-
-        $avatarUrl = $providerData->avatar_url;
-        if ($avatarUrl) {
-            $registration->setAvatarUrl($avatarUrl);
-        }
-
-        if (!$registration->validate($errors)) {
-            return $this->error($errors);
-        }
-
-        /** @var \XF\Entity\User $user */
-        $user = $registration->save();
+        $user = $this->createExternalAccount($providerData, $provider, $input);
         $connectedAccountRepo->associateConnectedAccountWithUser($user, $providerData);
 
         return $this->apiSuccess($this->getAuthResultData($user));
@@ -641,6 +582,103 @@ class App extends AbstractController
             'message' => XF::phrase('tapi_your_account_has_been_upgraded'),
             'request_key' => $purchaseRequest->request_key,
         ]);
+    }
+
+    protected function decryptPassword(string $encryptedPassword): string
+    {
+        if ($this->request()->exists('password_algo')) {
+            $algo = $this->filter('password_algo', 'str');
+        } else {
+            $algo = Encryption::ALGO_AES_256_CBC;
+        }
+
+        if (Encryption::isSupportedAlgo($algo)) {
+            try {
+                $password = Encryption::decrypt($encryptedPassword, $this->options()->tApi_encryptKey, $algo);
+            } catch (Throwable $e) {
+                throw $this->exception($this->error(XF::phrase('incorrect_password')));
+            }
+        } else {
+            $password = $encryptedPassword;
+        }
+
+        return $password;
+    }
+
+    protected function createExternalAccount(
+        XF\ConnectedAccount\ProviderData\AbstractProviderData $providerData,
+        ConnectedAccountProvider $provider,
+        array $input,
+    ): XF\Entity\User {
+        if (!$this->options()->registrationSetup['enabled']) {
+            throw $this->exception($this->error(XF::phrase('new_registrations_currently_not_being_accepted'), 400));
+        }
+
+        if ($this->request()->exists('password') &&
+            strlen($input['password']) === 0
+        ) {
+            throw $this->exception($this->error(XF::phrase('please_enter_valid_password')));
+        }
+
+        $filterer = $this->app->inputFilterer();
+
+        if ($providerData->email) {
+            /** @var \XF\Entity\User|null $emailUser */
+            $emailUser = $this->finder('XF:User')->where('email', $providerData->email)->fetchOne();
+            if ($emailUser !== null && $emailUser->user_id !== XF::visitor()->user_id) {
+                throw $this->exception($this->error(XF::phrase('this_accounts_email_is_already_associated_with_another_member', [
+                    'provider' => $provider->title,
+                    'boardTitle' => $this->options()->boardTitle,
+                ])));
+            }
+
+            $input['email'] = $filterer->cleanString($providerData->email);
+        }
+
+        $options = $this->options();
+
+        if ($providerData->dob) {
+            $dob = $providerData->dob;
+            $input['dob_day'] = $dob['dob_day'];
+            $input['dob_month'] = $dob['dob_month'];
+            $input['dob_year'] = $dob['dob_year'];
+        } else {
+            $options->offsetSet('registrationSetup', array_replace($options->registrationSetup, [
+                'requireDob' => false,
+            ]));
+        }
+
+        $options->offsetSet('registrationSetup', array_replace($options->registrationSetup, [
+            'requireLocation' => false,
+        ]));
+
+        /** @var \XF\Service\User\Registration $registration */
+        $registration = $this->service('XF:User\Registration');
+        $registration->setFromInput($input);
+
+        if (strlen($input['password']) === 0) {
+            // to support old version
+            $registration->setNoPassword();
+        }
+
+        if ($providerData->email) {
+            $registration->skipEmailConfirmation();
+        }
+
+        $avatarUrl = $providerData->avatar_url ?? null;
+        // @phpstan-ignore-next-line
+        if ($avatarUrl) {
+            $registration->setAvatarUrl($avatarUrl);
+        }
+
+        if (!$registration->validate($errors)) {
+            throw $this->exception($this->error($errors));
+        }
+
+        /** @var User $user */
+        $user = $registration->save();
+
+        return $user;
     }
 
     protected function getUserApiResultOptions(XF\Entity\User $user): array

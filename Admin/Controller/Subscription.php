@@ -30,12 +30,12 @@ class Subscription extends Entity
         $finder->order('subscribed_date', 'desc');
     }
 
-    public function getEntityHint($entity)
+    public function getEntityHint(\XF\Mvc\Entity\Entity $entity): string
     {
         return $entity->get('device_token');
     }
 
-    public function getEntityExplain($entity)
+    public function getEntityExplain(\XF\Mvc\Entity\Entity $entity): string
     {
         $language = $this->app()->language();
 
@@ -47,57 +47,42 @@ class Subscription extends Entity
         );
     }
 
-    /**
-     * @return string
-     */
-    protected function getShortName()
+    protected function getShortName(): string
     {
         return 'Truonglv\Api:Subscription';
     }
 
-    /**
-     * @return string
-     */
-    protected function getPrefixForClasses()
+    protected function getPrefixForClasses(): string
     {
         return 'Truonglv\Api:Subscription';
     }
 
-    /**
-     * @return string
-     */
-    protected function getPrefixForPhrases()
+    protected function getPrefixForPhrases(): string
     {
         return 'tapi_subscription';
     }
 
-    /**
-     * @return string
-     */
-    protected function getPrefixForTemplates()
+    protected function getPrefixForTemplates(): string
     {
         return 'tapi';
     }
 
-    /**
-     * @return string
-     */
-    protected function getRoutePrefix()
+    protected function getRoutePrefix(): string
     {
         return 'tapi-subscriptions';
     }
 
-    protected function supportsAdding()
+    protected function supportsAdding(): bool
     {
         return false;
     }
 
-    protected function supportsEditing()
+    protected function supportsEditing(): bool
     {
         return false;
     }
 
-    protected function supportsViewing()
+    protected function supportsViewing(): bool
     {
         return true;
     }

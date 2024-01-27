@@ -33,12 +33,12 @@ class Log extends Entity
         );
     }
 
-    public function getEntityHint($entity)
+    public function getEntityHint(\XF\Mvc\Entity\Entity $entity): string
     {
         return $entity->get('response_code');
     }
 
-    public function getEntityExplain($entity)
+    public function getEntityExplain(\XF\Mvc\Entity\Entity $entity): string
     {
         if (!$entity instanceof \Truonglv\Api\Entity\Log) {
             return '';
@@ -62,57 +62,42 @@ class Log extends Entity
         $finder->order('log_date', 'desc');
     }
 
-    /**
-     * @return string
-     */
-    protected function getShortName()
+    protected function getShortName(): string
     {
         return 'Truonglv\Api:Log';
     }
 
-    /**
-     * @return string
-     */
-    protected function getPrefixForClasses()
+    protected function getPrefixForClasses(): string
     {
         return 'Truonglv\Api:Log';
     }
 
-    /**
-     * @return string
-     */
-    protected function getPrefixForPhrases()
+    protected function getPrefixForPhrases(): string
     {
         return 'tapi_log';
     }
 
-    /**
-     * @return string
-     */
-    protected function getPrefixForTemplates()
+    protected function getPrefixForTemplates(): string
     {
         return 'tapi';
     }
 
-    /**
-     * @return string
-     */
-    protected function getRoutePrefix()
+    protected function getRoutePrefix(): string
     {
         return 'tapi-logs';
     }
 
-    protected function supportsAdding()
+    protected function supportsAdding(): bool
     {
         return false;
     }
 
-    protected function supportsEditing()
+    protected function supportsEditing(): bool
     {
         return false;
     }
 
-    protected function supportsViewing()
+    protected function supportsViewing(): bool
     {
         return true;
     }
