@@ -7,7 +7,9 @@ use function md5;
 use function time;
 use XF\Util\Random;
 use function usleep;
+use function sprintf;
 use RuntimeException;
+use function microtime;
 use XF\Mvc\Entity\Repository;
 
 class Token extends Repository
@@ -66,7 +68,13 @@ class Token extends Repository
         while ($retried < $limit) {
             $retried++;
 
-            $token = md5(Random::getRandomString(32) . $salt);
+            $token = md5(sprintf(
+                '%s%f%d%s',
+                Random::getRandomBytes(32),
+                microtime(true),
+                $userId,
+                $salt
+            ));
             $exists = $app->finder($entityClassName)
                 ->whereId($token)
                 ->fetchOne();
