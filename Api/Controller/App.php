@@ -624,7 +624,7 @@ class App extends AbstractController
         if (!$this->options()->registrationSetup['enabled']) {
             throw $this->exception($this->error(XF::phrase('new_registrations_currently_not_being_accepted'), 400));
         }
-        
+
         $filterer = $this->app->inputFilterer();
 
         if ($providerData->email) {
@@ -659,12 +659,13 @@ class App extends AbstractController
 
         /** @var \XF\Service\User\Registration $registration */
         $registration = $this->service('XF:User\Registration');
-        $registration->setFromInput($input);
-
         if (strlen($input['password']) === 0) {
             // to support old version
             $registration->setNoPassword();
+            unset($input['password']);
         }
+
+        $registration->setFromInput($input);
 
         if ($providerData->email) {
             $registration->skipEmailConfirmation();
