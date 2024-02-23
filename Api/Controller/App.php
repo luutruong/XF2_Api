@@ -624,13 +624,7 @@ class App extends AbstractController
         if (!$this->options()->registrationSetup['enabled']) {
             throw $this->exception($this->error(XF::phrase('new_registrations_currently_not_being_accepted'), 400));
         }
-
-        if ($this->request()->exists('password') &&
-            strlen($input['password']) === 0
-        ) {
-            throw $this->exception($this->error(XF::phrase('please_enter_valid_password')));
-        }
-
+        
         $filterer = $this->app->inputFilterer();
 
         if ($providerData->email) {
