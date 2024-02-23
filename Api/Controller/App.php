@@ -619,7 +619,7 @@ class App extends AbstractController
     protected function createExternalAccount(
         XF\ConnectedAccount\ProviderData\AbstractProviderData $providerData,
         ConnectedAccountProvider $provider,
-        array $input,
+        array $input
     ): XF\Entity\User {
         if (!$this->options()->registrationSetup['enabled']) {
             throw $this->exception($this->error(XF::phrase('new_registrations_currently_not_being_accepted'), 400));
