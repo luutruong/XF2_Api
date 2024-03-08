@@ -37,9 +37,19 @@ class User extends XFCP_User
         $page = $this->filterPage();
         $perPage = $this->app()->options()->tApi_recordsPerPage;
 
+        $order = $this->filter('order', 'str');
+        $direction = $this->filter('direction', 'str');
+        if (!\in_array($direction, ['asc', 'desc'], true)) {
+            $direction = 'desc';
+        }
+
         /** @var UserFollow $followRepo */
         $followRepo = $this->repository('XF:UserFollow');
         $finder = $followRepo->findFollowingForProfile($user);
+
+        if ($order == 'last_activity') {
+            $finder->order('User.last_activity', $direction);
+        }
 
         $total = $finder->total();
         $entities = $total > 0
