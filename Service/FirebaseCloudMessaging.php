@@ -5,7 +5,9 @@ namespace Truonglv\Api\Service;
 use XF;
 use XF\Entity\User;
 use function strlen;
+use function strpos;
 use function strval;
+use ReflectionClass;
 use function file_exists;
 use function is_readable;
 use Kreait\Firebase\Factory;
@@ -16,6 +18,7 @@ use Kreait\Firebase\Messaging\ApnsConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 use Kreait\Firebase\Messaging\AndroidConfig;
+use Kreait\Firebase\Messaging\MessageTarget;
 
 class FirebaseCloudMessaging extends AbstractPushNotification
 {
@@ -58,8 +61,12 @@ class FirebaseCloudMessaging extends AbstractPushNotification
             $dataTransformed[strval($key)] = strval($value);
         }
 
+        $subsKeyedToken = [];
+
         /** @var Subscription $subscription */
         foreach ($subscriptions as $subscription) {
+            $subsKeyedToken[$subscription->device_token][] = $subscription;
+
             /** @var User $receiver */
             $receiver = $subscription->User;
             $message = CloudMessage::withTarget('token', $subscription->device_token)
@@ -88,10 +95,38 @@ class FirebaseCloudMessaging extends AbstractPushNotification
         // @phpstan-ignore-next-line
         $sent = $messaging->sendAll($messages);
         foreach ($sent->failures()->getItems() as $fail) {
-            if ($fail->error() !== null) {
-                $this->app->error()->logError($fail->error()->getMessage());
+            if ($fail->error() === null) {
+                continue;
             }
+
+            $message = $fail->message();
+            if ($message !== null &&
+                $this->isEntityNotFound($fail->error()->getMessage()) &&
+                $message instanceof CloudMessage
+            ) {
+                $reflection = new ReflectionClass($message);
+                $prop = $reflection->getProperty('target');
+                $prop->setAccessible(true);
+
+                /** @var MessageTarget $messageTarget */
+                $messageTarget = $prop->getValue($message);
+                if (isset($subsKeyedToken[$messageTarget->value()])) {
+                    /** @var Subscription $subscription */
+                    foreach ($subsKeyedToken[$messageTarget->value()] as $subscription) {
+                        $subscription->delete();
+                    }
+
+                    continue;
+                }
+            }
+
+            $this->app->error()->logError($fail->error()->getMessage());
         }
+    }
+
+    protected function isEntityNotFound(string $message): bool
+    {
+        return strpos($message, 'Requested entity was not found') === 0;
     }
 
     public function unsubscribe(string $externalId, string $pushToken): void

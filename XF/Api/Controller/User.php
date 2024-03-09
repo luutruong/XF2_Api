@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use XF;
+use function in_array;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
 use XF\Service\User\Follow;
@@ -39,7 +40,7 @@ class User extends XFCP_User
 
         $order = $this->filter('order', 'str');
         $direction = $this->filter('direction', 'str');
-        if (!\in_array($direction, ['asc', 'desc'], true)) {
+        if (!in_array($direction, ['asc', 'desc'], true)) {
             $direction = 'desc';
         }
 
