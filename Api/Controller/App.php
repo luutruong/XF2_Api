@@ -569,20 +569,20 @@ class App extends AbstractController
             return $this->error(XF::phrase('tapi_your_account_has_been_upgraded'));
         }
 
-//        /** @var XF\Repository\Payment $paymentRepo */
-//        $paymentRepo$paymentRepo = $this->repository('XF:Payment');
-//        $paymentRepo->logCallback(
-//            $purchaseRequest->request_key,
-//            $product->PaymentProfile->provider_id,
-//            $transactionId,
-//            'payment',
-//            "[{$platform}] Received in-app purchase",
-//            array_merge([
-//                '_POST' => $_POST,
-//                'store_product_id' => $product->store_product_id,
-//            ], $data),
-//            $subscriberId
-//        );
+        /** @var XF\Repository\Payment $paymentRepo */
+        $paymentRepo = $this->repository('XF:Payment');
+        $paymentRepo->logCallback(
+            $purchaseRequest->request_key,
+            $product->PaymentProfile->provider_id,
+            $transactionId,
+            'info',
+            "[{$platform}] Received in-app purchase",
+            array_merge([
+                '_POST' => $_POST,
+                'store_product_id' => $product->store_product_id,
+            ], $data),
+            $subscriberId
+        );
 
         $state = new XF\Payment\CallbackState();
         $state->purchaseRequest = $purchaseRequest;
@@ -590,6 +590,11 @@ class App extends AbstractController
         $state->transactionId = $transactionId;
         $state->subscriberId = $subscriberId;
         $handler->completeTransaction($state);
+
+        $state->apiLogDetails = array_merge([
+            '_POST' => $_POST,
+            'store_product_id' => $product->store_product_id,
+        ], $data);
 
         $handler->log($state);
 
