@@ -56,8 +56,7 @@ class ThreadController extends XFCP_ThreadController
 
         $voter->save();
 
-        /** @var Poll $pollNew */
-        $pollNew = $this->finder('XF:Poll')->whereId($poll->poll_id)->fetchOne();
+        $pollNew = $this->finder(XF\Finder\PollFinder::class)->whereId($poll->poll_id)->fetchOne();
 
         return $this->apiSuccess([
             'poll' => $pollNew->toApiResult(Entity::VERBOSITY_VERBOSE)

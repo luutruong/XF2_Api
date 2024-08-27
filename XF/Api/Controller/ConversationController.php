@@ -43,7 +43,7 @@ class ConversationController extends XFCP_ConversationController
         /** @var ConversationMaster $convoMaster */
         $convoMaster = $userConvo->Master;
 
-        $finder = $this->finder('XF:ConversationRecipient');
+        $finder = $this->finder(XF\Finder\ConversationRecipientFinder::class);
         $finder->with('User', true);
         $finder->where('recipient_state', 'active');
         $finder->where('conversation_id', $convoMaster->conversation_id);

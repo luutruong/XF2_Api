@@ -194,7 +194,7 @@ class IOS extends AbstractProvider implements IAPInterface
 
         // setup from subscription
         if ($originalTransactionId) {
-            $purchaseRequests = XF::finder('XF:PurchaseRequest')
+            $purchaseRequests = XF::finder(XF\Finder\PurchaseRequestFinder::class)
                 ->where('provider_id', $this->providerId)
                 ->where('provider_metadata', $originalTransactionId)
                 ->order('purchase_request_id', 'desc')
@@ -214,7 +214,7 @@ class IOS extends AbstractProvider implements IAPInterface
             if ($purchaseRequest !== null) {
                 $state->purchaseRequest = $purchaseRequest; // sets requestKey too
             } else {
-                $logFinder = XF::finder('XF:PaymentProviderLog')
+                $logFinder = XF::finder(XF\Finder\PaymentProviderLogFinder::class)
                     ->where('subscriber_id', $originalTransactionId)
                     ->where('provider_id', $this->providerId)
                     ->order('log_date', 'desc');

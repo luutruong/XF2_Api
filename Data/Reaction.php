@@ -17,7 +17,7 @@ class Reaction
     {
         if ($this->reactions === null) {
             $reactions = [];
-            $activeReactions = XF::finder('XF:Reaction')
+            $activeReactions = XF::finder(XF\Finder\ReactionFinder::class)
                 ->where('active', true)
                 ->order('display_order')
                 ->fetch();

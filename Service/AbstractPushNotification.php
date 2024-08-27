@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Service;
 
+use Truonglv\Api\Finder\SubscriptionFinder;
 use XF;
 use XF\Entity\User;
 use Truonglv\Api\App;
@@ -128,7 +129,7 @@ abstract class AbstractPushNotification extends AbstractService
      */
     protected function findSubscriptions()
     {
-        $finder = $this->app->finder('Truonglv\Api:Subscription');
+        $finder = $this->app->finder(SubscriptionFinder::class);
         $finder->where('provider', $this->getProviderId());
 
         return $finder;

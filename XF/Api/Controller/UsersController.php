@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use XF\Finder\UserFinder;
 use function is_array;
 use function array_map;
 use function preg_split;
@@ -22,7 +23,7 @@ class UsersController extends XFCP_UsersController
         }
 
         $names = array_map('trim', $names);
-        $userFinder = $this->finder('XF:User');
+        $userFinder = $this->finder(UserFinder::class);
         $users = $userFinder->where('username', $names)->with('api')->fetch();
 
         return $this->apiResult([

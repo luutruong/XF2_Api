@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Payment;
 
+use Truonglv\Api\Finder\IAPProductFinder;
 use XF;
 use Throwable;
 use function ceil;
@@ -124,7 +125,7 @@ class Android extends AbstractProvider implements IAPInterface
         $state->{static::KEY_STATE_DATA_RAW} = $json;
 
         /** @var IAPProduct|null $product */
-        $product = XF::finder('Truonglv\Api:IAPProduct')
+        $product = XF::finder(IAPProductFinder::class)
             ->where('platform', 'android')
             ->where('store_product_id', $filtered['subscriptionNotification']['subscriptionId'])
             ->fetchOne();
@@ -178,7 +179,7 @@ class Android extends AbstractProvider implements IAPInterface
         if ($purchaseRequest !== null) {
             $state->purchaseRequest = $purchaseRequest; // sets requestKey too
         } else {
-            $logFinder = XF::finder('XF:PaymentProviderLog')
+            $logFinder = XF::finder(XF\Finder\PaymentProviderLogFinder::class)
                 ->where('subscriber_id', $transInfo['subscriber_id'])
                 ->where('provider_id', $this->providerId)
                 ->order('log_date', 'desc');
@@ -242,7 +243,7 @@ class Android extends AbstractProvider implements IAPInterface
             $payload = (array) json_decode($purchase->getDeveloperPayload(), true);
             if (!array_key_exists('request_key', $payload) || $payload['request_key'] === null) {
                 $state->logMessage = 'Invalid purchase request';
-                $lastLog = XF::finder('XF:PaymentProviderLog')
+                $lastLog = XF::finder(XF\Finder\PaymentProviderLogFinder::class)
                     ->where('subscriber_id', $state->subscriberId)
                     ->where('provider_id', $this->providerId)
                     ->where('log_type', 'info')

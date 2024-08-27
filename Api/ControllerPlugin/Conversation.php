@@ -10,6 +10,7 @@ use XF\Api\Result\EntityResults;
 use XF\Entity\ConversationMaster;
 use XF\Entity\ConversationRecipient;
 use XF\Api\ControllerPlugin\AbstractPlugin;
+use XF\Finder\ConversationRecipientFinder;
 
 class Conversation extends AbstractPlugin
 {
@@ -104,7 +105,7 @@ class Conversation extends AbstractPlugin
             $conversationIds[] = $conversation->conversation_id;
         }
 
-        $recipients = $this->finder('XF:ConversationRecipient')
+        $recipients = $this->finder(ConversationRecipientFinder::class)
             ->with('User')
             ->where('conversation_id', $conversationIds)
             ->where('recipient_state', 'active')

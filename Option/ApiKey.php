@@ -40,7 +40,7 @@ class ApiKey extends AbstractOption
     {
         return self::getTemplate('admin:tapi_option_template_apiKey', $option, $htmlParams, [
             'requiredScopes' => self::$requiredScopes,
-            'availableApiKeys' => XF::app()->finder('XF:ApiKey')->where('active', 1)->fetch()
+            'availableApiKeys' => XF::app()->finder(XF\Finder\ApiKeyFinder::class)->where('active', 1)->fetch()
         ]);
     }
 

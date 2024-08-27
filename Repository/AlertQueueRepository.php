@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Repository;
 
+use Truonglv\Api\Finder\AlertQueueFinder;
 use XF;
 use XF\Timer;
 use Throwable;
@@ -61,7 +62,7 @@ class AlertQueueRepository extends Repository
     public function run(int $maxRunTime): void
     {
         $timer = $maxRunTime > 0 ? new Timer($maxRunTime) : null;
-        $records = $this->finder('Truonglv\Api:AlertQueue')
+        $records = $this->finder(AlertQueueFinder::class)
             ->where('queue_date', '<=', XF::$time)
             ->order('queue_date')
             ->limit($timer === null ? null : 20)

@@ -2,6 +2,9 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use Truonglv\Api\Finder\IAPProductFinder;
+use Truonglv\Api\Finder\RefreshTokenFinder;
+use Truonglv\Api\Finder\SubscriptionFinder;
 use Truonglv\Api\Repository\TokenRepository;
 use Truonglv\Api\Service\SubscriptionService;
 use XF;
@@ -111,7 +114,7 @@ class App extends AbstractController
             ]);
         }
 
-        $newFinder = $this->finder('XF:Thread');
+        $newFinder = $this->finder(XF\Finder\ThreadFinder::class);
         $threads = $newFinder->whereIds($threadIds)
             ->with(['FirstPost', 'LastPost'])
             ->with('api')
@@ -209,7 +212,7 @@ class App extends AbstractController
                 'provider_key',
             ]);
 
-            $dupes = $this->finder('Truonglv\Api:Subscription')
+            $dupes = $this->finder(SubscriptionFinder::class)
                 ->where('device_token', $input['device_token'])
                 ->where('provider', $input['provider'])
                 ->fetch();
@@ -438,7 +441,7 @@ class App extends AbstractController
         $this->assertRequiredApiInput(['name']);
 
         /** @var XF\Entity\Node|null $node */
-        $node = $this->finder('XF:Node')
+        $node = $this->finder(XF\Finder\NodeFinder::class)
             ->where('node_name', $this->filter('name', 'str'))
             ->fetchOne();
         if ($node === null) {
@@ -454,7 +457,7 @@ class App extends AbstractController
     {
         $this->assertRegisteredUser();
 
-        $products = $this->finder('Truonglv\Api:IAPProduct')
+        $products = $this->finder(IAPProductFinder::class)
             ->with('UserUpgrade', true)
             ->where('active', true)
             ->order('display_order')
@@ -484,7 +487,7 @@ class App extends AbstractController
         }
 
         /** @var IAPProduct|null $product */
-        $product = $this->finder('Truonglv\Api:IAPProduct')
+        $product = $this->finder(IAPProductFinder::class)
             ->where('platform', $platform)
             ->where('store_product_id', $storeProductId)
             ->fetchOne();
@@ -556,7 +559,7 @@ class App extends AbstractController
         $purchaseRequest->fastUpdate('provider_metadata', $subscriberId);
 
         /** @var XF\Entity\PaymentProviderLog|null $log */
-        $log = $this->finder('XF:PaymentProviderLog')
+        $log = $this->finder(XF\Finder\PaymentProviderLogFinder::class)
             ->where('provider_id', $handler->getProviderId())
             ->where('transaction_id', $transactionId)
             ->where('log_type', 'payment')
@@ -634,7 +637,7 @@ class App extends AbstractController
 
         if ($providerData->email) {
             /** @var \XF\Entity\User|null $emailUser */
-            $emailUser = $this->finder('XF:User')->where('email', $providerData->email)->fetchOne();
+            $emailUser = $this->finder(XF\Finder\UserFinder::class)->where('email', $providerData->email)->fetchOne();
             if ($emailUser !== null && $emailUser->user_id !== XF::visitor()->user_id) {
                 throw $this->exception($this->error(XF::phrase('this_accounts_email_is_already_associated_with_another_member', [
                     'provider' => $provider->title,
@@ -865,7 +868,7 @@ class App extends AbstractController
         $this->assertRequiredApiInput(['token']);
 
         /** @var RefreshToken|null $token */
-        $token = $this->finder('Truonglv\Api:RefreshToken')
+        $token = $this->finder(RefreshTokenFinder::class)
             ->with('User', true)
             ->whereId($this->filter('token', 'str'))
             ->fetchOne();
@@ -996,8 +999,7 @@ class App extends AbstractController
         $visitor = XF::visitor();
         $filters = $this->getNewsFeedsFilters();
 
-        /** @var Thread $finder */
-        $finder = $this->finder('XF:Thread');
+        $finder = $this->finder(XF\Finder\ThreadFinder::class);
 
         $this->applyNewsFeedsFilter($finder, $filters);
         $finder->limit($this->options()->maximumSearchResults);

@@ -16,7 +16,7 @@ class Bookmark extends AbstractController
         $contentType = $this->filter('content_type', 'str');
 
         $visitor = XF::visitor();
-        $finder = $this->finder('XF:BookmarkItem');
+        $finder = $this->finder(XF\Finder\BookmarkItemFinder::class);
 
         $finder->where('user_id', $visitor->user_id);
         $finder->where('content_type', $contentType);

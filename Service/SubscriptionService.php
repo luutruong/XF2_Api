@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Service;
 
+use Truonglv\Api\Finder\SubscriptionFinder;
 use XF;
 use XF\Entity\User;
 use XF\Service\AbstractService;
@@ -34,7 +35,7 @@ class SubscriptionService extends AbstractService
     public function unsubscribe(): void
     {
         /** @var \Truonglv\Api\Entity\Subscription[] $subscriptions */
-        $subscriptions = $this->finder('Truonglv\Api:Subscription')
+        $subscriptions = $this->finder(SubscriptionFinder::class)
             ->where('user_id', $this->user->user_id)
             ->where('device_token', $this->pushToken)
             ->fetch();
@@ -46,7 +47,7 @@ class SubscriptionService extends AbstractService
     public function subscribe(array $extra): \Truonglv\Api\Entity\Subscription
     {
         /** @var \Truonglv\Api\Entity\Subscription|null $exists */
-        $exists = $this->finder('Truonglv\Api:Subscription')
+        $exists = $this->finder(SubscriptionFinder::class)
             ->where('user_id', $this->user->user_id)
             ->where('device_token', $this->pushToken)
             ->fetchOne();

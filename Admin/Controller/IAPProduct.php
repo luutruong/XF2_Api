@@ -3,6 +3,9 @@
 namespace Truonglv\Api\Admin\Controller;
 
 use Truonglv\Api\App;
+use Truonglv\Api\Finder\IAPProductFinder;
+use XF\Finder\PaymentProfileFinder;
+use XF\Finder\UserUpgradeFinder;
 use XF\Mvc\ParameterBag;
 use XF\ControllerPlugin\Delete;
 use XF\ControllerPlugin\Toggle;
@@ -25,7 +28,7 @@ class IAPProduct extends AbstractController
 
     public function actionIndex()
     {
-        $products = $this->finder($this->getEntityClassName())
+        $products = $this->finder(IAPProductFinder::class)
             ->order('display_order')
             ->fetch();
 
@@ -127,8 +130,8 @@ class IAPProduct extends AbstractController
 
     protected function getProductForm(\Truonglv\Api\Entity\IAPProduct $product): AbstractReply
     {
-        $userUpgrades = $this->finder('XF:UserUpgrade')->fetch();
-        $paymentProfiles = $this->finder('XF:PaymentProfile')
+        $userUpgrades = $this->finder(UserUpgradeFinder::class)->fetch();
+        $paymentProfiles = $this->finder(PaymentProfileFinder::class)
             ->where('provider_id', [App::PAYMENT_PROVIDER_ANDROID, App::PAYMENT_PROVIDER_IOS])
             ->fetch();
 

@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Cron;
 
+use Truonglv\Api\Finder\SubscriptionFinder;
 use XF;
 use XF\Timer;
 use Truonglv\Api\Repository\TokenRepository;
@@ -22,7 +23,7 @@ class Auto
         $subscriptionInactiveLength = XF::options()->tApi_inactiveDeviceLength;
         if ($subscriptionInactiveLength > 0) {
             $timer = new Timer(3);
-            $entities = XF::finder('Truonglv\Api:Subscription')
+            $entities = XF::finder(SubscriptionFinder::class)
                 ->where('subscribed_date', '<=', XF::$time - $subscriptionInactiveLength * 86400)
                 ->order('subscribed_date')
                 ->limit(20)

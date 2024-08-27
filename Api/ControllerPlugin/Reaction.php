@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Api\ControllerPlugin;
 
+use XF\Finder\ReactionContentFinder;
 use XF\Mvc\Entity\Entity;
 use XF\Api\ControllerPlugin\AbstractPlugin;
 
@@ -19,7 +20,7 @@ class Reaction extends AbstractPlugin
            'reaction_id' => 'uint',
         ]);
 
-        $finder = $this->finder('XF:ReactionContent');
+        $finder = $this->finder(ReactionContentFinder::class);
 
         $finder->where('content_type', $contentType);
         $finder->where('content_id', $content->getEntityId());

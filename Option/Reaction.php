@@ -81,7 +81,7 @@ class Reaction extends AbstractOption
 
     protected static function getReactions(): AbstractCollection
     {
-        return XF::finder('XF:Reaction')
+        return XF::finder(XF\Finder\ReactionFinder::class)
             ->where('active', true)
             ->order('display_order')
             ->fetch();

@@ -190,7 +190,7 @@ class Search extends AbstractController
         );
 
         /** @var \XF\Entity\Search|null $existingSearch */
-        $existingSearch = $this->finder('XF:Search')
+        $existingSearch = $this->finder(XF\Finder\SearchFinder::class)
             ->where('user_id', 0)
             ->where('query_hash', $queryHash)
             ->where('search_type', self::SEARCH_TYPE_USER)
@@ -203,7 +203,7 @@ class Search extends AbstractController
             ]);
         }
 
-        $finder = $this->finder('XF:User');
+        $finder = $this->finder(XF\Finder\UserFinder::class);
         $finder->where('username', 'LIKE', $finder->escapeLike($name, '?%'));
         $finder->order('username');
 

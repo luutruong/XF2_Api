@@ -17,7 +17,7 @@ class MeController extends XFCP_MeController
         $visitor = XF::visitor();
         $ignored = $visitor->Profile !== null ? $visitor->Profile->ignored : [];
         if (count($ignored) > 0) {
-            $users = $this->finder('XF:User')
+            $users = $this->finder(XF\Finder\UserFinder::class)
                 ->where('user_id', array_keys($ignored))
                 ->order('username')
                 ->fetch();
