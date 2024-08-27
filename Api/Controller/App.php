@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use Truonglv\Api\Repository\TokenRepository;
+use Truonglv\Api\Service\SubscriptionService;
 use XF;
 use DateTime;
 use Throwable;
@@ -124,8 +126,7 @@ class App extends AbstractController
             }
         }
 
-        /** @var Attachment $attachmentRepo */
-        $attachmentRepo = $this->repository('XF:Attachment');
+        $attachmentRepo = $this->repository(XF\Repository\AttachmentRepository::class);
         $attachmentRepo->addAttachmentsToContent($posts, 'post');
 
         $data['threads'] = $threads->filterViewable()->toApiResults(Entity::VERBOSITY_NORMAL, [
@@ -150,8 +151,7 @@ class App extends AbstractController
 
     public function actionGetTrendingTags()
     {
-        /** @var \Truonglv\Api\XF\Repository\Tag $tagRepo */
-        $tagRepo = $this->repository('XF:Tag');
+        $tagRepo = $this->repository(XF\Repository\TagRepository::class);
         $enableTagging = (bool) $this->options()->enableTagging;
         if (!$enableTagging) {
             return $this->apiResult([
@@ -198,8 +198,7 @@ class App extends AbstractController
             'device_type' => 'str',
         ]);
 
-        /** @var \Truonglv\Api\Service\Subscription $service */
-        $service = $this->service('Truonglv\Api:Subscription', XF::visitor(), $input['device_token']);
+        $service = $this->service(SubscriptionService::class, XF::visitor(), $input['device_token']);
 
         $extra = [];
         if ($input['type'] === 'unsubscribe') {
@@ -263,8 +262,7 @@ class App extends AbstractController
             'email' => 'str'
         ]);
 
-        /** @var Registration $registration */
-        $registration = $this->service('XF:User\Registration');
+        $registration = $this->service(XF\Service\User\RegistrationService::class);
         $registration->setFromInput($input);
         $registration->setPassword($decrypted, '', false);
 
@@ -374,8 +372,7 @@ class App extends AbstractController
             $input['password'] = $this->decryptPassword($input['password']);
         }
 
-        /** @var ConnectedAccount $connectedAccountRepo */
-        $connectedAccountRepo = $this->repository('XF:ConnectedAccount');
+        $connectedAccountRepo = $this->repository(XF\Repository\ConnectedAccountRepository::class);
         $tokenText = $this->filter('token', 'str');
 
         /** @var User|null $associateUser */
@@ -567,8 +564,7 @@ class App extends AbstractController
             return $this->error(XF::phrase('tapi_your_account_has_been_upgraded'));
         }
 
-        /** @var XF\Repository\Payment $paymentRepo */
-        $paymentRepo = $this->repository('XF:Payment');
+        $paymentRepo = $this->repository(XF\Repository\PaymentRepository::class);
         $paymentRepo->logCallback(
             $purchaseRequest->request_key,
             $product->PaymentProfile->provider_id,
@@ -657,8 +653,7 @@ class App extends AbstractController
             'requireLocation' => false,
         ]));
 
-        /** @var \XF\Service\User\Registration $registration */
-        $registration = $this->service('XF:User\Registration');
+        $registration = $this->service(XF\Service\User\RegistrationService::class);
         if (strlen($input['password']) === 0) {
             // to support old version
             $registration->setNoPassword();
@@ -699,8 +694,7 @@ class App extends AbstractController
 
     protected function getAuthResultData(\XF\Entity\User $user, bool $withRefreshToken = true): array
     {
-        /** @var \Truonglv\Api\Repository\Token $tokenRepo */
-        $tokenRepo = XF::repository('Truonglv\Api:Token');
+        $tokenRepo = XF::repository(TokenRepository::class);
 
         $data = [
             'user' => $user->toApiResult(Entity::VERBOSITY_VERBOSE, $this->getUserApiResultOptions($user)),
@@ -790,8 +784,7 @@ class App extends AbstractController
     {
         $ip = $this->request()->getIp();
 
-        /** @var \XF\Service\User\Login $loginService */
-        $loginService = $this->service('XF:User\Login', $username, $ip);
+        $loginService = $this->service(XF\Service\User\LoginService::class, $username, $ip);
         if ($loginService->isLoginLimited($limitType)) {
             throw $this->errorException(XF::phrase('your_account_has_temporarily_been_locked_due_to_failed_login_attempts'), 400);
         }
@@ -823,8 +816,7 @@ class App extends AbstractController
         }
 
         $provider = $this->filter('tfa_provider', 'str');
-        /** @var Tfa $tfaRepo */
-        $tfaRepo = $this->repository('XF:Tfa');
+        $tfaRepo = $this->repository(XF\Repository\TfaRepository::class);
         $providers = $tfaRepo->getAvailableProvidersForUser($user->user_id);
         $response = $this->app()->response();
         $response->header('X-Api-Tfa-Providers', implode(',', array_keys($providers)));
@@ -835,8 +827,7 @@ class App extends AbstractController
             throw $this->exception($this->message(XF::phrase('two_step_verification_required'), 202));
         }
 
-        /** @var \XF\Service\User\Tfa $tfaService */
-        $tfaService = $this->service('XF:User\Tfa', $user);
+        $tfaService = $this->service(XF\Service\User\TfaService::class, $user);
 
         if (!$tfaService->isTfaAvailable()) {
             return true;
@@ -955,8 +946,7 @@ class App extends AbstractController
             $finder->whereImpossible();
         }
 
-        /** @var \XF\Repository\Thread $threadRepo */
-        $threadRepo = $this->repository('XF:Thread');
+        $threadRepo = $this->repository(XF\Repository\ThreadRepository::class);
         $readMarkingCutoff = $threadRepo->getReadMarkingCutOff();
 
         switch ($filters['order']) {
@@ -1036,8 +1026,7 @@ class App extends AbstractController
 
     protected function getViewableNodeIds(): array
     {
-        /** @var Node $nodeRepo */
-        $nodeRepo = $this->repository('XF:Node');
+        $nodeRepo = $this->repository(XF\Repository\NodeRepository::class);
         $nodes = $nodeRepo->getNodeList();
 
         $nodeIds = [];

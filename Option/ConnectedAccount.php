@@ -9,8 +9,7 @@ class ConnectedAccount extends AbstractOption
 {
     public static function renderOption(\XF\Entity\Option $option, array $htmlParams): string
     {
-        /** @var \XF\Repository\ConnectedAccount $connectedAccountRepo */
-        $connectedAccountRepo = XF::repository('XF:ConnectedAccount');
+        $connectedAccountRepo = XF::repository(XF\Repository\ConnectedAccountRepository::class);
         $choices = ['' => ''];
         $choices += $connectedAccountRepo->getConnectedAccountProviderTitlePairs();
 

@@ -16,7 +16,7 @@ use InvalidArgumentException;
 use Truonglv\Api\Data\Reaction;
 use XF\Api\Result\EntityResult;
 use Truonglv\Api\Util\Encryption;
-use Truonglv\Api\Repository\AlertQueue;
+use Truonglv\Api\Repository\AlertQueueRepository;
 
 class App
 {
@@ -62,8 +62,7 @@ class App
 
     public static function canViewResources(): bool
     {
-        /** @var AddOn $addOnRepo */
-        $addOnRepo = XF::repository('XF:AddOn');
+        $addOnRepo = XF::repository(XF\Repository\AddOnRepository::class);
         $addOns = $addOnRepo->getEnabledAddOns();
 
         if (isset($addOns['XFRM'])) {
@@ -110,8 +109,7 @@ class App
      */
     public static function getSupportAlertContentTypes(): array
     {
-        /** @var AlertQueue $alertQueueRepo */
-        $alertQueueRepo = XF::repository('Truonglv\Api:AlertQueue');
+        $alertQueueRepo = XF::repository(AlertQueueRepository::class);
 
         return $alertQueueRepo->getSupportedAlertContentTypes();
     }
@@ -161,10 +159,9 @@ class App
         $result->tapi_reactions = $reacted;
     }
 
-    public static function alertQueueRepo(): AlertQueue
+    public static function alertQueueRepo(): AlertQueueRepository
     {
-        /** @var AlertQueue $repo */
-        $repo = XF::repository('Truonglv\Api:AlertQueue');
+        $repo = XF::repository(AlertQueueRepository::class);
 
         return $repo;
     }

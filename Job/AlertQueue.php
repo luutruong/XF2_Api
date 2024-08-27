@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Job;
 
+use Truonglv\Api\Repository\AlertQueueRepository;
 use XF\Job\AbstractJob;
 
 class AlertQueue extends AbstractJob
@@ -11,8 +12,7 @@ class AlertQueue extends AbstractJob
      */
     public function run($maxRunTime)
     {
-        /** @var \Truonglv\Api\Repository\AlertQueue $alertQueueRepo */
-        $alertQueueRepo = $this->app->repository('Truonglv\Api:AlertQueue');
+        $alertQueueRepo = $this->app->repository(AlertQueueRepository::class);
         $alertQueueRepo->run(max($maxRunTime, 0));
 
         $nextRunTime = $alertQueueRepo->getFirstRunTime();

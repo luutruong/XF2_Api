@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Api\\Controller\\ThreadController",
+    "to_class": "Truonglv\\Api\\XF\\Api\\Controller\\ThreadController",
+    "execute_order": 10,
+    "active": true
+}

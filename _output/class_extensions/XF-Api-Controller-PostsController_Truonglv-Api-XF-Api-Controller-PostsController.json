@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Api\\Controller\\PostsController",
+    "to_class": "Truonglv\\Api\\XF\\Api\\Controller\\PostsController",
+    "execute_order": 10,
+    "active": true
+}

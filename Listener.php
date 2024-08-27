@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api;
 
+use Truonglv\Api\Repository\LogRepository;
 use XF;
 use XF\Container;
 use XF\Entity\ApiKey;
@@ -100,8 +101,7 @@ class Listener
         }
 
         $request = $app->request();
-        /** @var \Truonglv\Api\Repository\Log $logRepo */
-        $logRepo = $app->repository('Truonglv\Api:Log');
+        $logRepo = $app->repository(LogRepository::class);
 
         /** @var Log $log */
         $log = $app->em()->create('Truonglv\Api:Log');

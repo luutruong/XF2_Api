@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Job;
 
+use Truonglv\Api\Service\OneSignalService;
 use XF\Job\JobResult;
 use XF\Job\AbstractJob;
 use Truonglv\Api\Service\AbstractPushNotification;
@@ -24,7 +25,7 @@ class Unsubscribe extends AbstractJob
         /** @var AbstractPushNotification|null $service */
         $service = null;
         if ($this->data['provider'] === 'one_signal') {
-            $service = $this->app->service('Truonglv\Api:OneSignal');
+            $service = $this->app->service(OneSignalService::class);
         }
 
         if ($service) {

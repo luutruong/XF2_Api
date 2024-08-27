@@ -247,8 +247,7 @@ abstract class Entity extends AbstractController
         switch ($relation['entity']) {
             case 'XF:Forum':
                 $tag = 'select';
-                /** @var \XF\Repository\Node $nodeRepo */
-                $nodeRepo = $entity->repository('XF:Node');
+                $nodeRepo = $entity->repository(XF\Repository\NodeRepository::class);
                 $tagOptions['choices'] = $nodeRepo->getNodeOptionsData(false, ['Forum']);
 
                 break;
@@ -573,8 +572,7 @@ abstract class Entity extends AbstractController
                 $userId = 0;
 
                 if (isset($input['username_values'][$columnName])) {
-                    /** @var \XF\Repository\User $userRepo */
-                    $userRepo = $this->repository('XF:User');
+                    $userRepo = $this->repository(XF\Repository\UserRepository::class);
                     /** @var \XF\Entity\User|null $user */
                     $user = $userRepo->getUserByNameOrEmail($input['username_values'][$columnName]);
                     if ($user === null) {

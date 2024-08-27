@@ -4,7 +4,7 @@ namespace Truonglv\Api\Cron;
 
 use XF;
 use XF\Timer;
-use Truonglv\Api\Repository\Token;
+use Truonglv\Api\Repository\TokenRepository;
 
 class Auto
 {
@@ -16,8 +16,7 @@ class Auto
         $logLength = XF::options()->tApi_logLength;
         XF::db()->delete('xf_tapi_log', 'log_date <= ?', XF::$time - $logLength * 86400);
 
-        /** @var Token $tokenRepo */
-        $tokenRepo = XF::repository('Truonglv\Api:Token');
+        $tokenRepo = XF::repository(TokenRepository::class);
         $tokenRepo->pruneTokens();
 
         $subscriptionInactiveLength = XF::options()->tApi_inactiveDeviceLength;

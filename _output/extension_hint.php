@@ -1,5 +1,6 @@
 <?php
 
+/** @noinspection PhpIllegalPsrClassPathInspection */
 // ################## THIS IS A GENERATED FILE ##################
 // DO NOT EDIT DIRECTLY. EDIT THE CLASS EXTENSIONS IN THE CONTROL PANEL.
 
@@ -17,26 +18,26 @@ namespace Truonglv\Api\XFRM\Entity
 
 namespace Truonglv\Api\XF\Admin\Controller
 {
-	class XFCP_Tools extends \XF\Admin\Controller\Tools {}
+	class XFCP_ToolsController extends \XF\Admin\Controller\ToolsController {}
 }
 
 namespace Truonglv\Api\XF\Api\Controller
 {
-	class XFCP_Conversation extends \XF\Api\Controller\Conversation {}
-	class XFCP_ConversationMessage extends \XF\Api\Controller\ConversationMessage {}
-	class XFCP_ConversationMessages extends \XF\Api\Controller\ConversationMessages {}
-	class XFCP_Conversations extends \XF\Api\Controller\Conversations {}
-	class XFCP_Forum extends \XF\Api\Controller\Forum {}
-	class XFCP_Me extends \XF\Api\Controller\Me {}
-	class XFCP_Post extends \XF\Api\Controller\Post {}
-	class XFCP_Posts extends \XF\Api\Controller\Posts {}
-	class XFCP_ProfilePost extends \XF\Api\Controller\ProfilePost {}
-	class XFCP_ProfilePostComment extends \XF\Api\Controller\ProfilePostComment {}
-	class XFCP_ProfilePostComments extends \XF\Api\Controller\ProfilePostComments {}
-	class XFCP_Thread extends \XF\Api\Controller\Thread {}
-	class XFCP_Threads extends \XF\Api\Controller\Threads {}
-	class XFCP_User extends \XF\Api\Controller\User {}
-	class XFCP_Users extends \XF\Api\Controller\Users {}
+	class XFCP_ConversationController extends \XF\Api\Controller\ConversationController {}
+	class XFCP_ConversationMessageController extends \XF\Api\Controller\ConversationMessageController {}
+	class XFCP_ConversationMessagesController extends \XF\Api\Controller\ConversationMessagesController {}
+	class XFCP_ConversationsController extends \XF\Api\Controller\ConversationsController {}
+	class XFCP_ForumController extends \XF\Api\Controller\ForumController {}
+	class XFCP_MeController extends \XF\Api\Controller\MeController {}
+	class XFCP_PostController extends \XF\Api\Controller\PostController {}
+	class XFCP_PostsController extends \XF\Api\Controller\PostsController {}
+	class XFCP_ProfilePostCommentController extends \XF\Api\Controller\ProfilePostCommentController {}
+	class XFCP_ProfilePostCommentsController extends \XF\Api\Controller\ProfilePostCommentsController {}
+	class XFCP_ProfilePostController extends \XF\Api\Controller\ProfilePostController {}
+	class XFCP_ThreadController extends \XF\Api\Controller\ThreadController {}
+	class XFCP_ThreadsController extends \XF\Api\Controller\ThreadsController {}
+	class XFCP_UserController extends \XF\Api\Controller\UserController {}
+	class XFCP_UsersController extends \XF\Api\Controller\UsersController {}
 }
 
 namespace Truonglv\Api\XF\Api\Mvc\Renderer
@@ -73,23 +74,23 @@ namespace Truonglv\Api\XF\Entity
 
 namespace Truonglv\Api\XF\Pub\Controller
 {
-	class XFCP_Attachment extends \XF\Pub\Controller\Attachment {}
-	class XFCP_Misc extends \XF\Pub\Controller\Misc {}
-	class XFCP_Search extends \XF\Pub\Controller\Search {}
+	class XFCP_AttachmentController extends \XF\Pub\Controller\AttachmentController {}
+	class XFCP_MiscController extends \XF\Pub\Controller\MiscController {}
+	class XFCP_SearchController extends \XF\Pub\Controller\SearchController {}
 }
 
 namespace Truonglv\Api\XF\Repository
 {
-	class XFCP_Tag extends \XF\Repository\Tag {}
+	class XFCP_TagRepository extends \XF\Repository\TagRepository {}
 }
 
 namespace Truonglv\Api\XF\Service\Alert
 {
-	class XFCP_Pusher extends \XF\Service\Alert\Pusher {}
+	class XFCP_PusherService extends \XF\Service\Alert\PusherService {}
 }
 
 namespace Truonglv\Api\XF\Service\Conversation
 {
-	class XFCP_Notifier extends \XF\Service\Conversation\Notifier {}
-	class XFCP_Pusher extends \XF\Service\Conversation\Pusher {}
+	class XFCP_NotifierService extends \XF\Service\Conversation\NotifierService {}
+	class XFCP_PusherService extends \XF\Service\Conversation\PusherService {}
 }

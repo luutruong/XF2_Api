@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Repository\\TagRepository",
+    "to_class": "Truonglv\\Api\\XF\\Repository\\TagRepository",
+    "execute_order": 10,
+    "active": true
+}

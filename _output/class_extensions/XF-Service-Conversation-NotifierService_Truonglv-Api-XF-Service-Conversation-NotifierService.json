@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Service\\Conversation\\NotifierService",
+    "to_class": "Truonglv\\Api\\XF\\Service\\Conversation\\NotifierService",
+    "execute_order": 10,
+    "active": true
+}

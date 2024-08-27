@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Api\\Controller\\ProfilePostController",
+    "to_class": "Truonglv\\Api\\XF\\Api\\Controller\\ProfilePostController",
+    "execute_order": 10,
+    "active": true
+}

@@ -14,7 +14,7 @@ use XF\Service\AbstractService;
 use XF\Entity\ConversationMaster;
 use XF\Entity\ConversationMessage;
 use XF\Entity\ConversationRecipient;
-use Truonglv\Api\XF\Service\Conversation\Pusher;
+use Truonglv\Api\XF\Service\Conversation\PusherService;
 
 abstract class AbstractPushNotification extends AbstractService
 {
@@ -111,8 +111,7 @@ abstract class AbstractPushNotification extends AbstractService
     protected function getTotalUnviewedNotifications(User $user): int
     {
         if (!array_key_exists($user->user_id, $this->userAlertsCache)) {
-            /** @var \XF\Repository\UserAlert $alertRepo */
-            $alertRepo = XF::app()->repository('XF:UserAlert');
+            $alertRepo = XF::app()->repository(XF\Repository\UserAlertRepository::class);
 
             $total = $alertRepo->findAlertsForUser($user->user_id)
                 ->where('view_date', 0)
@@ -148,16 +147,16 @@ abstract class AbstractPushNotification extends AbstractService
      */
     protected function getAlertContentBody(UserAlert $alert)
     {
-        /** @var \Truonglv\Api\XF\Service\Alert\Pusher $pusher */
-        $pusher = $this->service('XF:Alert\Pusher', $alert->Receiver, $alert);
+        /** @var \Truonglv\Api\XF\Service\Alert\PusherService $pusher */
+        $pusher = $this->service(XF\Service\Alert\PusherService::class, $alert->Receiver, $alert);
 
         return $pusher->tApiGetNotificationBody();
     }
 
     protected function getConversationPushContentBody(User $receiver, ConversationMessage $message, string $actionType): string
     {
-        /** @var Pusher $pusher */
-        $pusher = $this->service('XF:Conversation\Pusher', $receiver, $message, $actionType, $message->User);
+        /** @var PusherService $pusher */
+        $pusher = $this->service(XF\Service\Conversation\PusherService::class, $receiver, $message, $actionType, $message->User);
 
         return $pusher->tApiGetNotificationBody();
     }

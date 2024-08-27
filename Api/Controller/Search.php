@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Api\Controller;
 
+use Truonglv\Api\Repository\SearchQueryRepository;
 use XF;
 use function max;
 use function md5;
@@ -62,8 +63,7 @@ class Search extends AbstractController
 
         if (strpos($keywords, 'tag:') === 0) {
             $tagName = substr($keywords, 4);
-            /** @var Tag $tagRepo */
-            $tagRepo = $this->repository('XF:Tag');
+            $tagRepo = $this->repository(XF\Repository\TagRepository::class);
             if (!$tagRepo->isValidTag($tagName)) {
                 return $this->message(XF::phrase('no_results_found'));
             }
@@ -103,8 +103,7 @@ class Search extends AbstractController
 
         $constraints = [];
 
-        /** @var \XF\Repository\Search $searchRepo */
-        $searchRepo = $this->repository('XF:Search');
+        $searchRepo = $this->repository(XF\Repository\SearchRepository::class);
         $search = $searchRepo->runSearch($query, $constraints, true);
 
         if (!$search) {
@@ -168,8 +167,7 @@ class Search extends AbstractController
 
     public function actionGetTrendingQueries()
     {
-        /** @var \Truonglv\Api\Repository\SearchQuery $searchQueryRepo*/
-        $searchQueryRepo = $this->repository('Truonglv\Api:SearchQuery');
+        $searchQueryRepo = $this->repository(SearchQueryRepository::class);
 
         return $this->apiResult([
             'queries' => $searchQueryRepo->getTrendingQueries(),

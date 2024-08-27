@@ -45,8 +45,7 @@ class Notifications extends AbstractController
             }
         }
 
-        /** @var \XF\Repository\UserAlert $alertRepo */
-        $alertRepo = $this->repository('XF:UserAlert');
+        $alertRepo = $this->repository(XF\Repository\UserAlertRepository::class);
 
         $alertsFinder = $alertRepo->findAlertsForUser($visitor->user_id);
         if (count($contentTypes) === 0) {
@@ -80,8 +79,7 @@ class Notifications extends AbstractController
     {
         $this->assertRegisteredUser();
 
-        /** @var \XF\Repository\UserAlert $alertRepo */
-        $alertRepo = $this->repository('XF:UserAlert');
+        $alertRepo = $this->repository(XF\Repository\UserAlertRepository::class);
         $alertRepo->markUserAlertsViewed(XF::visitor());
 
         return $this->apiSuccess();
@@ -91,8 +89,7 @@ class Notifications extends AbstractController
     {
         $this->assertRegisteredUser();
 
-        /** @var \XF\Repository\UserAlert $alertRepo */
-        $alertRepo = $this->repository('XF:UserAlert');
+        $alertRepo = $this->repository(XF\Repository\UserAlertRepository::class);
         $alertRepo->markUserAlertsRead(XF::visitor());
 
         return $this->apiSuccess();

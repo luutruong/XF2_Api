@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Admin\\Controller\\ToolsController",
+    "to_class": "Truonglv\\Api\\XF\\Admin\\Controller\\ToolsController",
+    "execute_order": 10,
+    "active": true
+}

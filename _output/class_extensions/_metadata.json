@@ -1,51 +1,51 @@
 {
-    "XF-Admin-Controller-Tools_Truonglv-Api-XF-Admin-Controller-Tools.json": {
-        "hash": "0201264c7202c6f8ccd5e24d4c5721eb"
+    "XF-Admin-Controller-ToolsController_Truonglv-Api-XF-Admin-Controller-ToolsController.json": {
+        "hash": "54a34546d8a9693be1a565cc3e4bcb74"
     },
-    "XF-Api-Controller-ConversationMessage_Truonglv-Api-XF-Api-Controller-ConversationMessage.json": {
-        "hash": "b69671125e294b693bb905f74e815e0d"
+    "XF-Api-Controller-ConversationController_Truonglv-Api-XF-Api-Controller-ConversationController.json": {
+        "hash": "b20e616a9a9bf10b75fd11d898f65673"
     },
-    "XF-Api-Controller-ConversationMessages_Truonglv-Api-XF-Api-Controller-ConversationMessages.json": {
-        "hash": "7036e060cc6a6adde83abd9f6d05cce5"
+    "XF-Api-Controller-ConversationMessageController_Truonglv-Api-XF-Api-Controller-ConversationMessageController.json": {
+        "hash": "4f20b2bfb4ab97c9cbccf3c14feada1e"
     },
-    "XF-Api-Controller-Conversation_Truonglv-Api-XF-Api-Controller-Conversation.json": {
-        "hash": "b24473c0c6efb6e64b808ac009dc1436"
+    "XF-Api-Controller-ConversationMessagesController_Truonglv-Api-XF-Api-Controller-ConversationMessagesController.json": {
+        "hash": "8f0e0ed62faf711be17150ed5a9c937f"
     },
-    "XF-Api-Controller-Conversations_Truonglv-Api-XF-Api-Controller-Conversations.json": {
-        "hash": "89e3c8431c5524ead2c8af90ccf705e5"
+    "XF-Api-Controller-ConversationsController_Truonglv-Api-XF-Api-Controller-ConversationsController.json": {
+        "hash": "339828c175bb2628eed55f28f965623d"
     },
-    "XF-Api-Controller-Forum_Truonglv-Api-XF-Api-Controller-Forum.json": {
-        "hash": "ba4af94bb03b88901f71cb5406c8ae24"
+    "XF-Api-Controller-ForumController_Truonglv-Api-XF-Api-Controller-ForumController.json": {
+        "hash": "0b43ea7c627947f51e09ae6340a850eb"
     },
-    "XF-Api-Controller-Me_Truonglv-Api-XF-Api-Controller-Me.json": {
-        "hash": "31bef0a6dac2b75c01e2cf09a835071c"
+    "XF-Api-Controller-MeController_Truonglv-Api-XF-Api-Controller-MeController.json": {
+        "hash": "14101bf8a7fc5f49e9fff25e9799e286"
     },
-    "XF-Api-Controller-Post_Truonglv-Api-XF-Api-Controller-Post.json": {
-        "hash": "0838eb6eae3fb80f17b73dad70ca2d6e"
+    "XF-Api-Controller-PostController_Truonglv-Api-XF-Api-Controller-PostController.json": {
+        "hash": "ad3ba183f50de9a64e73ac2c0d057867"
     },
-    "XF-Api-Controller-Posts_Truonglv-Api-XF-Api-Controller-Posts.json": {
-        "hash": "eb9c9846bd3d8216ab47662ae5ce5d52"
+    "XF-Api-Controller-PostsController_Truonglv-Api-XF-Api-Controller-PostsController.json": {
+        "hash": "91db7d2bc4783649ce5f34daea7a3d5b"
     },
-    "XF-Api-Controller-ProfilePostComment_Truonglv-Api-XF-Api-Controller-ProfilePostComment.json": {
-        "hash": "0cc8687206e330293ecee6ed134932c5"
+    "XF-Api-Controller-ProfilePostCommentController_Truonglv-Api-XF-Api-Controller-ProfilePostCommentController.json": {
+        "hash": "281045aefc9a4129c19e042b50262a9d"
     },
-    "XF-Api-Controller-ProfilePostComments_Truonglv-Api-XF-Api-Controller-ProfilePostComments.json": {
-        "hash": "73ef5323f885e9f23f7a902a8c5c7680"
+    "XF-Api-Controller-ProfilePostCommentsController_Truonglv-Api-XF-Api-Controller-ProfilePostCommentsController.json": {
+        "hash": "ac86690331df3385e5e9703fcfaeebf8"
     },
-    "XF-Api-Controller-ProfilePost_Truonglv-Api-XF-Api-Controller-ProfilePost.json": {
-        "hash": "15307fed8b80c60e2a2136e63360b9f5"
+    "XF-Api-Controller-ProfilePostController_Truonglv-Api-XF-Api-Controller-ProfilePostController.json": {
+        "hash": "9c9e97188ce83a4354c28aed49900d81"
     },
-    "XF-Api-Controller-Thread_Truonglv-Api-XF-Api-Controller-Thread.json": {
-        "hash": "b5c3b31e612c9292a8c120d9624accb3"
+    "XF-Api-Controller-ThreadController_Truonglv-Api-XF-Api-Controller-ThreadController.json": {
+        "hash": "f3def2a65434745a52550bd98edf6288"
     },
-    "XF-Api-Controller-Threads_Truonglv-Api-XF-Api-Controller-Threads.json": {
-        "hash": "b472e41cfe50a9cb7f707bdd3a3cb421"
+    "XF-Api-Controller-ThreadsController_Truonglv-Api-XF-Api-Controller-ThreadsController.json": {
+        "hash": "abe0011d655295b288ffdc75051c8deb"
     },
-    "XF-Api-Controller-User_Truonglv-Api-XF-Api-Controller-User.json": {
-        "hash": "9f2979df1e62f09078962afee1effb94"
+    "XF-Api-Controller-UserController_Truonglv-Api-XF-Api-Controller-UserController.json": {
+        "hash": "bf9b2ef98804c7b9bafb832b3bf696f9"
     },
-    "XF-Api-Controller-Users_Truonglv-Api-XF-Api-Controller-Users.json": {
-        "hash": "8e4cecc44455aac2288e27435807eb24"
+    "XF-Api-Controller-UsersController_Truonglv-Api-XF-Api-Controller-UsersController.json": {
+        "hash": "660b8128fe68bd87229c7399dc602d56"
     },
     "XF-Api-Mvc-Renderer-Api_Truonglv-Api-XF-Api-Mvc-Renderer-Api.json": {
         "hash": "635e776bde606e0568a94decb0ccd957"
@@ -95,26 +95,26 @@
     "XF-Entity-User_Truonglv-Api-XF-Entity-User.json": {
         "hash": "9c577930b3addba539df5e576b4765ce"
     },
-    "XF-Pub-Controller-Attachment_Truonglv-Api-XF-Pub-Controller-Attachment.json": {
-        "hash": "9364b7509c992450fb5ccb2e2431372b"
+    "XF-Pub-Controller-AttachmentController_Truonglv-Api-XF-Pub-Controller-AttachmentController.json": {
+        "hash": "248a47e50409dd140a699cdb9e5c3ab1"
     },
-    "XF-Pub-Controller-Misc_Truonglv-Api-XF-Pub-Controller-Misc.json": {
-        "hash": "d0176a93132b6eb8146e820aafacc1af"
+    "XF-Pub-Controller-MiscController_Truonglv-Api-XF-Pub-Controller-MiscController.json": {
+        "hash": "b3eaab89af48974e1ee7a166641417e3"
     },
-    "XF-Pub-Controller-Search_Truonglv-Api-XF-Pub-Controller-Search.json": {
-        "hash": "cd83c3cc1688f41fb2c6cb5ad316c344"
+    "XF-Pub-Controller-SearchController_Truonglv-Api-XF-Pub-Controller-SearchController.json": {
+        "hash": "c73be667465e79f2db48eb9c87fe9725"
     },
-    "XF-Repository-Tag_Truonglv-Api-XF-Repository-Tag.json": {
-        "hash": "92da7e38fa2a0321f7401ea994791c82"
+    "XF-Repository-TagRepository_Truonglv-Api-XF-Repository-TagRepository.json": {
+        "hash": "831341ce6dfd5d551c03939b56cbcfdc"
     },
-    "XF-Service-Alert-Pusher_Truonglv-Api-XF-Service-Alert-Pusher.json": {
-        "hash": "291cdb92c14b5e8cdd2b30a14616d861"
+    "XF-Service-Alert-PusherService_Truonglv-Api-XF-Service-Alert-PusherService.json": {
+        "hash": "1f7eb5bf1e7d3f40c86d2686589319f1"
     },
-    "XF-Service-Conversation-Notifier_Truonglv-Api-XF-Service-Conversation-Notifier.json": {
-        "hash": "9b3292a45dfe6e480d8956100e441881"
+    "XF-Service-Conversation-NotifierService_Truonglv-Api-XF-Service-Conversation-NotifierService.json": {
+        "hash": "ed5199cc6ab0bbdf74f7fa3cf52cdd89"
     },
-    "XF-Service-Conversation-Pusher_Truonglv-Api-XF-Service-Conversation-Pusher.json": {
-        "hash": "8494e6fc9f654a2fc88e2efbcabed0c0"
+    "XF-Service-Conversation-PusherService_Truonglv-Api-XF-Service-Conversation-PusherService.json": {
+        "hash": "be70208a669f9d3b5e06fbec3f8c51c4"
     },
     "XFRM-Api-Controller-ResourceItem_Truonglv-Api-XFRM-Api-Controller-ResourceItem.json": {
         "hash": "5834c4d0c85f41178e5b964bbbcbf074"

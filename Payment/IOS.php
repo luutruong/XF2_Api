@@ -298,8 +298,7 @@ class IOS extends AbstractProvider implements IAPInterface
         if (isset($state->notificationType)
             && in_array($state->notificationType, [static::NOTIFICATION_TYPE_EXPIRED, static::NOTIFICATION_TYPE_REFUND], true)
         ) {
-            /** @var XF\Repository\Payment $paymentRepo */
-            $paymentRepo = XF::repository('XF:Payment');
+            $paymentRepo = XF::repository(XF\Repository\PaymentRepository::class);
             $total = $paymentRepo->findLogsByTransactionIdForProvider(
                 $state->transactionId,
                 $this->providerId,

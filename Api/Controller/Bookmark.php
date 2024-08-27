@@ -65,8 +65,7 @@ class Bookmark extends AbstractController
             return $this->apiSuccess();
         }
 
-        /** @var \XF\Service\Bookmark\Creator $creator */
-        $creator = $this->service('XF:Bookmark\Creator', $content);
+        $creator = $this->service(XF\Service\Bookmark\CreatorService::class, $content);
 
         $message = $this->filter('message', 'str');
         if (utf8_strlen($message) > 0) {

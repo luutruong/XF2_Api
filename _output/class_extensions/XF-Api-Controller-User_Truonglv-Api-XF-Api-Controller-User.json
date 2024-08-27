@@ -1,6 +1,0 @@
-{
-    "from_class": "XF\\Api\\Controller\\User",
-    "to_class": "Truonglv\\Api\\XF\\Api\\Controller\\User",
-    "execute_order": 10,
-    "active": true
-}

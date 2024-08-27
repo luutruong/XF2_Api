@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Service\\Conversation\\PusherService",
+    "to_class": "Truonglv\\Api\\XF\\Service\\Conversation\\PusherService",
+    "execute_order": 10,
+    "active": true
+}

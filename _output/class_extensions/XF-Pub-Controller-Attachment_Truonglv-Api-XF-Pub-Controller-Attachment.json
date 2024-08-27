@@ -1,6 +1,0 @@
-{
-    "from_class": "XF\\Pub\\Controller\\Attachment",
-    "to_class": "Truonglv\\Api\\XF\\Pub\\Controller\\Attachment",
-    "execute_order": 10,
-    "active": true
-}

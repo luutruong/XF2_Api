@@ -3,9 +3,11 @@
 namespace Truonglv\Api\Api\ControllerPlugin;
 
 use XF\Repository\AddOn;
+use XF\Repository\AddOnRepository;
 use XF\Repository\Attachment;
 use Truonglv\Api\Data\Reaction;
 use XF\Api\ControllerPlugin\AbstractPlugin;
+use XF\Repository\AttachmentRepository;
 
 class App extends AbstractPlugin
 {
@@ -18,12 +20,10 @@ class App extends AbstractPlugin
         $reactionData = $this->data('Truonglv\Api:Reaction');
         $reactions = $reactionData->getReactions();
 
-        /** @var AddOn $addOnRepo */
-        $addOnRepo = $this->repository('XF:AddOn');
+        $addOnRepo = $this->repository(AddOnRepository::class);
         $addOns = $addOnRepo->getInstalledAddOnData();
 
-        /** @var Attachment $attachmentRepo */
-        $attachmentRepo = $this->repository('XF:Attachment');
+        $attachmentRepo = $this->repository(AttachmentRepository::class);
         $constraints = $attachmentRepo->getDefaultAttachmentConstraints();
 
         $options = $this->app->options();

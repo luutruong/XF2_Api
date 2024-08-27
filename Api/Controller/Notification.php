@@ -44,8 +44,7 @@ class Notification extends AbstractController
     {
         $alert = $this->assertViewableAlert($params['alert_id']);
 
-        /** @var \XF\Repository\UserAlert $alertRepo */
-        $alertRepo = $this->repository('XF:UserAlert');
+        $alertRepo = $this->repository(XF\Repository\UserAlertRepository::class);
         $alertRepo->markUserAlertRead($alert);
 
         return $this->apiSuccess();

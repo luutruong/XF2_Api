@@ -269,8 +269,7 @@ class Android extends AbstractProvider implements IAPInterface
      */
     public function validateTransaction(CallbackState $state)
     {
-        /** @var XF\Repository\Payment $paymentRepo */
-        $paymentRepo = XF::repository('XF:Payment');
+        $paymentRepo = XF::repository(XF\Repository\PaymentRepository::class);
         $purchase = $this->getSubscriptionPurchase($state);
         if ($purchase !== null) {
             $total = null;

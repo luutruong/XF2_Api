@@ -16,8 +16,7 @@ class Api extends XFCP_Api
         $extra = parent::getVisitorResponseExtras();
         $visitor = XF::visitor();
 
-        /** @var UserAlert $alertRepo */
-        $alertRepo = XF::app()->repository('XF:UserAlert');
+        $alertRepo = XF::app()->repository(XF\Repository\UserAlertRepository::class);
         $finder = $alertRepo->findAlertsForUser($visitor->user_id);
         $finder->where('view_date', 0);
         $finder->where('content_type', App::getSupportAlertContentTypes());
