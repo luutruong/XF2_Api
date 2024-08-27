@@ -537,6 +537,8 @@ class App extends AbstractController
             $subscriberId = $data['subscriber_id'];
             $transactionId = $data['transaction_id'];
         } catch (PurchaseExpiredException $e) {
+            $this->app()->logException($e);
+
             return $this->apiError(
                 XF::phrase('tapi_iap_purchase_was_expired'),
                 'purchase_expired'
@@ -569,7 +571,7 @@ class App extends AbstractController
             $purchaseRequest->request_key,
             $product->PaymentProfile->provider_id,
             $transactionId,
-            'payment',
+            'info',
             "[{$platform}] Received in-app purchase",
             array_merge([
                 '_POST' => $_POST,
@@ -584,6 +586,13 @@ class App extends AbstractController
         $state->transactionId = $transactionId;
         $state->subscriberId = $subscriberId;
         $handler->completeTransaction($state);
+
+        $state->apiLogDetails = array_merge([
+            '_POST' => $_POST,
+            'store_product_id' => $product->store_product_id,
+        ], $data);
+
+        $handler->log($state);
 
         return $this->apiSuccess([
             'message' => XF::phrase('tapi_your_account_has_been_upgraded'),

@@ -352,6 +352,9 @@ class IOS extends AbstractProvider implements IAPInterface
     public function prepareLogData(CallbackState $state)
     {
         $logDetails = [];
+        if (isset($state->apiLogDetails)) {
+            $logDetails = $state->apiLogDetails;
+        }
 
         $logDetails['signedTransaction'] = $state->signedTransaction;
         $logDetails['signedRenewable'] = $state->signedRenewable;
