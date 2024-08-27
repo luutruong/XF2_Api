@@ -3,7 +3,7 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 use XF\Mvc\ParameterBag;
-use Truonglv\Api\Api\ControllerPlugin\Reaction;
+use Truonglv\Api\Api\ControllerPlugin\ReactionPlugin;
 
 class ConversationMessageController extends XFCP_ConversationMessageController
 {
@@ -11,8 +11,7 @@ class ConversationMessageController extends XFCP_ConversationMessageController
     {
         $message = $this->assertViewableMessage($params->message_id);
 
-        /** @var Reaction $reactionPlugin */
-        $reactionPlugin = $this->plugin('Truonglv\Api:Api:Reaction');
+        $reactionPlugin = $this->plugin(ReactionPlugin::class);
 
         return $reactionPlugin->actionReactions('conversation_message', $message);
     }

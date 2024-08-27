@@ -6,7 +6,7 @@ use XF;
 use XF\Mvc\Entity\Entity;
 use XF\Api\ControllerPlugin\AbstractPlugin;
 
-class Report extends AbstractPlugin
+class ReportPlugin extends AbstractPlugin
 {
     /**
      * @param string $contentType

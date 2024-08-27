@@ -4,6 +4,8 @@ namespace Truonglv\Api\Admin\Controller;
 
 use Truonglv\Api\App;
 use Truonglv\Api\Finder\IAPProductFinder;
+use XF\ControllerPlugin\DeletePlugin;
+use XF\ControllerPlugin\TogglePlugin;
 use XF\Finder\PaymentProfileFinder;
 use XF\Finder\UserUpgradeFinder;
 use XF\Mvc\ParameterBag;
@@ -83,7 +85,7 @@ class IAPProduct extends AbstractController
     public function actionToggle()
     {
         /** @var Toggle $toggle */
-        $toggle = $this->plugin('XF:Toggle');
+        $toggle = $this->plugin(TogglePlugin::class);
 
         return $toggle->actionToggle(
             $this->getEntityClassName(),
@@ -95,8 +97,7 @@ class IAPProduct extends AbstractController
     {
         $product = $this->assertProductExists($params['product_id']);
 
-        /** @var Delete $delete */
-        $delete = $this->plugin('XF:Delete');
+        $delete = $this->plugin(DeletePlugin::class);
 
         return $delete->actionDelete(
             $product,

@@ -10,7 +10,7 @@ use XF\Service\User\Follow;
 use XF\Repository\UserFollow;
 use XF\Api\Result\EntityResults;
 use XF\Mvc\Entity\AbstractCollection;
-use Truonglv\Api\Api\ControllerPlugin\Report;
+use Truonglv\Api\Api\ControllerPlugin\ReportPlugin;
 
 class UserController extends XFCP_UserController
 {
@@ -90,8 +90,7 @@ class UserController extends XFCP_UserController
             return $this->noPermission();
         }
 
-        /** @var Report $reportPlugin */
-        $reportPlugin = $this->plugin('Truonglv\Api:Api:Report');
+        $reportPlugin = $this->plugin(ReportPlugin::class);
 
         return $reportPlugin->actionReport('user', $user);
     }

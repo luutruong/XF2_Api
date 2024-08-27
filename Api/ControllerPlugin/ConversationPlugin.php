@@ -12,7 +12,7 @@ use XF\Entity\ConversationRecipient;
 use XF\Api\ControllerPlugin\AbstractPlugin;
 use XF\Finder\ConversationRecipientFinder;
 
-class Conversation extends AbstractPlugin
+class ConversationPlugin extends AbstractPlugin
 {
     public function includeLastMessage(ApiResult $response): ApiResult
     {

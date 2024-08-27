@@ -108,8 +108,7 @@ abstract class Entity extends AbstractController
             return $this->noPermission();
         }
 
-        /** @var \XF\ControllerPlugin\Toggle $plugin */
-        $plugin = $this->plugin('XF:Toggle');
+        $plugin = $this->plugin(XF\ControllerPlugin\TogglePlugin::class);
 
         return $plugin->actionToggle($this->getShortName(), $activeColumn);
     }

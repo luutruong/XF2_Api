@@ -2,12 +2,12 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use Truonglv\Api\Api\ControllerPlugin\ConversationPlugin;
 use XF;
 use function count;
 use function explode;
 use function implode;
 use function array_map;
-use XF\Repository\User;
 
 class ConversationsController extends XFCP_ConversationsController
 {
@@ -15,8 +15,7 @@ class ConversationsController extends XFCP_ConversationsController
     {
         $response = parent::actionGet();
 
-        /** @var \Truonglv\Api\Api\ControllerPlugin\Conversation $conversationPlugin */
-        $conversationPlugin = $this->plugin('Truonglv\Api:Api:Conversation');
+        $conversationPlugin = $this->plugin(ConversationPlugin::class);
         $response = $conversationPlugin->addRecipientsIntoResult($response);
         $response = $conversationPlugin->includeLastMessage($response);
 
@@ -54,8 +53,7 @@ class ConversationsController extends XFCP_ConversationsController
         }
 
         $response = parent::actionPost();
-        /** @var \Truonglv\Api\Api\ControllerPlugin\Conversation $conversationPlugin */
-        $conversationPlugin = $this->plugin('Truonglv\Api:Api:Conversation');
+        $conversationPlugin = $this->plugin(ConversationPlugin::class);
         $response = $conversationPlugin->addRecipientsIntoResult($response);
         $response = $conversationPlugin->includeLastMessage($response);
 

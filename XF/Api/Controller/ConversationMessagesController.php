@@ -2,6 +2,8 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use Truonglv\Api\Api\ControllerPlugin\QuotePlugin;
+
 class ConversationMessagesController extends XFCP_ConversationMessagesController
 {
     protected function setupConversationReply(\XF\Entity\ConversationMaster $conversation)
@@ -21,8 +23,7 @@ class ConversationMessagesController extends XFCP_ConversationMessagesController
         }
 
         $message = $this->filter('message', 'str');
-        /** @var \Truonglv\Api\Api\ControllerPlugin\Quote $quotePlugin */
-        $quotePlugin = $this->plugin('Truonglv\Api:Api:Quote');
+        $quotePlugin = $this->plugin(QuotePlugin::class);
         $message = $quotePlugin->prepareMessage($message, 'conversation_message');
 
         if ($defaultMessage !== null) {

@@ -9,14 +9,14 @@ use Truonglv\Api\Data\Reaction;
 use XF\Api\ControllerPlugin\AbstractPlugin;
 use XF\Repository\AttachmentRepository;
 
-class App extends AbstractPlugin
+class AppPlugin extends AbstractPlugin
 {
     /**
      * @return array
      */
     public function getAppInfo(): array
     {
-        /** @var Reaction $reactionData */
+        /** @var ReactionPlugin $reactionData */
         $reactionData = $this->data('Truonglv\Api:Reaction');
         $reactions = $reactionData->getReactions();
 

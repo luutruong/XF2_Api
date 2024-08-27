@@ -12,7 +12,7 @@ use function preg_match_all;
 use XF\Entity\ConversationMessage;
 use XF\Api\ControllerPlugin\AbstractPlugin;
 
-class Quote extends AbstractPlugin
+class QuotePlugin extends AbstractPlugin
 {
     public function getMessagePlaceholders(string $message, string $contentType): array
     {

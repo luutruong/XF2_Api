@@ -3,6 +3,7 @@
 namespace Truonglv\Api\XF\Api\Controller;
 
 
+use Truonglv\Api\Api\ControllerPlugin\QuotePlugin;
 use XF\Service\Thread\ReplierService;
 
 class PostsController extends XFCP_PostsController
@@ -18,8 +19,7 @@ class PostsController extends XFCP_PostsController
     protected function tApiPrepareMessageForReply(ReplierService $replier): void
     {
         $message = $this->filter('message', 'str');
-        /** @var \Truonglv\Api\Api\ControllerPlugin\Quote $quotePlugin */
-        $quotePlugin = $this->plugin('Truonglv\Api:Api:Quote');
+        $quotePlugin = $this->plugin(QuotePlugin::class);
         $message = $quotePlugin->prepareMessage($message, 'post');
 
         $replier->setMessage($message);

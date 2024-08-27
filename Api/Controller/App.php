@@ -821,8 +821,7 @@ class App extends AbstractController
      */
     protected function runTfaValidation(\XF\Entity\User $user)
     {
-        /** @var Login $loginPlugin */
-        $loginPlugin = $this->plugin('XF:Login');
+        $loginPlugin = $this->plugin(XF\ControllerPlugin\LoginPlugin::class);
         if (!$loginPlugin->isTfaConfirmationRequired($user)) {
             return true;
         }
@@ -894,8 +893,7 @@ class App extends AbstractController
      */
     protected function getAppInfo(): array
     {
-        /** @var \Truonglv\Api\Api\ControllerPlugin\App $appPlugin */
-        $appPlugin = $this->plugin('Truonglv\Api:Api:App');
+        $appPlugin = $this->plugin(\Truonglv\Api\Api\ControllerPlugin\AppPlugin::class);
 
         return $appPlugin->getAppInfo();
     }

@@ -2,8 +2,9 @@
 
 namespace Truonglv\Api\XFRM\Api\Controller;
 
+use XF\Api\ControllerPlugin\ReactionPlugin;
 use XF\Mvc\ParameterBag;
-use Truonglv\Api\Api\ControllerPlugin\Reaction;
+use Truonglv\Api\Api\ControllerPlugin\ReactionPlugin;
 
 class ResourceUpdate extends XFCP_ResourceUpdate
 {
@@ -11,8 +12,7 @@ class ResourceUpdate extends XFCP_ResourceUpdate
     {
         $update = $this->assertViewableUpdate($params['resource_update_id']);
 
-        /** @var \XF\Api\ControllerPlugin\Reaction $reactPlugin */
-        $reactPlugin = $this->plugin('XF:Api:Reaction');
+        $reactPlugin = $this->plugin(ReactionPlugin::class);
 
         return $reactPlugin->actionReact($update);
     }
@@ -21,8 +21,7 @@ class ResourceUpdate extends XFCP_ResourceUpdate
     {
         $update = $this->assertViewableUpdate($params['resource_update_id']);
 
-        /** @var Reaction $reactionPlugin */
-        $reactionPlugin = $this->plugin('Truonglv\Api:Api:Reaction');
+        $reactionPlugin = $this->plugin(ReactionPlugin::class);
 
         return $reactionPlugin->actionReactions('resource_update', $update);
     }

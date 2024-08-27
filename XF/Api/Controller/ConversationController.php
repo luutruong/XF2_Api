@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
+use Truonglv\Api\Api\ControllerPlugin\ConversationPlugin;
 use XF;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
@@ -29,8 +30,7 @@ class ConversationController extends XFCP_ConversationController
         }
 
         if ($response instanceof ApiResult) {
-            /** @var \Truonglv\Api\Api\ControllerPlugin\Conversation $conversationPlugin */
-            $conversationPlugin = $this->plugin('Truonglv\Api:Api:Conversation');
+            $conversationPlugin = $this->plugin(ConversationPlugin::class);
             $conversationPlugin->addRecipientsIntoResult($response);
         }
 

@@ -4,8 +4,8 @@ namespace Truonglv\Api\XF\Api\Controller;
 
 use XF;
 use XF\Mvc\ParameterBag;
-use Truonglv\Api\Api\ControllerPlugin\Report;
-use Truonglv\Api\Api\ControllerPlugin\Reaction;
+use Truonglv\Api\Api\ControllerPlugin\ReportPlugin;
+use Truonglv\Api\Api\ControllerPlugin\ReactionPlugin;
 
 class PostController extends XFCP_PostController
 {
@@ -16,8 +16,7 @@ class PostController extends XFCP_PostController
             return $this->noPermission($error);
         }
 
-        /** @var Report $reportPlugin */
-        $reportPlugin = $this->plugin('Truonglv\Api:Api:Report');
+        $reportPlugin = $this->plugin(ReportPlugin::class);
 
         return $reportPlugin->actionReport('post', $post);
     }
@@ -26,8 +25,7 @@ class PostController extends XFCP_PostController
     {
         $post = $this->assertViewablePost($params->post_id);
 
-        /** @var Reaction $reactionPlugin */
-        $reactionPlugin = $this->plugin('Truonglv\Api:Api:Reaction');
+        $reactionPlugin = $this->plugin(ReactionPlugin::class);
 
         return $reactionPlugin->actionReactions('post', $post);
     }
