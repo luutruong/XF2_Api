@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\Repository;
 
-use Truonglv\Api\Finder\AlertQueueFinder;
 use XF;
 use XF\Timer;
 use Throwable;
@@ -12,6 +11,7 @@ use XF\Entity\UserAlert;
 use XF\Mvc\Entity\Repository;
 use XF\Entity\ConversationMessage;
 use XF\Mvc\Entity\AbstractCollection;
+use Truonglv\Api\Finder\AlertQueueFinder;
 use Truonglv\Api\Service\AbstractPushNotification;
 
 class AlertQueueRepository extends Repository

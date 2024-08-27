@@ -4,6 +4,7 @@ namespace Truonglv\Api\Admin\Controller;
 
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Finder;
+use Truonglv\Api\Finder\SubscriptionFinder;
 use Truonglv\Api\DevHelper\Admin\Controller\Entity;
 
 class Subscription extends Entity
@@ -85,5 +86,10 @@ class Subscription extends Entity
     protected function supportsViewing(): bool
     {
         return true;
+    }
+
+    protected function getFinderClassName(): string
+    {
+        return SubscriptionFinder::class;
     }
 }

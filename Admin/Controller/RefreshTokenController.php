@@ -6,6 +6,7 @@ use XF;
 use function implode;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Finder;
+use Truonglv\Api\Finder\RefreshTokenFinder;
 use Truonglv\Api\DevHelper\Admin\Controller\Entity;
 
 class RefreshToken extends Entity
@@ -91,5 +92,10 @@ class RefreshToken extends Entity
     protected function getRoutePrefix(): string
     {
         return 'tapi-refresh-tokens';
+    }
+
+    protected function getFinderClassName(): string
+    {
+        return RefreshTokenFinder::class;
     }
 }

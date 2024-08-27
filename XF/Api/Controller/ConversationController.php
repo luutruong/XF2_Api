@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\Api\ControllerPlugin\ConversationPlugin;
 use XF;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
@@ -10,7 +9,7 @@ use XF\Api\Mvc\Reply\ApiResult;
 use XF\Entity\ConversationUser;
 use XF\Entity\ConversationMaster;
 use XF\Entity\ConversationRecipient;
-use XF\Repository\ConversationMessage;
+use Truonglv\Api\Api\ControllerPlugin\ConversationPlugin;
 
 class ConversationController extends XFCP_ConversationController
 {

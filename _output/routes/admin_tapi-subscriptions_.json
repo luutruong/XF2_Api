@@ -5,7 +5,7 @@
     "format": ":int<subscription_id>/",
     "build_class": "",
     "build_method": "",
-    "controller": "Truonglv\\Api:Subscription",
+    "controller": "Truonglv\\Api:SubscriptionController",
     "context": "tapi_subscriptions",
     "action_prefix": ""
 }

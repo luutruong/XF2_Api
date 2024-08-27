@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\Payment;
 
-use Truonglv\Api\Finder\IAPProductFinder;
 use XF;
 use Throwable;
 use function ceil;
@@ -24,6 +23,7 @@ use XF\Entity\PurchaseRequest;
 use XF\Payment\AbstractProvider;
 use Truonglv\Api\Entity\IAPProduct;
 use Google\Service\AndroidPublisher;
+use Truonglv\Api\Finder\IAPProductFinder;
 
 class Android extends AbstractProvider implements IAPInterface
 {

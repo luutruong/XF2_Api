@@ -2,12 +2,12 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use Truonglv\Api\Api\ControllerPlugin\ConversationPlugin;
 use XF;
 use function count;
 use function explode;
 use function implode;
 use function array_map;
+use Truonglv\Api\Api\ControllerPlugin\ConversationPlugin;
 
 class ConversationsController extends XFCP_ConversationsController
 {

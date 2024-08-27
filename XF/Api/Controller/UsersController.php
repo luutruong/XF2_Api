@@ -2,10 +2,10 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-use XF\Finder\UserFinder;
 use function is_array;
 use function array_map;
 use function preg_split;
+use XF\Finder\UserFinder;
 use XF\Mvc\Entity\Entity;
 
 class UsersController extends XFCP_UsersController

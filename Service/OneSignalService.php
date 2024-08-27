@@ -7,7 +7,6 @@ use function count;
 use GuzzleHttp\Client;
 use function urldecode;
 use function array_replace_recursive;
-use Truonglv\Api\Entity\Subscription;
 use XF\Mvc\Entity\AbstractCollection;
 
 class OneSignalService extends AbstractPushNotification

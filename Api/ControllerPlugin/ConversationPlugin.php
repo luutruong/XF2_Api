@@ -9,8 +9,8 @@ use XF\Api\Result\EntityResult;
 use XF\Api\Result\EntityResults;
 use XF\Entity\ConversationMaster;
 use XF\Entity\ConversationRecipient;
-use XF\Api\ControllerPlugin\AbstractPlugin;
 use XF\Finder\ConversationRecipientFinder;
+use XF\Api\ControllerPlugin\AbstractPlugin;
 
 class ConversationPlugin extends AbstractPlugin
 {

@@ -2,20 +2,19 @@
 
 namespace Truonglv\Api\Api\Controller;
 
-use Truonglv\Api\Repository\SearchQueryRepository;
 use XF;
 use function max;
 use function md5;
 use function count;
 use XF\Entity\Post;
 use function strlen;
-use XF\Repository\Tag;
 use XF\Mvc\ParameterBag;
 use function utf8_strlen;
 use XF\Mvc\Entity\Entity;
 use function utf8_strtolower;
 use Truonglv\Api\Entity\SearchQuery;
 use XF\Api\Controller\AbstractController;
+use Truonglv\Api\Repository\SearchQueryRepository;
 
 class Search extends AbstractController
 {

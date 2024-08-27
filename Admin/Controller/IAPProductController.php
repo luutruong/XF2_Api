@@ -3,15 +3,14 @@
 namespace Truonglv\Api\Admin\Controller;
 
 use Truonglv\Api\App;
-use Truonglv\Api\Finder\IAPProductFinder;
-use XF\ControllerPlugin\DeletePlugin;
-use XF\ControllerPlugin\TogglePlugin;
-use XF\Finder\PaymentProfileFinder;
-use XF\Finder\UserUpgradeFinder;
 use XF\Mvc\ParameterBag;
-use XF\ControllerPlugin\Delete;
 use XF\ControllerPlugin\Toggle;
 use XF\Mvc\Reply\AbstractReply;
+use XF\Finder\UserUpgradeFinder;
+use XF\Finder\PaymentProfileFinder;
+use XF\ControllerPlugin\DeletePlugin;
+use XF\ControllerPlugin\TogglePlugin;
+use Truonglv\Api\Finder\IAPProductFinder;
 use XF\Admin\Controller\AbstractController;
 
 class IAPProduct extends AbstractController

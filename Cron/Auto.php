@@ -2,9 +2,9 @@
 
 namespace Truonglv\Api\Cron;
 
-use Truonglv\Api\Finder\SubscriptionFinder;
 use XF;
 use XF\Timer;
+use Truonglv\Api\Finder\SubscriptionFinder;
 use Truonglv\Api\Repository\TokenRepository;
 
 class Auto

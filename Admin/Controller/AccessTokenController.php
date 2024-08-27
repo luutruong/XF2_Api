@@ -8,6 +8,7 @@ use function time;
 use function implode;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Finder;
+use Truonglv\Api\Finder\AccessTokenFinder;
 use Truonglv\Api\DevHelper\Admin\Controller\Entity;
 
 class AccessToken extends Entity
@@ -105,5 +106,10 @@ class AccessToken extends Entity
     protected function getRoutePrefix(): string
     {
         return 'tapi-access-tokens';
+    }
+
+    protected function getFinderClassName(): string
+    {
+        return AccessTokenFinder::class;
     }
 }

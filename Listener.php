@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api;
 
-use Truonglv\Api\Repository\LogRepository;
 use XF;
 use XF\Container;
 use XF\Entity\ApiKey;
@@ -13,6 +12,7 @@ use Truonglv\Api\Entity\Log;
 use Truonglv\Api\Http\Request;
 use Truonglv\Api\Entity\AccessToken;
 use XF\Api\Controller\AbstractController;
+use Truonglv\Api\Repository\LogRepository;
 
 class Listener
 {

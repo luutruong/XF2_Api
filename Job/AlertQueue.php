@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\Job;
 
-use Truonglv\Api\Repository\AlertQueueRepository;
 use XF\Job\AbstractJob;
+use Truonglv\Api\Repository\AlertQueueRepository;
 
 class AlertQueue extends AbstractJob
 {

@@ -4,6 +4,7 @@ namespace Truonglv\Api\Admin\Controller;
 
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Finder;
+use Truonglv\Api\Finder\LogFinder;
 use Truonglv\Api\DevHelper\Admin\Controller\Entity;
 
 class Log extends Entity
@@ -100,5 +101,10 @@ class Log extends Entity
     protected function supportsViewing(): bool
     {
         return true;
+    }
+
+    protected function getFinderClassName(): string
+    {
+        return LogFinder::class;
     }
 }

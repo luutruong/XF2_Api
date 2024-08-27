@@ -4,7 +4,6 @@ namespace Truonglv\Api\XF\Api\Mvc\Renderer;
 
 use XF;
 use Truonglv\Api\App;
-use XF\Repository\UserAlert;
 
 class Api extends XFCP_Api
 {

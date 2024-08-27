@@ -13,7 +13,6 @@ use function is_readable;
 use Kreait\Firebase\Factory;
 use InvalidArgumentException;
 use function file_get_contents;
-use Truonglv\Api\Entity\Subscription;
 use Kreait\Firebase\Messaging\ApnsConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;

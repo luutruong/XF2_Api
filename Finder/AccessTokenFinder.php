@@ -2,9 +2,9 @@
 
 namespace Truonglv\Api\Finder;
 
+use XF\Mvc\Entity\Finder;
 use Truonglv\Api\Entity\AccessToken;
 use XF\Mvc\Entity\AbstractCollection;
-use XF\Mvc\Entity\Finder;
 
 /**
  * @method AbstractCollection<AccessToken> fetch(?int $limit = null, ?int $offset = null)

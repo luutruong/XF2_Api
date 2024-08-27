@@ -5,7 +5,6 @@ namespace Truonglv\Api\XF\Api\Controller;
 use XF;
 use XF\Mvc\ParameterBag;
 use XF\Entity\ThreadPrefix;
-use XF\Repository\ForumWatch;
 use XF\Mvc\Entity\AbstractCollection;
 
 class ForumController extends XFCP_ForumController

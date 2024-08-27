@@ -5,7 +5,7 @@
     "format": ":int<log_id>/",
     "build_class": "",
     "build_method": "",
-    "controller": "Truonglv\\Api:Log",
+    "controller": "Truonglv\\Api:LogController",
     "context": "tapi_logs",
     "action_prefix": ""
 }

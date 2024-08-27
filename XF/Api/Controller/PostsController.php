@@ -2,9 +2,8 @@
 
 namespace Truonglv\Api\XF\Api\Controller;
 
-
-use Truonglv\Api\Api\ControllerPlugin\QuotePlugin;
 use XF\Service\Thread\ReplierService;
+use Truonglv\Api\Api\ControllerPlugin\QuotePlugin;
 
 class PostsController extends XFCP_PostsController
 {

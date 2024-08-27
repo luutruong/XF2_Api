@@ -2,10 +2,10 @@
 
 namespace Truonglv\Api\Service;
 
-use Truonglv\Api\Finder\SubscriptionFinder;
 use XF;
 use XF\Entity\User;
 use XF\Service\AbstractService;
+use Truonglv\Api\Finder\SubscriptionFinder;
 
 class SubscriptionService extends AbstractService
 {

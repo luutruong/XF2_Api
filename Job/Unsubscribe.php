@@ -2,9 +2,9 @@
 
 namespace Truonglv\Api\Job;
 
-use Truonglv\Api\Service\OneSignalService;
 use XF\Job\JobResult;
 use XF\Job\AbstractJob;
+use Truonglv\Api\Service\OneSignalService;
 use Truonglv\Api\Service\AbstractPushNotification;
 
 class Unsubscribe extends AbstractJob

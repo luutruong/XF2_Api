@@ -2,11 +2,10 @@
 
 namespace Truonglv\Api\XF\Pub\Controller;
 
-use Truonglv\Api\Entity\AccessToken;
-use Truonglv\Api\Finder\AccessTokenFinder;
 use XF;
 use Truonglv\Api\App;
 use XF\Mvc\ParameterBag;
+use Truonglv\Api\Entity\AccessToken;
 
 class AttachmentController extends XFCP_AttachmentController
 {

@@ -7,7 +7,6 @@ use function md5;
 use function strval;
 use function is_array;
 use function array_keys;
-use XF\Repository\AddOn;
 use function json_encode;
 use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;

@@ -1,7 +1,7 @@
 {
-    "Admin/Controller/Entity.php": 2024011000,
+    "Admin/Controller/Entity.php": 2024081700,
     "DevHelper\\Cli\\Command\\AutoGen": {
-        "version_id": 2021022001
+        "version_id": 2024081701
     },
     "SetupTrait.php": 2022092802
 }

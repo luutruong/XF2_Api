@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\XFRM\Api\Controller;
 
-use XF\Api\ControllerPlugin\ReactionPlugin;
 use XF\Mvc\ParameterBag;
+use XF\Api\ControllerPlugin\ReactionPlugin;
 use Truonglv\Api\Api\ControllerPlugin\ReactionPlugin;
 
 class ResourceUpdate extends XFCP_ResourceUpdate

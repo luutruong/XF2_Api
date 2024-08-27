@@ -2,12 +2,9 @@
 
 namespace Truonglv\Api\Api\ControllerPlugin;
 
-use XF\Repository\AddOn;
 use XF\Repository\AddOnRepository;
-use XF\Repository\Attachment;
-use Truonglv\Api\Data\Reaction;
-use XF\Api\ControllerPlugin\AbstractPlugin;
 use XF\Repository\AttachmentRepository;
+use XF\Api\ControllerPlugin\AbstractPlugin;
 
 class AppPlugin extends AbstractPlugin
 {

@@ -2,9 +2,9 @@
 
 namespace Truonglv\Api\Finder;
 
+use XF\Mvc\Entity\Finder;
 use Truonglv\Api\Entity\Subscription;
 use XF\Mvc\Entity\AbstractCollection;
-use XF\Mvc\Entity\Finder;
 
 /**
  * @method AbstractCollection<Subscription> fetch(?int $limit = null, ?int $offset = null)

@@ -5,7 +5,7 @@
     "format": ":int<product_id>/",
     "build_class": "",
     "build_method": "",
-    "controller": "Truonglv\\Api:IAPProduct",
+    "controller": "Truonglv\\Api:IAPProductController",
     "context": "setup",
     "action_prefix": ""
 }

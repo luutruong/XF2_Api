@@ -2,8 +2,8 @@
 
 namespace Truonglv\Api\Api\ControllerPlugin;
 
-use XF\Finder\ReactionContentFinder;
 use XF\Mvc\Entity\Entity;
+use XF\Finder\ReactionContentFinder;
 use XF\Api\ControllerPlugin\AbstractPlugin;
 
 class ReactionPlugin extends AbstractPlugin

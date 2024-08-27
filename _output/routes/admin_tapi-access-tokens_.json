@@ -5,7 +5,7 @@
     "format": ":str<token>/",
     "build_class": "",
     "build_method": "",
-    "controller": "Truonglv\\Api:AccessToken",
+    "controller": "Truonglv\\Api:AccessTokenController",
     "context": "tApi_accessTokens",
     "action_prefix": ""
 }

@@ -6,7 +6,6 @@ use XF;
 use function count;
 use function array_keys;
 use XF\Mvc\Entity\Entity;
-use XF\Service\User\Ignore;
 use XF\Api\Mvc\Reply\ApiResult;
 use Truonglv\Api\Repository\TokenRepository;
 

@@ -6,8 +6,6 @@ use XF;
 use function in_array;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
-use XF\Service\User\Follow;
-use XF\Repository\UserFollow;
 use XF\Api\Result\EntityResults;
 use XF\Mvc\Entity\AbstractCollection;
 use Truonglv\Api\Api\ControllerPlugin\ReportPlugin;

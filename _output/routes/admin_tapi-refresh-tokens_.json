@@ -5,7 +5,7 @@
     "format": ":str<token>/",
     "build_class": "",
     "build_method": "",
-    "controller": "Truonglv\\Api:RefreshToken",
+    "controller": "Truonglv\\Api:RefreshTokenController",
     "context": "tApi_refreshTokens",
     "action_prefix": ""
 }
