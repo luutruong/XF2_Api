@@ -89,8 +89,7 @@ class ConversationController extends XFCP_ConversationController
         $convMessageRepo = $this->repository(XF\Repository\ConversationMessageRepository::class);
 
         if ($messageId > 0) {
-            /** @var \XF\Entity\ConversationMessage|null $message */
-            $message = $this->em()->find('XF:ConversationMessage', $messageId);
+            $message = $this->em()->find(XF\Entity\ConversationMessage::class, $messageId);
             if ($message !== null
                 && $message->conversation_id === $conversation->conversation_id
             ) {
