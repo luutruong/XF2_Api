@@ -15,10 +15,13 @@
         "guzzlehttp/promises": "*",
         "guzzlehttp/psr7": "*",
         "psr/log": "*",
+        "psr/cache": "*",
         "psr/http-message": "*",
         "symfony/polyfill-mbstring": "*",
         "paragonie/random_compat": "*",
-        "paragonie/constant_time_encoding": "*"
+        "paragonie/constant_time_encoding": "*",
+        "brick/math": "*",
+        "symfory/polyfill-php80": "*"
     },
     "scripts": {
         "post-autoload-dump": ["Google\\Task\\Composer::cleanup"]
