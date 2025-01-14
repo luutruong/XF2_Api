@@ -13,12 +13,12 @@
     },
     "require": {
         "php": [
-            "7.4.0",
-            "Required PHP 7.4.0 or higher."
+            "8.0.0",
+            "Required PHP 8.0.0 or higher."
         ],
         "XF": [
-            2020000,
-            "XenForo 2.2.x"
+            2030000,
+            "XenForo 2.3.x"
         ]
     },
     "icon": "",
