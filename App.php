@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api;
 
+use Truonglv\Api\Service\FirebaseCloudMessagingService;
 use XF;
 use function md5;
 use function strval;
@@ -38,11 +39,6 @@ class App
      * @var bool
      */
     public static $enableLogging = false;
-
-    /**
-     * @var string
-     */
-    public static $defaultPushNotificationService = 'Truonglv\Api:FirebaseCloudMessaging';
 
     /**
      * @var \XF\Http\Request|null

@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Repository;
 
+use Truonglv\Api\Service\FirebaseCloudMessagingService;
 use XF;
 use XF\Timer;
 use Throwable;
@@ -94,6 +95,11 @@ class AlertQueueRepository extends Repository
         }
     }
 
+    public function getPushNotificationService(): AbstractPushNotification
+    {
+        return $this->app()->service(FirebaseCloudMessagingService::class);
+    }
+
     public function runQueueEntry(string $contentType, int $contentId, array $data = []): void
     {
         switch ($contentType) {
@@ -104,8 +110,7 @@ class AlertQueueRepository extends Repository
                     return;
                 }
 
-                /** @var AbstractPushNotification $service */
-                $service = $this->app()->service(App::$defaultPushNotificationService);
+                $service = $this->getPushNotificationService();
                 $service->sendNotification($userAlert);
 
                 break;
@@ -116,8 +121,7 @@ class AlertQueueRepository extends Repository
                 /** @var ConversationMessage|null $convoMessage */
                 $convoMessage = $this->em->find('XF:ConversationMessage', $contentId);
                 if ($convoMessage !== null) {
-                    /** @var AbstractPushNotification $service */
-                    $service = $this->app()->service(App::$defaultPushNotificationService);
+                    $service = $this->getPushNotificationService();
                     $service->sendConversationNotification($convoMessage, $data['action']);
                 }
 
