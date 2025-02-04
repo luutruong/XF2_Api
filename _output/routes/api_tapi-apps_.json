@@ -5,7 +5,7 @@
     "format": "",
     "build_class": "",
     "build_method": "",
-    "controller": "Truonglv\\Api:App",
+    "controller": "Truonglv\\Api:AppController",
     "context": "",
     "action_prefix": ""
 }

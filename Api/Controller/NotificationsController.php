@@ -12,7 +12,7 @@ use function array_map;
 use function array_keys;
 use XF\Api\Controller\AbstractController;
 
-class Notifications extends AbstractController
+class NotificationsController extends AbstractController
 {
     public function actionGet()
     {

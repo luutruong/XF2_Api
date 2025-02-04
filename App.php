@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api;
 
-use Truonglv\Api\Service\FirebaseCloudMessagingService;
 use XF;
 use function md5;
 use function strval;

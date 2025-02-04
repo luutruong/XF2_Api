@@ -9,7 +9,7 @@ use XF\Mvc\ParameterBag;
 use XF\Mvc\Entity\Entity;
 use XF\Api\Controller\AbstractController;
 
-class Notification extends AbstractController
+class NotificationController extends AbstractController
 {
     public function actionGet(ParameterBag $params)
     {
@@ -82,7 +82,7 @@ class Notification extends AbstractController
     protected function assertViewableAlert($alertId): UserAlert
     {
         /** @var UserAlert $alert */
-        $alert = $this->assertRecordExists('XF:UserAlert', $alertId);
+        $alert = $this->assertRecordExists(UserAlert::class, $alertId);
         if ($alert->alerted_user_id !== XF::visitor()->user_id) {
             throw $this->exception($this->noPermission());
         }

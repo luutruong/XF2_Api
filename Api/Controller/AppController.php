@@ -11,7 +11,6 @@ use function count;
 use LogicException;
 use function strlen;
 use XF\Http\Request;
-use XF\Finder\Thread;
 use function in_array;
 use XF\Mvc\Dispatcher;
 use XF\Mvc\Reply\Error;
@@ -46,7 +45,7 @@ use Truonglv\Api\Service\SubscriptionService;
 use Truonglv\Api\Payment\PurchaseExpiredException;
 use Truonglv\Api\XF\ConnectedAccount\Storage\StorageState;
 
-class App extends AbstractController
+class AppController extends AbstractController
 {
     public function actionGet()
     {
@@ -66,8 +65,7 @@ class App extends AbstractController
         /** @var \XF\Entity\Search|null $search */
         $search = null;
         if ($searchId > 0) {
-            /** @var \XF\Entity\Search|null $existingSearch */
-            $existingSearch = $this->em()->find('XF:Search', $searchId);
+            $existingSearch = $this->em()->find(XF\Entity\Search::class, $searchId);
             if ($existingSearch !== null
                 && $existingSearch->user_id === $visitor->user_id
                  && $existingSearch->search_query === $searchQuery
@@ -165,8 +163,7 @@ class App extends AbstractController
     {
         $accessToken = $this->request()->getServer(\Truonglv\Api\App::HEADER_KEY_ACCESS_TOKEN);
 
-        /** @var AccessToken|null $token */
-        $token = $this->em()->find('Truonglv\Api:AccessToken', $accessToken);
+        $token = $this->em()->find(AccessToken::class, $accessToken);
         if ($token !== null) {
             $token->delete();
         }
@@ -506,7 +503,7 @@ class App extends AbstractController
                 'purchase' => $this->filter('purchase', 'str'),
             ];
 
-            $jsonPayload['purchase'] = \GuzzleHttp\json_decode($jsonPayload['purchase'], true);
+            $jsonPayload['purchase'] = \GuzzleHttp\Utils::jsonDecode($jsonPayload['purchase'], true);
         }
 
         /** @var IAPInterface|XF\Payment\AbstractProvider $handler */
@@ -708,7 +705,7 @@ class App extends AbstractController
         ];
 
         /** @var AccessToken $token */
-        $token = $this->em()->find('Truonglv\Api:AccessToken', $data['accessToken']);
+        $token = $this->em()->find(AccessToken::class, $data['accessToken']);
         $data['expiresAt'] = $token->expire_date;
 
         if ($withRefreshToken) {
@@ -718,10 +715,6 @@ class App extends AbstractController
         return $data;
     }
 
-    /**
-     * @param array $job
-     * @return array|null
-     */
     protected function runJob(array $job): ?array
     {
         if (!isset($job['uri'])) {
@@ -933,12 +926,7 @@ class App extends AbstractController
         return $filters;
     }
 
-    /**
-     * @param Thread $finder
-     * @param array $filters
-     * @return void
-     */
-    protected function applyNewsFeedsFilter(Thread $finder, array $filters)
+    protected function applyNewsFeedsFilter(XF\Finder\ThreadFinder $finder, array $filters): void
     {
         $finder->where('discussion_state', 'visible');
         $finder->where('discussion_type', '<>', 'redirect');
@@ -1009,8 +997,7 @@ class App extends AbstractController
             return null;
         }
 
-        /** @var \XF\Entity\Search $search */
-        $search = $this->em()->create('XF:Search');
+        $search = $this->em()->create(XF\Entity\Search::class);
         $search->search_type = 'thread';
         $search->search_query = $searchQuery;
         $search->query_hash = md5(__METHOD__ . $searchQuery . json_encode($filters));

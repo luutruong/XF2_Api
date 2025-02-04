@@ -5,7 +5,7 @@
     "format": "",
     "build_class": "",
     "build_method": "",
-    "controller": "Truonglv\\Api:Bookmark",
+    "controller": "Truonglv\\Api:BookmarkController",
     "context": "",
     "action_prefix": ""
 }

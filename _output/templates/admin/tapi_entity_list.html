@@ -2,13 +2,12 @@
 
 <xf:if is="{$links.add}">
     <xf:pageaction>
-        <xf:button href="{{ link($links.add) }}" icon="add" overlay="true">{$phrases.add|raw}</xf:button>
+        <xf:button href="{{ link($links.add) }}" icon="add">{$phrases.add|raw}</xf:button>
     </xf:pageaction>
 </xf:if>
 
 <xf:if is="$macroTemplateEntityListFilters">
-	<xf:macro template="{$macroTemplateEntityListFilters}"
-			  name="entity_list_filters"
+	<xf:macro id="{$macroTemplateEntityListFilters}::entity_list_filters"
 			  arg-controller="{$controller}"
 			  arg-filters="{$filters}"/>
 </xf:if>
@@ -19,7 +18,7 @@
 			<div class="block-outer">
 				<xf:contentcheck>
 					<xf:if is="$links.quickFilter">
-						<xf:macro template="filter_macros" name="quick_filter"
+						<xf:macro id="filter_macros::quick_filter"
 								  arg-class="block-outer-opposite"
 								  arg-ajax="{{ link($links.quickFilter) }}"
 								  arg-key="{$phrases.entity}" />
@@ -31,7 +30,7 @@
         <div class="block-container">
             <div class="block-body">
                 <xf:datalist>
-                    <xf:macro name="entity_list"
+                    <xf:macro id="entity_list"
 							  arg-controller="{$controller}"
 							  arg-entities="{$entities}"
 							  arg-links="{$links}"
@@ -57,15 +56,14 @@
     <div class="blockMessage">{{ phrase('no_items_have_been_created_yet') }}</div>
 </xf:if>
 
-<xf:macro name="entity_list" arg-controller="!" arg-entities="!" arg-links="!"
+<xf:macro id="entity_list" arg-controller="!" arg-entities="!" arg-links="!"
 	arg-templateEntityListItemPopup="{{ null }}">
 	<xf:foreach loop="{$entities}" value="$entity">
 		<xf:set var="$editLink" value="{{ $links.edit ? link($links.edit, $entity) : '' }}"/>
 		<xf:set var="$viewLink" value="{{ (empty($editLink) && $links.view) ? link($links.view, $entity) : '' }}"/>
 		<xf:set var="$popup">
 			<xf:if is="$templateEntityListItemPopup">
-				<xf:macro template="{$templateEntityListItemPopup}"
-						  name="entity_list_item_popup"
+				<xf:macro id="{$templateEntityListItemPopup}:entity_list_item_popup"
 						  arg-controller="{$controller}"
 						  arg-entity="{$entity}"
 						  arg-links="{$links}"/>

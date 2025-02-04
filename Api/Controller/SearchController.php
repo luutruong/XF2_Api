@@ -9,14 +9,12 @@ use function count;
 use XF\Entity\Post;
 use function strlen;
 use XF\Mvc\ParameterBag;
-use function utf8_strlen;
 use XF\Mvc\Entity\Entity;
-use function utf8_strtolower;
 use Truonglv\Api\Entity\SearchQuery;
 use XF\Api\Controller\AbstractController;
 use Truonglv\Api\Repository\SearchQueryRepository;
 
-class Search extends AbstractController
+class SearchController extends AbstractController
 {
     const SEARCH_TYPE_THREAD = 'thread';
     const SEARCH_TYPE_POST = 'post';
@@ -86,7 +84,7 @@ class Search extends AbstractController
 
         $query->withGroupedResults();
         /** @var SearchQuery $searchQueryLogger */
-        $searchQueryLogger = $this->em()->create('Truonglv\Api:SearchQuery');
+        $searchQueryLogger = $this->em()->create(SearchQuery::class);
         $searchQueryLogger->user_id = XF::visitor()->user_id;
 
         if ($tag !== null) {
@@ -177,7 +175,7 @@ class Search extends AbstractController
     {
         $name = $this->filter('name', 'str');
 
-        if (utf8_strlen($name) <= 2) {
+        if (\XF\Util\Str::strlen($name) <= 2) {
             return $this->message(XF::phrase('no_results_found'));
         }
 
@@ -185,7 +183,7 @@ class Search extends AbstractController
             $this->app()->config('globalSalt')
             . __METHOD__
             . self::SEARCH_TYPE_USER
-            . utf8_strtolower($name)
+            . \XF\Util\Str::strtolower($name)
         );
 
         /** @var \XF\Entity\Search|null $existingSearch */
@@ -219,7 +217,7 @@ class Search extends AbstractController
         }
 
         /** @var \XF\Entity\Search $search */
-        $search = $this->em()->create('XF:Search');
+        $search = $this->em()->create(XF\Entity\Search::class);
 
         $search->user_id = 0;
         $search->result_count = count($searchResults);
@@ -256,7 +254,7 @@ class Search extends AbstractController
     protected function assertSearchViewable($id)
     {
         /** @var \XF\Entity\Search $search */
-        $search = $this->assertRecordExists('XF:Search', $id);
+        $search = $this->assertRecordExists(XF\Entity\Search::class, $id);
         if (($search->user_id > 0 && $search->user_id !== XF::visitor()->user_id)
             || (
                 $search->search_type !== ''

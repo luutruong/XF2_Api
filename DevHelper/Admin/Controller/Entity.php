@@ -14,7 +14,7 @@ use XF\Mvc\Entity\Entity as MvcEntity;
 use XF\Admin\Controller\AbstractController;
 
 /**
- * @version 2024081700
+ * @version 2024092501
  * @see \DevHelper\Autogen\Admin\Controller\Entity
  */
 abstract class Entity extends AbstractController
@@ -474,7 +474,7 @@ abstract class Entity extends AbstractController
     final protected function entityListData(): array
     {
         $shortName = $this->getShortName();
-        $finder = $this->finder($this->getFinderClassName());
+        $finder = $this->finder($this->getShortName());
         $filters = ['pageNavParams' => []];
 
         /** @var mixed $that */
@@ -536,7 +536,7 @@ abstract class Entity extends AbstractController
             foreach ($input['hidden_columns'] as $columnName) {
                 $entity->set(
                     $columnName,
-                    isset($input['hidden_values'][$columnName]) ? $input['hidden_values'][$columnName] : ''
+                    $input['hidden_values'][$columnName] ?? ''
                 );
             }
 
@@ -698,7 +698,7 @@ abstract class Entity extends AbstractController
     protected function supportsXfFilter(): bool
     {
         /** @var mixed $unknownFinder */
-        $unknownFinder = $this->finder($this->getFinderClassName());
+        $unknownFinder = $this->finder($this->getShortName());
 
         return is_callable([$unknownFinder, 'entityDoXfFilter']);
     }
@@ -725,7 +725,6 @@ abstract class Entity extends AbstractController
     }
 
     abstract protected function getShortName(): string;
-    abstract protected function getFinderClassName(): string;
     abstract protected function getPrefixForClasses(): string;
     abstract protected function getPrefixForPhrases(): string;
     abstract protected function getPrefixForTemplates(): string;

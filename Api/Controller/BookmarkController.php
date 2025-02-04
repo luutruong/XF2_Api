@@ -6,7 +6,7 @@ use XF;
 use XF\Mvc\Entity\Entity;
 use XF\Api\Controller\AbstractController;
 
-class Bookmark extends AbstractController
+class BookmarkController extends AbstractController
 {
     public function actionGet()
     {
@@ -68,12 +68,12 @@ class Bookmark extends AbstractController
         $creator = $this->service(XF\Service\Bookmark\CreatorService::class, $content);
 
         $message = $this->filter('message', 'str');
-        if (utf8_strlen($message) > 0) {
+        if (\XF\Util\Str::strlen($message) > 0) {
             $creator->setMessage($message);
         }
 
         $labels = $this->filter('labels', 'str');
-        if (utf8_strlen($labels) > 0) {
+        if (\XF\Util\Str::strlen($labels) > 0) {
             $creator->setLabels($labels);
         }
 

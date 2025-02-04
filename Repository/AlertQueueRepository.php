@@ -2,7 +2,6 @@
 
 namespace Truonglv\Api\Repository;
 
-use Truonglv\Api\Service\FirebaseCloudMessagingService;
 use XF;
 use XF\Timer;
 use Throwable;
@@ -14,6 +13,7 @@ use XF\Entity\ConversationMessage;
 use XF\Mvc\Entity\AbstractCollection;
 use Truonglv\Api\Finder\AlertQueueFinder;
 use Truonglv\Api\Service\AbstractPushNotification;
+use Truonglv\Api\Service\FirebaseCloudMessagingService;
 
 class AlertQueueRepository extends Repository
 {
