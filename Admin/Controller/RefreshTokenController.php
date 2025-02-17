@@ -52,6 +52,11 @@ class RefreshToken extends Entity
 
     protected function doPrepareFinderForList(Finder $finder): void
     {
+        $userId = $this->filter('user_id', 'int');
+        if ($userId > 0) {
+            $finder->where('user_id', $userId);
+        }
+        
         $finder->with('User');
         $finder->setDefaultOrder('created_date', 'desc');
     }
