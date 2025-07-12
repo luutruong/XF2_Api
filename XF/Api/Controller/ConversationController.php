@@ -10,6 +10,7 @@ use XF\Entity\ConversationUser;
 use XF\Entity\ConversationMaster;
 use XF\Entity\ConversationRecipient;
 use Truonglv\Api\Api\ControllerPlugin\ConversationPlugin;
+use XF\Repository\AttachmentRepository;
 
 class ConversationController extends XFCP_ConversationController
 {
@@ -84,6 +85,43 @@ class ConversationController extends XFCP_ConversationController
     public function actionPostRecipients(ParameterBag $params)
     {
         return $this->rerouteController(__CLASS__, 'post-invite', $params);
+    }
+
+    public function actionGetMessages(ParameterBag $params)
+    {
+        if ($this->request->exists('message_ids')) {
+            $messageIds = $this->filter('message_ids', 'array-uint');
+            if (\count($messageIds) === 0) {
+                return $this->apiResult([
+                    'messages' => [],
+                    // not supported in this mode
+                    'pagination' => null,
+                ]);
+            }
+
+            if (\count($messageIds) > 50) {
+                return $this->error(XF::phrase('tapi_message_ids_too_long'));
+            }
+
+            $conversation = $this->assertViewableUserConversation($params['conversation_id']);
+            $finder = $this->setupMessageFinder($conversation->Master);
+            $finder->whereIds($messageIds);
+            $messages = $finder->fetch()->sortByList($messageIds);
+
+            /** @var AttachmentRepository $attachmentRepo */
+            $attachmentRepo = $this->repository(AttachmentRepository::class);
+            $attachmentRepo->addAttachmentsToContent($messages, 'conversation_message');
+
+            $messageResults = $messages->toApiResults();
+
+            return $this->apiResult([
+                'messages' => $messageResults,
+                // not supported in this mode
+                'pagination' => null,
+            ]);
+        }
+
+        return parent::actionGetMessages($params);
     }
 
     /**
