@@ -39,17 +39,26 @@ class ConversationController extends XFCP_ConversationController
 
     public function actionGetMessageIds(ParameterBag $params)
     {
-        $conversation = $this->assertViewableUserConversation($params['conversation_id']);
+        $userConvo = $this->assertViewableUserConversation($params['conversation_id']);
 
         $messages = $this->finder(XF\Finder\ConversationMessageFinder::class)
-            ->where('conversation_id', $conversation->conversation_id)
+            ->where('conversation_id', $userConvo->conversation_id)
             ->order('message_date', 'ASC')
-            ->fetchColumns(['message_id']);
-        $messageIds = array_column($messages, 'message_id');
+            ->fetchColumns(['message_id', 'message_date']);
+        $messageIds = [];
+        $unreadMessageId = 0;
+        foreach ($messages as $message) {
+            $messageIds[] = $message['message_id'];
+
+            if ($message['message_date'] > $userConvo->Recipient->last_read_date && $unreadMessageId === 0) {
+                $unreadMessageId = $message['message_id'];
+            }
+        }
 
         return $this->apiResult([
             'message_ids' => $messageIds,
             'total' => count($messageIds),
+            'unread_message_id' => $unreadMessageId,
         ]);
     }
 

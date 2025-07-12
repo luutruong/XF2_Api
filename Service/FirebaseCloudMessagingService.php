@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Service;
 
+use Truonglv\Api\Entity\Subscription;
 use XF;
 use XF\Entity\User;
 use function strlen;
@@ -33,6 +34,7 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
             $fbConfigFile = $this->app->options()->tApi_firebaseConfigPath;
         }
         if (strlen($fbConfigFile) === 0) {
+            $this->app->error()->logError('no firebase config file');
             return;
         }
 
@@ -62,7 +64,7 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
 
         $subsKeyedToken = [];
 
-        /** @var SubscriptionService $subscription */
+        /** @var Subscription $subscription */
         foreach ($subscriptions as $subscription) {
             $subsKeyedToken[$subscription->device_token][] = $subscription;
 
@@ -90,9 +92,13 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
             $messages[] = $message;
         }
 
+        $this->app->error()->logError(\sprintf('sending %d messages', \count($messages)));
         $messaging = $factory->createMessaging();
-        // @phpstan-ignore-next-line
+
         $sent = $messaging->sendAll($messages);
+        $_POST['__sent'] = $sent->getItems();
+
+        $this->app->logException(new \Exception('sent message result'));
         foreach ($sent->failures()->getItems() as $fail) {
             if ($fail->error() === null) {
                 continue;
@@ -110,9 +116,9 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
                 /** @var MessageTarget $messageTarget */
                 $messageTarget = $prop->getValue($message);
                 if (isset($subsKeyedToken[$messageTarget->value()])) {
-                    /** @var SubscriptionService $subscription */
+                    /** @var Subscription $subscription */
                     foreach ($subsKeyedToken[$messageTarget->value()] as $subscription) {
-                        $subscription->delete();
+                        $subscription->delete(false);
                     }
 
                     continue;
@@ -125,7 +131,7 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
 
     protected function isEntityNotFound(string $message): bool
     {
-        return strpos($message, 'Requested entity was not found') === 0;
+        return str_starts_with($message, 'Requested entity was not found');
     }
 
     public function unsubscribe(string $externalId, string $pushToken): void
