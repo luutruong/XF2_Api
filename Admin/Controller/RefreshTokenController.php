@@ -56,7 +56,7 @@ class RefreshToken extends Entity
         if ($userId > 0) {
             $finder->where('user_id', $userId);
         }
-        
+
         $finder->with('User');
         $finder->setDefaultOrder('created_date', 'desc');
     }

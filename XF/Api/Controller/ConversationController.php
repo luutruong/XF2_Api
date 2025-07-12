@@ -36,6 +36,22 @@ class ConversationController extends XFCP_ConversationController
         return $response;
     }
 
+    public function actionGetMessageIds(ParameterBag $params)
+    {
+        $conversation = $this->assertViewableUserConversation($params['conversation_id']);
+
+        $messages = $this->finder(XF\Finder\ConversationMessageFinder::class)
+            ->where('conversation_id', $conversation->conversation_id)
+            ->order('message_date', 'ASC')
+            ->fetchColumns(['message_id']);
+        $messageIds = array_column($messages, 'message_id');
+
+        return $this->apiResult([
+            'message_ids' => $messageIds,
+            'total' => count($messageIds),
+        ]);
+    }
+
     public function actionGetRecipients(ParameterBag $params)
     {
         $userConvo = $this->assertViewableUserConversation($params->conversation_id);
