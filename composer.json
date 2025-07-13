@@ -3,7 +3,6 @@
         "php": ">=8.0.0",
         "ext-openssl": "*",
         "ext-json": "*",
-        "kreait/firebase-php": "^6.9",
         "google/apiclient": "^2.18"
     },
     "config": {

@@ -2,6 +2,7 @@
 
 namespace Truonglv\Api\Service;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Truonglv\Api\Entity\Subscription;
 use XF;
 use XF\Entity\User;
@@ -22,33 +23,86 @@ use Kreait\Firebase\Messaging\MessageTarget;
 
 class FirebaseCloudMessagingService extends AbstractPushNotification
 {
+    private ?string $token = null;
+    private ?array $config = null;
+
     protected function getProviderId(): string
     {
         return 'fcm';
     }
 
+    protected function getToken(): string
+    {
+        if ($this->token === null) {
+            $config = $this->getConfig();
+
+            $now = time();
+            $header = ['alg' => 'RS256', 'typ' => 'JWT'];
+            $claimSet = [
+                'iss' => $config['client_email'],
+                'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
+                'aud' => 'https://oauth2.googleapis.com/token',
+                'iat' => $now,
+                'exp' => $now + 3600,
+            ];
+
+            $base64UrlHeader = rtrim(strtr(base64_encode(json_encode($header)), '+/', '-_'), '=');
+            $base64UrlClaim = rtrim(strtr(base64_encode(json_encode($claimSet)), '+/', '-_'), '=');
+            $dataToSign = $base64UrlHeader . "." . $base64UrlClaim;
+
+            // Sign using openssl
+            openssl_sign($dataToSign, $signature, $config['private_key'], 'sha256');
+            $base64UrlSignature = rtrim(strtr(base64_encode($signature), '+/', '-_'), '=');
+
+            $jwt = $base64UrlHeader . '.' . $base64UrlClaim . '.' . $base64UrlSignature;
+
+            $client = $this->client();
+            $resp = $client->post('https://oauth2.googleapis.com/token', [
+                'form_params' => [
+                    'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                    'assertion'  => $jwt
+                ]
+            ]);
+
+            $tokenData = json_decode($resp->getBody()->getContents(), true);
+            if (!isset($tokenData['access_token'])) {
+                throw new \InvalidArgumentException('failed to retrieve access token');
+            }
+
+            $this->token = $tokenData['access_token'];
+        }
+
+        return $this->token;
+    }
+
+    protected function getConfig(): array
+    {
+        if ($this->config === null) {
+            $fbConfigFile = $this->app->config('tApi_firebaseConfigPath');
+            if ($fbConfigFile === null) {
+                $fbConfigFile = $this->app->options()->tApi_firebaseConfigPath;
+            }
+            if (strlen($fbConfigFile) === 0) {
+                throw new \InvalidArgumentException('no firebase config file');
+            }
+
+            if (!file_exists($fbConfigFile) || !is_readable($fbConfigFile)) {
+                throw new InvalidArgumentException('Firebase config file not exists or not readable.');
+            }
+
+            $contents = file_get_contents($fbConfigFile);
+            if ($contents === false) {
+                throw new InvalidArgumentException('Cannot read Firebase config.');
+            }
+
+            $this->config = json_decode($contents, true);
+        }
+
+        return $this->config;
+    }
+
     protected function doSendNotification(XF\Mvc\Entity\AbstractCollection $subscriptions, string $title, string $body, array $data): void
     {
-        $fbConfigFile = $this->app->config('tApi_firebaseConfigPath');
-        if ($fbConfigFile === null) {
-            $fbConfigFile = $this->app->options()->tApi_firebaseConfigPath;
-        }
-        if (strlen($fbConfigFile) === 0) {
-            $this->app->error()->logError('no firebase config file');
-            return;
-        }
-
-        if (!file_exists($fbConfigFile) || !is_readable($fbConfigFile)) {
-            throw new InvalidArgumentException('Firebase config file not exists or not readable.');
-        }
-
-        $contents = file_get_contents($fbConfigFile);
-        if ($contents === false) {
-            throw new InvalidArgumentException('Cannot read Firebase config.');
-        }
-        $factory = new Factory();
-        $factory = $factory->withServiceAccount($contents);
-
         $messages = [];
         $dataTransformed = [];
         foreach ($data as $key => $value) {
@@ -63,75 +117,102 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
         }
 
         $subsKeyedToken = [];
+        if (count($dataTransformed) === 0) {
+            $dataTransformed = null;
+        }
 
         /** @var Subscription $subscription */
         foreach ($subscriptions as $subscription) {
             $subsKeyedToken[$subscription->device_token][] = $subscription;
 
+            $message = [
+                'notification' => [
+                    'title' => $title,
+                    'body' => $body,
+                ],
+                'data' => $dataTransformed,
+                'token' => $subscription->device_token,
+                'fcm_options' => [
+                    'analytics_label' => $subscription->device_type,
+                ]
+            ];
+
+            // @see https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
+
             /** @var User $receiver */
             $receiver = $subscription->User;
-            $message = CloudMessage::withTarget('token', $subscription->device_token)
-                ->withNotification(Notification::create($title, $body))
-                ->withData($dataTransformed);
             if ($subscription->device_type === 'ios') {
-                $apnsConfig = ApnsConfig::new();
-                $apnsConfig->withApsField('badge', $this->getTotalUnviewedNotifications($receiver))
-                    ->withDefaultSound();
-
-                $message = $message->withApnsConfig($apnsConfig);
+                $message['apns'] = [
+                    'payload' => [
+                        'aps' => [
+                            'alert' => $title,
+                            'body' => $body,
+                            'badge' => $this->getTotalUnviewedNotifications($receiver),
+                            'sound' => 'default',
+                            'content-available' => 1
+                        ]
+                    ]
+                ];
             } elseif ($subscription->device_type === 'android') {
-                $androidConfig = AndroidConfig::fromArray([
+                $message['android'] = [
+                    'priority' => 'high',
+                    'sound' => 'default',
                     'notification' => [
                         'notification_count' => $this->getTotalUnviewedNotifications($receiver),
-                    ],
-                ]);
-                $androidConfig->withDefaultSound()->withDefaultNotificationPriority();
-                $message = $message->withAndroidConfig($androidConfig);
+                        'notification_priority' => 'PRIORITY_DEFAULT'
+                    ]
+                ];
             }
 
             $messages[] = $message;
         }
 
+        $config = $this->getConfig();
+        $token = $this->getToken();
+
         $this->app->error()->logError(\sprintf('sending %d messages', \count($messages)));
-        $messaging = $factory->createMessaging();
-
-        $sent = $messaging->sendAll($messages);
-        $_POST['__sent'] = $sent->getItems();
-
-        $this->app->logException(new \Exception('sent message result'));
-        foreach ($sent->failures()->getItems() as $fail) {
-            if ($fail->error() === null) {
-                continue;
-            }
-
-            $message = $fail->message();
-            if ($message !== null &&
-                $this->isEntityNotFound($fail->error()->getMessage()) &&
-                $message instanceof CloudMessage
-            ) {
-                $reflection = new ReflectionClass($message);
-                $prop = $reflection->getProperty('target');
-                $prop->setAccessible(true);
-
-                /** @var MessageTarget $messageTarget */
-                $messageTarget = $prop->getValue($message);
-                if (isset($subsKeyedToken[$messageTarget->value()])) {
-                    /** @var Subscription $subscription */
-                    foreach ($subsKeyedToken[$messageTarget->value()] as $subscription) {
-                        $subscription->delete(false);
-                    }
-
+        foreach ($messages as $message) {
+            try {
+                $resp = $this->client()->post(
+                    \sprintf('https://fcm.googleapis.com/v1/projects/%s/messages:send', $config['project_id']),
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $token,
+                        ],
+                        'json' => [
+                            'message' => $message,
+                        ],
+                        'http_errors' => false
+                    ]
+                );
+                if ($resp->getStatusCode() >= 500) {
                     continue;
                 }
-            }
 
-            $this->app->error()->logError($fail->error()->getMessage());
+                if ($resp->getStatusCode() >= 400) {
+                    $respData = json_decode($resp->getBody()->getContents(), true);
+                    if ($this->isInvalidToken($respData)) {
+                        /** @var Subscription $sub */
+                        foreach ($subsKeyedToken[$message['token']] as $sub) {
+                            $sub->delete(false);
+                        }
+                    } else {
+                        throw new \InvalidArgumentException('failed to sent message: ' . json_encode($respData));
+                    }
+                }
+            } catch (\Throwable $e) {
+                $this->app->logException($e);
+            }
         }
     }
 
-    protected function isEntityNotFound(string $message): bool
+    protected function isInvalidToken(array $response): bool
     {
-        return str_starts_with($message, 'Requested entity was not found');
+        if (isset($response['error'], $response['error']['message'])) {
+            return \str_starts_with($response['error']['message'], 'The registration token is not a valid FCM registration token');
+        }
+
+        return false;
     }
 
     public function unsubscribe(string $externalId, string $pushToken): void

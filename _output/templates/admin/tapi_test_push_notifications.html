@@ -3,6 +3,10 @@
 <xf:form action="{{ link('tools/tapi-test-push-notifications') }}" ajax="true" class="block">
     <div class="block-container">
         <div class="block-body">
+            <xf:radiorow name="device_type" value="ios" label="Device type">
+                <xf:option value="ios">IOS</xf:option>
+                <xf:option value="android">Android</xf:option>
+            </xf:radiorow>
             <xf:textboxrow name="device_token" label="Device token" />
             <xf:textboxrow name="title" label="Title" />
             <xf:textboxrow name="message" label="Message" />
