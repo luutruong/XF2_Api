@@ -137,10 +137,15 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
             $receiver = $subscription->User;
             if ($subscription->device_type === 'ios') {
                 $message['apns'] = [
+                    'headers' => [
+                        'apns-priority' => '10'
+                    ],
                     'payload' => [
                         'aps' => [
-                            'alert' => $title,
-                            'body' => $body,
+                            'alert' => [
+                                'title' => $title,
+                                'body' => $body,
+                            ],
                             'badge' => $this->getTotalUnviewedNotifications($receiver),
                             'sound' => 'default',
                             'content-available' => 1
