@@ -124,7 +124,7 @@ class Encryption
      * @param mixed $payload
      * @return bool
      */
-    protected static function isValidPayload(&$payload): bool
+    protected static function isValidPayload(& $payload): bool
     {
         if (!is_array($payload)) {
             return false;

@@ -55,7 +55,7 @@ class IOS extends AbstractProvider implements IAPInterface
      * @param mixed $errors
      * @return bool
      */
-    public function verifyConfig(array &$options, &$errors = [])
+    public function verifyConfig(array & $options, & $errors = [])
     {
         $options = array_replace([
             'app_shared_pass' => '',

@@ -37,7 +37,7 @@ class Listener
      * @param mixed $code
      * @return void
      */
-    public static function appApiValidateRequest(\XF\Http\Request $request, &$result, &$error, &$code)
+    public static function appApiValidateRequest(\XF\Http\Request $request, & $result, & $error, & $code)
     {
         $requestApiKey = $request->getServer('HTTP_XF_TAPI_KEY');
         if (strlen($requestApiKey) === 0) {
@@ -94,7 +94,7 @@ class Listener
      * @throws \XF\PrintableException
      * @return void
      */
-    public static function onAppApiComplete(\XF\Api\App $app, \XF\Http\Response &$response)
+    public static function onAppApiComplete(\XF\Api\App $app, \XF\Http\Response & $response)
     {
         if (!App::$enableLogging) {
             return;

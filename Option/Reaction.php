@@ -35,7 +35,7 @@ class Reaction extends AbstractOption
      * @throws PrintableException
      * @return bool
      */
-    public static function verifyOption(&$values)
+    public static function verifyOption(& $values)
     {
         $output = [];
         $reactions = self::getReactions();

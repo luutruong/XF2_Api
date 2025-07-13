@@ -9,8 +9,8 @@ use XF\Api\Mvc\Reply\ApiResult;
 use XF\Entity\ConversationUser;
 use XF\Entity\ConversationMaster;
 use XF\Entity\ConversationRecipient;
-use Truonglv\Api\Api\ControllerPlugin\ConversationPlugin;
 use XF\Repository\AttachmentRepository;
+use Truonglv\Api\Api\ControllerPlugin\ConversationPlugin;
 
 class ConversationController extends XFCP_ConversationController
 {

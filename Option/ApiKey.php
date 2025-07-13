@@ -49,7 +49,7 @@ class ApiKey extends AbstractOption
      * @return bool
      * @throws PrintableException
      */
-    public static function verifyOption(array &$value)
+    public static function verifyOption(array & $value)
     {
         if (isset($value['apiKeyId'])) {
             /** @var \XF\Entity\ApiKey|null $apiKey */

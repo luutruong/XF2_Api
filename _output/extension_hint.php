@@ -5,6 +5,7 @@
 
 /**
  * @noinspection PhpIllegalPsrClassPathInspection
+ * @noinspection PhpMultipleClassesDeclarationsInOneFile
  */
 
 namespace Truonglv\Api\XFRM\Api\Controller

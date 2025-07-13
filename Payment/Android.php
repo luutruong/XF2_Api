@@ -56,7 +56,7 @@ class Android extends AbstractProvider implements IAPInterface
      * @param mixed $errors
      * @return bool
      */
-    public function verifyConfig(array &$options, &$errors = [])
+    public function verifyConfig(array & $options, & $errors = [])
     {
         $options = array_replace([
             'app_bundle_id' => '',

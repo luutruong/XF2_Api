@@ -21,7 +21,7 @@ class User extends XFCP_User
      * @param mixed $error
      * @return bool
      */
-    public function canTapiDelete(&$error = null): bool
+    public function canTapiDelete(& $error = null): bool
     {
         if ($this->is_super_admin || $this->is_admin || $this->is_moderator) {
             return false;

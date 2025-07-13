@@ -2,7 +2,9 @@
 
 namespace Truonglv\Api\XF\Admin\Controller;
 
-use Truonglv\Api\App;
+use XF;
+use function time;
+use ReflectionClass;
 use Truonglv\Api\Entity\Subscription;
 use Truonglv\Api\Service\FirebaseCloudMessagingService;
 
@@ -20,11 +22,11 @@ class ToolsController extends XFCP_ToolsController
             ]);
 
             $input['data'] = strlen($input['data']) > 0 ? \GuzzleHttp\Utils::jsonDecode($input['data'], true) : [];
-            $visitor = \XF::visitor();
+            $visitor = XF::visitor();
 
             $fcm = $this->app->service(FirebaseCloudMessagingService::class);
             $sub = $this->em()->instantiateEntity(Subscription::class, [
-                'subscription_id' => \time(),
+                'subscription_id' => time(),
                 'user_id' => $visitor->user_id,
                 'username' => $visitor->username,
                 'app_version' => '',
@@ -33,7 +35,7 @@ class ToolsController extends XFCP_ToolsController
                 'device_type' => $input['device_type'],
             ]);
 
-            $reflection = new \ReflectionClass($fcm);
+            $reflection = new ReflectionClass($fcm);
             $method = $reflection->getMethod('doSendNotification');
             $method->setAccessible(true);
 

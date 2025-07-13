@@ -2,24 +2,18 @@
 
 namespace Truonglv\Api\Service;
 
-use GuzzleHttp\Exception\GuzzleException;
-use Truonglv\Api\Entity\Subscription;
 use XF;
+use Throwable;
 use XF\Entity\User;
 use function strlen;
-use function strpos;
 use function strval;
-use ReflectionClass;
+use function sprintf;
 use function file_exists;
 use function is_readable;
-use Kreait\Firebase\Factory;
+use function str_starts_with;
 use InvalidArgumentException;
 use function file_get_contents;
-use Kreait\Firebase\Messaging\ApnsConfig;
-use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Notification;
-use Kreait\Firebase\Messaging\AndroidConfig;
-use Kreait\Firebase\Messaging\MessageTarget;
+use Truonglv\Api\Entity\Subscription;
 
 class FirebaseCloudMessagingService extends AbstractPushNotification
 {
@@ -48,7 +42,7 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
 
             $base64UrlHeader = rtrim(strtr(base64_encode(json_encode($header)), '+/', '-_'), '=');
             $base64UrlClaim = rtrim(strtr(base64_encode(json_encode($claimSet)), '+/', '-_'), '=');
-            $dataToSign = $base64UrlHeader . "." . $base64UrlClaim;
+            $dataToSign = $base64UrlHeader . '.' . $base64UrlClaim;
 
             // Sign using openssl
             openssl_sign($dataToSign, $signature, $config['private_key'], 'sha256');
@@ -66,7 +60,7 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
 
             $tokenData = json_decode($resp->getBody()->getContents(), true);
             if (!isset($tokenData['access_token'])) {
-                throw new \InvalidArgumentException('failed to retrieve access token');
+                throw new InvalidArgumentException('failed to retrieve access token');
             }
 
             $this->token = $tokenData['access_token'];
@@ -83,7 +77,7 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
                 $fbConfigFile = $this->app->options()->tApi_firebaseConfigPath;
             }
             if (strlen($fbConfigFile) === 0) {
-                throw new \InvalidArgumentException('no firebase config file');
+                throw new InvalidArgumentException('no firebase config file');
             }
 
             if (!file_exists($fbConfigFile) || !is_readable($fbConfigFile)) {
@@ -170,11 +164,11 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
         $config = $this->getConfig();
         $token = $this->getToken();
 
-        $this->app->error()->logError(\sprintf('sending %d messages', \count($messages)));
+        $this->app->error()->logError(sprintf('sending %d messages', \count($messages)));
         foreach ($messages as $message) {
             try {
                 $resp = $this->client()->post(
-                    \sprintf('https://fcm.googleapis.com/v1/projects/%s/messages:send', $config['project_id']),
+                    sprintf('https://fcm.googleapis.com/v1/projects/%s/messages:send', $config['project_id']),
                     [
                         'headers' => [
                             'Authorization' => 'Bearer ' . $token,
@@ -197,10 +191,10 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
                             $sub->delete(false);
                         }
                     } else {
-                        throw new \InvalidArgumentException('failed to sent message: ' . json_encode($respData));
+                        throw new InvalidArgumentException('failed to sent message: ' . json_encode($respData));
                     }
                 }
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->app->logException($e);
             }
         }
@@ -209,7 +203,7 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
     protected function isInvalidToken(array $response): bool
     {
         if (isset($response['error'], $response['error']['message'])) {
-            return \str_starts_with($response['error']['message'], 'The registration token is not a valid FCM registration token');
+            return str_starts_with($response['error']['message'], 'The registration token is not a valid FCM registration token');
         }
 
         return false;

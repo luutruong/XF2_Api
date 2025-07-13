@@ -18,7 +18,7 @@ class ApiHtml extends XFCP_ApiHtml
      * @param array $options
      * @return void
      */
-    protected function setupRenderOptions(array $ast, array &$options)
+    protected function setupRenderOptions(array $ast, array & $options)
     {
         parent::setupRenderOptions($ast, $options);
 

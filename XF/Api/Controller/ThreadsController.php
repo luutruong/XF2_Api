@@ -18,7 +18,7 @@ class ThreadsController extends XFCP_ThreadsController
         return parent::setupThreadCreate($forum);
     }
 
-    protected function setupThreadFinder(&$filters = [], &$sort = null)
+    protected function setupThreadFinder(& $filters = [], & $sort = null)
     {
         if ($this->request()->exists('started_by')) {
             $starterName = $this->filter('started_by', 'str');

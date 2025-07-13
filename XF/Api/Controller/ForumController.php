@@ -58,7 +58,7 @@ class ForumController extends XFCP_ForumController
         ]);
     }
 
-    protected function setupThreadFinder(\XF\Entity\Forum $forum, &$filters = [], &$sort = null)
+    protected function setupThreadFinder(\XF\Entity\Forum $forum, & $filters = [], & $sort = null)
     {
         $notFound = false;
         if ($this->request()->exists('started_by')) {
