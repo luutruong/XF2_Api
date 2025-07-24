@@ -155,7 +155,6 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
             } elseif ($subscription->device_type === 'android') {
                 $message['android'] = [
                     'priority' => 'high',
-                    'sound' => 'default',
                     'notification' => [
                         'notification_count' => $this->getTotalUnviewedNotifications($receiver),
                         'notification_priority' => 'PRIORITY_DEFAULT'
