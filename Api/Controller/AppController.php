@@ -385,6 +385,9 @@ class AppController extends AbstractController
         $token = new StdOAuth2Token();
         $token->setAccessToken($tokenText);
         $token->setEndOfLife(TokenInterface::EOL_UNKNOWN);
+        $token->setExtraParams([
+            'id_token' => $token,
+        ]);
         $storageState->storeToken($token);
 
         $providerData = $handler->getProviderData($storageState);
