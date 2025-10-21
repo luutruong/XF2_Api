@@ -386,7 +386,7 @@ class AppController extends AbstractController
         $token->setAccessToken($tokenText);
         $token->setEndOfLife(TokenInterface::EOL_UNKNOWN);
         $token->setExtraParams([
-            'id_token' => $token,
+            'id_token' => $tokenText,
         ]);
         $storageState->storeToken($token);
 
