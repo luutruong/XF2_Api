@@ -3,7 +3,7 @@
         "php": ">=8.0.0",
         "ext-openssl": "*",
         "ext-json": "*",
-        "google/apiclient": "^2.18"
+        "google/apiclient": "2.2"
     },
     "config": {
         "autoloader-suffix": "TruonglvApi"
@@ -21,9 +21,6 @@
         "paragonie/constant_time_encoding": "*",
         "brick/math": "*",
         "symfory/polyfill-php80": "*"
-    },
-    "scripts": {
-        "post-autoload-dump": ["Google\\Task\\Composer::cleanup"]
     },
     "extra": {
         "google/apiclient-services": [
