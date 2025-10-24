@@ -378,9 +378,17 @@ class Android extends AbstractProvider implements IAPInterface
         return \get_object_vars($purchase);
     }
 
-    public function getAndroidPublisher(PaymentProfile $paymentProfile): AndroidPublisher
+    protected function getClient(): \Google_Client
     {
         $client = new \Google_Client();
+        $client->setHttpClient(\XF::app()->http()->client());
+
+        return $client;
+    }
+
+    public function getAndroidPublisher(PaymentProfile $paymentProfile): AndroidPublisher
+    {
+        $client = $this->getClient();
         $serviceAccount = \GuzzleHttp\Utils::jsonDecode($paymentProfile->options['service_account_json'], true);
 
         $client->setAuthConfig($serviceAccount);
