@@ -363,16 +363,25 @@ class Android extends AbstractProvider implements IAPInterface
 
         $purchase = $this->getSubscriptionPurchase($state);
         if ($purchase !== null) {
-            $logDetails[static::KEY_STATE_ANDROID_PURCHASE] = $purchase->toSimpleObject();
+            $logDetails[static::KEY_STATE_ANDROID_PURCHASE] = $this->getPurchaseForLogging($purchase);
         }
 
         $state->logDetails = $logDetails;
     }
 
+    protected function getPurchaseForLogging(AndroidPublisher\SubscriptionPurchase $purchase): array
+    {
+        if (\is_callable([$purchase, 'toSimpleObject'])) {
+            return $purchase->toSimpleObject();
+        }
+
+        return \get_object_vars($purchase);
+    }
+
     public function getAndroidPublisher(PaymentProfile $paymentProfile): AndroidPublisher
     {
-        $client = new Client();
-        $serviceAccount = \GuzzleHttp\json_decode($paymentProfile->options['service_account_json'], true);
+        $client = new \Google_Client();
+        $serviceAccount = \GuzzleHttp\Utils::jsonDecode($paymentProfile->options['service_account_json'], true);
 
         $client->setAuthConfig($serviceAccount);
         $client->addScope('https://www.googleapis.com/auth/androidpublisher');
@@ -432,7 +441,7 @@ class Android extends AbstractProvider implements IAPInterface
         $paymentLog->log_message = '[Android] Verify receipt response';
         $paymentLog->log_details = [
             'payload' => $payload,
-            'response' => $purchase->toSimpleObject(),
+            'response' => $this->getPurchaseForLogging($purchase),
             '_POST' => $_POST,
             'store_product_id' => $purchaseRequest->extra_data['store_product_id'],
         ];
@@ -464,7 +473,7 @@ class Android extends AbstractProvider implements IAPInterface
             return $transInfo;
         }
 
-        $_POST['android_purchase'] = $purchase->toSimpleObject();
+        $_POST['android_purchase'] = $this->getPurchaseForLogging($purchase);
 
         throw new LogicException('Cannot verify transaction');
     }
@@ -477,7 +486,7 @@ class Android extends AbstractProvider implements IAPInterface
     protected function ackPurchase(AndroidPublisher $publisher, string $packageName, string $subId, string $token, array $devPayload = []): void
     {
         $ackBody = new AndroidPublisher\SubscriptionPurchasesAcknowledgeRequest();
-        $ackBody->setDeveloperPayload(\GuzzleHttp\json_encode($devPayload));
+        $ackBody->setDeveloperPayload(\GuzzleHttp\Utils::jsonEncode($devPayload));
 
         try {
             $publisher->purchases_subscriptions->acknowledge(
@@ -487,7 +496,7 @@ class Android extends AbstractProvider implements IAPInterface
                 $ackBody
             );
         } catch (Throwable $e) {
-            if ($e instanceof Exception) {
+            if ($e instanceof \Google_Service_Exception) {
                 $message = (array) json_decode($e->getMessage(), true);
                 if (isset($message['error'], $message['error']['errors'])) {
                     $reason = $message['error']['errors'][0]['reason'];
