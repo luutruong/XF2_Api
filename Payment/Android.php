@@ -369,7 +369,7 @@ class Android extends AbstractProvider implements IAPInterface
         $state->logDetails = $logDetails;
     }
 
-    protected function getPurchaseForLogging(AndroidPublisher\SubscriptionPurchase $purchase): array
+    protected function getPurchaseForLogging(AndroidPublisher\SubscriptionPurchase $purchase)
     {
         if (\is_callable([$purchase, 'toSimpleObject'])) {
             return $purchase->toSimpleObject();
@@ -378,9 +378,9 @@ class Android extends AbstractProvider implements IAPInterface
         return \get_object_vars($purchase);
     }
 
-    protected function getClient(): \Google_Client
+    protected function getClient(): \Google\Client
     {
-        $client = new \Google_Client();
+        $client = new \Google\Client();
         $client->setHttpClient(\XF::app()->http()->client());
 
         return $client;
