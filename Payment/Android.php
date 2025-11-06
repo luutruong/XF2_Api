@@ -440,7 +440,7 @@ class Android extends AbstractProvider implements IAPInterface
         $purchase = $service->purchases_subscriptions->get(
             $payload['package_name'],
             $payload['subscription_id'],
-            $payload['token']
+            $payload['purchase_token']
         );
 
         /** @var \XF\Entity\PaymentProviderLog $paymentLog */
@@ -472,7 +472,7 @@ class Android extends AbstractProvider implements IAPInterface
 
             // ack
             if ($purchase->getAcknowledgementState() === 0) {
-                $this->ackPurchase($service, $payload['package_name'], $payload['subscription_id'], $payload['token'], [
+                $this->ackPurchase($service, $payload['package_name'], $payload['subscription_id'], $payload['purchase_token'], [
                     'user_id' => $purchaseRequest->user_id,
                     'request_key' => $purchaseRequest->request_key,
                 ]);

@@ -1,1 +1,0 @@
-This value will give purchase expires longer; it can be error if user has slow connection.

@@ -5,9 +5,9 @@
         "hash": "f0e63a791b0430378f1e52f83167ad12"
     },
     "admin/payment_profile_tapi_iap_ios.html": {
-        "version_id": 3010800,
-        "version_string": "3.1.8",
-        "hash": "a6002e1f35a17612a5ae4c4a4b208b70"
+        "version_id": 4000200,
+        "version_string": "4.0.2",
+        "hash": "d6677760bc32e7ba4c1605101da85b49"
     },
     "admin/tapi_access_token_macros.html": {
         "version_id": 3020200,

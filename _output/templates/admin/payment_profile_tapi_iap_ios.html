@@ -1,13 +1,4 @@
 <xf:formrow label="">{{ phrase('tapi_iap_the_callback_url_x', {'url': $profile.Provider.handler.getCallbackUrl()}) }}</xf:formrow>
 
-<xf:textboxrow name="options[app_shared_pass]" value="{$profile.options.app_shared_pass}"
-               explain="{{ phrase('tapi_iap_ios_app_shared_pass_explain') }}"
-               label="{{ phrase('tapi_iap_ios_app_shared_pass') }}" />
-
 <xf:textboxrow name="options[app_bundle_id]" value="{$profile.options.app_bundle_id}"
                label="{{ phrase('tapi_iap_ios_app_bundle_id') }}" />
-
-<xf:numberboxrow name="options[expires_extra_seconds]"
-                 value="{{ $profile.options.expires_extra_seconds != null ? $profile.options.expires_extra_seconds : 120 }}"
-                 label="{{ phrase('tapi_iap_purchase_expires_extra_seconds') }}"
-                 explain="{{ phrase('tapi_iap_purchase_expires_extra_seconds_explain') }}" />

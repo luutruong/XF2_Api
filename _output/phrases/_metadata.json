@@ -275,23 +275,11 @@
         "version_string": "3.1.4",
         "hash": "e64f1aa9955dea9a51cde15016de5eec"
     },
-    "tapi_iap_ios_app_shared_pass_explain.txt": {
-        "global_cache": false,
-        "version_id": 3010400,
-        "version_string": "3.1.4",
-        "hash": "02369eac6dc7a45dd60863ecb03791d1"
-    },
     "tapi_iap_ios_please_enter_valid_app_bundle_id.txt": {
         "global_cache": false,
         "version_id": 3010400,
         "version_string": "3.1.4",
         "hash": "47bdf9a64dad5580ad5702536d478cba"
-    },
-    "tapi_iap_ios_please_enter_valid_app_shared_pass.txt": {
-        "global_cache": false,
-        "version_id": 3010400,
-        "version_string": "3.1.4",
-        "hash": "633018861157d4ebb6d323f1dbd21246"
     },
     "tapi_iap_product_add.txt": {
         "global_cache": false,
@@ -364,18 +352,6 @@
         "version_id": 3010400,
         "version_string": "3.1.4",
         "hash": "068f80c7519d0528fb08e82137a72131"
-    },
-    "tapi_iap_purchase_expires_extra_seconds.txt": {
-        "global_cache": false,
-        "version_id": 3010800,
-        "version_string": "3.1.8",
-        "hash": "6cbab13fb95a296f5e2830de38ad1f53"
-    },
-    "tapi_iap_purchase_expires_extra_seconds_explain.txt": {
-        "global_cache": false,
-        "version_id": 3010800,
-        "version_string": "3.1.8",
-        "hash": "d9d69bd8ef4d8869fcd7cbd9c3902edc"
     },
     "tapi_iap_purchase_was_expired.txt": {
         "global_cache": false,

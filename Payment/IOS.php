@@ -58,12 +58,11 @@ class IOS extends AbstractProvider implements IAPInterface
     public function verifyConfig(array & $options, & $errors = [])
     {
         $options = array_replace([
-            'app_shared_pass' => '',
             'app_bundle_id' => '',
             'expires_extra_seconds' => 120,
         ], $options);
-        if (strlen($options['app_shared_pass']) === 0) {
-            $errors[] = XF::phrase('tapi_iap_ios_please_enter_valid_app_shared_pass');
+        if (strlen($options['apple_issuer_id']) === 0) {
+            $errors[] = XF::phrase('tapi_iap_ios_please_enter_valid_apple_issuer_id');
 
             return false;
         }
@@ -107,7 +106,7 @@ class IOS extends AbstractProvider implements IAPInterface
     public function setupCallback(\XF\Http\Request $request)
     {
         $inputRaw = $request->getInputRaw();
-        $json = \GuzzleHttp\json_decode($inputRaw, true);
+        $json = \GuzzleHttp\Utils::jsonDecode($inputRaw, true);
         $signedPayload = $json['signedPayload'] ?? '';
 
         $state = new CallbackState();
@@ -126,7 +125,7 @@ class IOS extends AbstractProvider implements IAPInterface
         }
 
         list($head64, $body64, ) = $parts;
-        $header = \GuzzleHttp\json_decode(base64_decode($head64, true));
+        $header = \GuzzleHttp\Utils::jsonDecode(base64_decode($head64, true));
 
         if (!isset($header->x5c) || count($header->x5c) !== 3 || !isset($header->alg)) {
             $state->logType = 'error';
@@ -139,12 +138,7 @@ class IOS extends AbstractProvider implements IAPInterface
         $intermediateCertificate = $this->getCertificate($header->x5c[1]);
         $rootCertificate = $this->getCertificate($header->x5c[2]);
 
-        $appleRootCa = file_get_contents(
-            XF::getAddOnDirectory() . '/Truonglv/Api/AppleRootCA-g3.pem'
-        );
-        if (openssl_x509_verify($rootCertificate, $appleRootCa) !== 1
-            || openssl_x509_verify($intermediateCertificate, $rootCertificate) !== 1
-        ) {
+        if (!$this->verifyCertificate($intermediateCertificate, $rootCertificate)) {
             $state->logType = 'error';
             $state->logMessage = 'Certificate mismatch!';
 
@@ -156,7 +150,7 @@ class IOS extends AbstractProvider implements IAPInterface
             $pkeyObj = openssl_pkey_get_public($certObj);
             $pkeyArr = openssl_pkey_get_details($pkeyObj);
 
-            $data = \GuzzleHttp\json_decode(base64_decode($body64, true));
+            $data = \GuzzleHttp\Utils::jsonDecode(base64_decode($body64, true));
             $transaction = JWT::decode($data->data->signedTransactionInfo, new Key($pkeyArr['key'], $header->alg));
             $signedRenewableInfo = JWT::decode($data->data->signedRenewalInfo, new Key($pkeyArr['key'], $header->alg));
         } catch (Throwable $e) {
@@ -339,10 +333,10 @@ class IOS extends AbstractProvider implements IAPInterface
     {
         $enableLivePayments = (bool) XF::config('enableLivePayments');
         if (!$enableLivePayments ||  $this->forceSandbox) {
-            return 'https://sandbox.itunes.apple.com';
+            return 'https://api.storekit-sandbox.itunes.apple.com';
         }
 
-        return 'https://buy.itunes.apple.com';
+        return 'https://api.storekit.itunes.apple.com';
     }
 
     /**
@@ -364,26 +358,96 @@ class IOS extends AbstractProvider implements IAPInterface
         $state->logDetails = $logDetails;
     }
 
-    protected function requestVerifyReceipt(PurchaseRequest $purchaseRequest, array $payload): array
-    {
-        $client = XF::app()->http()->client();
-        $resp = $client->post($this->getApiEndpoint() . '/verifyReceipt', [
-            'json' => [
-                'receipt-data' => $payload['transactionReceipt'],
-                'password' => $purchaseRequest->PaymentProfile->options['app_shared_pass'],
-                'exclude-old-transactions' => true,
-            ]
-        ]);
+    /**
+     * Parse transaction info từ decoded JWS payload
+     */
+    private function parseAppleTransactionInfo(array $transactionInfo) {
+        $expiresDate = isset($transactionInfo['expiresDate'])
+            ? $transactionInfo['expiresDate'] / 1000
+            : 0;
 
-        $respJson = \GuzzleHttp\json_decode($resp->getBody()->getContents(), true);
-        if (isset($respJson['status']) && $respJson['status'] === 21007) {
-            // @see https://developer.apple.com/documentation/appstorereceipts/verifyreceipt
-            $this->forceSandbox = true;
+        $isActive = $expiresDate > time();
 
-            return $this->requestVerifyReceipt($purchaseRequest, $payload);
+        return [
+            'success' => true,
+            'platform' => 'ios',
+            'product_id' => $transactionInfo['productId'] ?? '',
+            'transaction_id' => $transactionInfo['transactionId'] ?? '',
+            'original_transaction_id' => $transactionInfo['originalTransactionId'] ?? '',
+            'purchase_date' => isset($transactionInfo['purchaseDate'])
+                ? date('Y-m-d H:i:s', $transactionInfo['purchaseDate'] / 1000)
+                : null,
+            'expires_date' => $expiresDate ? date('Y-m-d H:i:s', $expiresDate) : null,
+            'expires_date_timestamp' => $expiresDate,
+            'is_trial_period' => isset($transactionInfo['offerType']) && $transactionInfo['offerType'] == 1,
+            'is_active' => $isActive,
+            'environment' => $transactionInfo['environment'] ?? 'Production',
+            'bundle_id' => $transactionInfo['bundleId'] ?? '',
+            'transaction_reason' => $transactionInfo['transactionReason'] ?? '',
+            'raw_data' => $transactionInfo
+        ];
+    }
+
+    /**
+     * Verify certificate chain với Apple Root CA
+     */
+    private function verifyCertificate(string $interCert, string $rootCert) {
+        $appleRootCa = file_get_contents(
+            XF::getAddOnDirectory() . '/Truonglv/Api/AppleRootCA-g3.pem'
+        );
+        if (openssl_x509_verify($rootCert, $appleRootCa) !== 1
+            || openssl_x509_verify($interCert, $rootCert) !== 1
+        ) {
+            return false;
         }
 
-        return $respJson;
+        return true;
+    }
+
+    /**
+     * Verify JWS signature với Apple's certificate chain
+     */
+    private function verifyAppleJWSSignature(string $jws) {
+        // Parse JWS header
+        $parts = explode('.', $jws);
+        if (count($parts) !== 3) {
+            throw new \Exception('Invalid JWS format');
+        }
+
+        $header = json_decode(base64_decode(strtr($parts[0], '-_', '+/')), true);
+        $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
+
+        if (!isset($header['x5c']) || !is_array($header['x5c'])) {
+            throw new \Exception('Missing x5c certificate chain');
+        }
+
+        $intermediateCertificate = $this->getCertificate($header['x5c'][1]);
+        $rootCertificate = $this->getCertificate($header['x5c'][2]);
+
+        if (!$this->verifyCertificate($intermediateCertificate, $rootCertificate)) {
+            throw new \Exception('Certificate chain verification failed');
+        }
+
+        $publicKey = openssl_pkey_get_public($this->getCertificate($header['x5c'][0]));
+        if (!$publicKey) {
+            throw new \Exception('Failed to extract public key');
+        }
+
+        // Verify JWS signature
+        try {
+            JWT::decode($jws, new Key($publicKey, 'ES256'));
+            return $payload;
+        } catch (\Exception $e) {
+            throw new \Exception('JWS signature verification failed: ' . $e->getMessage());
+        }
+    }
+
+    protected function requestVerifyReceipt(PurchaseRequest $purchaseRequest, array $payload): array
+    {
+        $transactionInfo = $this->verifyAppleJWSSignature($payload['purchase_token']);
+        $transactionInfo = $this->parseAppleTransactionInfo($transactionInfo);
+
+        return $transactionInfo;
     }
 
     public function verifyIAPTransaction(PurchaseRequest $purchaseRequest, array $payload): array
@@ -404,38 +468,30 @@ class IOS extends AbstractProvider implements IAPInterface
         $paymentLog->provider_id = $this->getProviderId();
         $paymentLog->save();
 
-        if (isset($respJson['status']) && $respJson['status'] === 0) {
-            $latestReceipt = $respJson['latest_receipt_info'][0];
-            if ($respJson['receipt']['bundle_id'] !== $purchaseRequest->PaymentProfile->options['app_bundle_id']) {
-                throw new InvalidArgumentException('App bundle ID did not match');
-            }
-
-            $expires = \ceil($latestReceipt['expires_date_ms'] / 1000) + $this->getPurchaseExpiresExtraSeconds($purchaseRequest->PaymentProfile);
-            if ($expires <= time()) {
-                throw new PurchaseExpiredException();
-            }
-
-            if (isset($latestReceipt['transaction_id']) && $latestReceipt['in_app_ownership_type'] === 'PURCHASED') {
-                $transactionId = $latestReceipt['transaction_id'];
-                $subscriberId = $latestReceipt['original_transaction_id'];
-
-                $paymentLog->fastUpdate([
-                    'transaction_id' => $transactionId,
-                    'subscriber_id' => $subscriberId,
-                ]);
-
-                return [
-                    'transaction_id' => $transactionId,
-                    'subscriber_id' => $subscriberId,
-                    'signedTransaction' => [
-                        'productId' => $latestReceipt['product_id'],
-                    ],
-                    'store_product_id' => $purchaseRequest->extra_data['store_product_id'],
-                ];
-            }
+        if ($respJson['bundle_id'] !== $purchaseRequest->PaymentProfile->options['app_bundle_id']) {
+            throw new InvalidArgumentException('App bundle ID did not match');
         }
 
-        throw new InvalidArgumentException('Cannot verify receipt');
+        if (!$respJson['is_active']) {
+            throw new PurchaseExpiredException();
+        }
+
+        $transactionId = $respJson['transaction_id'];
+        $subscriberId = $respJson['original_transaction_id'];
+
+        $paymentLog->fastUpdate([
+            'transaction_id' => $transactionId,
+            'subscriber_id' => $subscriberId,
+        ]);
+
+        return [
+            'transaction_id' => $transactionId,
+            'subscriber_id' => $subscriberId,
+            'signedTransaction' => [
+                'productId' => $respJson['product_id'],
+            ],
+            'store_product_id' => $purchaseRequest->extra_data['store_product_id'],
+        ];
     }
 
     protected function getPurchaseExpiresExtraSeconds(PaymentProfile $paymentProfile): int

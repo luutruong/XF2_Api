@@ -465,25 +465,23 @@ class AppController extends AbstractController
     public function actionPostIAPVerify()
     {
         $this->assertRegisteredUser();
-        $this->assertRequiredApiInput(['platform', 'store_product_id']);
+        $this->assertRequiredApiInput(['platform', 'store_product_id', 'purchase', 'purchase_token']);
 
-        $platform = $this->filter('platform', 'str');
-        if ($platform === 'ios') {
-            $this->assertRequiredApiInput(['receipt']);
-        } else {
-            $this->assertRequiredApiInput(['package_name', 'token']);
-        }
+        $input = $this->filter([
+            'platform' => 'str',
+            'store_product_id' => 'str',
+            'purchase' => 'str',
+            'purchase_token' => 'str',
+        ]);
 
-        $storeProductId = $this->filter('store_product_id', 'str');
-
-        if (!in_array($platform, ['ios', 'android'], true)) {
+        if (!in_array($input['platform'], ['ios', 'android'], true)) {
             return $this->noPermission();
         }
 
         /** @var IAPProduct|null $product */
         $product = $this->finder(IAPProductFinder::class)
-            ->where('platform', $platform)
-            ->where('store_product_id', $storeProductId)
+            ->where('platform', $input['platform'])
+            ->where('store_product_id', $input['store_product_id'])
             ->fetchOne();
         if ($product === null) {
             // unverified
@@ -494,20 +492,14 @@ class AppController extends AbstractController
             return $this->error(XF::phrase('tapi_iap_product_already_subscribed'), 400);
         }
 
-        if ($platform === 'ios') {
-            $jsonPayload = [
-                'transactionReceipt' => $this->filter('receipt', 'str'),
-            ];
-        } else {
-            $jsonPayload = [
-                'package_name' => $this->filter('package_name', 'str'),
-                'token' => $this->filter('token', 'str'),
-                'subscription_id' => $storeProductId,
-                'purchase' => $this->filter('purchase', 'str'),
-            ];
+        $jsonPayload = [
+            'package_name' => $this->filter('package_name', 'str'),
+            'subscription_id' => $input['store_product_id'],
+            'purchase' => $this->filter('purchase', 'str'),
+        ];
 
-            $jsonPayload['purchase'] = \GuzzleHttp\Utils::jsonDecode($jsonPayload['purchase'], true);
-        }
+        $jsonPayload['purchase'] = \GuzzleHttp\Utils::jsonDecode($jsonPayload['purchase'], true);
+        $jsonPayload['purchase_token'] = $input['purchase_token'];
 
         /** @var IAPInterface|XF\Payment\AbstractProvider $handler */
         $handler = $product->PaymentProfile->Provider->handler;
