@@ -561,7 +561,7 @@ class AppController extends AbstractController
             $product->PaymentProfile->provider_id,
             $transactionId,
             'info',
-            "[{$platform}] Received in-app purchase",
+            \sprintf("[%s] Received in-app purchase", $input['platform']),
             array_merge([
                 '_POST' => $_POST,
                 'store_product_id' => $product->store_product_id,

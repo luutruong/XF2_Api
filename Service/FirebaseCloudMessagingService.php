@@ -210,6 +210,10 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
             return str_starts_with($response['error']['message'], 'The registration token is not a valid FCM registration token');
         }
 
+        if (isset($response['error']['code']) && $response['error']['code'] === 404) {
+            return true;
+        }
+
         return false;
     }
 
