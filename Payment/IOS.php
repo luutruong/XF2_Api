@@ -361,10 +361,11 @@ class IOS extends AbstractProvider implements IAPInterface
     /**
      * Parse transaction info từ decoded JWS payload
      */
-    private function parseAppleTransactionInfo(array $transactionInfo) {
+    private function parseAppleTransactionInfo(PaymentProfile $paymentProfile, array $transactionInfo) {
         $expiresDate = isset($transactionInfo['expiresDate'])
             ? $transactionInfo['expiresDate'] / 1000
             : 0;
+        $expiresDate += $this->getPurchaseExpiresExtraSeconds($paymentProfile);
 
         $isActive = $expiresDate > time();
 
@@ -445,7 +446,8 @@ class IOS extends AbstractProvider implements IAPInterface
     protected function requestVerifyReceipt(PurchaseRequest $purchaseRequest, array $payload): array
     {
         $transactionInfo = $this->verifyAppleJWSSignature($payload['purchase_token']);
-        $transactionInfo = $this->parseAppleTransactionInfo($transactionInfo);
+        $transactionInfo = $this->parseAppleTransactionInfo($purchaseRequest->PaymentProfile, $transactionInfo);
+        $_POST['parsed_transaction'] = $transactionInfo;
 
         return $transactionInfo;
     }

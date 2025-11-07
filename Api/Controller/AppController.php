@@ -526,8 +526,6 @@ class AppController extends AbstractController
             $subscriberId = $data['subscriber_id'];
             $transactionId = $data['transaction_id'];
         } catch (PurchaseExpiredException $e) {
-            $this->app()->logException($e);
-
             return $this->apiError(
                 XF::phrase('tapi_iap_purchase_was_expired'),
                 'purchase_expired'
