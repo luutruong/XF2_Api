@@ -432,13 +432,10 @@ class Android extends AbstractProvider implements IAPInterface
         }
 
         $paymentProfile = $purchaseRequest->PaymentProfile;
-        if ($paymentProfile->options['app_bundle_id'] !== $payload['package_name']) {
-            throw new LogicException('Invalid bundle.');
-        }
 
         $service = $this->getAndroidPublisher($paymentProfile);
         $purchase = $service->purchases_subscriptions->get(
-            $payload['package_name'],
+            $paymentProfile->options['app_bundle_id'],
             $payload['subscription_id'],
             $payload['purchase_token']
         );
@@ -472,7 +469,7 @@ class Android extends AbstractProvider implements IAPInterface
 
             // ack
             if ($purchase->getAcknowledgementState() === 0) {
-                $this->ackPurchase($service, $payload['package_name'], $payload['subscription_id'], $payload['purchase_token'], [
+                $this->ackPurchase($service, $paymentProfile->options['app_bundle_id'], $payload['subscription_id'], $payload['purchase_token'], [
                     'user_id' => $purchaseRequest->user_id,
                     'request_key' => $purchaseRequest->request_key,
                 ]);
