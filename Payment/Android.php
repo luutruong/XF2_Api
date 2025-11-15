@@ -7,7 +7,6 @@ use Throwable;
 use function ceil;
 use function time;
 use function trim;
-use Google\Client;
 use LogicException;
 use XF\Mvc\Controller;
 use function preg_match;
@@ -15,7 +14,6 @@ use function json_decode;
 use function array_replace;
 use function base64_decode;
 use XF\Purchasable\Purchase;
-use Google\Service\Exception;
 use XF\Entity\PaymentProfile;
 use XF\Payment\CallbackState;
 use function array_key_exists;
@@ -152,6 +150,7 @@ class Android extends AbstractProvider implements IAPInterface
                 $filtered['subscriptionNotification']['purchaseToken']
             );
         } catch (Throwable $e) {
+            \XF::app()->logException($e);
             $state->logType = 'error';
             $state->logMessage = 'Get purchase subscription error: ' . $e->getMessage();
 
