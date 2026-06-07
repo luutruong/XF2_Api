@@ -1,0 +1,1 @@
+Multiplier applied to thread views (divided by 10) when computing the trending score. 10 views equals one weight unit.

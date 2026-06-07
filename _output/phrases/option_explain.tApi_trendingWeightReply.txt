@@ -1,0 +1,1 @@
+Multiplier applied to each thread reply when computing the trending score.

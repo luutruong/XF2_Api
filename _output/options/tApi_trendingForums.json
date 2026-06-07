@@ -1,0 +1,15 @@
+{
+    "edit_format": "callback",
+    "edit_format_params": "Truonglv\\Api\\Option\\TrendingForums::renderOption",
+    "data_type": "array",
+    "sub_options": [
+        "*"
+    ],
+    "validation_class": "Truonglv\\Api\\Option\\TrendingForums",
+    "validation_method": "verifyOption",
+    "advanced": false,
+    "default_value": "[]",
+    "relations": {
+        "tl_Api": 230
+    }
+}
