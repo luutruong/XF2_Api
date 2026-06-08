@@ -131,6 +131,36 @@
         "version_string": "1.2.6 Alpha",
         "hash": "0d65c51f1e5f7281260c6494c57549fc"
     },
+    "option.tApi_trendingForums.txt": {
+        "global_cache": false,
+        "version_id": 4000400,
+        "version_string": "4.0.4",
+        "hash": "a3e0e17cae8f752767e15b5e207d1945"
+    },
+    "option.tApi_trendingWeightReaction.txt": {
+        "global_cache": false,
+        "version_id": 4000400,
+        "version_string": "4.0.4",
+        "hash": "a0dcd902ac907c5cc783ababe1ca7588"
+    },
+    "option.tApi_trendingWeightReply.txt": {
+        "global_cache": false,
+        "version_id": 4000400,
+        "version_string": "4.0.4",
+        "hash": "565ff1a09bd414f0b01d4bec1346ccfb"
+    },
+    "option.tApi_trendingWeightView.txt": {
+        "global_cache": false,
+        "version_id": 4000400,
+        "version_string": "4.0.4",
+        "hash": "73b3cb89de066f98058b31fc400d0d86"
+    },
+    "option.tApi_trendingWindowDays.txt": {
+        "global_cache": false,
+        "version_id": 4000400,
+        "version_string": "4.0.4",
+        "hash": "98c677992afc8b120e049141c615305b"
+    },
     "option_explain.tApi_accessTokenTtl.txt": {
         "global_cache": false,
         "version_id": 3000700,
@@ -208,6 +238,36 @@
         "version_id": 1020610,
         "version_string": "1.2.6 Alpha",
         "hash": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "option_explain.tApi_trendingForums.txt": {
+        "global_cache": false,
+        "version_id": 4000400,
+        "version_string": "4.0.4",
+        "hash": "da64d48e1e12a4c071877ff17fc30a67"
+    },
+    "option_explain.tApi_trendingWeightReaction.txt": {
+        "global_cache": false,
+        "version_id": 4000400,
+        "version_string": "4.0.4",
+        "hash": "1a57585e42a5aaa89de282577434fc6c"
+    },
+    "option_explain.tApi_trendingWeightReply.txt": {
+        "global_cache": false,
+        "version_id": 4000400,
+        "version_string": "4.0.4",
+        "hash": "84c31f5fa6785c7e8b6dceeb57746a4b"
+    },
+    "option_explain.tApi_trendingWeightView.txt": {
+        "global_cache": false,
+        "version_id": 4000400,
+        "version_string": "4.0.4",
+        "hash": "265ea0135d01e134b3e4a14b74e8f012"
+    },
+    "option_explain.tApi_trendingWindowDays.txt": {
+        "global_cache": false,
+        "version_id": 4000400,
+        "version_string": "4.0.4",
+        "hash": "3f3546fd1e74b5460c8cd70d0a51c9d7"
     },
     "option_group.tl_Api.txt": {
         "global_cache": false,

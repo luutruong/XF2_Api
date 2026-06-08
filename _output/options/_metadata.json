@@ -37,5 +37,20 @@
     },
     "tApi_recordsPerPage.json": {
         "hash": "b59369118c0ca115954d7cd723f899ea"
+    },
+    "tApi_trendingForums.json": {
+        "hash": "f1f2b27736cf4e20dce5ed944887873a"
+    },
+    "tApi_trendingWeightReaction.json": {
+        "hash": "ad114837f0a7d9f5a58ababf79712758"
+    },
+    "tApi_trendingWeightReply.json": {
+        "hash": "558c666363b9add89410a576175a97af"
+    },
+    "tApi_trendingWeightView.json": {
+        "hash": "237d502bb0bd15f45f0f85c3f4d6a1b1"
+    },
+    "tApi_trendingWindowDays.json": {
+        "hash": "5141a1d24cc9a4368fcb9e63ec3d5f11"
     }
 }
