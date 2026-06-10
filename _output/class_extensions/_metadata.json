@@ -62,6 +62,9 @@
     "XF-Entity-ConversationMessage_Truonglv-Api-XF-Entity-ConversationMessage.json": {
         "hash": "44f7d70248f7be5f109fca85f32aa3c1"
     },
+    "XF-Entity-FeaturedContent_Truonglv-Api-XF-Entity-FeaturedContent.json": {
+        "hash": "1e2cd05b62a6987fca418bf44fc9d142"
+    },
     "XF-Entity-Forum_Truonglv-Api-XF-Entity-Forum.json": {
         "hash": "f097d20487c5100fb6ac73eaef22199f"
     },

@@ -24,16 +24,6 @@ namespace XF;
  * @property non-negative-int|null $tApi_logLength Api request log length
  * @property array{0: array{reactionId: int, imageUrl: string}, 1: array{reactionId: int, imageUrl: string}, 2: array{reactionId: int, imageUrl: string}, 3: array{reactionId: int, imageUrl: string}, 4: array{reactionId: int, imageUrl: string}, 5: array{reactionId: int, imageUrl: string}}|null $tApi_reactions Reactions
  * @property non-negative-int|null $tApi_recordsPerPage Records per page
- * @property array|null $tApi_trendingForums Trending threads: forums
-
- * @property non-negative-int|null $tApi_trendingWeightReaction Trending threads: reaction weight
-
- * @property non-negative-int|null $tApi_trendingWeightReply Trending threads: reply weight
-
- * @property non-negative-int|null $tApi_trendingWeightView Trending threads: view weight
-
- * @property non-negative-int|null $tApi_trendingWindowDays Trending threads: time window (days)
-
  */
 class Options
 {

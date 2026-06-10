@@ -1,1 +1,0 @@
-Forums whose threads will be considered for the trending list. Leave empty to include every forum.

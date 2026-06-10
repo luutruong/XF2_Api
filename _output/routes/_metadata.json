@@ -26,10 +26,13 @@
     "api_tapi-bookmarks_.json": {
         "hash": "11f5a0ec9e4a5661b30208848961d9f4"
     },
+    "api_tapi-featured-contents_-.json": {
+        "hash": "577a251aeefaf97c7b04373cebbf9848"
+    },
+    "api_tapi-featured-contents_.json": {
+        "hash": "ce9c6bb97f065710711640b03591c7d3"
+    },
     "api_tapi-search_.json": {
         "hash": "5e44e8473cfa30ea90a460137302ea50"
-    },
-    "api_tapi-trending-threads_.json": {
-        "hash": "0b0c253b89ff517316d7bf955e05e263"
     }
 }

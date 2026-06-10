@@ -54,11 +54,6 @@
         "version_string": "1.1.1",
         "hash": "6235afe39c7984ed4e8da81c171fab8c"
     },
-    "admin/tapi_option_template_trending_forums.html": {
-        "version_id": 4000400,
-        "version_string": "4.0.4",
-        "hash": "15f453c53871f2156ee0d85a3347a344"
-    },
     "admin/tapi_subscription_view.html": {
         "version_id": 1000600,
         "version_string": "1.0.6",

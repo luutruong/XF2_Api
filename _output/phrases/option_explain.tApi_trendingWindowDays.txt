@@ -1,1 +1,0 @@
-Only threads whose first post falls within the last N days are considered for trending.

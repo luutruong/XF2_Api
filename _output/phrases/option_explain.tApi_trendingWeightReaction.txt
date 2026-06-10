@@ -1,1 +1,0 @@
-Multiplier applied to each thread reaction point when computing the trending score.
