@@ -42,6 +42,31 @@ class User extends XFCP_User
         if ($this->user_id === XF::visitor()->user_id) {
             $result->can_upload_avatar = $this->canUploadAvatar();
             $result->can_upload_cover = $this->canUploadProfileBanner();
+
+            if ($verbosity >= self::VERBOSITY_VERBOSE) {
+                $cache = $this->app()->cache();
+                $total = false;
+
+                if ($cache !== null) {
+                    $total = $cache->fetch('tapi_user_thread_count:' . $this->user_id);
+                }
+                if ($total === false) {
+                    $total = (int) $this->db()->fetchOne('
+                        SELECT COUNT(*)
+                        FROM xf_thread
+                        WHERE user_id = ? AND discussion_state = ?
+                    ', [
+                        $this->user_id,
+                        'visible'
+                    ]);
+
+                    if ($cache !== null) {
+                        $cache->save('tapi_user_thread_count:' . $this->user_id, $total, 300);
+                    }
+                }
+
+                $result->thread_count = $total;
+            }
         } else {
             $result->can_upload_avatar = false;
             $result->can_upload_cover = false;
