@@ -101,6 +101,163 @@ Response:
 }
 ```
 
+## Featured Contents
+
+### Feature object schema
+
+The `(feature)` object returned by the endpoints below has the following shape:
+
+```
+{
+  "featured_content_id": (int),
+  "content_type": (string),         // e.g. "thread", "post", "xfrm_resource"
+  "content_id": (int),
+  "content_container_id": (int),    // e.g. forum/node id for a thread
+  "content_user_id": (int),         // author of the underlying content
+  "content_username": (string),
+  "content_date": (int),            // unix timestamp
+  "content_visible": (bool),
+  "feature_user_id": (int),         // user who created the feature
+  "feature_date": (int),            // unix timestamp
+  "auto_featured": (bool),
+  "always_visible": (bool),
+  "title": (string),
+  "snippet": (string),
+  "image_url": (string),            // empty string when no image
+  "content_link": (string),         // canonical URL to the underlying content
+  "content": (thread|xfrm_resource|...|null) // see "The `content` field" below
+}
+```
+
+#### The `content` field
+
+`content` is only present at `VERBOSITY_VERBOSE` (returned by the list `GET`, single `GET`, and `POST` create/update endpoints — not by `DELETE`). Its shape **depends on `content_type`**: it is the standard XenForo API result of the underlying entity, at `VERBOSITY_NORMAL`. The full per-field schema is not duplicated here — refer to the official XenForo API endpoints docs for the matching entity.
+
+| `content_type`   | `content` shape                       | Reference                                                                                    |
+|------------------|---------------------------------------|----------------------------------------------------------------------------------------------|
+| `thread`         | a `thread` object                     | [XF API — threads](https://xenforo.com/community/pages/api-endpoints/#type_thread)           |
+| `xfrm_resource`  | a `resource` object (if XFRM is installed) | [XFRM API — resources](https://xenforo.com/community/pages/api-endpoints/#type_resource) |
+| (other)          | the API result for the matching entity registered via the `featured_content_handler_class` content-type field | n/a |
+
+The exact set of supported `content_type` values is whatever has registered a `featured_content_handler_class` in the running XenForo instance. Out of the box that is just `thread`; XFRM/XFMG and similar add-ons register their own. Call `GET /tapi-featured-contents` with no filter to see what is actually in use.
+
+`content` is `null` when the underlying entity has been deleted or is not viewable by the current visitor.
+
+The `(pagination)` object follows the standard XenForo API pagination shape:
+
+```
+{
+  "current_page": (int),
+  "last_page": (int),
+  "per_page": (int),
+  "shown_items": (int),
+  "total_items": (int)
+}
+```
+
+### GET `/tapi-featured-contents`
+
+Get a paginated list of featured contents that the current visitor can view.
+
+Parameters:
+
+* `page` (int) __optional__
+* `content_type` (string) __optional__: Filter by content type. Only supported content types are accepted (e.g. `thread`, `post`, `xfrm_resource`); other values are ignored.
+
+Response:
+
+```
+{
+  "features": [
+    (feature),
+    ...
+  ],
+  "pagination": (pagination)
+}
+```
+
+### POST `/tapi-featured-contents`
+
+Feature a piece of content. Requires the visitor to have permission to feature/unfeature the target content.
+
+Parameters:
+
+* `content_type` (string) __required__: Supported content type (e.g. `thread`, `post`, `xfrm_resource`).
+* `content_id` (int) __required__: ID of the content to feature.
+* `title` (string) __optional__: Override feature title.
+* `snippet` (string) __optional__: Override feature snippet.
+* `always_visible` (bool) __optional__
+* `auto_featured` (bool) __optional__
+
+Response:
+
+```
+{
+  "feature": (feature)
+}
+```
+
+Errors:
+
+* `already_featured`: The content has already been featured.
+* `validation_failed`: Returned with validation error details.
+
+### GET `/tapi-featured-contents/:featuredContentId`
+
+Get a single featured content by id.
+
+Parameters:
+
+* N/A
+
+Response:
+
+```
+{
+  "feature": (feature)
+}
+```
+
+### POST `/tapi-featured-contents/:featuredContentId`
+
+Update an existing featured content. Requires the visitor to have permission to feature/unfeature the underlying content.
+
+Parameters:
+
+* `title` (string) __optional__
+* `snippet` (string) __optional__
+* `always_visible` (bool) __optional__
+* `auto_featured` (bool) __optional__
+* `feature_date` (int) __optional__: Unix timestamp. Only applied when greater than 0.
+
+Response:
+
+```
+{
+  "feature": (feature)
+}
+```
+
+Errors:
+
+* `validation_failed`: Returned with validation error details.
+
+### DELETE `/tapi-featured-contents/:featuredContentId`
+
+Remove a featured content. Requires the visitor to have permission to feature/unfeature the underlying content.
+
+Parameters:
+
+* N/A
+
+Response:
+
+```
+{
+  "success": true
+}
+```
+
 ## Forums
 
 ### GET `/forums/:forumId/prefixes`
