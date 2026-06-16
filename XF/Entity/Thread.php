@@ -77,5 +77,27 @@ class Thread extends XFCP_Thread
         if ($this->discussion_type === 'poll' && $verbosity >= self::VERBOSITY_VERBOSE) {
             $result->includeRelation('Poll', $verbosity, $options);
         }
+
+        if ($verbosity >= self::VERBOSITY_VERBOSE) {
+            $fields = $this->app()->registry()->get('threadFieldsInfo');
+            $fieldValues = $this->custom_fields->getNamedFieldValues($this->Forum->field_cache);
+
+            $fieldsData = [];
+            foreach ($fieldValues as $fieldId => $fieldValue) {
+                if (!isset($fields[$fieldId])) {
+                    continue;
+                }
+
+                $fieldDefinition = $fields[$fieldId];
+                $fieldDefinition['title'] = \XF::phrase($fieldDefinition['title']);
+                $fieldDefinition['description'] = \XF::phrase($fieldDefinition['description']);
+
+                $fieldsData[] = \array_merge([
+                    'field_value' => $fieldValue,
+                ], $fieldDefinition);
+            }
+
+            $result->tapi_custom_fields = $fieldsData;
+        }
     }
 }
