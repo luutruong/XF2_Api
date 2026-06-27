@@ -47,9 +47,9 @@ class ForumController extends XFCP_ForumController
         $cacheKey = 'tlApi_prefixThreadStats_' . $forum->node_id;
 
         if ($cache !== null) {
-            $item = $cache->getItem($cacheKey);
-            if ($item->isHit()) {
-                return $item->get();
+            $cached = $cache->fetch($cacheKey);
+            if ($cached !== false) {
+                return $cached;
             }
         }
 
@@ -63,9 +63,7 @@ class ForumController extends XFCP_ForumController
         $stats = array_map('\intval', $stats);
 
         if ($cache !== null) {
-            $item->set($stats);
-            $item->expiresAfter(600); // 10 minutes
-            $cache->save($item);
+            $cache->save($cacheKey, $stats, 600); // 10 minutes
         }
 
         return $stats;
