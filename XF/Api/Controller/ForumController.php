@@ -53,7 +53,7 @@ class ForumController extends XFCP_ForumController
             }
         }
 
-        $stats = $this->db()->fetchPairs("
+        $stats = $this->app()->db()->fetchPairs("
             SELECT prefix_id, COUNT(*) AS total
             FROM xf_thread
             WHERE node_id = ? AND prefix_id > 0 AND discussion_state = 'visible'
