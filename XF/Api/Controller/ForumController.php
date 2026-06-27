@@ -34,7 +34,41 @@ class ForumController extends XFCP_ForumController
             'prefix_tree' => $prefixTree
         ];
 
+        if ($this->filter('with_thread_stats', 'bool') === true) {
+            $data['thread_stats'] = $this->getPrefixThreadStats($forum);
+        }
+
         return $this->apiSuccess($data);
+    }
+
+    protected function getPrefixThreadStats(\XF\Entity\Forum $forum): array
+    {
+        $cache = XF::app()->cache();
+        $cacheKey = 'tlApi_prefixThreadStats_' . $forum->node_id;
+
+        if ($cache !== null) {
+            $item = $cache->getItem($cacheKey);
+            if ($item->isHit()) {
+                return $item->get();
+            }
+        }
+
+        $stats = $this->db()->fetchPairs("
+            SELECT prefix_id, COUNT(*) AS total
+            FROM xf_thread
+            WHERE node_id = ? AND prefix_id > 0 AND discussion_state = 'visible'
+            GROUP BY prefix_id
+        ", $forum->node_id);
+
+        $stats = array_map('\intval', $stats);
+
+        if ($cache !== null) {
+            $item->set($stats);
+            $item->expiresAfter(600); // 10 minutes
+            $cache->save($item);
+        }
+
+        return $stats;
     }
 
     public function actionPostWatch(ParameterBag $params)
