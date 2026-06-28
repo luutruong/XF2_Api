@@ -79,22 +79,23 @@ class Thread extends XFCP_Thread
         }
 
         if ($verbosity >= self::VERBOSITY_VERBOSE) {
-            $fields = $this->app()->registry()->get('threadFieldsInfo');
+            /** @var XF\CustomField\DefinitionSet $fields */
+            $fields = $this->app()->container('customFields.threads');
             $fieldValues = $this->custom_fields->getNamedFieldValues($this->Forum->field_cache);
 
             $fieldsData = [];
             foreach ($fieldValues as $fieldId => $fieldValue) {
-                if (!isset($fields[$fieldId])) {
+                if (!$fields->offsetExists($fieldId)) {
                     continue;
                 }
 
-                $fieldDefinition = $fields[$fieldId];
-                $fieldDefinition['title'] = \XF::phrase($fieldDefinition['title']);
-                $fieldDefinition['description'] = \XF::phrase($fieldDefinition['description']);
+                $fieldDefinition = $fields->get($fieldId);
+                $fieldDefinition['title'] = $fieldDefinition->title;
+                $fieldDefinition['description'] = $fieldDefinition->description;
 
                 $fieldsData[] = \array_merge([
-                    'field_value' => $fieldValue,
-                ], $fieldDefinition);
+                    'field_value' => $fieldDefinition->getFormattedValue($fieldValue),
+                ], $fieldDefinition->toArray());
             }
 
             $result->tapi_custom_fields = $fieldsData;
