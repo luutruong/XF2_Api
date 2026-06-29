@@ -90,10 +90,11 @@ class Thread extends XFCP_Thread
                 }
 
                 $fieldDefinition = $fields->get($fieldId);
-                $fieldsData[] = \array_merge([], $fieldDefinition->toArray(), [
+                $fieldsData[] = [
+                    'field_id' => $fieldId,
                     'field_value' => $fieldDefinition->getFormattedValue($fieldValue),
                     'title' => $fieldDefinition->title,
-                ]);
+                ];
             }
 
             $result->tapi_custom_fields = $fieldsData;
