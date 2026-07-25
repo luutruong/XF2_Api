@@ -23,11 +23,7 @@ class FeaturedContentsController extends AbstractController
         $featureRepo = $this->getFeatureRepo();
         $finder = $featureRepo->findFeaturedContent(true);
 
-        $contentType = $this->filter('content_type', 'str');
-        if ($contentType !== '' && in_array($contentType, $featureRepo->getSupportedContentTypes(), true)) {
-            $finder->where('content_type', $contentType);
-        }
-
+        $this->applyFilter($finder);
         $total = $finder->total();
 
         $features = $finder->limitByPage($page, $perPage)->fetch();
@@ -79,6 +75,14 @@ class FeaturedContentsController extends AbstractController
         return $this->apiResult([
             'feature' => $feature->toApiResult(Entity::VERBOSITY_VERBOSE),
         ]);
+    }
+
+    protected function applyFilter(XF\Finder\FeaturedContentFinder $finder)
+    {
+        $contentType = $this->filter('content_type', 'str');
+        if ($contentType !== '' && in_array($contentType, $this->getFeatureRepo()->getSupportedContentTypes(), true)) {
+            $finder->where('content_type', $contentType);
+        }
     }
 
     protected function applyCreatorInput(CreatorService $creator): void
