@@ -187,13 +187,6 @@ class SearchController extends AbstractController
             return $this->message(XF::phrase('no_results_found'));
         }
 
-        $queryHash = md5(
-            $this->app()->config('globalSalt')
-            . __METHOD__
-            . self::SEARCH_TYPE_THREAD
-            . $tag->tag_id
-        );
-
         $searchId = $this->filter('search_id', 'uint');
         if ($searchId > 0) {
             return $this->rerouteController(__CLASS__, 'get', [
@@ -206,6 +199,8 @@ class SearchController extends AbstractController
             ->where('content_type', self::SEARCH_TYPE_THREAD)
             ->where('visible', 1)
             ->order('content_date', 'desc');
+        $constraints = [];
+        $this->applyTagContentFinderFilters($tagContentFinder, $constraints);
 
         $searchResults = [];
         foreach ($tagContentFinder->limit(max(XF::options()->maximumSearchResults, 20))->fetch() as $tagContent) {
@@ -216,6 +211,14 @@ class SearchController extends AbstractController
             return $this->message(XF::phrase('no_results_found'));
         }
 
+        $queryHash = md5(
+            $this->app()->config('globalSalt')
+            . __METHOD__
+            . self::SEARCH_TYPE_THREAD
+            . $tag->tag_id
+            . \json_encode($constraints)
+        );
+
         /** @var \XF\Entity\Search $search */
         $search = $this->em()->create(XF\Entity\Search::class);
 
@@ -223,7 +226,7 @@ class SearchController extends AbstractController
         $search->result_count = count($searchResults);
         $search->search_results = $searchResults;
         $search->search_type = self::SEARCH_TYPE_THREAD;
-        $search->search_constraints = [];
+        $search->search_constraints = $constraints;
         $search->search_order = 'date';
         $search->query_hash = $queryHash;
         $search->search_query = 'tag:' . $tag->tag;
@@ -297,6 +300,10 @@ class SearchController extends AbstractController
         return $this->rerouteController(__CLASS__, 'get', [
             'search_id' => $search->search_id
         ]);
+    }
+
+    protected function applyTagContentFinderFilters(XF\Finder\TagContentFinder $finder, array &$constraints = []): void
+    {
     }
 
     protected function getApiResultOptions(Entity $entity): array
