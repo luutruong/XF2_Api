@@ -171,6 +171,70 @@ class SearchController extends AbstractController
         ]);
     }
 
+    public function actionGetTagged()
+    {
+        $this->assertRequiredApiInput(['tag_name']);
+
+        $tagName = $this->filter('tag_name', 'str');
+        $tagRepo = $this->repository(XF\Repository\TagRepository::class);
+        if (!$tagRepo->isValidTag($tagName)) {
+            return $this->message(XF::phrase('no_results_found'));
+        }
+
+        $tags = $tagRepo->getTags([$tagName]);
+        $tag = reset($tags);
+        if (!$tag instanceof \XF\Entity\Tag) {
+            return $this->message(XF::phrase('no_results_found'));
+        }
+
+        $queryHash = md5(
+            $this->app()->config('globalSalt')
+            . __METHOD__
+            . self::SEARCH_TYPE_THREAD
+            . $tag->tag_id
+        );
+
+        $searchId = $this->filter('search_id', 'uint');
+        if ($searchId > 0) {
+            return $this->rerouteController(__CLASS__, 'get', [
+                'search_id' => $searchId
+            ]);
+        }
+
+        $tagContentFinder = $this->finder(XF\Finder\TagContentFinder::class)
+            ->where('tag_id', $tag->tag_id)
+            ->where('content_type', self::SEARCH_TYPE_THREAD)
+            ->where('visible', 1)
+            ->order('content_date', 'desc');
+
+        $searchResults = [];
+        foreach ($tagContentFinder->limit(max(XF::options()->maximumSearchResults, 20))->fetch() as $tagContent) {
+            $searchResults[] = [self::SEARCH_TYPE_THREAD, $tagContent->content_id];
+        }
+
+        if (count($searchResults) === 0) {
+            return $this->message(XF::phrase('no_results_found'));
+        }
+
+        /** @var \XF\Entity\Search $search */
+        $search = $this->em()->create(XF\Entity\Search::class);
+
+        $search->user_id = XF::visitor()->user_id;
+        $search->result_count = count($searchResults);
+        $search->search_results = $searchResults;
+        $search->search_type = self::SEARCH_TYPE_THREAD;
+        $search->search_constraints = [];
+        $search->search_order = 'date';
+        $search->query_hash = $queryHash;
+        $search->search_query = 'tag:' . $tag->tag;
+
+        $search->save();
+
+        return $this->rerouteController(__CLASS__, 'get', [
+            'search_id' => $search->search_id
+        ]);
+    }
+
     public function actionUser()
     {
         $name = $this->filter('name', 'str');

@@ -648,6 +648,30 @@ Response:
 }
 ```
 
+### GET `/tapi-search/tagged`
+
+Get a paginated list of threads tagged with a given tag name. The lookup is persisted as a search and the results are returned through the same shape as the search `GET` endpoint. Only threads the current visitor can view are included.
+
+Parameters:
+
+* `tag_name` (string) __required__: The tag name to look up. Invalid or unknown tags return a `no_results_found` message.
+* `search_id` (int) __optional__: Reuse a previously created search. When provided, the tag lookup is skipped and the results are returned directly from that search (use the `search_id` from a prior response to page through the same result set).
+* `page` (int) __optional__
+
+Response:
+
+```
+{
+  "keywords": (string),      // "tag:<tag>"
+  "search_id": (int),
+  "results": [
+    (thread),                // each thread also includes "content_type" and "content_id" extras
+    ...
+  ],
+  "pagination": (pagination)
+}
+```
+
 ### POST `/tapi-apps/connected-accounts`
 
 Associate with external account.
