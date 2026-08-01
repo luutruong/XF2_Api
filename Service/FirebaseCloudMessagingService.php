@@ -201,10 +201,11 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
 
                         break;
                     } else {
-                        throw new InvalidArgumentException('failed to sent message: ' . json_encode($respData));
+                        throw new InvalidArgumentException('received bad status: ' . $resp->getStatusCode() . ', ' . json_encode($respData));
                     }
                 }
             } catch (Throwable $e) {
+                $_POST['_message'] = $message;
                 $this->app->logException($e);
             }
         }
