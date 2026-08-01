@@ -168,7 +168,6 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
         $config = $this->getConfig();
         $token = $this->getToken();
 
-        $this->app->error()->logError(sprintf('sending %d messages', \count($messages)));
         foreach ($messages as $message) {
             try {
                 $resp = $this->client()->post(
@@ -194,6 +193,13 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
                         foreach ($subsKeyedToken[$message['token']] as $sub) {
                             $sub->delete(false);
                         }
+                    } elseif ($resp->getStatusCode() === 401 || $resp->getStatusCode() === 403) {
+                        // credentials are broken for every message, stop instead of logging one error per device
+                        $this->app->logException(new InvalidArgumentException(
+                            'failed to sent message: ' . json_encode($respData)
+                        ));
+
+                        break;
                     } else {
                         throw new InvalidArgumentException('failed to sent message: ' . json_encode($respData));
                     }
@@ -206,15 +212,20 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
 
     protected function isInvalidToken(array $response): bool
     {
-        if (isset($response['error'], $response['error']['message'])) {
-            return str_starts_with($response['error']['message'], 'The registration token is not a valid FCM registration token');
+        $details = $response['error']['details'] ?? [];
+        foreach ($details as $detail) {
+            if (isset($detail['errorCode']) && $detail['errorCode'] === 'UNREGISTERED') {
+                return true;
+            }
         }
 
-        if (isset($response['error']['code']) && $response['error']['code'] === 404) {
+        if (isset($response['error']['message'])
+            && str_starts_with($response['error']['message'], 'The registration token is not a valid FCM registration token')
+        ) {
             return true;
         }
 
-        return false;
+        return isset($response['error']['code']) && $response['error']['code'] === 404;
     }
 
     public function unsubscribe(string $externalId, string $pushToken): void
