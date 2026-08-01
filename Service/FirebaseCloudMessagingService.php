@@ -186,8 +186,8 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
                     continue;
                 }
 
+                $respData = json_decode($resp->getBody()->getContents(), true);
                 if ($resp->getStatusCode() >= 400) {
-                    $respData = json_decode($resp->getBody()->getContents(), true);
                     if ($this->isInvalidToken($respData)) {
                         /** @var Subscription $sub */
                         foreach ($subsKeyedToken[$message['token']] as $sub) {
@@ -203,9 +203,10 @@ class FirebaseCloudMessagingService extends AbstractPushNotification
                     } else {
                         throw new InvalidArgumentException('received bad status: ' . $resp->getStatusCode() . ', ' . json_encode($respData));
                     }
+                } else if ($resp->getStatusCode() >= 200) {
+                    $this->app->logException(new \Exception('sent firebase message ok: ' . \json_encode($respData)));
                 }
             } catch (Throwable $e) {
-                $_POST['_message'] = $message;
                 $this->app->logException($e);
             }
         }
